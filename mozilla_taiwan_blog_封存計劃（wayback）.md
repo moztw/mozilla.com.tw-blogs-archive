@@ -316,8 +316,13 @@ div.post-content
 
 流程：
 
-1. 抓 `<article>` 內所有 `img[src]`
-2. 下載圖片（透過 Wayback URL）
+1. 抓 `<article>` 內所有媒體參照：
+
+- `img[src]` / `img[srcset]`：文章實際顯示的圖片
+- `a[href]` 指向圖片、PDF、影片等媒體時：文章原本的連結目標
+- 兩者必須視為不同資產，不可互相取代
+
+2. 下載圖片與媒體（透過 Wayback URL）
 3. 優先保留 WordPress uploads 原始路徑：
 
 ```text
@@ -345,11 +350,37 @@ assets/{post_id}/{index}-{hash}.{ext}
 - 必要時比對副檔名與檔案 signature
 - 若 Wayback 回傳 HTML 錯誤頁，不可存成圖片
 
-6. rewrite Markdown：
+6. 保留原文的圖片與連結結構：
+
+- 若原文是單純 `<img src="...">`，Markdown 輸出為一般圖片。
+- 若原文是 `<a href="大圖"><img src="縮圖"></a>`，Markdown 必須維持成 linked image。
+- `href` 指向的大圖與 `img src` 指向的縮圖要分開抓；縮圖抓得到不代表大圖已補回。
+- 大圖抓不到時，保留原始大圖連結並記錄 missing；縮圖若可抓，仍可本地化並放在文內。
+- 不可用縮圖資產標記大圖 URL 為已本地化，也不可把點圖連結改成縮圖。
+
+rewrite Markdown 範例：
+
+單純圖片：
 
 ```markdown
 ![alt](../assets/9335/wp-content/uploads/data-breaches-notification-1024x657.jpg)
 ```
+
+原文為大圖連結包縮圖時：
+
+```html
+<a href="https://blog.mozilla.com.tw/wp-content/uploads/DSC09930.jpg">
+  <img src="https://blog.mozilla.com.tw/wp-content/uploads/DSC09930-300x199.jpg" alt="SONY DSC">
+</a>
+```
+
+應輸出：
+
+```markdown
+[![SONY DSC](../assets/3354/wp-content/uploads/DSC09930-300x199.jpg)](https://blog.mozilla.com.tw/wp-content/uploads/DSC09930.jpg)
+```
+
+其中 `DSC09930-300x199.jpg` 與 `DSC09930.jpg` 是兩個獨立資產；若大圖缺失，仍保留連結並在 missing report 中記錄大圖 URL。
 
 補抓策略：
 
@@ -358,6 +389,13 @@ assets/{post_id}/{index}-{hash}.{ext}
 - 只抓沒有 `archive_path` 的圖片，不重抓正文
 - 成功後更新該篇 JSON 與 Markdown
 - 輸出 `archive/asset-manifest.json`
+
+Wayback 補抓來源：
+
+- 優先使用文章目前封存的 raw HTML 與其中的媒體 URL。
+- 若 `https://blog.mozilla.com.tw/?p={id}` 版本缺圖，需嘗試同一篇文章的 legacy permalink，例如 `https://blog.mozilla.com.tw/posts/{id}/`。
+- `/posts/{id}/` snapshot 常保留較早期的 WordPress rewrite HTML，可補到 `?p={id}` snapshot 中缺失的縮圖參照。
+- 仍須遵守原文結構：從 alternate snapshot 找到的 `<a href="大圖"><img src="縮圖"></a>` 只能用來補各自對應的資產，不能用縮圖替代大圖。
 
 ---
 

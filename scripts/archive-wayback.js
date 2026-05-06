@@ -70,6 +70,7 @@ const CATEGORY_LISTING_TIMESTAMP = '20200805155022';
 const MONTH_START = 201112;
 const MONTH_END = 201610;
 const ASSET_SNAPSHOT_CACHE = new Map();
+const ALTERNATE_POST_IMAGE_CACHE = new Map();
 
 const args = parseArgs(process.argv.slice(2));
 const command = args._[0] ?? 'all';
@@ -1795,10 +1796,12 @@ async function recoverArticleMedia() {
   const report = await articleMediaReport();
   const only = String(args.only || '').trim();
   const kind = String(args.kind || '').trim();
+  const source = String(args.source || '').trim();
   const limit = args.limit ? Number(args.limit) : Infinity;
   const candidates = report.missing
     .filter((item) => !only || (only === 'uploads' && isUploadsUrl(item.url)))
     .filter((item) => !kind || item.kind === kind)
+    .filter((item) => !source || item.source === source)
     .slice(0, limit);
   const byPost = new Map();
   const result = {
@@ -1807,6 +1810,7 @@ async function recoverArticleMedia() {
     include_srcset: hasFlag('include-srcset'),
     only: only || null,
     kind: kind || null,
+    source: source || null,
     total_missing_before: candidates.length,
     localized_now: 0,
     total_missing_after: 0,
@@ -1867,32 +1871,57 @@ async function writeRecoveredArticles(byPost) {
 }
 
 async function recoverOneMedia(article, item, usedPaths) {
-  const attempts = mediaUrlRecoveryCandidates(item.url);
+  const attempts = [
+    ...mediaUrlRecoveryCandidates(item.url).map((url) => ({ url })),
+    ...await alternatePostImageAttempts(article, item),
+  ];
   const errors = [];
 
-  for (const url of attempts) {
+  for (const attempt of attempts) {
     try {
-      const { buffer, contentType, snapshot } = await fetchAssetBuffer(article.wayback_timestamp, url);
-      const assetPath = chooseAssetPath(article.post_id, url, item.index, buffer, contentType, usedPaths);
+      const { buffer, contentType, snapshot } = attempt.fetch_url
+        ? await fetchAssetBufferFromUrl(attempt.fetch_url, attempt.url)
+        : await fetchAssetBuffer(article.wayback_timestamp, attempt.url);
+      const assetPath = chooseAssetPath(article.post_id, attempt.url, item.index, buffer, contentType, usedPaths);
       usedPaths.add(assetPath);
       await mkdir(path.dirname(assetPath), { recursive: true });
       await writeFile(assetPath, buffer);
       return {
         ...item,
         url: item.url,
-        recovered_url: url,
+        recovered_url: attempt.url,
         archive_path: path.relative(ARCHIVE_DIR, assetPath),
         markdown_path: `../assets/${path.relative(ASSETS_DIR, assetPath).split(path.sep).join('/')}`,
         wayback_timestamp: snapshot.timestamp,
-        asset_archive_url: waybackAssetUrl(snapshot.timestamp, snapshot.original),
+        asset_archive_url: snapshot.archive_url || waybackAssetUrl(snapshot.timestamp, snapshot.original),
         content_type: contentType,
       };
     } catch (error) {
-      errors.push(`${url}: ${error.message}`);
+      errors.push(`${attempt.fetch_url || attempt.url}: ${error.message}`);
     }
   }
 
   throw new Error(errors.join(' | '));
+}
+
+async function fetchAssetBufferFromUrl(fetchUrl, originalUrl) {
+  const response = await fetchWithRetry(fetchUrl, { accept: '*/*' });
+  const contentType = response.headers.get('content-type') || '';
+
+  if (contentType.toLowerCase().startsWith('text/html')) {
+    throw new Error(`content_type_html:${contentType || 'missing'}`);
+  }
+
+  const buffer = Buffer.from(await response.arrayBuffer());
+  if (buffer.length === 0) {
+    throw new Error('empty_asset');
+  }
+
+  return {
+    buffer,
+    contentType,
+    snapshot: snapshotFromWaybackResponse(response.url) || { timestamp: '', original: originalUrl, archive_url: response.url },
+  };
 }
 
 function mergeRecoveredMedia(article, recovered) {
@@ -1922,6 +1951,71 @@ function mediaUrlRecoveryCandidates(url) {
     }
   } catch {}
   return [...new Set(candidates)];
+}
+
+async function alternatePostImageAttempts(article, item) {
+  if (!article?.post_id || item?.source !== 'img') {
+    return [];
+  }
+
+  const images = await alternatePostImages(article.post_id);
+  return (images.get(item.url) || []).map((fetchUrl) => ({ url: item.url, fetch_url: fetchUrl }));
+}
+
+async function alternatePostImages(postId) {
+  if (ALTERNATE_POST_IMAGE_CACHE.has(postId)) {
+    return ALTERNATE_POST_IMAGE_CACHE.get(postId);
+  }
+
+  const images = new Map();
+  ALTERNATE_POST_IMAGE_CACHE.set(postId, images);
+
+  const urls = [
+    `https://web.archive.org/web/https://blog.mozilla.com.tw/posts/${postId}/`,
+    `https://web.archive.org/web/http://blog.mozilla.com.tw/posts/${postId}/`,
+  ];
+
+  let html = '';
+  for (const url of urls) {
+    try {
+      html = await fetchText(url);
+      if (html && !isErrorPage(html)) {
+        break;
+      }
+    } catch {}
+  }
+
+  if (!html || isErrorPage(html)) {
+    return images;
+  }
+
+  const articleHtml = extractArticleElement(html) || html;
+  for (const match of articleHtml.matchAll(/<img\b([^>]*)>/gi)) {
+    for (const rawUrl of [attr(match[1], 'src') || attr(match[1], 'data-src'), ...collectSrcsetRaw(attr(match[1], 'srcset'))]) {
+      const normalized = normalizeUrl(rawUrl, `https://blog.mozilla.com.tw/posts/${postId}/`);
+      if (!normalized || !isUploadsUrl(normalized) || !isWaybackUrl(rawUrl)) {
+        continue;
+      }
+      images.set(normalized, [...new Set([...(images.get(normalized) || []), absoluteWaybackUrl(rawUrl)])]);
+    }
+  }
+
+  return images;
+}
+
+function collectSrcsetRaw(srcset) {
+  return String(srcset || '')
+    .split(',')
+    .map((part) => part.trim().split(/\s+/)[0])
+    .filter(Boolean);
+}
+
+function isWaybackUrl(url) {
+  return /^(?:https?:)?\/\/web\.archive\.org\/web\/\d+(?:[a-z_]+)?\//i.test(String(url || ''));
+}
+
+function absoluteWaybackUrl(url) {
+  return String(url || '').startsWith('//') ? `https:${url}` : String(url || '');
 }
 
 function originalSizeMediaUrl(url) {
