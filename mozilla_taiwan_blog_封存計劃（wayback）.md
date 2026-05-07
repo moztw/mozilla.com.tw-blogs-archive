@@ -397,6 +397,71 @@ Wayback 補抓來源：
 - `/posts/{id}/` snapshot 常保留較早期的 WordPress rewrite HTML，可補到 `?p={id}` snapshot 中缺失的縮圖參照。
 - 仍須遵守原文結構：從 alternate snapshot 找到的 `<a href="大圖"><img src="縮圖"></a>` 只能用來補各自對應的資產，不能用縮圖替代大圖。
 
+第二階段補救策略：
+
+1. 同站資源仍以 Wayback 為 source of truth。
+
+- `blog.mozilla.com.tw/*` 與 `tech.mozilla.com.tw/*` 不直接抓現站。
+- 原因是網域內容可能已變動，直接抓現站會混入非歷史 snapshot 的檔案。
+- 同站缺圖要先嘗試文章 snapshot、asset CDX、undated Wayback、legacy permalink snapshot。
+
+2. WordPress 同目錄尺寸版 fallback。
+
+- 若原文引用原尺寸 URL，例如：
+
+```text
+https://tech.mozilla.com.tw/wp-content/uploads/2012/04/b2g1.png
+```
+
+- 但原尺寸找不到，而手動擷取的 `/wp-content/` 清單中有同目錄、同 basename 的尺寸版，例如：
+
+```text
+https://tech.mozilla.com.tw/wp-content/uploads/2012/04/b2g1-300x295.png
+```
+
+- 可下載尺寸版作為文章內顯示圖。
+- 必須選同目錄候選；只靠 basename、但目錄或 host 不同者不可自動套用。
+- 若同一原圖有多個尺寸候選，優先選面積最大的尺寸；沒有尺寸尾碼者視為最佳候選。
+- JSON 仍以原尺寸 URL 作為 `url`，並以 `fallback_url` / `recovered_url` 記錄實際下載的尺寸版。
+- Markdown 輸出顯示本地 fallback 圖，但外層連結保留原尺寸 URL：
+
+```markdown
+[![](../assets/127/wp-content/uploads/2012/04/b2g1-300x295.png)](https://tech.mozilla.com.tw/wp-content/uploads/2012/04/b2g1.png)
+```
+
+- `scripts/build-site.js` 必須支援 linked image，輸出為 `<a href="原尺寸URL"><img src="fallback"></a>`。
+
+3. 外站資源直接抓原始出處。
+
+- 缺失 URL 若 host 不是目前站台，例如 `hacks.mozilla.org`、`blog.mozilla.org`、`videos-cdn.mozilla.net`、`assets.pinterest.com`、`statics.plurk.com`、Flickr、Dropbox、Blogger 等，先直接 fetch 原始 URL，不先走 Wayback。
+- 成功條件：
+  - HTTP status 200
+  - Content-Type 不可為 HTML
+  - 檔案大小 > 0
+- 若回傳 HTML 頁、403、404、406、500 或 fetch failed，只記錄失敗，不可把錯誤頁存成媒體。
+- 成功後回填 `archive_path`、`markdown_path`、`direct_source_url`、`content_type`，並標記 `recovered_from: direct_external_source`。
+
+相關指令：
+
+```bash
+# 同站缺圖盤點
+node scripts/archive-wayback.js media-report
+node scripts/archive-wayback.js media-report --site-host tech.mozilla.com.tw --archive-dir archive-tech --timemap json-tech.json
+
+# WordPress 同目錄尺寸版 fallback
+node scripts/archive-wayback.js media-fallback-variants --site-host tech.mozilla.com.tw --archive-dir archive-tech --timemap json-tech.json
+
+# 外站資源 direct fetch
+node scripts/archive-wayback.js media-direct-external
+node scripts/archive-wayback.js media-direct-external --site-host tech.mozilla.com.tw --archive-dir archive-tech --timemap json-tech.json
+
+# 補救後重建 manifest/index 與缺圖報告
+node scripts/archive-wayback.js reindex
+node scripts/archive-wayback.js media-report
+node scripts/archive-wayback.js reindex --site-host tech.mozilla.com.tw --archive-dir archive-tech --timemap json-tech.json
+node scripts/archive-wayback.js media-report --site-host tech.mozilla.com.tw --archive-dir archive-tech --timemap json-tech.json
+```
+
 ---
 
 ## Phase 7 — Markdown 輸出

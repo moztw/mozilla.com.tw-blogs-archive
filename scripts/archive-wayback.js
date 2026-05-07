@@ -7,8 +7,11 @@ import path from 'node:path';
 
 setDefaultResultOrder('ipv4first');
 
+const args = parseArgs(process.argv.slice(2));
 const ROOT = process.cwd();
-const ARCHIVE_DIR = path.join(ROOT, 'archive');
+const SITE_HOST = String(args.siteHost || args['site-host'] || 'blog.mozilla.com.tw').replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+const SITE_ORIGIN = `https://${SITE_HOST}`;
+const ARCHIVE_DIR = path.resolve(ROOT, args.archiveDir || args['archive-dir'] || 'archive');
 const RAW_DIR = path.join(ARCHIVE_DIR, 'raw-html');
 const JSON_DIR = path.join(ARCHIVE_DIR, 'articles-json');
 const MD_DIR = path.join(ARCHIVE_DIR, 'articles-md');
@@ -24,18 +27,21 @@ const URLS_PATH = path.join(ROOT, 'urls.txt');
 const URL_PROBE_PATH = path.join(DISCOVERY_DIR, 'url-probe-report.json');
 const URL_IMPORT_PATH = path.join(DISCOVERY_DIR, 'url-import-report.json');
 const URL_RETRY_IDS_PATH = path.join(DISCOVERY_DIR, 'urls-retry-post-ids.txt');
-const TIMEMAP_PATH = path.join(ROOT, 'json.json');
+const TIMEMAP_PATH = path.resolve(ROOT, args.timemap || args['timemap-path'] || 'json.json');
 const TIMEMAP_IMPORT_PATH = path.join(DISCOVERY_DIR, 'timemap-import-report.json');
 const TIMEMAP_RETRY_IDS_PATH = path.join(DISCOVERY_DIR, 'timemap-retry-post-ids.txt');
 const ARTICLE_MEDIA_REPORT_PATH = path.join(DISCOVERY_DIR, 'article-media-report.json');
 const ARTICLE_MEDIA_MISSING_PATH = path.join(DISCOVERY_DIR, 'article-media-missing.json');
 const ARTICLE_MEDIA_RECOVER_PATH = path.join(DISCOVERY_DIR, 'article-media-recover-report.json');
+const WP_CONTENT_CROSSCHECK_PATH = path.join(DISCOVERY_DIR, 'wp-content-missing-resource-crosscheck.json');
+const WP_CONTENT_UNIQUE_PATH = path.join(DISCOVERY_DIR, `wp-content-unique-vs-${path.basename(TIMEMAP_PATH, path.extname(TIMEMAP_PATH))}.json`);
+const MEDIA_FALLBACK_REPORT_PATH = path.join(DISCOVERY_DIR, 'media-fallback-variants-report.json');
 
 const POST_ID_MIN = 74;
 const POST_ID_MAX = 9335;
 const SNAPSHOT_CUTOFF = '20201231235959';
 const MAX_SNAPSHOT_ATTEMPTS = 5;
-const USER_AGENT = 'MozillaTaiwanBlogArchive/0.1 (+https://blog.mozilla.com.tw archival recovery)';
+const USER_AGENT = `MozillaTaiwanBlogArchive/0.1 (+${SITE_ORIGIN} archival recovery)`;
 const CATEGORY_MAP = {
   8: 'Firefox',
   11: 'Firefox for Android',
@@ -72,7 +78,6 @@ const MONTH_END = 201610;
 const ASSET_SNAPSHOT_CACHE = new Map();
 const ALTERNATE_POST_IMAGE_CACHE = new Map();
 
-const args = parseArgs(process.argv.slice(2));
 const command = args._[0] ?? 'all';
 
 main().catch((error) => {
@@ -197,6 +202,38 @@ async function main() {
     return;
   }
 
+  if (command === 'wp-content-crosscheck') {
+    const result = await crosscheckWpContentResources();
+    console.log(
+      `Crosschecked ${result.crosscheck.missing_checked} missing media against ${result.wpContent.counts.wp_content_rows} wp-content rows; ` +
+      `path/exact matches ${result.crosscheck.exact_or_path_matches.length}; basename matches ${result.crosscheck.basename_matches.length}; ` +
+      `reports written to ${relative(WP_CONTENT_CROSSCHECK_PATH)} and ${relative(WP_CONTENT_UNIQUE_PATH)}`
+    );
+    return;
+  }
+
+  if (command === 'media-fallback-variants') {
+    const result = await applyMediaFallbackVariants();
+    console.log(
+      `Applied ${result.applied_count}/${result.candidate_count} media fallbacks; failed ${result.failed_count}; report written to ${relative(MEDIA_FALLBACK_REPORT_PATH)}`
+    );
+    return;
+  }
+
+  if (command === 'media-direct-external') {
+    const result = await recoverExternalMediaDirectly();
+    console.log(
+      `Direct-fetched ${result.recovered_count}/${result.candidate_count} external media; failed ${result.failed_count}; report written to ${relative(result.report_path)}`
+    );
+    return;
+  }
+
+  if (command === 'reindex') {
+    const result = await reindexArchive();
+    console.log(`Reindexed ${result.articles.length} articles; manifest written to ${relative(MANIFEST_PATH)}`);
+    return;
+  }
+
   throw new Error(`Unknown command: ${command}`);
 }
 
@@ -211,7 +248,7 @@ function printHelp() {
 Commands:
   scan   Query CDX and write archive/cdx-snapshots.json
   scan-urls
-         Query all archived blog.mozilla.com.tw URLs and extract post ids
+         Query all archived ${SITE_HOST} URLs and extract post ids
   import-urls
          Synthesize cdx-snapshots.json candidates from urls.txt
   import-timemap
@@ -230,6 +267,14 @@ Commands:
          Report media referenced inside each raw <article>
   media-recover
          Recover missing media referenced inside each raw <article>
+  wp-content-crosscheck
+         Compare a wp-content TimeMap list with currently missing article media
+  media-fallback-variants
+         Use same-directory WordPress image size variants as fallbacks for missing original images
+  media-direct-external
+         Fetch missing non-site media directly from its original URL, without Wayback
+  reindex
+         Rebuild manifest.json and index.csv from article JSON files
   all    Scan if needed, then archive posts (default)
 
 Options:
@@ -241,7 +286,8 @@ Options:
   --ids-file <path>     Process only newline-delimited post ids from a file
   --include-assets      Download images referenced inside article content
   --include-srcset      Include srcset candidates in media-report/media-recover
-  --only uploads        Limit media-recover to blog.mozilla.com.tw/wp-content/uploads
+  --only uploads        Limit media-recover to ${SITE_HOST}/wp-content/uploads
+  --wp-content <path>   wp-content TimeMap JSON list, default <site-prefix>-wp-content.json
   --delay-min <ms>      Minimum request delay, default 1000
   --delay-max <ms>      Maximum request delay, default 3000
   --max-attempts <n>    Snapshot attempts per post, default ${MAX_SNAPSHOT_ATTEMPTS}
@@ -275,7 +321,7 @@ async function readCdx() {
 async function scanCdx() {
   const url = [
     'https://web.archive.org/cdx/search/cdx',
-    '?url=blog.mozilla.com.tw/%3Fp=*',
+    `?url=${SITE_HOST}/%3Fp=*`,
     '&output=json',
     '&fl=timestamp,original,statuscode,mimetype,digest,length',
     '&filter=statuscode:200',
@@ -315,7 +361,7 @@ async function scanCdx() {
 }
 
 async function scanAllArchivedUrls() {
-  const rows = await scanCdxRows('blog.mozilla.com.tw/', 'digest', { matchType: 'prefix' });
+  const rows = await scanCdxRows(`${SITE_HOST}/`, 'digest', { matchType: 'prefix' });
   const snapshots = {};
 
   for (const row of rows) {
@@ -491,7 +537,7 @@ async function scanListingPages(kind) {
     const parsed = new URL(normalizeOriginalUrl(row.original));
     const key = listingKey(kind, parsed);
 
-    if (kind === 'cat' && !CATEGORY_MAP[key]) {
+    if (SITE_HOST === 'blog.mozilla.com.tw' && kind === 'cat' && !CATEGORY_MAP[key]) {
       continue;
     }
     if (kind === 'month' && !isWantedMonth(key)) {
@@ -514,7 +560,7 @@ async function scanListingPages(kind) {
     });
   }
 
-  if (kind === 'cat' && hasFlag('expected-category-pages')) {
+  if (SITE_HOST === 'blog.mozilla.com.tw' && kind === 'cat' && hasFlag('expected-category-pages')) {
     pages.push(...await expectedCategoryPages());
   }
 
@@ -523,18 +569,18 @@ async function scanListingPages(kind) {
 
 async function scanListingRows(kind) {
   if (kind === 'cat') {
-    return scanCdxRows('blog.mozilla.com.tw/%3Fcat=*', 'urlkey');
+    return scanCdxRows(`${SITE_HOST}/%3Fcat=*`, 'urlkey');
   }
   if (kind === 'month') {
-    return scanCdxRows('blog.mozilla.com.tw/%3Fm=*', 'urlkey');
+    return scanCdxRows(`${SITE_HOST}/%3Fm=*`, 'urlkey');
   }
   if (kind === 'tag') {
-    const queryRows = await scanCdxRows('blog.mozilla.com.tw/%3Ftag=*', 'urlkey');
-    const pathRows = await scanCdxRows('blog.mozilla.com.tw/tag/*', 'urlkey');
+    const queryRows = await scanCdxRows(`${SITE_HOST}/%3Ftag=*`, 'urlkey');
+    const pathRows = await scanCdxRows(`${SITE_HOST}/tag/*`, 'urlkey');
     return [...queryRows, ...pathRows];
   }
   if (kind === 'home') {
-    return scanCdxRows('blog.mozilla.com.tw/%3Fpaged=*', 'urlkey');
+    return scanCdxRows(`${SITE_HOST}/%3Fpaged=*`, 'urlkey');
   }
   throw new Error(`Unknown listing source: ${kind}`);
 }
@@ -571,7 +617,7 @@ function listingKey(kind, parsed) {
 
 function listingName(kind, key) {
   if (kind === 'cat') {
-    return CATEGORY_MAP[key];
+    return CATEGORY_MAP[key] || key;
   }
   return key;
 }
@@ -648,13 +694,13 @@ async function scanCategoryPageSnapshot(categoryId, page) {
 
 function categoryPageCdxPattern(categoryId, page) {
   if (page === 1) {
-    return `blog.mozilla.com.tw/%3Fcat=${categoryId}`;
+    return `${SITE_HOST}/%3Fcat=${categoryId}`;
   }
-  return `blog.mozilla.com.tw/%3Fcat=${categoryId}%26paged=${page}`;
+  return `${SITE_HOST}/%3Fcat=${categoryId}%26paged=${page}`;
 }
 
 function categoryPageUrl(categoryId, page) {
-  const url = new URL('https://blog.mozilla.com.tw/');
+  const url = new URL(`${SITE_ORIGIN}/`);
   url.searchParams.set('cat', categoryId);
   if (page > 1) {
     url.searchParams.set('paged', page);
@@ -698,7 +744,7 @@ function choosePreferredListingPages(pages) {
 }
 
 async function scanPostSnapshots(postId) {
-  const rows = await scanCdxRows(`blog.mozilla.com.tw/%3Fp=${postId}`, 'digest');
+  const rows = await scanCdxRows(`${SITE_HOST}/%3Fp=${postId}`, 'digest');
   const snapshots = [];
   const seen = new Set();
 
@@ -1111,7 +1157,7 @@ async function probeMissingRangePrefixes(snapshots) {
 
   for (const [index, group] of groups.entries()) {
     try {
-      const rows = await scanCdxRows(`blog.mozilla.com.tw/%3Fp=${group.prefix}*`, 'digest');
+      const rows = await scanCdxRows(`${SITE_HOST}/%3Fp=${group.prefix}*`, 'digest');
       const grouped = new Map();
 
       for (const row of rows) {
@@ -1272,7 +1318,7 @@ function parseTsv(text) {
 }
 
 function discoverPostIdsFromHtml(html) {
-  return [...new Set(collectLinks(html, 'https://blog.mozilla.com.tw/')
+  return [...new Set(collectLinks(html, `${SITE_ORIGIN}/`)
     .map((link) => getPostId(link.url))
     .filter((postId) => postId && postId >= POST_ID_MIN && postId <= POST_ID_MAX))]
     .sort((a, b) => a - b);
@@ -1482,7 +1528,7 @@ function baseArticle(postId, extra = {}) {
     tags: [],
     author: '',
     page_type: '',
-    original_url: `https://blog.mozilla.com.tw/?p=${postId}`,
+    original_url: `${SITE_ORIGIN}/?p=${postId}`,
     archive_url: '',
     wayback_timestamp: '',
     content_html: '',
@@ -1503,20 +1549,23 @@ function parseArticle(html, originalUrl) {
     /<div\b[^>]*class=["'][^"']*\bpost\b[^"']*["'][^>]*>[\s\S]*?<\/div>/i,
     /<div\b[^>]*class=["'][^"']*\bentry-content\b[^"']*["'][^>]*>[\s\S]*?<\/div>/i,
     /<div\b[^>]*class=["'][^"']*\bpost-content\b[^"']*["'][^>]*>[\s\S]*?<\/div>/i,
-  ]);
+  ]) || extractMainElement(html);
   const articleClass = attr(firstCapture(articleHtml, [/<article\b([^>]*)>/i]), 'class');
   const bodyClass = attr(firstCapture(html, [/<body\b([^>]*)>/i]), 'class');
   const pageType = /\b(?:attachment|type-attachment|single-attachment)\b/i.test(`${bodyClass} ${articleClass}`)
     ? 'attachment'
-    : 'post';
+    : /\bpage\b/i.test(bodyClass)
+      ? 'page'
+      : 'post';
   const contentHtml = extractEntryContent(articleHtml) || articleHtml || '';
   const title = cleanText(
     firstCapture(articleHtml, [
       /<h1\b[^>]*>([\s\S]*?)<\/h1>/i,
       /<h2\b[^>]*class=["'][^"']*\bentry-title\b[^"']*["'][^>]*>([\s\S]*?)<\/h2>/i,
     ]) ||
+      firstCapture(html, [/<h1\b[^>]*>([\s\S]*?)<\/h1>/i]) ||
       firstCapture(html, [/<title\b[^>]*>([\s\S]*?)<\/title>/i])
-  ).replace(/\s*[|｜-]\s*Mozilla Taiwan.*$/i, '');
+  ).replace(/\s*[|｜-]\s*Mozilla (?:Taiwan|Tech).*$/i, '');
 
   const date =
     parseDisplayedPostDate(`${html}\n${articleHtml}`) ||
@@ -1570,6 +1619,11 @@ function extractEntryContent(html) {
   }
 
   return sliceBalancedElement(html, startIndex, 'div');
+}
+
+function extractMainElement(html) {
+  const match = html.match(/<div\b[^>]*id=["']main["'][^>]*>/i);
+  return match ? sliceBalancedElement(html, match.index, 'div') : '';
 }
 
 function sliceBalancedElement(html, startIndex, tagName) {
@@ -1870,6 +1924,476 @@ async function writeRecoveredArticles(byPost) {
   }
 }
 
+async function applyMediaFallbackVariants() {
+  const crosscheck = JSON.parse(await readFile(WP_CONTENT_CROSSCHECK_PATH, 'utf8'));
+  const fallbackCandidates = chooseFallbackVariantCandidates(crosscheck.exact_or_path_matches || []);
+  const byPost = new Map();
+  const result = {
+    generated_at: new Date().toISOString(),
+    source: relative(WP_CONTENT_CROSSCHECK_PATH),
+    candidate_count: fallbackCandidates.length,
+    applied_count: 0,
+    failed_count: 0,
+    applied: [],
+    failed: [],
+  };
+
+  for (const candidate of fallbackCandidates) {
+    const article = byPost.get(candidate.post_id) ?? JSON.parse(await readFile(path.join(JSON_DIR, `${candidate.post_id}.json`), 'utf8'));
+    byPost.set(candidate.post_id, article);
+
+    try {
+      const usedPaths = new Set((article.media || article.images || [])
+        .map((media) => media.archive_path)
+        .filter(Boolean)
+        .map((archivePath) => path.join(ARCHIVE_DIR, archivePath)));
+      const fallback = await fetchFallbackVariant(article, candidate, usedPaths);
+      mergeFallbackVariant(article, fallback);
+      result.applied_count += 1;
+      result.applied.push({
+        post_id: article.post_id,
+        url: candidate.url,
+        fallback_url: candidate.fallback_url,
+        archive_path: fallback.archive_path,
+        wayback_timestamp: fallback.wayback_timestamp,
+      });
+    } catch (error) {
+      result.failed_count += 1;
+      result.failed.push({ ...candidate, reason: error.message });
+      console.warn(`Fallback failed ${candidate.post_id}: ${candidate.url}: ${error.message}`);
+    }
+
+    if ((result.applied_count + result.failed_count) % Number(args.checkpointEvery || args['checkpoint-every'] || 25) === 0) {
+      await writeRecoveredArticles(byPost);
+      await saveJson(MEDIA_FALLBACK_REPORT_PATH, result);
+      console.log(`Fallback checkpoint: ${result.applied_count + result.failed_count}/${fallbackCandidates.length}`);
+    }
+
+    await sleep(randomDelay());
+  }
+
+  await writeRecoveredArticles(byPost);
+  await saveJson(MEDIA_FALLBACK_REPORT_PATH, result);
+  return result;
+}
+
+async function crosscheckWpContentResources() {
+  const wpContent = await readWpContentRows();
+  const timemapRows = await readTimemapRows();
+  const report = await articleMediaReport();
+  const indexed = indexWpContentRows(wpContent.rows);
+  const timemapKeys = new Set(timemapRows.map((row) => resourceKey(row.original)));
+  const unique = wpContent.rows
+    .filter((row) => !timemapKeys.has(resourceKey(row.original)))
+    .map((row) => ({
+      original: normalizeOriginalUrl(row.original),
+      mimetype: row.mimetype,
+      timestamp: row.timestamp,
+      endtimestamp: row.endtimestamp,
+      groupcount: row.groupcount,
+      uniqcount: row.uniqcount,
+    }));
+  const crosscheck = {
+    generated_at: new Date().toISOString(),
+    missing_checked: report.missing.length,
+    exact_or_path_matches: [],
+    basename_matches: [],
+  };
+
+  for (const item of report.missing) {
+    for (const match of wpContentMatches(item.url, indexed)) {
+      const entry = {
+        source: 'article-media-report',
+        post_id: item.post_id,
+        url: item.url,
+        match_mode: match.mode,
+        matched_original: normalizeOriginalUrl(match.row.original),
+        matched_mimetype: match.row.mimetype,
+        matched_timestamp: match.row.timestamp,
+        matched_endtimestamp: match.row.endtimestamp,
+      };
+      if (match.kind === 'basename') {
+        crosscheck.basename_matches.push(entry);
+      } else {
+        crosscheck.exact_or_path_matches.push(entry);
+      }
+    }
+  }
+
+  const uniqueReport = {
+    generated_at: new Date().toISOString(),
+    source: relative(wpContent.path),
+    compared_to: relative(TIMEMAP_PATH),
+    normalization: 'normalize http to https and strip query/hash',
+    counts: {
+      wp_content_rows: wpContent.rows.length,
+      timemap_rows: timemapRows.length,
+      unique: unique.length,
+    },
+    unique,
+  };
+
+  await saveJson(WP_CONTENT_CROSSCHECK_PATH, crosscheck);
+  await saveJson(WP_CONTENT_UNIQUE_PATH, uniqueReport);
+  return { crosscheck, wpContent: { path: wpContent.path, counts: uniqueReport.counts }, uniqueReport };
+}
+
+async function readWpContentRows() {
+  const filePath = path.resolve(ROOT, args.wpContent || args['wp-content'] || `${SITE_HOST.split('.')[0]}-wp-content.json`);
+  const rows = JSON.parse(await readFile(filePath, 'utf8'));
+  const header = rows[0] ?? [];
+  return {
+    path: filePath,
+    rows: rows.slice(1).map((row) => Object.fromEntries(header.map((key, index) => [key, row[index]]))),
+  };
+}
+
+function indexWpContentRows(rows) {
+  const indexed = {
+    exact: new Map(),
+    stripped: new Map(),
+    path: new Map(),
+    basename: new Map(),
+  };
+
+  for (const row of rows) {
+    for (const [map, key] of [
+      [indexed.exact, normalizeOriginalUrl(row.original)],
+      [indexed.stripped, resourceKey(row.original)],
+      [indexed.path, resourcePathKey(row.original)],
+      [indexed.basename, resourceBasename(row.original)],
+    ]) {
+      if (!key) {
+        continue;
+      }
+      const bucket = map.get(key) || [];
+      bucket.push(row);
+      map.set(key, bucket);
+    }
+  }
+
+  return indexed;
+}
+
+function wpContentMatches(url, indexed) {
+  const seen = new Set();
+  const matches = [];
+  const candidates = [
+    { mode: 'exact', kind: 'path', rows: indexed.exact.get(normalizeOriginalUrl(url)) || [] },
+    { mode: 'stripped', kind: 'path', rows: indexed.stripped.get(resourceKey(url)) || [] },
+    { mode: 'path', kind: 'path', rows: indexed.path.get(resourcePathKey(url)) || [] },
+    { mode: 'decoded', kind: 'path', rows: indexed.path.get(resourcePathKey(decodeMaybe(url))) || [] },
+    { mode: 'basename', kind: 'basename', rows: indexed.basename.get(resourceBasename(url)) || [] },
+  ];
+
+  for (const candidate of candidates) {
+    for (const row of candidate.rows) {
+      const key = `${candidate.kind}:${candidate.mode}:${normalizeOriginalUrl(row.original)}`;
+      if (seen.has(key)) {
+        continue;
+      }
+      seen.add(key);
+      matches.push({ ...candidate, row });
+    }
+  }
+
+  return matches;
+}
+
+function resourceKey(url) {
+  try {
+    const parsed = new URL(normalizeOriginalUrl(url));
+    return `${parsed.origin}${decodeMaybe(parsed.pathname)}`.toLowerCase();
+  } catch {
+    return normalizeOriginalUrl(url).split(/[?#]/)[0].toLowerCase();
+  }
+}
+
+function resourcePathKey(url) {
+  try {
+    return decodeMaybe(new URL(normalizeOriginalUrl(url)).pathname).toLowerCase();
+  } catch {
+    return '';
+  }
+}
+
+function resourceBasename(url) {
+  const pathKey = resourcePathKey(url);
+  return pathKey ? path.posix.basename(pathKey) : '';
+}
+
+function decodeMaybe(value) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+async function recoverExternalMediaDirectly() {
+  const report = await articleMediaReport();
+  const limit = args.limit ? Number(args.limit) : Infinity;
+  const candidates = report.missing
+    .filter((item) => isExternalMediaUrl(item.url))
+    .slice(0, limit);
+  const byPost = new Map();
+  const reportPath = path.join(DISCOVERY_DIR, 'media-direct-external-report.json');
+  const result = {
+    generated_at: new Date().toISOString(),
+    source_report: relative(ARTICLE_MEDIA_REPORT_PATH),
+    site_host: SITE_HOST,
+    candidate_count: candidates.length,
+    recovered_count: 0,
+    failed_count: 0,
+    recovered: [],
+    failed: [],
+    report_path: reportPath,
+  };
+
+  for (const candidate of candidates) {
+    const article = byPost.get(candidate.post_id) ?? JSON.parse(await readFile(path.join(JSON_DIR, `${candidate.post_id}.json`), 'utf8'));
+    byPost.set(candidate.post_id, article);
+
+    try {
+      const usedPaths = new Set((article.media || article.images || [])
+        .map((media) => media.archive_path)
+        .filter(Boolean)
+        .map((archivePath) => path.join(ARCHIVE_DIR, archivePath)));
+      const recovered = await fetchDirectExternalMedia(article, candidate, usedPaths);
+      mergeRecoveredMedia(article, recovered);
+      result.recovered_count += 1;
+      result.recovered.push({
+        post_id: article.post_id,
+        url: candidate.url,
+        archive_path: recovered.archive_path,
+        content_type: recovered.content_type,
+      });
+    } catch (error) {
+      result.failed_count += 1;
+      result.failed.push({ ...candidate, reason: error.message });
+      console.warn(`Direct external failed ${candidate.post_id}: ${candidate.url}: ${error.message}`);
+    }
+
+    if ((result.recovered_count + result.failed_count) % Number(args.checkpointEvery || args['checkpoint-every'] || 25) === 0) {
+      await writeRecoveredArticles(byPost);
+      await saveJson(reportPath, result);
+      console.log(`Direct external checkpoint: ${result.recovered_count + result.failed_count}/${candidates.length}`);
+    }
+
+    await sleep(randomDelay());
+  }
+
+  await writeRecoveredArticles(byPost);
+  await saveJson(reportPath, result);
+  return result;
+}
+
+function isExternalMediaUrl(url) {
+  try {
+    return new URL(url).hostname !== SITE_HOST;
+  } catch {
+    return false;
+  }
+}
+
+async function fetchDirectExternalMedia(article, item, usedPaths) {
+  const response = await fetchWithRetry(item.url, { accept: '*/*' });
+  const contentType = response.headers.get('content-type') || '';
+  if (contentType.toLowerCase().startsWith('text/html')) {
+    throw new Error(`content_type_html:${contentType || 'missing'}`);
+  }
+
+  const buffer = Buffer.from(await response.arrayBuffer());
+  if (!buffer.length) {
+    throw new Error('empty_asset');
+  }
+
+  const assetPath = chooseAssetPath(article.post_id, item.url, item.index ?? usedPaths.size, buffer, contentType, usedPaths);
+  usedPaths.add(assetPath);
+  await mkdir(path.dirname(assetPath), { recursive: true });
+  await writeFile(assetPath, buffer);
+  return {
+    ...item,
+    url: item.url,
+    archive_path: path.relative(ARCHIVE_DIR, assetPath),
+    markdown_path: `../assets/${path.relative(ASSETS_DIR, assetPath).split(path.sep).join('/')}`,
+    direct_source_url: response.url,
+    content_type: contentType,
+    recovered_from: 'direct_external_source',
+  };
+}
+
+function chooseFallbackVariantCandidates(matches) {
+  const allowedModes = new Set(['stripped', 'decoded_stripped', 'path', 'decoded', 'exact']);
+  const byUrl = new Map();
+
+  for (const match of matches) {
+    if (
+      !allowedModes.has(match.match_mode) ||
+      !isRecoverableWpContentMimetype(match.matched_mimetype) ||
+      !isSameDirectoryUrl(match.url, match.matched_original)
+    ) {
+      continue;
+    }
+
+    const key = `${match.post_id}:${match.url}`;
+    const current = byUrl.get(key);
+    const candidate = {
+      post_id: match.post_id,
+      url: match.url,
+      fallback_url: normalizeOriginalUrl(match.matched_original),
+      match_mode: match.match_mode,
+      matched_timestamp: match.matched_timestamp,
+      matched_endtimestamp: match.matched_endtimestamp,
+      matched_mimetype: match.matched_mimetype,
+      score: fallbackVariantScore(match.matched_original),
+    };
+
+    if (!current || candidate.score > current.score) {
+      byUrl.set(key, candidate);
+    }
+  }
+
+  return [...byUrl.values()].sort((a, b) => a.post_id - b.post_id || a.url.localeCompare(b.url));
+}
+
+function isRecoverableWpContentMimetype(mimetype) {
+  return /^image\//i.test(mimetype || '') || mimetype === 'application/pdf';
+}
+
+function isSameDirectoryUrl(a, b) {
+  try {
+    return decodedDirectory(a) === decodedDirectory(b);
+  } catch {
+    return false;
+  }
+}
+
+function decodedDirectory(url) {
+  const parsed = new URL(url);
+  const pathname = decodeURIComponent(parsed.pathname);
+  return pathname.slice(0, pathname.lastIndexOf('/'));
+}
+
+function fallbackVariantScore(url) {
+  const parsed = new URL(url);
+  const decodedPath = decodeURIComponent(parsed.pathname);
+  const size = decodedPath.match(/-(\d+)x(\d+)(\.[a-z0-9]+)$/i);
+  if (size) {
+    return Number(size[1]) * Number(size[2]);
+  }
+  return Number.MAX_SAFE_INTEGER;
+}
+
+async function fetchFallbackVariant(article, candidate, usedPaths) {
+  const attempts = [
+    { timestamp: candidate.matched_timestamp, original: candidate.fallback_url },
+    { timestamp: candidate.matched_endtimestamp, original: candidate.fallback_url },
+  ].filter((attempt) => attempt.timestamp);
+  const errors = [];
+
+  for (const attempt of attempts) {
+    try {
+      const response = await fetchWithRetry(waybackAssetUrl(attempt.timestamp, attempt.original), { accept: '*/*' });
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.toLowerCase().startsWith('text/html')) {
+        throw new Error(`content_type_html:${contentType || 'missing'}`);
+      }
+      const buffer = Buffer.from(await response.arrayBuffer());
+      if (!buffer.length) {
+        throw new Error('empty_asset');
+      }
+      const assetPath = chooseAssetPath(article.post_id, candidate.fallback_url, usedPaths.size, buffer, contentType, usedPaths);
+      usedPaths.add(assetPath);
+      await mkdir(path.dirname(assetPath), { recursive: true });
+      await writeFile(assetPath, buffer);
+      return {
+        url: candidate.url,
+        fallback_url: candidate.fallback_url,
+        recovered_url: candidate.fallback_url,
+        archive_path: path.relative(ARCHIVE_DIR, assetPath),
+        markdown_path: `../assets/${path.relative(ASSETS_DIR, assetPath).split(path.sep).join('/')}`,
+        wayback_timestamp: attempt.timestamp,
+        asset_archive_url: waybackAssetUrl(attempt.timestamp, candidate.fallback_url),
+        content_type: contentType,
+        fallback_reason: 'same_directory_wordpress_size_variant',
+      };
+    } catch (error) {
+      errors.push(`${attempt.timestamp}:${error.message}`);
+    }
+  }
+
+  const recovered = await recoverOneMedia(article, {
+    post_id: article.post_id,
+    url: candidate.url,
+    source: 'img',
+    kind: 'image',
+    index: usedPaths.size,
+  }, usedPaths);
+  return { ...recovered, fallback_url: candidate.fallback_url, fallback_reason: 'same_directory_wordpress_size_variant' };
+}
+
+function mergeFallbackVariant(article, fallback) {
+  const media = article.media?.length ? article.media : article.images || [];
+  const existing = media.find((item) => item.url === fallback.url);
+  if (existing) {
+    Object.assign(existing, fallback);
+  } else {
+    media.push({
+      url: fallback.url,
+      alt: '',
+      kind: 'image',
+      source: 'img',
+      ...fallback,
+    });
+  }
+  article.media = media;
+  article.images = media;
+}
+
+async function reindexArchive() {
+  const articles = await readArchivedArticles();
+  const ids = articles.map((article) => article.post_id).filter(Number.isFinite);
+  const manifest = {
+    generated_at: new Date().toISOString(),
+    post_id_range: {
+      start: ids.length ? Math.min(...ids) : null,
+      end: ids.length ? Math.max(...ids) : null,
+    },
+    totals: {
+      posts_with_snapshots: articles.length,
+      success: 0,
+      fetch_failed: 0,
+      parse_failed: 0,
+      empty_article: 0,
+      assets_ok: 0,
+      partial_assets_failed: 0,
+      asset_errors_count: 0,
+    },
+    posts: [],
+  };
+
+  for (const article of articles) {
+    manifest.posts.push(summaryForManifest(article));
+    if (article.status === 'ok') {
+      manifest.totals.success += 1;
+    } else {
+      manifest.totals[article.status] = (manifest.totals[article.status] ?? 0) + 1;
+    }
+    if (article.asset_status === 'ok') {
+      manifest.totals.assets_ok += 1;
+    }
+    if (article.asset_status === 'partial_assets_failed') {
+      manifest.totals.partial_assets_failed += 1;
+    }
+    manifest.totals.asset_errors_count += article.asset_errors?.length ?? 0;
+  }
+
+  await saveJson(MANIFEST_PATH, manifest);
+  await writeIndex(articles);
+  return { articles, manifest };
+}
+
 async function recoverOneMedia(article, item, usedPaths) {
   const attempts = [
     ...mediaUrlRecoveryCandidates(item.url).map((url) => ({ url })),
@@ -1971,8 +2495,8 @@ async function alternatePostImages(postId) {
   ALTERNATE_POST_IMAGE_CACHE.set(postId, images);
 
   const urls = [
-    `https://web.archive.org/web/https://blog.mozilla.com.tw/posts/${postId}/`,
-    `https://web.archive.org/web/http://blog.mozilla.com.tw/posts/${postId}/`,
+    `https://web.archive.org/web/${SITE_ORIGIN}/posts/${postId}/`,
+    `https://web.archive.org/web/http://${SITE_HOST}/posts/${postId}/`,
   ];
 
   let html = '';
@@ -1992,7 +2516,7 @@ async function alternatePostImages(postId) {
   const articleHtml = extractArticleElement(html) || html;
   for (const match of articleHtml.matchAll(/<img\b([^>]*)>/gi)) {
     for (const rawUrl of [attr(match[1], 'src') || attr(match[1], 'data-src'), ...collectSrcsetRaw(attr(match[1], 'srcset'))]) {
-      const normalized = normalizeUrl(rawUrl, `https://blog.mozilla.com.tw/posts/${postId}/`);
+      const normalized = normalizeUrl(rawUrl, `${SITE_ORIGIN}/posts/${postId}/`);
       if (!normalized || !isUploadsUrl(normalized) || !isWaybackUrl(rawUrl)) {
         continue;
       }
@@ -2050,7 +2574,7 @@ async function articleMediaReport() {
     }
 
     const rawHtml = await readFile(rawPath, 'utf8');
-    const articleHtml = extractArticleElement(rawHtml);
+    const articleHtml = extractArticleElement(rawHtml) || extractMainElement(rawHtml);
     const media = collectArticleMedia(articleHtml, article.original_url, { includeSrcset: hasFlag('include-srcset') });
     const localizedUrls = new Set((article.media || article.images || [])
       .filter((item) => item.archive_path)
@@ -2177,7 +2701,7 @@ function collectArticleMedia(html, baseUrl, options = {}) {
 function isUploadsUrl(url) {
   try {
     const parsed = new URL(url);
-    return parsed.hostname === 'blog.mozilla.com.tw' && parsed.pathname.includes('/wp-content/uploads/');
+    return parsed.hostname === SITE_HOST && parsed.pathname.includes('/wp-content/uploads/');
   } catch {
     return false;
   }
@@ -2273,15 +2797,23 @@ function articleToMarkdown(article) {
 
 function htmlToMarkdown(html, images) {
   let output = html;
-  const imageMap = new Map(images.map((image) => [image.url, image.markdown_path]));
+  const imageMap = new Map(images.map((image) => [image.url, image]));
 
   output = output.replace(/<img\b([^>]*)>/gi, (_, attrs) => {
-    const src = normalizeUrl(attr(attrs, 'src') || attr(attrs, 'data-src') || '', 'https://blog.mozilla.com.tw/');
+    const src = normalizeUrl(attr(attrs, 'src') || attr(attrs, 'data-src') || '', `${SITE_ORIGIN}/`);
     const alt = cleanText(attr(attrs, 'alt') || '');
-    return src ? `\n![${alt}](${imageMap.get(src) || src})\n` : '';
+    if (!src) {
+      return '';
+    }
+    const image = imageMap.get(src);
+    const markdownPath = image?.markdown_path || src;
+    const markdownImage = `![${alt}](${markdownPath})`;
+    return image?.fallback_url && image.fallback_url !== image.url
+      ? `\n[${markdownImage}](${image.url})\n`
+      : `\n${markdownImage}\n`;
   });
   output = output.replace(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi, (_, attrs, text) => {
-    const href = normalizeUrl(attr(attrs, 'href') || '', 'https://blog.mozilla.com.tw/');
+    const href = normalizeUrl(attr(attrs, 'href') || '', `${SITE_ORIGIN}/`);
     const label = htmlToText(text);
     return href && label ? `[${label}](${href})` : label;
   });
@@ -2422,7 +2954,7 @@ function isMediaUrl(url) {
 function isWantedMediaUrl(url) {
   try {
     const parsed = new URL(url);
-    return parsed.hostname === 'blog.mozilla.com.tw' || parsed.pathname.includes('/wp-content/uploads/') || isMediaUrl(url);
+    return parsed.hostname === SITE_HOST || parsed.pathname.includes('/wp-content/uploads/') || isMediaUrl(url);
   } catch {
     return false;
   }
@@ -2559,7 +3091,7 @@ function getPostId(url) {
 }
 
 function canonicalPostUrl(postId) {
-  return `https://blog.mozilla.com.tw/?p=${postId}`;
+  return `${SITE_ORIGIN}/?p=${postId}`;
 }
 
 function isCanonicalPostUrl(url) {

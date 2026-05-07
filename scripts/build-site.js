@@ -211,6 +211,11 @@ function markdownToHtml(markdown, rootPrefix, postIds) {
 
 function inlineMarkdown(text, rootPrefix, postIds) {
   let escaped = escapeHtml(text);
+  escaped = escaped.replace(/\[!\[([^\]]*)\]\(([^)]+)\)\]\(([^)]+)\)/g, (_match, alt, imageUrl, linkUrl) => {
+    const src = rewriteUrl(unescapeHtml(imageUrl.trim()), rootPrefix, postIds);
+    const href = rewriteUrl(unescapeHtml(linkUrl.trim()), rootPrefix, postIds);
+    return `<a href="${escapeAttr(href)}"><img src="${escapeAttr(src)}" alt="${escapeAttr(unescapeHtml(alt))}" loading="lazy"></a>`;
+  });
   escaped = escaped.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_match, alt, url) => {
     const src = rewriteUrl(unescapeHtml(url.trim()), rootPrefix, postIds);
     return `<img src="${escapeAttr(src)}" alt="${escapeAttr(unescapeHtml(alt))}" loading="lazy">`;

@@ -30,6 +30,65 @@ npm run site:deploy -- --worktree /private/tmp/blog.mozilla.com.tw-gh-pages
 npm run site:deploy -- --message "Publish static site"
 ```
 
+## 封存與補資源
+
+主要封存腳本是 `scripts/archive-wayback.js`。預設處理 `blog.mozilla.com.tw` 與 `archive/`，也可以用參數切換到其他同型 WordPress 封存來源，例如 `tech.mozilla.com.tw`：
+
+```bash
+node scripts/archive-wayback.js media-report
+node scripts/archive-wayback.js media-report --site-host tech.mozilla.com.tw --archive-dir archive-tech --timemap json-tech.json
+```
+
+目前資源補救策略分三層：
+
+1. 同站資源優先從 Wayback 補。
+   `blog.mozilla.com.tw/*` 與 `tech.mozilla.com.tw/*` 這類原站資源仍以 Wayback snapshot 為主要來源，避免抓到後來網域內容變動後的檔案。
+
+2. WordPress 同目錄尺寸版可作為顯示 fallback。
+   若原文內嵌的是原尺寸 URL，但 Wayback 找不到原圖，而另有手動擷取的 `/wp-content/` 清單證明同目錄存在 `-300x...`、`-1024x...` 等尺寸版，可以下載最大尺寸版作為文內顯示圖；但 Markdown 仍保留原尺寸 URL 作為外層連結。
+
+```bash
+node scripts/archive-wayback.js wp-content-crosscheck --wp-content blog-wp-content.json
+node scripts/archive-wayback.js wp-content-crosscheck --site-host tech.mozilla.com.tw --archive-dir archive-tech --timemap json-tech.json --wp-content tech-wp-content.json
+node scripts/archive-wayback.js media-fallback-variants --site-host tech.mozilla.com.tw --archive-dir archive-tech --timemap json-tech.json
+```
+
+輸出範例：
+
+```markdown
+[![](../assets/127/wp-content/uploads/2012/04/b2g1-300x295.png)](https://tech.mozilla.com.tw/wp-content/uploads/2012/04/b2g1.png)
+```
+
+3. 外站資源優先直接抓原始出處，不先走 Wayback。
+   對缺失清單中不是目前站台 host 的 URL，例如 `hacks.mozilla.org`、`blog.mozilla.org`、`videos-cdn.mozilla.net`、`assets.pinterest.com`、`statics.plurk.com` 等，先直接 fetch 原始 URL。本機下載成功才回填 `archive_path`；若回 HTML 頁、404、403 或 fetch failed，就記錄失敗，不把錯誤頁存成媒體。
+
+```bash
+node scripts/archive-wayback.js media-direct-external
+node scripts/archive-wayback.js media-direct-external --site-host tech.mozilla.com.tw --archive-dir archive-tech --timemap json-tech.json
+```
+
+補救完成後重建索引與缺失報告：
+
+```bash
+node scripts/archive-wayback.js reindex
+node scripts/archive-wayback.js media-report
+node scripts/archive-wayback.js reindex --site-host tech.mozilla.com.tw --archive-dir archive-tech --timemap json-tech.json
+node scripts/archive-wayback.js media-report --site-host tech.mozilla.com.tw --archive-dir archive-tech --timemap json-tech.json
+```
+
+常用報告檔：
+
+- `archive/discovery/article-media-report.json`
+- `archive/discovery/current-missing-media-urls.tsv`
+- `archive/discovery/wp-content-missing-resource-crosscheck.json`
+- `archive/discovery/wp-content-recoverable-candidates.tsv`
+- `archive/discovery/media-direct-external-report.json`
+- `archive-tech/discovery/article-media-report.json`
+- `archive-tech/discovery/current-missing-media-urls.tsv`
+- `archive-tech/discovery/wp-content-missing-resource-crosscheck.json`
+- `archive-tech/discovery/media-fallback-variants-report.json`
+- `archive-tech/discovery/media-direct-external-report.json`
+
 ## 靜態網站結構
 
 `scripts/build-site.js` 會產生：
