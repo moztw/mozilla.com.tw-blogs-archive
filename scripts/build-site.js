@@ -9,7 +9,9 @@ const BUILD_DIR_NAME = path.basename(BUILD_DIR);
 const DEFAULT_ARCHIVE_DIR_NAME = `archive-${BUILD_DIR_NAME}`;
 const DEFAULT_THEME_ASSETS_DIR = path.join('archive-blog', 'theme-assets');
 const ARCHIVE_DIR = path.resolve(ROOT, args.archiveDir || args['archive-dir'] || DEFAULT_ARCHIVE_DIR_NAME);
+const JSON_DIR = path.join(ARCHIVE_DIR, 'articles-json');
 const MD_DIR = path.join(ARCHIVE_DIR, 'articles-md');
+const RAW_DIR = path.join(ARCHIVE_DIR, 'raw-html');
 const THEME_ASSETS_DIR = path.resolve(ROOT, args.themeAssets || args['theme-assets'] || DEFAULT_THEME_ASSETS_DIR);
 const SITE_HOST = `${BUILD_DIR_NAME}.mozilla.com.tw`;
 const SITE_ORIGIN = `https://${SITE_HOST}`;
@@ -58,15 +60,18 @@ async function readPosts() {
   for (const file of files) {
     const raw = await readFile(path.join(MD_DIR, file), 'utf8');
     const { frontmatter, body } = parseMarkdownFile(raw);
+    const id = Number(frontmatter.post_id);
+    const authorMeta = await readAuthorMeta(id, frontmatter.wayback_timestamp || '');
     posts.push({
       file,
       body,
       frontmatter,
-      id: Number(frontmatter.post_id),
+      id,
       title: frontmatter.title || path.basename(file, '.md'),
       date: frontmatter.date || '',
       categories: arrayValue(frontmatter.categories),
       tags: arrayValue(frontmatter.tags),
+      authorMeta,
     });
   }
 
@@ -74,6 +79,49 @@ async function readPosts() {
     const byDate = String(b.date).localeCompare(String(a.date));
     return byDate || b.id - a.id;
   });
+}
+
+async function readAuthorMeta(postId, waybackTimestamp) {
+  if (BUILD_DIR_NAME !== 'tech' || !postId) {
+    return null;
+  }
+
+  const [articleJsonRaw, rawHtml] = await Promise.all([
+    readFile(path.join(JSON_DIR, `${postId}.json`), 'utf8').catch(() => ''),
+    readFile(path.join(RAW_DIR, `${postId}-${waybackTimestamp}.html`), 'utf8').catch(() => ''),
+  ]);
+
+  if (!rawHtml) {
+    return null;
+  }
+
+  const match = rawHtml.match(/<div class="author-meta"[^>]*?(?:data-author-id="([^"]+)")?[\s\S]*?<a href="([^"]+)"[\s\S]*?<img src="([^"]+)"[^>]*class="([^"]*avatar[^"]*)"[^>]*width=['"]?(\d+)['"]?[^>]*height=['"]?(\d+)['"]?[\s\S]*?<div class="author-info">([\s\S]*?)<\/div>[\s\S]*?<div class="author-title">([\s\S]*?)<\/div>/i);
+  if (!match) {
+    return null;
+  }
+
+  const [, authorId = '', href, avatarUrl, avatarClass = 'avatar', width = '24', height = '24', name = '', title = ''] = match;
+  const articleJson = articleJsonRaw ? JSON.parse(articleJsonRaw) : null;
+  const localAvatarPath = findLocalAvatarPath(articleJson?.images || [], avatarUrl);
+
+  return {
+    authorId,
+    href,
+    avatarUrl,
+    avatarClass,
+    width: Number(width) || 24,
+    height: Number(height) || 24,
+    name: decodeHtmlEntities(stripHtml(name).trim()),
+    title: decodeHtmlEntities(stripHtml(title).trim()),
+    localAvatarPath,
+    waybackTimestamp,
+  };
+}
+
+function findLocalAvatarPath(images, avatarUrl) {
+  const target = normalizeAssetUrl(avatarUrl);
+  const match = images.find((image) => normalizeAssetUrl(image.url) === target || normalizeAssetUrl(image.recovered_url) === target);
+  return match?.markdown_path || '';
 }
 
 function parseMarkdownFile(raw) {
@@ -271,6 +319,16 @@ function rewriteUrl(url, rootPrefix, postIds) {
   return clean;
 }
 
+function waybackUrl(url, timestamp) {
+  if (!url) {
+    return '';
+  }
+  if (/^https?:\/\/web\.archive\.org\//i.test(url) || !timestamp) {
+    return url;
+  }
+  return `https://web.archive.org/web/${timestamp}/${url}`;
+}
+
 function renderPost(post, contentHtml) {
   const title = escapeHtml(post.title);
   const categories = displayCategories(post).map((category) => `<span>${categoryLink(category, '../../')}</span>`).join('');
@@ -287,7 +345,7 @@ function renderPost(post, contentHtml) {
         <div class="article-div">
           <article class="post single-post">
             <header class="entry-header">
-              <p class="entry-posted">${dateBadge(post.date)}</p>
+              ${renderEntryMeta(post, '../../')}
               <h1 class="entry-title">${title}</h1>
             </header>
             <div class="entry-content">${contentHtml}</div>
@@ -307,7 +365,8 @@ function renderIndex(posts) {
     title: `${SITE_TITLE} 封存`,
     rootPrefix: '',
     bodyClass: 'home blog',
-    mastheadHeading: SITE_SUBTITLE,
+    mastheadTitle: SITE_TITLE,
+    mastheadSubtitle: SITE_SUBTITLE,
     snapshotUrl: SITE_SNAPSHOT_URL,
     body: `
       <main id="primary" class="content" role="main">
@@ -384,7 +443,7 @@ function renderPostList(posts, rootPrefix) {
       <div class="article-div divider">
         <article class="post-list-item">
           <header class="entry-header">
-            <p class="entry-posted">${dateBadge(post.date)}</p>
+            ${renderEntryMeta(post, rootPrefix)}
             <h2 class="entry-title"><a href="${rootPrefix}posts/${post.id}/">${escapeHtml(post.title)}</a></h2>
           </header>
           ${thumbnail ? `<div class="thumb-img"><img src="${escapeAttr(thumbnail.src)}" alt="${escapeAttr(thumbnail.alt)}" loading="lazy"></div>` : ''}
@@ -504,6 +563,31 @@ function categoryLink(category, rootPrefix) {
   return `<a href="${rootPrefix}categories/${escapeAttr(slugify(category))}/">${escapeHtml(category)}</a>`;
 }
 
+function renderEntryMeta(post, rootPrefix) {
+  const authorMeta = renderAuthorMeta(post, rootPrefix);
+  if (!authorMeta) {
+    return `<p class="entry-posted">${dateBadge(post.date)}</p>`;
+  }
+  return `<p class="entry-posted">${dateBadge(post.date)}</p><div class="entry-meta">${authorMeta}<div class="post-date"></div></div>`;
+}
+
+function renderAuthorMeta(post, rootPrefix) {
+  if (BUILD_DIR_NAME !== 'tech' || !post.authorMeta?.name) {
+    return '';
+  }
+  const href = waybackUrl(post.authorMeta.href, post.authorMeta.waybackTimestamp || post.frontmatter.wayback_timestamp);
+  const avatarSrc = post.authorMeta.localAvatarPath
+    ? rewriteUrl(post.authorMeta.localAvatarPath, rootPrefix, new Set())
+    : post.authorMeta.avatarUrl;
+  return `<div class="author-meta"${post.authorMeta.authorId ? ` data-author-id="${escapeAttr(post.authorMeta.authorId)}"` : ''}>
+    <a href="${escapeAttr(href)}">
+      <img src="${escapeAttr(avatarSrc)}" alt="" class="${escapeAttr(post.authorMeta.avatarClass)}" width="${post.authorMeta.width}" height="${post.authorMeta.height}"><!--
+   --><div class="author-info">${escapeHtml(post.authorMeta.name)}</div><!--
+   -->${post.authorMeta.title ? `<div class="author-title">${escapeHtml(post.authorMeta.title)}</div>` : '<div class="author-title"></div>'}
+    </a>
+  </div>`;
+}
+
 function displayCategories(post) {
   return post.categories;
 }
@@ -520,6 +604,22 @@ function slugify(value) {
     .replace(/\s+/g, '-')
     .replace(/[\\/?%*:|"<>]+/g, '-')
     .replace(/^-+|-+$/g, '') || 'uncategorized';
+}
+
+function normalizeAssetUrl(value) {
+  return String(value || '')
+    .replace(/^https?:\/\//i, '')
+    .replace(/^web\.archive\.org\/web\/\d+(?:[a-z_]+)?\//i, '');
+}
+
+function stripHtml(value) {
+  return String(value || '').replace(/<[^>]+>/g, '');
+}
+
+function decodeHtmlEntities(value) {
+  return unescapeHtml(String(value || ''))
+    .replace(/&nbsp;/g, ' ')
+    .trim();
 }
 
 function markdownExcerpt(markdown, maxLength) {
@@ -556,7 +656,7 @@ function renderNotFound() {
   });
 }
 
-function pageShell({ title, rootPrefix, bodyClass, body, breadcrumbs = [], breadcrumbLeadingSeparator = false, mastheadHeading = '', snapshotUrl = SITE_SNAPSHOT_URL }) {
+function pageShell({ title, rootPrefix, bodyClass, body, breadcrumbs = [], breadcrumbLeadingSeparator = false, mastheadTitle = '', mastheadSubtitle = '', snapshotUrl = SITE_SNAPSHOT_URL }) {
   return `<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -574,7 +674,8 @@ function pageShell({ title, rootPrefix, bodyClass, body, breadcrumbs = [], bread
           <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
           <hgroup>
             <div class="site-logo"><a href="${rootPrefix}index.html"><img src="${rootPrefix}assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
-            ${mastheadHeading ? `<h1 class="site-heading">${escapeHtml(mastheadHeading)}</h1>` : ''}
+            ${mastheadTitle ? `<h1 class="site-title">${escapeHtml(mastheadTitle)}</h1>` : ''}
+            ${mastheadSubtitle ? `<p class="site-heading">${escapeHtml(mastheadSubtitle)}</p>` : ''}
           </hgroup>
         </header>
         ${renderBreadcrumbs(breadcrumbs, breadcrumbLeadingSeparator)}
@@ -652,20 +753,43 @@ a:hover { text-decoration: underline; }
 .breadcrumbs { margin: 0 0 0 20px; color: #303030; font-size: 13px; }
 .breadcrumbs b { margin: 0 5px; color: #303030; font-size: 120%; font-weight: bold; }
 hgroup { margin: 0; padding: 34px 28px 30px; color: #484848; }
-hgroup .site-logo, hgroup .site-heading { margin-top: 1em; margin-left: 0; margin-right: 0; text-shadow: none; }
+hgroup .site-logo, hgroup .site-title, hgroup .site-heading { margin-top: 1em; margin-left: 0; margin-right: 0; text-shadow: none; }
 .site-logo { margin: 0 0 3px; }
 .site-logo a:hover { text-decoration: none; }
 .site-logo img { display: block; width: 130px; height: auto; }
+.site-title { margin: 1.2em 0 0; font-size: 32px; font-weight: 300; line-height: 1.15; }
 .site-heading { margin-top: 2em; margin-bottom: 0; font-size: 18px; font-weight: 400; line-height: 1.35; }
 #main { display: grid; grid-template-columns: 660px 220px; gap: 60px; align-items: start; padding-top: 26px; }
 .article-div { clear: both; margin: 0 0 28px; padding: 20px 20px 30px; border-radius: 5px; background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1)); background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1)); }
 .post, .post-list-item { position: relative; }
-.entry-header { display: block; }
+.entry-header { position: relative; display: block; }
+.entry-meta { clear: both; display: block; margin: 10px 0; }
 .entry-title { margin: 0 0 14px; font-size: 32px; line-height: 1.22; font-weight: 300; }
-.post-list-item .entry-title { min-height: 44px; margin-left: 92px; font-size: 26px; }
+.post-list-item .entry-title { min-height: 0; font-size: 32px; }
 .entry-title a { color: #303030; }
 .entry-posted { margin: 0 0 12px; text-align: left; }
-.post-list-item .entry-posted { float: left; margin: 0 18px 8px 0; }
+.post-list-item .entry-posted { float: none; }
+.author-meta { color: #777; font-size: 14px; }
+.author-meta a { color: inherit; text-decoration: none; }
+.author-meta a:hover { text-decoration: none; }
+.author-meta img { width: 24px; height: 24px; vertical-align: middle; }
+.author-info, .author-title { display: inline-block; vertical-align: middle; line-height: 1.2; }
+.author-info { margin-left: 8px; }
+.author-title { margin-left: 4px; color: #999; }
+.post-date { display: none; }
+.single .entry-meta,
+.archive .entry-meta,
+.home .entry-meta {
+  position: absolute;
+  top: 3px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid #ffffff;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  margin: 10px 0 20px;
+  padding: 5px;
+  width: calc(100% - 100px);
+}
 .published { display: inline-block; width: 68px; min-width: 68px; height: 72px; padding: 7px 0 0; background: url("assets/theme/bg-date-lt.png") no-repeat center top; color: #555; text-align: center; box-shadow: none; }
 .posted-month, .posted-year { display: block; padding: 0; font-size: 14px; line-height: 1.05; background: transparent; }
 .posted-date { display: block; font-size: 27px; line-height: .95; color: #555; }
@@ -705,9 +829,13 @@ hgroup .site-logo, hgroup .site-heading { margin-top: 1em; margin-left: 0; margi
   #main, #secondary { width: auto; }
   .post-list-item .entry-title { min-height: 0; margin-left: 0; }
   .post-list-item .entry-posted { float: none; }
+  .single .entry-meta,
+  .archive .entry-meta,
+  .home .entry-meta { position: static; width: auto; margin: 0 0 12px; }
   .thumb-img { float: none; margin-left: 0; }
   #secondary .widget { display: block; width: auto; margin: 0 0 22px; }
   .entry-posted { text-align: left; }
+  .site-title { font-size: 28px; }
   .site-heading { font-size: 18px; }
 }
 `;
