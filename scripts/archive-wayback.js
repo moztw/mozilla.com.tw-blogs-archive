@@ -27,7 +27,7 @@ const URLS_PATH = path.join(ROOT, 'urls.txt');
 const URL_PROBE_PATH = path.join(DISCOVERY_DIR, 'url-probe-report.json');
 const URL_IMPORT_PATH = path.join(DISCOVERY_DIR, 'url-import-report.json');
 const URL_RETRY_IDS_PATH = path.join(DISCOVERY_DIR, 'urls-retry-post-ids.txt');
-const TIMEMAP_PATH = path.resolve(ROOT, args.timemap || args['timemap-path'] || 'json.json');
+const TIMEMAP_PATH = path.resolve(ROOT, args.timemap || args['timemap-path'] || 'json-blog.json');
 const TIMEMAP_IMPORT_PATH = path.join(DISCOVERY_DIR, 'timemap-import-report.json');
 const TIMEMAP_RETRY_IDS_PATH = path.join(DISCOVERY_DIR, 'timemap-retry-post-ids.txt');
 const ARTICLE_MEDIA_REPORT_PATH = path.join(DISCOVERY_DIR, 'article-media-report.json');
@@ -252,7 +252,7 @@ Commands:
   import-urls
          Synthesize cdx-snapshots.json candidates from urls.txt
   import-timemap
-         Synthesize cdx-snapshots.json candidates from json.json TimeMap groups
+         Synthesize cdx-snapshots.json candidates from json-blog.json TimeMap groups
   discover-urls
          Fetch archived listing URLs from the full URL list and extract post ids
   discover
