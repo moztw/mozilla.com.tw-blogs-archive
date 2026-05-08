@@ -8,7 +8,7 @@
 npm run site:build
 ```
 
-將 `archive/articles-md` 內的 Markdown 文章轉成靜態網站，輸出到 `blog/`。
+將 `archive-blog/articles-md` 內的 Markdown 文章轉成靜態網站，輸出到 `blog/`。
 
 ```bash
 npm run site:deploy
@@ -32,7 +32,7 @@ npm run site:deploy -- --message "Publish static site"
 
 ## 封存與補資源
 
-主要封存腳本是 `scripts/archive-wayback.js`。預設處理 `blog.mozilla.com.tw` 與 `archive/`，也可以用參數切換到其他同型 WordPress 封存來源，例如 `tech.mozilla.com.tw`：
+主要封存腳本是 `scripts/archive-wayback.js`。預設處理 `blog.mozilla.com.tw` 與 `archive-blog/`，也可以用參數切換到其他同型 WordPress 封存來源，例如 `tech.mozilla.com.tw`：
 
 ```bash
 node scripts/archive-wayback.js media-report
@@ -78,11 +78,11 @@ node scripts/archive-wayback.js media-report --site-host tech.mozilla.com.tw --a
 
 常用報告檔：
 
-- `archive/discovery/article-media-report.json`
-- `archive/discovery/current-missing-media-urls.tsv`
-- `archive/discovery/wp-content-missing-resource-crosscheck.json`
-- `archive/discovery/wp-content-recoverable-candidates.tsv`
-- `archive/discovery/media-direct-external-report.json`
+- `archive-blog/discovery/article-media-report.json`
+- `archive-blog/discovery/current-missing-media-urls.tsv`
+- `archive-blog/discovery/wp-content-missing-resource-crosscheck.json`
+- `archive-blog/discovery/wp-content-recoverable-candidates.tsv`
+- `archive-blog/discovery/media-direct-external-report.json`
 - `archive-tech/discovery/article-media-report.json`
 - `archive-tech/discovery/current-missing-media-urls.tsv`
 - `archive-tech/discovery/wp-content-missing-resource-crosscheck.json`
@@ -107,8 +107,8 @@ node scripts/archive-wayback.js media-report --site-host tech.mozilla.com.tw --a
 
 輸入來源是已封存的 Markdown 與媒體檔：
 
-- `archive/articles-md/*.md`
-- `archive/assets/**`
+- `archive-blog/articles-md/*.md`
+- `archive-blog/assets/**`
 
 每篇 Markdown 的 frontmatter 提供 `post_id`、`title`、`date`、`categories`、`tags`、`original_url`、`archive_url` 等欄位。build script 會用 frontmatter 排序、建立文章 URL、分類頁、月份頁，並把 Markdown body 轉成 HTML。
 

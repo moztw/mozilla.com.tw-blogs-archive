@@ -26,7 +26,7 @@
 ## 📦 輸出成果（資料結構）
 
 ```text
-archive/
+archive-blog/
 ├── raw-html/              # 原始 Wayback HTML（可重現）
 ├── articles-json/         # 結構化資料（分析用）
 ├── articles-md/           # Markdown（重建網站用）
@@ -86,9 +86,9 @@ CDX ?p=* 基礎掃描
 
 重點：
 
-- `archive/cdx-snapshots.json` 是目前可抓候選文章的索引
+- `archive-blog/cdx-snapshots.json` 是目前可抓候選文章的索引
 - `https://web.archive.org/web/*/blog.mozilla.com.tw/*` 可列出 Wayback 已知的所有 archived URL，是補洞時的重要來源
-- `archive/discovery/` 保留 listing pages 與 discovered post ids
+- `archive-blog/discovery/` 保留 listing pages 與 discovered post ids
 - `discover --synthesize-cdx` 可把 listing pages 找到但 CDX `?p=*` 沒列出的 post id 補進候選清單
 - `fetch --include-assets` 可同時抓正文與圖片，但速度受圖片與 retry 影響
 - `assets` command 只重試已成功文章中的缺漏圖片，不重抓正文
@@ -146,7 +146,7 @@ https://web.archive.org/web/*/blog.mozilla.com.tw/*
 https://web.archive.org/cdx/search/cdx?url=blog.mozilla.com.tw/&matchType=prefix&output=json&fl=timestamp,original,statuscode,mimetype,digest,length&filter=statuscode:200&filter=mimetype:text/html&collapse=digest
 ```
 
-- 若 UI 清單已另存成 `urls.txt`，可直接從中去重抽出 post id，與 `archive/cdx-snapshots.json` 比對，針對缺漏 ID 逐一補查 CDX。
+- 若 UI 清單已另存成 `urls.txt`，可直接從中去重抽出 post id，與 `archive-blog/cdx-snapshots.json` 比對，針對缺漏 ID 逐一補查 CDX。
 - 若有 TimeMap group JSON，例如 `json.json` 來自 `https://web.archive.org/web/timemap/json?url=blog.mozilla.com.tw`，可作為 `urls.txt` 的交叉驗證與補充來源。此格式是 original URL group，不是逐 snapshot 明細；需使用 `timestamp/endtimestamp/groupcount/uniqcount` 判斷封存範圍，並過濾 2020 之後疑似網域被重用產生的無關 URL。
 - 完整 URL 清單不只包含單篇 `?p=ID`，也包含首頁、月份、分類、分頁、press 等 listing URL；若單篇 CDX 不完整，應抓 listing HTML 再解析其中的文章連結。
 
@@ -184,10 +184,10 @@ CDX `?p=*` 只能找到 Wayback 直接收錄為 query post URL 的文章，不�
 Discovery 輸出：
 
 ```text
-archive/discovery/discovered-post-ids.json
-archive/discovery/missing-post-ids.txt
-archive/discovery/summary.json
-archive/discovery/listing-pages/
+archive-blog/discovery/discovered-post-ids.json
+archive-blog/discovery/missing-post-ids.txt
+archive-blog/discovery/summary.json
+archive-blog/discovery/listing-pages/
 ```
 
 補 snapshot 策略：
@@ -385,10 +385,10 @@ rewrite Markdown 範例：
 補抓策略：
 
 - 正文重建完成後，針對 `asset_status: partial_assets_failed` 的文章跑 asset-only retry
-- asset-only retry 讀取 `archive/articles-json/*.json`
+- asset-only retry 讀取 `archive-blog/articles-json/*.json`
 - 只抓沒有 `archive_path` 的圖片，不重抓正文
 - 成功後更新該篇 JSON 與 Markdown
-- 輸出 `archive/asset-manifest.json`
+- 輸出 `archive-blog/asset-manifest.json`
 
 Wayback 補抓來源：
 

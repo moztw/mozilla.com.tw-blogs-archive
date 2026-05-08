@@ -4,11 +4,13 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const args = parseArgs(process.argv.slice(2));
-const ARCHIVE_DIR = path.resolve(ROOT, args.archiveDir || args['archive-dir'] || 'archive');
-const MD_DIR = path.join(ARCHIVE_DIR, 'articles-md');
-const THEME_ASSETS_DIR = path.resolve(ROOT, args.themeAssets || args['theme-assets'] || path.join('archive', 'theme-assets'));
 const BUILD_DIR = path.resolve(ROOT, args.buildDir || args['build-dir'] || 'blog');
 const BUILD_DIR_NAME = path.basename(BUILD_DIR);
+const DEFAULT_ARCHIVE_DIR_NAME = `archive-${BUILD_DIR_NAME}`;
+const DEFAULT_THEME_ASSETS_DIR = path.join('archive-blog', 'theme-assets');
+const ARCHIVE_DIR = path.resolve(ROOT, args.archiveDir || args['archive-dir'] || DEFAULT_ARCHIVE_DIR_NAME);
+const MD_DIR = path.join(ARCHIVE_DIR, 'articles-md');
+const THEME_ASSETS_DIR = path.resolve(ROOT, args.themeAssets || args['theme-assets'] || DEFAULT_THEME_ASSETS_DIR);
 const SITE_HOST = `${BUILD_DIR_NAME}.mozilla.com.tw`;
 const SITE_ORIGIN = `https://${SITE_HOST}`;
 const POSTS_DIR = path.join(BUILD_DIR, 'posts');

@@ -10,7 +10,6 @@ const TARGETS = [
     name: 'taipei',
     buildDir: path.join(ROOT, 'blog'),
     buildArgs: [
-      '--archive-dir', 'archive',
       '--build-dir', 'blog',
       '--site-title', 'Mozilla Taiwan 部落格',
       '--site-subtitle', '最新部落格文章，提供各式 Mozilla 產品與專案相關訊息',
@@ -21,7 +20,6 @@ const TARGETS = [
     name: 'tech',
     buildDir: path.join(ROOT, 'tech'),
     buildArgs: [
-      '--archive-dir', 'archive-tech',
       '--build-dir', 'tech',
       '--site-title', '謀智台客',
       '--site-subtitle', 'Firefox OS 研發工程師團隊共筆資料庫，提供各式 Firefox OS 開發心得與甘苦談',

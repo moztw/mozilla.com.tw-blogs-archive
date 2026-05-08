@@ -11,7 +11,7 @@ const args = parseArgs(process.argv.slice(2));
 const ROOT = process.cwd();
 const SITE_HOST = String(args.siteHost || args['site-host'] || 'blog.mozilla.com.tw').replace(/^https?:\/\//, '').replace(/\/.*$/, '');
 const SITE_ORIGIN = `https://${SITE_HOST}`;
-const ARCHIVE_DIR = path.resolve(ROOT, args.archiveDir || args['archive-dir'] || 'archive');
+const ARCHIVE_DIR = path.resolve(ROOT, args.archiveDir || args['archive-dir'] || 'archive-blog');
 const RAW_DIR = path.join(ARCHIVE_DIR, 'raw-html');
 const JSON_DIR = path.join(ARCHIVE_DIR, 'articles-json');
 const MD_DIR = path.join(ARCHIVE_DIR, 'articles-md');
@@ -246,7 +246,7 @@ function printHelp() {
   npm run archive -- --start 74 --end 9335 --delay-min 1000 --delay-max 3000
 
 Commands:
-  scan   Query CDX and write archive/cdx-snapshots.json
+  scan   Query CDX and write archive-blog/cdx-snapshots.json
   scan-urls
          Query all archived ${SITE_HOST} URLs and extract post ids
   import-urls
@@ -261,8 +261,8 @@ Commands:
          Query individual post ids inferred from monthly missing ranges
   probe-urls
          Query post ids listed in urls.txt but missing from cdx-snapshots.json
-  fetch  Read archive/cdx-snapshots.json and archive posts
-  assets Retry only missing article image assets from archive/articles-json
+  fetch  Read archive-blog/cdx-snapshots.json and archive posts
+  assets Retry only missing article image assets from archive-blog/articles-json
   media-report
          Report media referenced inside each raw <article>
   media-recover
