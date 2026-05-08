@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-import { readdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -21,19 +22,24 @@ const SITES = [
   },
 ];
 
+const args = parseArgs(process.argv.slice(2));
+
 async function main() {
+  const urls = [];
   for (const site of SITES) {
     const buildDir = path.join(ROOT, site.buildDir);
     const articleDates = await readArticleDates(path.join(ROOT, site.archiveDir, 'articles-json'));
     const indexFiles = await findIndexFiles(buildDir);
-    const urls = indexFiles
-      .map((filePath) => sitemapEntry(site, buildDir, filePath, articleDates))
-      .sort((a, b) => a.loc.localeCompare(b.loc));
-    const xml = renderSitemap(urls);
-    const outputPath = path.join(buildDir, 'sitemap.xml');
-    await writeFile(outputPath, xml, 'utf8');
-    console.log(`Wrote ${urls.length} URLs to ${relative(outputPath)} for ${site.baseUrl}`);
+    const siteUrls = indexFiles.map((filePath) => sitemapEntry(site, buildDir, filePath, articleDates));
+    urls.push(...siteUrls);
+    console.log(`Collected ${siteUrls.length} URLs for ${site.baseUrl}`);
   }
+
+  const outputPath = sitemapOutputPath();
+  const sitemapUrls = uniqueUrls(urls);
+  await mkdir(path.dirname(outputPath), { recursive: true });
+  await writeFile(outputPath, renderSitemap(sitemapUrls), 'utf8');
+  console.log(`Wrote ${sitemapUrls.length} URLs to ${relative(outputPath)}`);
 }
 
 async function readArticleDates(jsonDir) {
@@ -98,6 +104,24 @@ function renderSitemap(urls) {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
 }
 
+function uniqueUrls(urls) {
+  return [...new Map(urls.map((entry) => [entry.loc, entry])).values()]
+    .sort((a, b) => a.loc.localeCompare(b.loc));
+}
+
+function sitemapOutputPath() {
+  const explicitOutput = args.output || process.env.SITEMAP_OUTPUT || '';
+  if (explicitOutput) {
+    return path.resolve(ROOT, explicitOutput);
+  }
+
+  const worktreePath = existingGhPagesWorktree();
+  if (!worktreePath) {
+    throw new Error('No gh-pages worktree found. Run deploy first or pass --output <path>.');
+  }
+  return path.join(worktreePath, 'sitemap.xml');
+}
+
 function escapeXml(value) {
   return String(value)
     .replace(/&/g, '&amp;')
@@ -109,6 +133,39 @@ function escapeXml(value) {
 
 function relative(filePath) {
   return path.relative(ROOT, filePath) || '.';
+}
+
+function existingGhPagesWorktree() {
+  const result = spawnSync('git', ['worktree', 'list', '--porcelain'], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    stdio: 'pipe',
+  });
+  if (result.status !== 0) {
+    return '';
+  }
+
+  const records = result.stdout.trim().split(/\n\n+/);
+  for (const record of records) {
+    const lines = record.split('\n');
+    const worktree = lines.find((line) => line.startsWith('worktree '))?.slice('worktree '.length);
+    const branch = lines.find((line) => line.startsWith('branch '))?.slice('branch '.length);
+    if (worktree && branch === 'refs/heads/gh-pages') {
+      return worktree;
+    }
+  }
+  return '';
+}
+
+function parseArgs(values) {
+  const parsed = {};
+  for (let i = 0; i < values.length; i += 1) {
+    const value = values[i];
+    if (value === '--output') {
+      parsed.output = values[++i];
+    }
+  }
+  return parsed;
 }
 
 main().catch((error) => {

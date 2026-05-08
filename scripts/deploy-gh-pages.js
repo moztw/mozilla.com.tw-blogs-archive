@@ -38,6 +38,7 @@ async function main() {
   buildTargets();
   await ensureWorktree();
   await syncBuild();
+  writeSitemap();
   run('git', ['add', '.'], worktreePath);
 
   const status = run('git', ['status', '--porcelain'], worktreePath, { capture: true });
@@ -58,6 +59,10 @@ function buildTargets() {
   for (const target of TARGETS) {
     run('node', ['scripts/build-site.js', ...target.buildArgs], ROOT);
   }
+}
+
+function writeSitemap() {
+  run('node', ['scripts/build-sitemaps.js', '--output', path.join(worktreePath, 'sitemap.xml')], ROOT);
 }
 
 async function ensureWorktree() {
