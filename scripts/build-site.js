@@ -22,6 +22,10 @@ const SITE_TITLE = args.siteTitle || args['site-title'] || SITE_HOST;
 const SITE_SUBTITLE = args.siteSubtitle || args['site-subtitle'] || '';
 const ARCHIVE_LABEL = `${SITE_TITLE} 封存`;
 const SITE_DESCRIPTION = args.siteDescription || args['site-description'] || ARCHIVE_LABEL;
+const BODY_BACKGROUND_IMAGE = BUILD_DIR_NAME === 'tech' ? 'bg-sand.png' : 'bg-sky.png';
+const BODY_BACKGROUND_COLOR = BUILD_DIR_NAME === 'tech' ? '#eeeeee' : '#f6f4ee';
+const BODY_BACKGROUND_REPEAT = BUILD_DIR_NAME === 'tech' ? 'repeat-x' : 'repeat';
+const BODY_BACKGROUND_ATTACHMENT = BUILD_DIR_NAME === 'tech' ? 'fixed' : 'scroll';
 const LICENSE_NAME = '創用 CC 姓名標示─相同方式分享 4.0 國際';
 const LICENSE_URL = 'https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant';
 const SITE_SNAPSHOT_URL = args.snapshotUrl || args['snapshot-url'] || `https://web.archive.org/web/*/${SITE_ORIGIN}/`;
@@ -739,7 +743,7 @@ function dateBadge(date) {
 function stylesheet() {
   return `body {
   margin: 0;
-  background: #f6f4ee url("assets/theme/bg-sky.png") repeat center top;
+  background: ${BODY_BACKGROUND_COLOR} url("assets/theme/${BODY_BACKGROUND_IMAGE}") ${BODY_BACKGROUND_REPEAT} center top ${BODY_BACKGROUND_ATTACHMENT};
   color: #484848;
   font: 14px/1.65 "Open Sans", "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
 }
