@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>和 Firefox OS 介面的第一次親密接觸 – 基本觸控手勢看招！ | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-03/">2013 年 3 月</a><b>&raquo;</b><a href="../../posts/1393/">和 Firefox OS 介面的第一次親密接觸 – 基本觸控手勢看招！</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-03-18" class="published"><span class="posted-month">3月</span><span class="posted-date">18</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">和 Firefox OS 介面的第一次親密接觸 – 基本觸控手勢看招！</h1>
+            </header>
+            <div class="entry-content"><p>你習慣用手指在螢幕上滑來滑去，用手勢 ( gesture ) 代替你處理大小事嗎？</p>
+<p>在現今行動裝置的世界裡，手勢 ( gesture ) 儼然成為與裝置溝通的最主要管道。無須其他的輸入設備，動動手指就可輕易將手中的手機或平板操控自如。不管是 Android 、iOS 甚至 Windows 都有針對手勢操控，提供了完整的 library 供開發者使用。至於在標準 HTML 前端架構的 Firefox OS（以下簡稱 FFOS ）上該如何活用手勢呢？筆者接下來針對手勢功能的基本介紹，希望讓大家對於 FFOS 的介面開發更加輕鬆上手。</p>
+<p>相信 web 開發者一定對 mouse event 不陌生。不過隨著時代的演進，touch event 後來也列入 HTML5 的標準，大致上 touch event 的用法跟 mouse event 相去不遠。 Mouse event 當中的 mousedown、mousemove 及 mouseup 就同等於 touch event 中的 touchstart、touchmove 及 touchend。差別在於 touch 還有 touches（所有觸控點） / targetTouche（所有在 target 上的觸控點） / changedTouches（狀態有改變的觸控點） 以 array 型態來紀錄觸控點的資料。假設現在有一張圖片需套用到縮放的手勢：</p>
+<p>  var startDistance, startScale;<br>  image.addEventListener(&quot;touchstart&quot;, handleStart, false);<br>  image.addEventListener(&quot;touchmove&quot;, handleMove, false);<br>  image.addEventListener(&quot;touchend&quot;, handleEnd, false);</p>
+<p>  function distance(finger1, finger2) {<br>    // 利用觸控點的相對座標( finger.pageX , finger.pageY )計算兩點之間的距離<br>    ...<br>    return result;<br>  }</p>
+<p>  function queryScale(image) {<br>    // 從 style 中擷取縮放比例：<br>    ... <br>    return scale;<br>  }</p>
+<p>  function handleStart(evt) {<br>    // 當有兩指在圖片上，我們要先計算兩點之間的初始距離<br>    if (event.targetTouches.length == 2) {<br>      startDistance = distance(event.targetTouches[0], event.targetTouches[1]);<br>      startScale = queryScale(image);<br>      ...<br>    }<br>  }</p>
+<p>  function handleMove (evt) {<br>    // 計算目前兩指間的距離，並設定圖片的縮放比例<br>    if (event.targetTouches.length == 2) {<br>      var currentDistance = distance(event.targetTouches[0], event.targetTouches[1]);<br>      var newScale = currentDistance / startDistance * startScale;<br>      image.style.transform = &#39;scale(&#39; + newScale + &#39;)&#39;;<br>    }<br>    ...<br>  }</p>
+<p>  function handleEnd (evt) {<br>    // 當結束touch event時，可以在這裡定義自己想要的動作<br>    ...<br>  }</p>
+<p>					12345678910111213141516171819202122232425262728293031323334353637383940</p>
+<p>						  var startDistance, startScale;  image.addEventListener(&quot;touchstart&quot;, handleStart, false);  image.addEventListener(&quot;touchmove&quot;, handleMove, false);  image.addEventListener(&quot;touchend&quot;, handleEnd, false);   function distance(finger1, finger2) {    // 利用觸控點的相對座標( finger.pageX , finger.pageY )計算兩點之間的距離    ...    return result;  }   function queryScale(image) {    // 從 style 中擷取縮放比例：    ...     return scale;  }   function handleStart(evt) {    // 當有兩指在圖片上，我們要先計算兩點之間的初始距離    if (event.targetTouches.length == 2) {      startDistance = distance(event.targetTouches[0], event.targetTouches[1]);      startScale = queryScale(image);      ...    }  }   function handleMove (evt) {    // 計算目前兩指間的距離，並設定圖片的縮放比例    if (event.targetTouches.length == 2) {      var currentDistance = distance(event.targetTouches[0], event.targetTouches[1]);      var newScale = currentDistance / startDistance * startScale;      image.style.transform = &#39;scale(&#39; + newScale + &#39;)&#39;;    }    ...  }   function handleEnd (evt) {    // 當結束touch event時，可以在這裡定義自己想要的動作    ...  }</p>
+<p>Touch event 的概念也許不算複雜，但麻煩的部份在於邏輯計算。上述功能只是簡單的縮放，如果還要考慮上旋轉可能就令人頭大了。若你對 iOS 上的 web framework 開發有所涉獵，可能會馬上想到用 gesture event 的 gesturestart / gesturechange / gestureend 來進行其他常用的手勢操作，而縮放與旋轉等等的資訊，則會包含在事件回傳的物件裡，無須再從觸控點做進一步的運算，回傳的 gesture event 資料也能一目了然，所以問題就這麼迎刃而解了…嗎？答案當然是否定的，因為 gesture event 並非標準的 HTML 規範，而是 iOS 在 webkit 中從 touch event 再包裝出來的。這麼一來開發者就只能從最基本的 touch object 中，擷取資料做複雜的運算，不然就得再花時間去研究其他第三方的 gesture library 了嗎？先別急！其實 FFOS 內部就有一個共用的 gesture library，供核心應用程式使用，而開發者也可以下載來自行應用，雖然目前還沒有正式的文件，但以下你可參考簡單介紹以及如何使用和操作。</p>
+<p>這個 Gesture Detector (<a href="https://github.com/mozilla-b2g/gaia/blob/master/shared/js/gesture_detector.js">原始碼請按此</a>)目前可以支援的手勢有：tap（單點）、dbltap（雙點擊）、pan（拖移）、swipe（快速滑動，會接在 pan event 結束之後觸發）、holdstart / holdmove / holdend（長按之後觸發）、transform（兩指的縮放與旋轉）。只要簡單的幾個步驟就能輕鬆上手：</p>
+<ul><li>下載 Gesture Detector library 並載入至開發中的 app</li></ul>
+<p>&lt;!-- 在HTML中載入 gesture_detector.js --&gt;<br>&lt;script type=&quot;text/javascript&quot; src=&quot;Library_Path/gesture_detector.js&quot;&gt;&lt;/script&gt;</p>
+<p>					12</p>
+<p>						&lt;!-- 在HTML中載入 gesture_detector.js --&gt;&lt;script type=&quot;text/javascript&quot; src=&quot;Library_Path/gesture_detector.js&quot;&gt;&lt;/script&gt;</p>
+<p>使用 Gesture Detector library 不需要其他 JavaScript framework ，只要載入 gesture_detector.js 這個檔案就對了。</p>
+<ul><li>對 target element 註冊 event detector</li></ul>
+<p>// 針對 targetElement 跟 GestureDetector 註冊<br>new GestureDetector(targetElement).startDetecting();<br>// 如果 targetElement 有需要 hold gesture 相關 event，則需要這麼宣告：<br>// new GestureDetector(targetElement, {holdEvents:true}).startDetecting();<br>new GestureDetector(targetElement).stopDetecting();</p>
+<p>					12345</p>
+<p>						// 針對 targetElement 跟 GestureDetector 註冊new GestureDetector(targetElement).startDetecting();// 如果 targetElement 有需要 hold gesture 相關 event，則需要這麼宣告：// new GestureDetector(targetElement, {holdEvents:true}).startDetecting();new GestureDetector(targetElement).stopDetecting();</p>
+<ul><li>對 element 新增 gesture type event listerner 以及對應的 handler function</li></ul>
+<p>// 對特定的 gesture event 增加對應的 event handler function:<br>targetElement.addEventListener(&#39;pan&#39;, panHandler);<br>targetElement.addEventListener(&#39;swipe&#39;, swipeHandler);<br>...<br>// 實作 pan gesture 的 event handler function<br>function panHandler(event) {<br>  var dx = event.detail.relative.dx;<br>  var dy = event.detail.relative.dy;<br>  ...<br>}</p>
+<p>					12345678910</p>
+<p>						// 對特定的 gesture event 增加對應的 event handler function:targetElement.addEventListener(&#39;pan&#39;, panHandler);targetElement.addEventListener(&#39;swipe&#39;, swipeHandler);...// 實作 pan gesture 的 event handler functionfunction panHandler(event) {  var dx = event.detail.relative.dx;  var dy = event.detail.relative.dy;  ...}</p>
+<p>這部份就跟一般的 event handler 實作一樣了。比較令人困擾的是每個 gesture event 回傳的 event object 並不完全一樣，偏偏這個 libray 目前還沒有完整的文件，直接看原始碼是最直接的方法，不過這裡還是簡單介紹幾種常用的，有興趣的開發者可以在 gesture_detector 中搜尋 “emitEvent” ，觀察各種 gesture event 在發送之前是怎麼包裝的。先介紹有旋轉和縮放相關的 transform（待會我們也會使用到）：</p>
+<p>  absolute: { // 相對於 gesture 起始點的縮放比例和角度<br>    scale: 縮放比例,<br>    rotate: 旋轉角度<br>  },<br>  relative: { // 相對於上一個 gesture change 的縮放比例和角度<br>    scale: distance / d.lastDistance,<br>    rotate: touchRotation(d.lastDirection, direction)<br>  },<br>  midpoint: midpoint // 兩指的中心點位置</p>
+<p>					123456789</p>
+<p>						  absolute: { // 相對於 gesture 起始點的縮放比例和角度    scale: 縮放比例,    rotate: 旋轉角度  },  relative: { // 相對於上一個 gesture change 的縮放比例和角度    scale: distance / d.lastDistance,    rotate: touchRotation(d.lastDirection, direction)  },  midpoint: midpoint // 兩指的中心點位置</p>
+<p>其他像是 tap / dbltap / holdstart 則有 start (觸發點位置)，而 pan/holdmove 則是有 absolute / relative 的 dx / dy 來表示相對於起始點或是上一個 gesture change event 改變的 x / y 相對距離。 swipe 則帶有較多的資訊： start、end 表示起始和結束的座標位置，dx、dy、dt 是起始至結束的相對移動 x,y 距離以及時間，vx，vy是 x,y 方向的速率，而direction，angle 則是 swipe 的方向（left , right , up , down ）和角度。</p>
+<p>有了新的 gesture event ，圖片的縮放可以這樣改寫：</p>
+<p>  // 別忘了要先載入 gesture_detector.js<br>  new GestureDetector(image).startDetecting();<br>  image.addEventListener(&#39;transform&#39;, transformHandler);<br>  function transformHandler(evt) {<br>    var currentScale = evt.detail.relative.scale * queryScale(img);<br>    image.style.transform = &#39;scale(&#39; + currentScale + &#39;)&#39;;<br>  }</p>
+<p>					1234567</p>
+<p>						  // 別忘了要先載入 gesture_detector.js  new GestureDetector(image).startDetecting();  image.addEventListener(&#39;transform&#39;, transformHandler);  function transformHandler(evt) {    var currentScale = evt.detail.relative.scale * queryScale(img);    image.style.transform = &#39;scale(&#39; + currentScale + &#39;)&#39;;  }</p>
+<p>利用 Gesture Detector，開發起來就輕鬆多了，不需要計算縮放的比例、角度等等的邏輯，而且它並沒有使用 preventDefault 或是 stopPropagation 將元件的 touch event 吃掉，也就是套用了 Gesture Detector 的元件，依然可以收到基本的 touch event 來進行其他應用，例如定義兩指以上的手勢操作。這麼輕鬆且有彈性的特色，是否讓你迫不期待的想要設計一些方便的手勢操作，讓應用程式操作起來更靈活呢？</p>
+<p>以上就是在 FFOS 開發中對手勢應用的一些基本介紹了，如果在開發的過程中有任何問題也歡迎在這裡留言，苦命熱情的工程師會盡可能的回答你的問題喔～</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20140724021318id_/https://tech.mozilla.com.tw/?p=1393">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

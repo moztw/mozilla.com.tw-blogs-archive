@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>CGDB – 更好用的 GDB | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-01/">2014 年 1 月</a><b>&raquo;</b><a href="../../posts/3826/">CGDB – 更好用的 GDB</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-01-16" class="published"><span class="posted-month">1月</span><span class="posted-date">16</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">CGDB – 更好用的 GDB</h1>
+            </header>
+            <div class="entry-content"><p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo1.png"><img src="../../assets/3826/wp-content/uploads/2014/01/cgdb_logo1.png" alt="cgdb_logo" loading="lazy"></a></p>
+<p>我們在開發過程中，常常會使用 GDB 來找 bug，但是它是純文字介面，使用上還是有些不便，幸好現在可以找到不少 open source project 來改進這些問題，今天所介紹的 CGDB[[1]](https://cgdb.github.io/) 工具，是我使用過覺得相當好用的工具，讓你在漫漫長夜的 debug 過程中，得到一點小小的慰藉。CGDB 其實沒有 DEBUG 的能力，它底層還是需要呼叫GDB的，它使用 GDB MI[[2]](https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI.html) 的介面，重新包裝了 GDB ，讓你用更簡單的方式操作 GDB。</p>
+<h3>CGDB 的特點</h3>
+<ul><li>讓你人生變彩色的 syntax highlight source window，可以不用切到其他 editor 就可查看或搜尋程式碼。</li></ul>
+<ul><li>簡單的 breakpoint 新增與刪除方式。</li></ul>
+<p>當然 CGDB 還有其他好用的功能，網路上有完整的文件[[3]](https://cgdb.github.io/docs/cgdb.html)可以參考。</p>
+<h3>安裝 CGDB</h3>
+<p>要在 ubuntu 上安裝 CGDB 相當簡單，如果不想自己 build ，直使用 apt-get 安裝就可以了。</p>
+<p>apt-get install cgdb</p>
+<p>					1</p>
+<p>						apt-get install cgdb</p>
+<p>安裝完成後，直接執行程式，看到 CGDB logo 就代表安裝成功囉。</p>
+<p>cgdb</p>
+<p>					1</p>
+<p>						cgdb</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo.png"><img src="../../assets/3826/wp-content/uploads/2014/01/cgdb_logo-300x167.png" alt="cgdb_logo" loading="lazy"></a></p>
+<p>若你用的是 cross compiler tool chain 也沒關係，加個參數 -d 就可以用了。</p>
+<h1>if your debugger is arm-linux-androideabi-gdb</h1>
+<p>cgdb -d arm-linux-androideabi-gdb</p>
+<p>					12</p>
+<p>						# if your debugger is arm-linux-androideabi-gdbcgdb -d arm-linux-androideabi-gdb</p>
+<h3>CGDB 101</h3>
+<p>要在 B2G GDB debug script 改用 CGDB 很簡單，只要修改 run-gdb.sh 內容，改用 CGDB 即可。</p>
+<p>else<br> echo $GDB -x $GDBINIT $PROG<br> #$GDB -x $GDBINIT $PROG<br> cgdb -d $GDB -- -x $GDBINIT $PROG #&lt;---use cgdb here<br>fi</p>
+<p>					12345</p>
+<p>						else echo $GDB -x $GDBINIT $PROG #$GDB -x $GDBINIT $PROG cgdb -d $GDB -- -x $GDBINIT $PROG #&lt;---use cgdb herefi</p>
+<p>CGDB 頁面分成 source window 及 <a href="https://www.nbso.ca/">casino online</a>  GDB command window 兩部分，你可以像使用原來 GDB 一樣，在 GDB command window 輸入 command 來 debug，也可以切到 source window 看你要 debug 的程式內容，兩個 window 切換方式和 VIM 相同，使用 Esc 及 i 鍵來切換。GDB command 的教學網路上可以找到不少文章，或是可以參考[[4]](https://www.yolinux.com/TUTORIALS/GDB-Commands.html)的教學內容。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window.png"><img src="../../assets/3826/wp-content/uploads/2014/01/cgdb_window.png" alt="cgdb_window" loading="lazy"></a></p>
+<p>新增及移除 break point 方法很簡單，只要切到 source window 後，使用 PageDown/PageUp 及方向鍵移到你想要新增/刪除的位置，按下空白鍵就可以輕鬆新增/刪除 break point。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point.png"><img src="../../assets/3826/wp-content/uploads/2014/01/cgdb_break_point.png" alt="cgdb_break_point" loading="lazy"></a></p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point.png"><img src="../../assets/3826/wp-content/uploads/2014/01/cgdb_delete_break_point.png" alt="cgdb_delete_break_point" loading="lazy"></a></p>
+<p>CGDB 還有其他好用的功能，像是可以自定義 macros 或是用 regexp 去查找程式，值得大家花時間試用看看。</p>
+<p>Reference:</p>
+<p>[1] <a href="https://cgdb.github.io/">http://cgdb.github.io/</a></p>
+<p>[2] <a href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI.html">https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI.html</a></p>
+<p>[3] <a href="https://cgdb.github.io/docs/cgdb.html">http://cgdb.github.io/docs/cgdb.html</a></p>
+<p>[4] <a href="https://www.yolinux.com/TUTORIALS/GDB-Commands.html">http://www.yolinux.com/TUTORIALS/GDB-Commands.html</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/open-source/">Open Source</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20191118134235id_/https://tech.mozilla.com.tw/?p=3826">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

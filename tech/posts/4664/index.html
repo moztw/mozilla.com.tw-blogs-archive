@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>女媧，在 FxOS 裡捏 process | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-07/">2014 年 7 月</a><b>&raquo;</b><a href="../../posts/4664/">女媧，在 FxOS 裡捏 process</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-07-14" class="published"><span class="posted-month">7月</span><span class="posted-date">14</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">女媧，在 FxOS 裡捏 process</h1>
+            </header>
+            <div class="entry-content"><p>在 Firefox OS 中，有一個類似 Android Zygote 的 process，利用 <br>			fork()  複製出應用程序並在這些應用程序間透過 copy-on-write 共享記憶體分頁。這麼做有助於降低記憶體用量和更快速的啟動應用程式。她的名字叫 Nuwa – 女媧 [[1]](https://tech.mozilla.com.tw/#r1)[[2]](https://tech.mozilla.com.tw/#r2)。</p>
+<p>不過，<br>			fork()  有一個限制是只有呼叫 <br>			fork()  的 thread 會被保留下來，可是 FxOS 是 multi-threaded，那究竟女媧是怎麼”捏”出 process 來的呢？讓我們一起來看看。</p>
+<p>首先，FxOS 透過 ld 的 wrap 功能 [[3]](https://tech.mozilla.com.tw/#r3) 包裝了某些函式。例如，所有對 <br>			pthread_create()  的呼叫，實際上會呼叫定義在 Nuwa.cpp [[4]](https://tech.mozilla.com.tw/#r4) 裡的 <br>			__wrap_pthread_create() 。這樣一來，我們可以對這些函式增加額外的行為，且不影響原本使用這些函式的程式。</p>
+<p>在更深入以前，我想先解釋一下大致上的概念。FxOS 會讓需要被重建的 threads 在 Nuwa process 裡暫停下來，並記錄下它們暫停前的狀態。稍後在 fork 出來的 child process 裡重建新的 threads 後，讓它們從剛剛暫停前的狀態繼續往下執行。沒錯，我們將會用上 <br>			setjmp()  / <br>			longjmp()  來記錄並繼續，讓我們接著往下看。</p>
+<h2>準備動作</h2>
+<p>當 <br>			pthread_create()  在女媧 process 裡被呼叫時，<br>			__wrap_pthread_create()  會 new 出一個 thread info structure 來儲存相關資訊，並把它加入一個 sAllThreads 的 linked list 中。除此之外，還會 <br>			malloc  一個 stack 給即將被創建的 thread 使用。這個 stack 是必須的，假設我們沒有自己 <br>			malloc  一個 stack 的話，在 <br>			fork()  後的 child process 裡，這個 thread 的 stack 會消失，我們就沒有辦法讓它在 child process 裡繼續接著往下執行了。實際的 thread 函式稍後會在 <br>			_thread_create_startup()  中呼叫。</p>
+<h2>暫停</h2>
+<p>當 thread 開始執行並呼叫 <br>			epoll_wait() , <br>			poll() , <br>			pthread_mutex_lock() , <br>			pthread_cond_wait() , 和 <br>			pthread_cond_timedwait()  其中任一函式時，它會執行 <br>			setjmp()  並對一個已經被 locked 的 mutex 呼叫 <br>			pthread_mutex_lock()  讓整個 thread 暫停下來。這些動作在對應的 wrapper 函式中，由 macro <br>			THREAD_FREEZE_POINT*  完成。</p>
+<h2>fork() 並繼續</h2>
+<p>稍後當一個 child process 從女媧 <br>			fork()  出來，<br>			RecreateThreads()  會在 child process 中被呼叫，並對 sAllThreads 中每一個有 <br>			TINFO_FLAG_NUWA_SUPPORT  flag 的 thread 進行重建。注意 thread 的 stack 會被指定是我們剛解釋過的 malloc’d stack。在這裡，thread 函式是 <br>			thread_recreate_startup() ，它將重設 thread 的名字，紀錄重建後的 pthread ID 和 native thread ID，呼叫 <br>			setjmp() ，接著 <br>			longjmp()  回到稍早該 thread 在女媧 process 裡 <br>			setjmp()  的地方，繼續往下執行。當原始的 thread 函式結束後，接著會回到 <br>			thread_create_startup()  再 <br>			longjmp()  回到剛剛在 <br>			thread_recreate_startup()  設下的 <br>			setjmp() 。透過下圖我們可以更清楚的了解整個準備-暫停-繼續的流程：</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/06/recreate.png"><img src="../../assets/4664/wp-content/uploads/2014/06/recreate.png" alt="recreate" loading="lazy"></a></p>
+<p>也許眼尖的網友會注意到還有一些其他的 pthread 函式也被包裝，例如：<br>			pthread_join() 。這是因為在女媧 process 裡創建的 thread，其 ID 可能被儲存在某個變數中而被 child process 繼承。如果在 child process 中呼叫 <br>			pthread_join()  且傳入該 ID，它需要被替換成重建後的 pthread ID，否則將會產生錯誤，因此 <br>			pthread_join()  才會也被包裝。</p>
+<p>希望這篇文章能讓大家對女媧的運作有些許的了解。:)</p>
+<p>[1] <a href="https://en.wikipedia.org/wiki/N%C3%BCwa">http://en.wikipedia.org/wiki/N%C3%BCwa</a></p>
+<p>[2] <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=771765">https://bugzilla.mozilla.org/show_bug.cgi?id=771765</a></p>
+<p>[3] <a href="https://ftp.gnu.org/pub/old-gnu/Manuals/ld-2.9.1/html_node/ld_3.html">http://ftp.gnu.org/pub/old-gnu/Manuals/ld-2.9.1/html_node/ld_3.html</a></p>
+<p>[4] <a href="https://hg.mozilla.org/mozilla-central/file/7297cfffd91c/mozglue/build/Nuwa.cpp">http://hg.mozilla.org/mozilla-central/file/7297cfffd91c/mozglue/build/Nuwa.cpp</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20140715100213id_/https://tech.mozilla.com.tw/?p=4664">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

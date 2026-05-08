@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>在 Firefox 上建構 WebVR | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2016-02/">2016 年 2 月</a><b>&raquo;</b><a href="../../posts/6650/">在 Firefox 上建構 WebVR</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2016-02-01" class="published"><span class="posted-month">2月</span><span class="posted-date">1</span><span class="posted-year">2016</span></time></p>
+              <h1 class="entry-title">在 Firefox 上建構 WebVR</h1>
+            </header>
+            <div class="entry-content"><p>近年來在資訊業最火熱的話題無疑就是虛擬實境 (Virtual Reality，VR) 了。除了 <a href="https://www.oculus.com/en-us/">Oculus</a> 推出 Oculus Rift 之外，其他如 HTC、Google、Samsung 等科技大廠亦各別推出自己的解決方案。VR 目前在遊戲、 電影、多媒體內容都有其龐大的市場需求。Mozilla 的工程師與設計師正著手將 VR 帶到 Open Web 之上，讓每個人都能透過瀏覽器輕鬆享受 VR 世界。因此我們跟 Google 合作開發實驗性的 WebAPI ── <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebVR_API">WebVR</a>。希望能讓這些應用透過瀏覽器的力量，使更多使用者能夠接觸到 VR。本文將會介紹 WebVR 是如何基於 HTML5 標準達到跨平台的能力，並將使用 Oculus DK2、Google Cardboard 來展示在 Firefox 桌面版、行動版 (Firefox for Android)，以及 Firefox OS 裝置上的結果。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-12.03.57-PM.png"><img src="../../assets/6650/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-12.03.57-PM-1024x561.png" alt="Screen Shot 2015-10-05 at 12.03.57 PM" loading="lazy"></a>圖 1. 使用 WebVR 的結果</p>
+<h2>WebVR API</h2>
+<p>目前 WebVR API 定義了 Oculus 以及 Cardboard 兩種裝置，在 Firefox 桌面版可執行 Oculus 與 Cardboard 兩種模式，而行動裝置就只有 Cardboard 模式。此外是以 Oculus Rift 為 API 設計時的主要參考對象。Oculus 頭戴裝置分為兩個部分：頭戴顯示器 (Head mounted display) 以及深度攝影機 (Position sensor camera)，因此針對這兩個部分定義出 1).  <a href="https://developer.mozilla.org/en-US/docs/Web/API/HMDVRDevice">HMDVRDevice</a>，來協助我們得到頭戴顯示器的顯示資訊，以及 2). <a href="https://developer.mozilla.org/en-US/docs/Web/API/PositionSensorVRDevice">PositionSensorVRDevice</a> 告知我們的頭戴顯示器在三維空間中的位置 (Position) 與轉動 (Orientation)。另由於 Cardboard 模式不具備深度攝影機，所以 <a href="https://developer.mozilla.org/en-US/docs/Web/API/PositionSensorVRDevice">PositionSensorVRDevice</a> 僅將告知轉動資訊。</p>
+<h2>GetVRDevices</h2>
+<p>我們可透過 navigator.getVRDevices 取得目前使用平台可支援的裝置資訊。</p>
+<p>navigator.getVRDevices().then(vrDeviceCallback);</p>
+<p>function vrDeviceCallback(devices) {<br>  // Here, we would get all available devices.<br>  for (var i = 0; i &lt; devices.length; ++i) {<br>    if (devices[i] instanceof HMDVRDevice) {<br>       vrHMD = devices[i];<br>    }<br>    // Pair HMDVRDevice and PositionSensor via hardwareUnitId<br>    if (vrHMD &amp;&amp; devices[i] instanceof PositionSensorVRDevice<br>&amp;&amp; devices[i].hardwareUnitId == vrHMD.hardwareUnitId) {<br>      vrPosSensor = devices[i];<br>      // We just want to get the first VR device.<br>      break;<br>    }<br>  }<br>}</p>
+<p>					1234567891011121314151617</p>
+<p>						navigator.getVRDevices().then(vrDeviceCallback); function vrDeviceCallback(devices) {  // Here, we would get all available devices.  for (var i = 0; i &lt; devices.length; ++i) {    if (devices[i] instanceof HMDVRDevice) {       vrHMD = devices[i];    }    // Pair HMDVRDevice and PositionSensor via hardwareUnitId    if (vrHMD &amp;&amp; devices[i] instanceof PositionSensorVRDevice&amp;&amp; devices[i].hardwareUnitId == vrHMD.hardwareUnitId) {      vrPosSensor = devices[i];      // We just want to get the first VR device.      break;    }  }}</p>
+<h2>HMDVRDevice</h2>
+<p>在 VR 裝置的設計中，最重要的部分就是模擬人類視覺。人類的雙眼視覺有其固定的可視範圍 (FOV，Field of view) 以及位移量。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-4.40.20-PM.png"><img src="../../assets/6650/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-4.40.20-PM-1024x581.png" alt="" loading="lazy"></a></p>
+<p>在 WebVR API 中，HMDVRDevice 負責提供開發者 VR 視覺相關的參數。</p>
+<p>// Get eye parameters from HMDVRDevice<br>var eyeParamsL = vrHMD.getEyeParameters( &#39;left&#39; );<br>var eyeParamsR = vrHMD.getEyeParameters( &#39;right&#39; );<br>// Get the translation of eyes<br>var eyeTranslationL = eyeParamsL.eyeTranslation;<br>var eyeTranslationR = eyeParamsR.eyeTranslation;<br>// Get the field of view of eyes<br>var eyeFOVL = eyeParamsL.recommendedFieldOfView;<br>var eyeFOVR = eyeParamsR.recommendedFieldOfView;</p>
+<p>					123456789</p>
+<p>						// Get eye parameters from HMDVRDevicevar eyeParamsL = vrHMD.getEyeParameters( &#39;left&#39; );var eyeParamsR = vrHMD.getEyeParameters( &#39;right&#39; );// Get the translation of eyesvar eyeTranslationL = eyeParamsL.eyeTranslation;var eyeTranslationR = eyeParamsR.eyeTranslation;// Get the field of view of eyesvar eyeFOVL = eyeParamsL.recommendedFieldOfView;var eyeFOVR = eyeParamsR.recommendedFieldOfView;</p>
+<p>這些參數能夠讓我們產生人類視覺的立體繪圖 (Stereoscopic Rendering) [1]效果。根據立體繪圖的理論，我們使用 <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API">WebGL</a> 處理三維繪圖 (3D Renderering) 時，需要對同一個三維場景分別使用左右眼的視覺參數進行兩次繪圖作業。</p>
+<p>// Setup camera projection matrix<br>cameraL.projectionMatrix = fovToProjection( eyeFOVL, viewNear, viewFar );<br>cameraR.projectionMatrix = fovToProjection( eyeFOVR, viewNear, viewFar );<br>// Set the view translation to camera<br>cameraL.translateX( eyeTranslationL.x );<br>cameraR.translateX( eyeTranslationR.x );</p>
+<p>var rendererWidth = window.innerWidth * 0.5;<br>var rendererHeight = window.innerHeight;<br>// WebGL render left eye<br>renderer.setViewport( 0, 0, rendererWidth, rendererHeight );<br>renderer.setScissor( 0, 0, rendererWidth, rendererHeight );<br>renderer.render( sceneL, cameraL );</p>
+<p>// WebGL render right eye<br>renderer.setViewport( rendererWidth, 0, rendererWidth, rendererHeight );<br>renderer.setScissor( rendererWidth, 0, rendererWidth, rendererHeight );<br>renderer.render( sceneR, cameraR );</p>
+<p>					123456789101112131415161718</p>
+<p>						// Setup camera projection matrixcameraL.projectionMatrix = fovToProjection( eyeFOVL, viewNear, viewFar );cameraR.projectionMatrix = fovToProjection( eyeFOVR, viewNear, viewFar );// Set the view translation to cameracameraL.translateX( eyeTranslationL.x );cameraR.translateX( eyeTranslationR.x ); var rendererWidth = window.innerWidth * 0.5;var rendererHeight = window.innerHeight;// WebGL render left eyerenderer.setViewport( 0, 0, rendererWidth, rendererHeight );renderer.setScissor( 0, 0, rendererWidth, rendererHeight );renderer.render( sceneL, cameraL ); // WebGL render right eyerenderer.setViewport( rendererWidth, 0, rendererWidth, rendererHeight );renderer.setScissor( rendererWidth, 0, rendererWidth, rendererHeight );renderer.render( sceneR, cameraR );</p>
+<h2>PositionSensorVRDevice</h2>
+<p>PositionSensorVRDevice 提供關於 VR 裝置的三維座標位置與轉動方面的資訊，目前使用方式如下：</p>
+<p>var state = vrPosSensor.getState();<br>// If it has orientation data.<br>if ( state.hasOrientation ) {<br>  cameraL.quaternion.set(<br>    state.orientation.x, <br>    state.orientation.y, <br>    state.orientation.z, <br>    state.orientation.w);</p>
+<p>  cameraR.quaternion.set(<br>    state.orientation.x, <br>    state.orientation.y, <br>    state.orientation.z, <br>    state.orientation.w);<br>}<br>// If it has position data.<br>if ( state.hasPosition ) {<br>  cameraL.position.set(<br>    state.position.x, <br>    state.position.y, <br>    state.position.z);</p>
+<p>  cameraR.position.set(<br>    state.position.x, <br>    state.position.y, <br>    state.position.z);<br>}</p>
+<p>					123456789101112131415161718192021222324252627</p>
+<p>						var state = vrPosSensor.getState();// If it has orientation data.if ( state.hasOrientation ) {  cameraL.quaternion.set(    state.orientation.x,     state.orientation.y,     state.orientation.z,     state.orientation.w);   cameraR.quaternion.set(    state.orientation.x,     state.orientation.y,     state.orientation.z,     state.orientation.w);}// If it has position data.if ( state.hasPosition ) {  cameraL.position.set(    state.position.x,     state.position.y,     state.position.z);   cameraR.position.set(    state.position.x,     state.position.y,     state.position.z);}</p>
+<p>在更新各個幀數 (Frame) 時，即從感測器取得最新的數值，再將此數值傳給三維空間中的相機，來更新目前使用者在 VR 場景中的位置。</p>
+<h2>Fullscreen</h2>
+<p>Fullscreen API 目前僅能用於 Oculus。在 Oculus 啟動全螢幕模式時，會像圖 1 所示開啟全螢幕濾鏡 (fullscreen filter)，其中包含幾項功能：</p>
+<ul><li>將 VR 畫面投射到頭戴顯示器。</li></ul>
+<ul><li>校正鏡片扭曲 (Distortion) 因為 Oculus 搭配一種特殊的超廣角鏡片，讓使用者可達到 90 度的水平可視角度。此副作用就像魚眼鏡頭拍攝廣角時發生的畫面邊緣扭曲，所以需要校正。</li></ul>
+<ul><li>校正幀率 (Framerate) 以及時空扭曲 (Timewarp) Oculus DK2 建議幀率應高於 75 Hz，低於此標準會讓使用者不舒服。Oculus 在 Windows 版本 App 中即時 (real-time) 使用預測 (prediction) 方式做到時空扭曲，藉以協助 App 補間不足的幀數。</li></ul>
+<ul><li>顏色像差校正 (Chromatic aberration correction) 校正鏡片影響的色差，並處理立體繪圖的像差問題。</li></ul>
+<p>啟動方式：</p>
+<p>canvas.mozRequestFullScreen( { vrDisplay: vrHMD } );</p>
+<p>					1</p>
+<p>						canvas.mozRequestFullScreen( { vrDisplay: vrHMD } );</p>
+<h2>行動裝置上的 WebVR</h2>
+<p>WebVR API 雖可用於 Firefox for Android 與 Firefox OS 之上，但並未完全支援，以下幾點要注意：</p>
+<ul><li>不支援全螢幕濾鏡 目前僅 Oculus 可用，所以整體畫面尚不夠立體，配戴 Cardboard 多少有些失真。</li></ul>
+<ul><li>PositionSensorVRDevice 支援不完全 只支援方向狀態 (orientation state)，但不支援位置狀態 ( position state)。畢竟 Cardboard 沒有深度攝影機。</li></ul>
+<ul><li>某些裝置的方向狀態並無法運作。而我們所用的 GAME_ROTATION_VECTOR 僅支援 Android 4.3 或更高版本。可透過 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Detecting_device_orientation">deviceorientation</a> API 偵測是否支援該裝置。</li></ul>
+<p>目前 WebVR API 已進入 Firefox 每夜更新版 (Nightly)。首先可於桌機上安裝 Oculus runtime；但Firefox for Android 與 Firefox OS 上則不需安裝任何 runtime。接著下載 <a href="https://nightly.mozilla.org/">Firefox Nightly</a> 並開啟之：</p>
+<ul><li>在 Firefox 的瀏覽列輸入 about:config</li></ul>
+<ul><li>layout.frame_rate 改為「75」</li></ul>
+<ul><li>開啟「偏好設定 (Preferences)」，取消勾選「Enable multi-process Nightly」</li></ul>
+<p>值得注意的是，Oculus runtime 的 Mac 版本已於 <a href="https://developer.oculus.com/downloads/pc/0.5.0.1-beta/Oculus_Runtime_for_OS_X/">version 0.5.0.1</a> 停止更新，主因是 Oculus 要將主力放在 Windows 平台。而目前的 <a href="https://developer.oculus.com/downloads/pc/0.7.0.0-beta/Oculus_Runtime_for_Windows/">version 0.8.0.0</a> 也是 WebVR API 在跟隨的主要版本。瀏覽器先前的垂直同步率 (VSync) 最多只能到 60Hz，但此一限制會嚴重影響 Oculus 顯示器的效果 (其規格為 75Hz，低於此規格會讓使用者頭暈)。layout.frame_rate 可協助我們將目前的更新頻率提高到 Oculus 的建議值，以提供更好的使用者體驗。</p>
+<h2>結語</h2>
+<p>VR 的應用吸引了許多開發者的目光。為了支援立體繪圖，其整體圖形效能需求比以往高出許多，其幀率約為 VR 關閉時的一半。目前很多繪圖卡廠商為了此一熱門的產業，也都開始優化自己的整體繪圖程序，期待能夠讓使用者更容易接觸到這些應用。另一方面，體感控制對於 VR 也是很重要的議題。在 WebVR 的應用上，可考慮透過 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API">Gamepad API</a> 以抓到電腦上安裝的搖桿驅動程式，同時也可嘗試使用 <a href="https://www.leapmotion.com/">Leapmotion</a> 手勢操作三維場景中的三維物件。此影片是筆者在 Whistler Workweek 做的 Leapmotion 整合 Firefox OS WebVR 展示：x</p>
+<p>如果讀者對於 VR 應用有興趣，歡迎來試試 WebVR API。此外，Mozilla 的 VR 團隊剛發表的 <a href="https://aframe.io/">A-Frame</a> 也可讓開發者透過標記 (markup) 與基本組裝元件 (building block)，在 Web 上快速建構 VR 內容。有了 A-Frame，即便你沒時間了解底層的 WebVR API，也能單純地使用 HTML5 標記來打造酷炫的跨裝置 VR 內容。如果想進一步了解 Web 的開發方式，則可參考範例 [2][3]。當然另也可以聯絡筆者，一起在 Web 上帶來更多創新的 VR 應用吧！</p>
+<p>[1] <a href="https://hacks.mozilla.org/2015/09/stereoscopic-rendering-in-webvr/">https://hacks.mozilla.org/2015/09/stereoscopic-rendering-in-webvr/</a></p>
+<p>[2] Demo source code, <a href="https://daoshengmu.github.com/ConsoleGameOnWeb/">http://daoshengmu.github.com/ConsoleGameOnWeb/</a></p>
+<p>[3] three.js VR demo, <a href="https://threejs.org/examples/#vr_cubes">http://threejs.org/examples/#vr_cubes</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox/">Firefox</a></span><span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200919181525id_/https://tech.mozilla.com.tw/?p=6650">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

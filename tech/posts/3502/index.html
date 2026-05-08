@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>網頁上也能做刮刮樂！運用 HTML5 canvas 合成功能 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-12/">2013 年 12 月</a><b>&raquo;</b><a href="../../posts/3502/">網頁上也能做刮刮樂！運用 HTML5 canvas 合成功能</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-12-13" class="published"><span class="posted-month">12月</span><span class="posted-date">13</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">網頁上也能做刮刮樂！運用 HTML5 canvas 合成功能</h1>
+            </header>
+            <div class="entry-content"><p>我就先不賣關子，底下這個 fiddle 就是這篇文章的刮刮樂範例完整版。</p>
+<p>可以玩玩看，試著瞭解裡面的程式腳本，或是 fork 來改改看。</p>
+<p>有興趣但看不太懂 code 的話， 就跟著本篇文章的介紹帶你入門吧！</p>
+<p>如果大家有看過九月份的「<a href="https://firefox.club.tw/campaign/every-moment/">Firefox OS 讓你儘情享受每一刻</a>」活動網頁（註 1），</p>
+<p>應該很好奇一開始的刮刮樂是如何做到的吧？</p>
+<p>在研究該如何實作這個功能的時候，因為刮刮樂和繪圖的概念很類似，</p>
+<p>所以第一直覺就是想到要用 HTML5 Canvas。</p>
+<p>但 Canvas 如此博大精深，究竟要從何做起呢？讓我們繼續看下去……</p>
+<h2>瞭解 Canvas 的合成參數設定</h2>
+<p>Canvas 的 globalCompositeOperation 屬性設定可以打破原本圖形只能依繪製順序往上覆蓋的限制，它可以將圖形畫在另一圖形之下，也可用來遮蔽、清除圖形區域。讓圖形的繪製組合更有彈性。在 <a href="https://developer.mozilla.org/zh-TW/docs/Web/Guide/HTML/Canvas_tutorial/Compositing">MDN 的 Canvas 合成效果教學文件</a>（註 2）裡可以看到各種不同合成參數的執行效果：</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/11/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-12-03-%E4%B8%8B%E5%8D%8811.53.26.png"><img src="../../assets/3502/wp-content/uploads/2013/11/螢幕快照-2013-12-03-下午11.53.26.png" alt="canvas 合成參數圖例" loading="lazy"></a></p>
+<p>（注意其中 darker 已從 canvas 標準規範中移除並不再支援）</p>
+<p>圖例中藍色是設定合成參數之前繪製上去的，也就是 destination；</p>
+<p>紅色則是設定合成參數之後繪製上去的，也就是 source。</p>
+<p>哇靠 12 種也太多了吧！簡直是大海撈針！</p>
+<p>但冷靜下來仔細想想，其實刮刮樂不就和小畫家的橡皮擦功能差不多嗎？</p>
+<p>如果藍色方塊是我想要擦掉的圖形，</p>
+<p>而紅色的圓圈是橡皮擦工具，刮完後剩下的不就是一個缺圓角的方塊了嗎？</p>
+<p>因此答案很明顯了：登登登－ destiniation-out 就是你啦！</p>
+<h2>用滑鼠刮掉圖案</h2>
+<p>要開始寫一個功能時，第一件要做的事絕對不是建立一個空白的 javascript 檔案，重新發明輪子，</p>
+<p>網路上充滿了熱心的神人，你想得到的功能幾乎早就有人做出來並公開原始碼。</p>
+<p>我們只需要想出對的關鍵字，去把它找出來就行了。</p>
+<p>於是我在谷歌輸入「javascript scratcher」，運氣很不錯，</p>
+<p>第一個搜尋結果（註 3）就是我需要的範本。</p>
+<p>但仔細研究以後發現三個問題：</p>
+<ul><li>我想讓刮刮樂好刮一點，讓滑鼠經過之後就開始刮，而不需要點下滑鼠左鍵。</li></ul>
+<ul><li>我的刮刮樂圖形是圓的，且有透明背景，套用在上面時透明部分會刮出不必要的顏色來。</li></ul>
+<ul><li>刮完後我想用 CSS 在底圖上加上簡單動畫特效，底圖若載入 canvas 內就無法做到。</li></ul>
+<p>於是我做了一些修改：</p>
+<p>首先我把程式裡處理 mouseup/mousedown 的部分刪去，只留下 mousemove 的部分，</p>
+<p>用來判斷是否按下滑鼠的 flag 則一律設定成 true，如此一來就可以直接刮不需要按滑鼠左鍵。</p>
+<p>接下來我把原本初始化時，傳進的前後景兩張圖的部分，改成只剩下刮刮樂的前景，</p>
+<p>讓 canvas 只用在處理刮除的前景部分，而背景則放在 canvas 外的另一個元素中。</p>
+<p>最後因為原腳本中兩張圖時用的合成模式是 source-atop ，</p>
+<p>這部分改成前面提到的 destination-out。並把原本處理兩張圖合成的部分刪去。</p>
+<p>如此一來就可以做出刮刮樂（橡皮擦）的效果。</p>
+<p>有了這段刮刮樂腳本後，只要像 fiddle 中那樣把 HTML 元素和其 CSS 寫好，</p>
+<p>再加入這段程式腳本，你就有一個基本的網頁刮刮樂了！</p>
+<p>var scratcher = new Scratcher(&quot;fx-scratcher&quot;);<br>scratcher.addEventListener(&quot;imagesloaded&quot;, scratcherLoadingHandler);<br>var scratcherImage = &quot;/static/img/event/every-moment/scratch/scratch-gray.png&quot;;<br>scratcher.setImages(scratcherImage);</p>
+<p>					1234</p>
+<p>						var scratcher = new Scratcher(&quot;fx-scratcher&quot;);scratcher.addEventListener(&quot;imagesloaded&quot;, scratcherLoadingHandler);var scratcherImage = &quot;/static/img/event/every-moment/scratch/scratch-gray.png&quot;;scratcher.setImages(scratcherImage);</p>
+<p>上面的腳本中 &quot;fx-scratcher&quot; 是 canvas 元素的 id 。你也可以換成自訂的 id。</p>
+<p>而 scratcherImage 是刮刮樂圖片（灰色圓形圖）的檔案路徑。</p>
+<p>在前面的 fiddle 中因為 canvas 載入的外部圖片會因為安全性限制，</p>
+<p>而無法進行我們下面要接著介紹的「取得刮除進度」。</p>
+<p>所以我改成用 data url 的方式嵌入圖片，若在本機用自己的圖測試則用檔案路徑即可。</p>
+<p>以上只點出修改的重點，完整的變動差異比較可以在<a href="https://gist.github.com/elin-moco/7858787/revisions">這個 Gist Revisions</a> 裡看到。</p>
+<h2>取得刮除進度</h2>
+<p>Scratcher.prototype.fullAmount = function (stride) {<br> var i, l;<br> var can = this.canvas.main;<br> var ctx = can.getContext(&quot;2d&quot;);<br> var count, total;<br> var pixels, pdata;</p>
+<p> if (!stride || stride &lt; 1) {<br> stride = 1;<br> }</p>
+<p> stride *= 4; // 4 elements per pixel</p>
+<p> pixels = ctx.getImageData(0, 0, can.width, can.height);<br> pdata = pixels.data;<br> l = pdata.length; // 4 entries per pixel</p>
+<p> total = (l / stride) | 0;</p>
+<p> for (i = count = 0; i &lt; l; i = stride) {<br> if (pdata[i] != 0) {<br> count ;<br> }<br> }</p>
+<p> return count / total;<br>};</p>
+<p>					123456789101112131415161718192021222324252627</p>
+<p>						Scratcher.prototype.fullAmount = function (stride) { var i, l; var can = this.canvas.main; var ctx = can.getContext(&quot;2d&quot;); var count, total; var pixels, pdata;  if (!stride || stride &lt; 1) { stride = 1; }  stride *= 4; // 4 elements per pixel  pixels = ctx.getImageData(0, 0, can.width, can.height); pdata = pixels.data; l = pdata.length; // 4 entries per pixel  total = (l / stride) | 0;  for (i = count = 0; i &lt; l; i = stride) { if (pdata[i] != 0) { count ; } }  return count / total;};</p>
+<p>這個函式是原本的範本程式裡就寫好的，用途是取得目前刮剩下的部分比例。</p>
+<p>我只把原本前面的 canvas.draw 改成 canvas.main ，</p>
+<p>因為前面修改過後我們只需要一個 canvas 即可。</p>
+<p>這段程式腳本的重點是透過 ctx.getImageData 將圖片轉為陣列資料，</p>
+<p>再用迴圈去檢查陣列內還留有顏色的比例。</p>
+<p>stride 參數是用來設定檢查的頻率，數字愈大則檢查的頻率愈低，</p>
+<p>避免每次都要掃過所有資料影響執行效能。</p>
+<p>若 pdata[i] = 0 代表已被刮除。</p>
+<p>腳本中的函式最後回傳的是一個介於 1 ~ 0 之間的小數，</p>
+<p>代表的意義是「未刮除部分所佔比例」。</p>
+<p>function scratcherProgressHandler(ev) {<br> // Test every pixel. Very accurate, but might be slow on large<br> // canvases on underpowered devices:<br> //var pct = (scratcher.fullAmount() * 100)|0;</p>
+<p> // Only test every 32nd pixel. 32x faster, but might lead to<br> // inaccuracy:<br> var pct = (this.fullAmount(32) * 100) | 0;<br> if (pct &lt; 3) {<br> if (!$(&quot;.scratcher&quot;).hasClass(&quot;complete&quot;)) {<br> $(&quot;.scratcher&quot;).addClass(&quot;complete&quot;);<br> if (!$(&quot;#moment&quot;).hasClass(&quot;appear&quot;)) {<br> &lt;a href=&quot;https://www.dgfev.de/&quot;&gt;online casino&lt;/a&gt;  $(&quot;#moment&quot;).addClass(&quot;appear&quot;)<br> }<br> }<br> }<br>}</p>
+<p>scratcher.addEventListener(&quot;scratch&quot;, scratcherProgressHandler);</p>
+<p>					12345678910111213141516171819</p>
+<p>						function scratcherProgressHandler(ev) { // Test every pixel. Very accurate, but might be slow on large // canvases on underpowered devices: //var pct = (scratcher.fullAmount() <em> 100)|0;  // Only test every 32nd pixel. 32x faster, but might lead to // inaccuracy: var pct = (this.fullAmount(32) </em> 100) | 0; if (pct &lt; 3) { if (!$(&quot;.scratcher&quot;).hasClass(&quot;complete&quot;)) { $(&quot;.scratcher&quot;).addClass(&quot;complete&quot;); if (!$(&quot;#moment&quot;).hasClass(&quot;appear&quot;)) { &lt;a href=&quot;https://www.dgfev.de/&quot;&gt;online casino&lt;/a&gt;  $(&quot;#moment&quot;).addClass(&quot;appear&quot;) } } }} scratcher.addEventListener(&quot;scratch&quot;, scratcherProgressHandler);</p>
+<p>瞭解 fullAmount 的運作方式和回傳值意義之後，</p>
+<p>接著只要在 scratch 事件發生時去檢查 fullAmount 的回傳值，</p>
+<p>即可依據目前的刮除進度做出對應的效果。</p>
+<p>上面這段腳本是判斷剩餘未刮除的部分小於 3% 時就當作刮除完成，</p>
+<p>並在刮刮樂元素上加上 &quot;complete&quot; 的 class ，</p>
+<p>接下來的「開獎」效果只要透過 CSS 來處理即可。</p>
+<h2>One more thing – 做個假掰的開獎效果</h2>
+<p>我要做的開獎效果分成兩個部分，先是讓剩下沒刮完的部分淡出消失，</p>
+<p>再來就是讓 Firefox 的圖示放大淡出，以做出開啟 App 的效果。</p>
+<p>.scratcher #fx-scratcher {<br> transition: opacity 0.5s ease-out 0s;<br>}<br>.scratcher.complete #fx-scratcher {<br> opacity: 0;<br>}<br>.scratcher #fx-icon {<br> transition: all 0.5s ease-out 0.5s;<br> left: 0;<br> top: 0;<br> width: 125px;<br> height: 125px;<br>}<br>.scratcher.complete #fx-icon {<br> width: 300px;<br> height: 300px;<br> opacity: 0;<br> left: -83px;<br> top: -100px;<br>}</p>
+<p>					1234567891011121314151617181920</p>
+<p>						.scratcher #fx-scratcher { transition: opacity 0.5s ease-out 0s;}.scratcher.complete #fx-scratcher { opacity: 0;}.scratcher #fx-icon { transition: all 0.5s ease-out 0.5s; left: 0; top: 0; width: 125px; height: 125px;}.scratcher.complete #fx-icon { width: 300px; height: 300px; opacity: 0; left: -83px; top: -100px;}</p>
+<p>要用 CSS 達成這些效果就要靠 CSS 的轉場功能 － 也就是 transition 啦！</p>
+<p>這裡腳本中使用的 transition 屬性是四個轉場屬性的簡易表示式，</p>
+<p>transition: opacity 0.5s ease-out 0s;</p>
+<p>					1</p>
+<p>						transition: opacity 0.5s ease-out 0s;</p>
+<p>這行裡指定的屬性依序為轉場套用屬性 (transition-property)、轉場持續時間 (transition-duration)、</p>
+<p>轉場速率變化曲線函式 (transition-timing-function)、轉場延遲時間 (transition-delay)。</p>
+<p>要注意的是 transition-property 若在不需要太多屬性同時進行轉場的狀況下，</p>
+<p>建議明確列出所有需要轉場的屬性（而不要使用 all），以防執行效能被拖慢。</p>
+<p>詳細的說明可參考 MDN 的 <a href="https://developer.mozilla.org/zh-TW/docs/CSS_%E8%BD%89%E5%A0%B4">CSS 轉場文件</a>（註 4）。</p>
+<p>寫好轉場效果的設定後，接下來就是在 .scratcher.complete CSS 選擇器底下，</p>
+<p>指定各別元素的樣式變化。只需要簡單幾行 CSS 就能達成。</p>
+<p>完成之後，只要當刮除進度超過 97 %，並執行到這行腳本時：</p>
+<p>$(&quot;.scratcher&quot;).addClass(&quot;complete&quot;);</p>
+<p>					1</p>
+<p>						$(&quot;.scratcher&quot;).addClass(&quot;complete&quot;);</p>
+<p>CSS 就會偵測到 class 的改變，並開始執行漸變轉場效果。</p>
+<p>是不是很有趣呢？你也來試著動手做做看吧！</p>
+<h2>參考連結：</h2>
+<ul><li>註 1：<a href="https://firefox.club.tw/campaign/every-moment/">線上活動：Firefox OS 讓你儘情享受每一刻</a></li></ul>
+<ul><li>註 2：<a href="https://developer.mozilla.org/zh-TW/docs/Web/Guide/HTML/Canvas_tutorial/Compositing">MDN – Canvas Tutorial – Compositing</a></li></ul>
+<ul><li>註 3：<a href="https://beej.us/blog/data/html5-canvas-globalcompositeoperation/">HTML5 Canvas and globalCompositeOperation</a></li></ul>
+<ul><li>註 4：<a href="https://developer.mozilla.org/zh-TW/docs/CSS_%E8%BD%89%E5%A0%B4">MDN – CSS 轉場</a></li></ul></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/css/">CSS</a></span><span><a href="../../categories/javascript/">Javascript</a></span><span><a href="../../categories/open-source/">Open Source</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200919193828id_/https://tech.mozilla.com.tw/?p=3502">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

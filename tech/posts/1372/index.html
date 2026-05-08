@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>越玩越有趣 – OpenCL 與行動裝置的未來！ | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-03/">2013 年 3 月</a><b>&raquo;</b><a href="../../posts/1372/">越玩越有趣 – OpenCL 與行動裝置的未來！</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-03-11" class="published"><span class="posted-month">3月</span><span class="posted-date">11</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">越玩越有趣 – OpenCL 與行動裝置的未來！</h1>
+            </header>
+            <div class="entry-content"><p>先節錄一下 OpenCL 在維基百科的介紹</p>
+<p>OpenCL (Open Computing Language，開放計算語言) 是一個為異構平台編寫程式的框架，此異構平台可由 <a href="https://zh.wikipedia.org/wiki/CPU">CPU</a>， <a href="https://zh.wikipedia.org/wiki/GPU">GPU</a> 或其他型別的處理器組成。 OpenCL 由一門用於編寫 kernels （在 OpenCL 裝置上執行的函式）的語言（基於<a href="https://zh.wikipedia.org/wiki/C99">C99</a>）和一組用於定義並控制平台的 API 組成。 OpenCL 提供了基於任務分割和資料分割的<a href="https://zh.wikipedia.org/wiki/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97">並列計算</a>機制。</p>
+<p>OpenCL 類似於另外兩個開放的工業標準<a href="https://zh.wikipedia.org/wiki/OpenGL">OpenGL</a>和 <a href="https://zh.wikipedia.org/wiki/OpenAL">OpenAL</a>，這兩個標準分別用於三維圖形和電腦音訊方面。 OpenCL 擴充了 GPU 圖形生成之外的能力。 OpenCL 由非盈利性技術組織<a href="https://zh.wikipedia.org/wiki/Khronos_Group">Khronos Group</a>掌管。</p>
+<p>最近對 OpenCL 很有興趣，常利用空閒時間看這方面相關的東西，所以跟大家分享一下個人的一些淺見。因為想講的東西很多，所以就打算把他寫成肥皂劇的劇本，看看會不會有人改編成電視劇，第一集就先介紹一些來龍去脈的東東，希望點閱率會不錯，不要被腰斬 :P。</p>
+<p>第一集暖身就來介紹兩件事， OpenCL 的由來，以及 2012 年底前支援的狀況。</p>
+<ul><li>OpenCL 的由來</li></ul>
+<p>隨著 CPU 時脈對於效能的貢獻進入高原期，眾多軟硬體開發商將目光移向平行運算跟 GPU Computing 中。其中 Apple 聯合 AMD、IBM、Intel 跟 nVidia合作，在 2008 年提出一個支援異質運算的 API 給 Khronos 組織，這一個組織就是成功推動 OpenGL 的組織，希望藉由這專案能讓軟體開發人員可以將需要平行處理的高運算量程式碼用 OpenCL 寫好，然後可以在 CPU 或是 GPU 甚至是支援 OpenCL 的 DSP 上運算，達到一碼跑天下的境界。目前最新的是 2011 年 11 月的 OpenCL 1.2 版本。</p>
+<ul><li>到 2012 年底為止支援 OpenCL 的裝置</li></ul>
+<p>介紹完由來，現在拉回來告訴大家有哪些裝置或公司對 OpenCL 情義相挺，以及目前我收集到的近況。</p>
+<ul><li>x86 系統：x86 的世界有分 CPU 的廠商跟作 GPU 的廠商，以及兩邊都做的廠商。只做 CPU 廠商中最有名的當然首推 Intel。 Intel 的 CPU 在 Core i3, i5, i7 就有支援 OpenCL ，但是在 Ivy Bridge 才有讓 Intel HD Graphics 支援 OpenCL 。 而講到 GPU，最有名的當然就是 nVidia，大家都知道 nVidia 也有推自己的 GPU Computing — CUDA ，所以你要使用 nVidia 的 OpenCL SDK 其實是要裝 CUDA 的 SDK 的，然後就可同時實現兩種願望。 最後壓軸的是 AMD ，他是腳踏兩條船的代表，旗下有 CPU 跟 GPU 的技術，所以他開始推 APU，希望靠這瀨尿牛丸來一展身手，可惜出師未捷，就遇到 PC 業界的寒冬，一整個慘兮兮，否則我個人認為 AMD 可以說是推 OpenCL 最認真的廠商。 AMD 還有舉辦 AMD OpenCL Coding Competition，可惜只辦了一屆就沒有再持續下去，比如 2012 年的比賽看來就胎死腹中了。不然 Innovation Challenge 的第一名還有兩萬美金可以撈…總之，希望 AMD 可以振作起來囉！ 附帶一提， x86 的 OpenCL 要注意的是 memory bus 的速度，因為 GPU 的記憶體和 RAM 的溝通很花時間，所以 x86 版本除了 AMD 的 APU 之外都要特別小心這件事，之後再來和大家分享 APU ，希望在我研究完之前 AMD 不要倒掉 :(。</li></ul>
+<ul><li>ARM 的世界：ARM 的世界目前比較積極推 OpenCL 的屬推 ARM 的 Mali GPU 跟 Qualcomm 的 Adreno GPU 。目前在行動裝置上已經可以找到 Qualcomm S4 Pro ( Nexus 4就是用這個晶片組) 有硬體支援 OpenCL。SDK (Software development Kit) 目前應該是還在作，相關文件還不齊全，希望在 2013 年可以有較多的行動裝置支援 OpenCL。此外， Android 有推 RenderScript 這東西但目前只能支援在 CPU 上，尚不支援在 GPU 上運作，不過他的意圖跟 OpenCL 有不少相近之處，所以我個人倒很好奇在 Android 的 OpenCL 支援會是怎樣發展。另外因為 ARM 系統一般是 CPU 跟 GPU 共用記憶體，所以這方面的溝通成本應該會比較低。</li></ul>
+<p>因為 SDK 的提供，2013 年起已經可以在行動裝置上開發 OpenCL 的程式，個人保守估計在 2015 應該會是 OpenCL 在行動裝置上大放異彩的時候，之後再跟大家介紹一些 OpenCL 的 coding 如何撰寫，以及其他 Open Source Project 囉！</p>
+<p>References:</p>
+<p><a href="https://en.wikipedia.org/wiki/OpenCL">http://en.wikipedia.org/wiki/OpenCL</a></p>
+<p><a href="https://zh.wikipedia.org/wiki/Intel_HD_Graphics">http://zh.wikipedia.org/wiki/Intel_HD_Graphics</a></p>
+<p><a href="https://zh.wikipedia.org/wiki/OpenCL">http://zh.wikipedia.org/wiki/OpenCL</a></p>
+<p><a href="https://www.khronos.org/opencl">http://www.khronos.org/opencl</a></p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/03/OpenCL_Logo.png"><img src="../../assets/1372/wp-content/uploads/2013/03/OpenCL_Logo.png" alt="" loading="lazy"></a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/open-source/">Open Source</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20181111133535id_/https://tech.mozilla.com.tw/?p=1372">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

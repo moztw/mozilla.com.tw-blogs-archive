@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>Let a wireframe be an app in the iframe | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2012-10/">2012 年 10 月</a><b>&raquo;</b><a href="../../posts/942/">Let a wireframe be an app in the iframe</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2012-10-22" class="published"><span class="posted-month">10月</span><span class="posted-date">22</span><span class="posted-year">2012</span></time></p>
+              <h1 class="entry-title">Let a wireframe be an app in the iframe</h1>
+            </header>
+            <div class="entry-content"><p>在 Firefox OS 平台上，一個 App 其實就是一個 iframe。Gaia 團隊成員 (Front-end engineer，簡稱 F2E) 會小心翼翼的檢閱著 UX 設計出來的 wireframe (示意圖)，對照 Gecko Developer (以下簡稱 Dev) 提供的 API，把 App 的功能一個個實作出來，成為 Firefox OS 手機裡真實存在的一個 App。wireframe 是 UX 理想上的操作流程，iframe 裡的 HTML/JavaScript/CSS 則是 F2E 實際上能達到真實效果。</p>
+<p>讓 wireframe 變成活生生的 iframe、變成一個讓使用者覺得好用的 App，需要 UX + F2E + Dev 的跨越自身知識領域的溝通，因此，我們無不想盡辦法讓對方瞭解我們的心意。今天就來跟大家聊聊我開發「設定 (Settings app)」過程中一些有趣的對話。</p>
+<p>或許你從未仔細留意過手機的藍牙設定，我一直以為它就跟無線網路設定類似，只是一堆裝置開關連線而已…直到我看到 wireframe。</p>
+<p>恩，找到的裝置可以點一下配對，然後他就顯示已配對 (Paired)，而已經配對的裝置可以點一下取消配對 (Unpair)…，看起來OK。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/10/v7_list.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2012/10/v7_list.png" alt="第一版 wireframe 的畫面(1)" loading="lazy"></a><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/10/v7_unpair.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2012/10/v7_unpair.png" alt="第一版 wireframe 的畫面(2)" loading="lazy"></a></p>
+<p>Dev：疑？說好的連線呢？</p>
+<p>我：啊？Paired 不是嗎？</p>
+<p>Dev：不，我是說連線 (connected)。</p>
+<p>我：所以你是說 paired ≠ connected？</p>
+<p>Dev：是啊～我們只是互加了好友，當然不等於在一起。</p>
+<p>嗯哼～！有道理。</p>
+<p>Dev：而且，我無法察覺她是不是在附近 (Not in range)，就算我們是朋友(Paired)</p>
+<p>我：為什麼？你都可以搜尋得到附近的裝置了！</p>
+<p>Dev：那是他們願意被搜尋到，但如果他們設定狀態顯示為離線 (就像正妹一樣)，你沒有丟訊息給她看看，是不會知道她是不是真的不在。</p>
+<p>我：原來藍牙網絡就跟社群網絡是一樣的道理啊…</p>
+<p>顯然 UX 跟我一樣不常使用藍牙，但我們都很熟悉社群。所以經過一番溝通後，UX 給了我新的 wireframe。</p>
+<p>恩，找到的裝置直接點一下就連線，然後他就顯示已連線 (Connected)。而進階設定裡面可以看到配對過的裝置，可以取消配對…。配對、連線都有了！</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/10/v8_list.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2012/10/v8_list.png" alt="第二版的示意圖(1)" loading="lazy"></a><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/10/v8_unpair.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2012/10/v8_unpair.png" alt="第二版的示意圖(2)" loading="lazy"></a></p>
+<p>UX：嘿～我的使用者才不在意他們只是朋友，既然茫茫機海中看到你了，就直接在一起吧。</p>
+<p>我：是啊，為什麼要去理解「配對才能連線」這種事呢，太複雜了！</p>
+<p>Dev：是可以啦…</p>
+<p>UX：至於好友 (配對)列表，他可以去「進階設定」裡看。</p>
+<p>Dev：可是，你知道看不到也可以在一起嗎…？</p>
+<p>UX&amp;我：(大驚) 這是今年暑假最淒美的人鬼戀情嗎？</p>
+<p>Dev：是的，其實大多數情況下，連線都是這樣發生的。已經配對過的裝置，現在可能是看不到的，但卻可以連線，因為我們知道彼此的存在 (address)。(羞)</p>
+<p>路人：奇怪，為什麼我從來都沒意到這件事情呢…啊！我知道了～因為我都會在配對裝置列表上看到它。</p>
+<p>Dev：沒錯！</p>
+<p>UX：所以配對列表是很重要的啊… 那應該要突顯它才是。</p>
+<p>路人：那有可能我不認識你，也看不到你，但你卻要求跟我連線嗎？</p>
+<p>我：這是被冤鬼纏上嗎…</p>
+<p>Dev：不，這是一方認定分手 (刪除所有記錄)，一方低調要求復合 (隱形要求連線)。可能的，但我們得先從朋友 (pair) 做起，好嗎？</p>
+<p>在確定眾人皆瞭解後，UX 又重新設計了第三版。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/10/v9.png"><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/10/v9.png"><img src="../../assets/942/wp-content/uploads/2012/10/v9-150x150.png" alt="第三版 wireframe 的畫面" loading="lazy"></a></a></p>
+<p>至於這是不是最終版的設計呢？請容許我賣個小關子。</p>
+<p>「使用者經驗設計」是一個漸進式的過程，在目前技術可行的前提下，讓使用者有最直覺、最完整的體驗。一個按鈕的位置、選單的層級、還有文字說明，都是被討論過，甚至實作後再加以修改的。不斷地檢討與改進，才能夠成為好用的 OS 。</p>
+<p>你，可曾用心瞭解過藍牙 (你所開發的app) 的小世界呢？</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20140728050217id_/https://tech.mozilla.com.tw/?p=942">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

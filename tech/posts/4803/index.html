@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>像原生應用程式一樣的 WebApp？趕快學起來！ | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-07/">2014 年 7 月</a><b>&raquo;</b><a href="../../posts/4803/">像原生應用程式一樣的 WebApp？趕快學起來！</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-07-21" class="published"><span class="posted-month">7月</span><span class="posted-date">21</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">像原生應用程式一樣的 WebApp？趕快學起來！</h1>
+            </header>
+            <div class="entry-content"><p>經常收看謀智台客的讀者可能已經看過怎麼開發一個 (Firefox) WebApp，或是可在 <a href="https://developer.mozilla.org/en-US/Apps">MDN</a> 上找到相關開發資訊。</p>
+<p>簡而言之，Mozilla 提出的<a href="https://developer.mozilla.org/en-US/Apps/Build/JavaScript_API">開放 WebApp</a> 標準草案，允許把使用網頁技術製作的網頁做成 App 來使用。提供的方式除了 App 使用者所習慣的 App Store 模式（如 <a href="https://marketplace.firefox.com/">Firefox Marketplace</a>），即使用者到固定的應用商店下載整包封裝好的 App （Packaged WebApp）之外，也提供 Web 常見的 Hosting 模式（Hosted WebApp），即使用者只需連到某支援 WebApp 標準的網頁，網頁本身即可當成 App 來使用。在封裝的 App（Packaged WebApp）模式下，WebApp 會和一般 App 一樣被整個下載到機器中，所以不需要任何網路連接也能運作。</p>
+<p>使用者電腦、手機的桌面上一樣會顯示 App 的圖標，點選後開啟獨立的視窗，無論是在電腦、手機上，操作起來就像原生的應用程式一樣。</p>
+<h2>像原生的應用程式一樣</h2>
+<p>拿 UI Demos 應用為例，可以使用任何手機（<a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox">Android</a> 或 <a href="https://mozilla.com.tw/firefox/os/">Firefox OS</a>）或電腦版（<a href="https://mozilla.com.tw/firefox/download/?os=win&amp;install=full">Windows</a>, <a href="https://download.myfirefox.com.tw/releases/firefox/zh-TW/Firefox-latest.dmg">Mac</a>, <a href="https://mozilla.com.tw/firefox/download/?os=linux&amp;install=64bit">Linux</a>）的Firefox瀏覽器，前往 <a href="https://marketplace.firefox.com/app/ui-demos">https://marketplace.firefox.com/app/ui-demos</a> 安裝此應用。這邊以 Mac 電腦為例，打開 UI Demos App 可以看到和一般應用程式無異的視窗。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2014-07-10-%E4%B8%8B%E5%8D%885.57.18.png"><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2014-07-10-%E4%B8%8B%E5%8D%885.57.18-300x216.png"><img src="../../assets/4803/007-8add3e5300a3.png" alt="uidemos" loading="lazy"></a></a></p>
+<p>這個視窗是不是真的應用程式？打開「應用程式」資料夾看看， UI Demos 應用確實會出現在裡面。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2014-07-10-%E4%B8%8B%E5%8D%886.04.20.png"><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2014-07-10-%E4%B8%8B%E5%8D%886.04.20-300x109.png"><img src="../../assets/4803/007-e730799944c3.png" alt="app_uninstall" loading="lazy"></a></a></p>
+<p>那麼要移除的時候要怎麼做？當然，也可以用該平台一般移除應用程式的方式來移除。</p>
+<p>（需注意的是並非所有在  <a href="https://marketplace.firefox.com/">Firefox Marketplace</a> 上的 WebApp 都可以在電腦端安裝，能不能在電腦端安裝視開發者的決定而不同）</p>
+<p>有了 WebApp 標準，Web 開發者也可以用 Web 技術來開發手機/桌面原生應用程式囉！</p>
+<h2>使用 WebApp 標準來開發有什麼好處？</h2>
+<p>WebApp 標準與一般的網頁不同的地方，是支援了「Priviledged」模式，若使用「Priviledged」模式則可以存取更多設備相關的資源，如「<a href="https://developer.mozilla.org/en-US/docs/WebAPI/Device_Storage_API">Device Storage</a>」、「<a href="https://developer.mozilla.org/en-US/docs/WebAPI/Contacts">Contacts</a>」。更多細節的可以參考 <a href="https://developer.mozilla.org/en-US/docs/WebAPI">WebAPI</a> 網頁。</p>
+<p>目前「Priviledged」模式僅支援封裝的 App （Packaged WebApp），在 Firefox 行動版裝置（<a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox">Android</a> 或 <a href="https://mozilla.com.tw/firefox/os/">Firefox OS</a>）上的支援度較高。</p>
+<h2>有沒有其他的 WebApp 格式？</h2>
+<p>Google 今年初發佈了主打桌面瀏覽器的 <a href="https://developer.chrome.com/apps/about_apps">Chrome packaged app</a>（Chrome 封裝 app），雖然 Chrome packaged app 使用的是「manifest.json」檔案，與 WebApp 標準使用的「manifest.webapp」副檔名不同，但兩者格式完全可以互通。差別僅在兩者支援的 API 種類不同（Chrome packaged app 目前主打桌面，Firefox WebApp 目前主打手機）。</p>
+<p>Amazon 亦在他們推出的 Fire 平板上推出 <a href="https://developer.amazon.com/appsandservices/solutions/platforms/webapps">HTML5/Web App</a>，並將 Web App 與 Android App 同放在 Amazon App Store 中販賣，Amazon 對兩者並無任何差別對待。</p>
+<h2>如何開發 webapp ?</h2>
+<p>就像要開發一個高品質的 App 一樣，App 開發完上架並不等於這個專案結束了。要將 App 後續的更新、維護，優化做好，除了考驗基本的網頁技術能力之外，其實還得兼顧許多軟體工程的問題。</p>
+<p>開發一個 App，並不僅止於把程式碼提交（commit）到版本控制系統就結束了。如何組織程式碼、如何保持程式碼風格一致（style check），如何最佳化（optimization）、如何部署（deploy）、如何管理使用到的內外部函式庫（library dependency management）、如何測試程式（unit/functional/integration test）、如何做多國語系支援（localization）、如何將流程自動化（continue integration）？都是一個高品質的 App 開發過程中需要解決與支援的環節。</p>
+<p>從 2013 年開始有一套名為 <a href="https://webapplate.github.io/webapplate/">webapplate</a> 的開源 WebApp 範本（Template），即是為了解決開發 WebApp 的問題（自我揭露：我是此專案的創建者）。一般 WebApp 或 Web 骨架（skeleton）產生器通常只處理了 WebApp 基本程式碼組織的問題，而未考慮其他部分，以讓開發者專注於習得 WebApp 和一般 Web 的重點差異。但只做到這樣是不夠產出高品質 WebApp 的。<a href="https://webapplate.github.io/webapplate/">webapplate</a> 則是將 WebApp 的開發流程考慮進來，集成 Javascript 生態圈中的工具如 <a href="https://nodejs.org/">node.js</a>、<a href="https://gruntjs.com/">grunt</a>、<a href="https://github.com/bower/bower">bower</a>、<a href="https://github.com/karma-runner/karma">karma</a>，來完成 WebApp 的開發、測試與維護。</p>
+<h2>安裝 Webapplate</h2>
+<p>要使用 <a href="https://webapplate.github.io/webapplate/">webapplate</a> 做開發的基礎，系統中須先安裝 <a href="https://nodejs.org/">node.js</a>，並透過命令安裝必須的相關工具：</p>
+<p>npm install -g grunt-cli bower karma</p>
+<p>					1</p>
+<p>						npm install -g grunt-cli bower karma</p>
+<p>接著只要透過 <a href="https://github.com/gasolin/webapplate#get-webapplate">git clone</a> 命令取得 https://github.com/gasolin/webapplate.git 倉庫，或下載 <a href="https://github.com/gasolin/webapplate/archive/master.zip">Zip</a> 檔後解壓縮，即可得到 <a href="https://webapplate.github.io/webapplate/">webapplate</a> 範本。</p>
+<h2>使用 Webapplate</h2>
+<p>若要製作常見的 Hosting 模式（Hosted）WebApp，只需運行任一網頁伺服器，並將 <a href="https://webapplate.github.io/webapplate/">webapplate</a> 範本放入即可透過 Firefox 瀏覽器查看 WebApp。如果您不知道怎麼運行網頁伺服器，那麼 <a href="https://webapplate.github.io/webapplate/">webapplate</a> 中也有附上一個使用 <a href="https://expressjs.com/">Express</a> 寫的，最佳化過的網頁伺服器。使用 grunt 命令即可啟動：</p>
+<p>$ grunt server</p>
+<p>					1</p>
+<p>						$ grunt server</p>
+<p>若要製作封裝模式（Packaged）的 WebApp，則可以透過 grunt 命令來打包：</p>
+<p>$ grunt pack</p>
+<p>					1</p>
+<p>						$ grunt pack</p>
+<p>打包後的 webapp 檔案將儲存在 dist/ 目錄下，即是可以上架到 <a href="https://marketplace.firefox.com/">Firefox Marketplace</a> 上的 WebApp。</p>
+<p>前面提到 Chrome packaged app 與 (Firefox) WebApp 的宣告檔可以互通。要將 WebApp 宣告檔複製成 Chrome packaged app 能讀取的格式，可以使用 grunt 命令：</p>
+<p>$ grunt f2c</p>
+<p>					1</p>
+<p>						$ grunt f2c</p>
+<p>則 WebApp 使用的 manifest.webapp 檔案將自動複製一份成 manifest.json，可以上架到 <a href="https://chrome.google.com/webstore/category/apps">Chrome Web Store</a> 上。</p>
+<h2>結語</h2>
+<p>本篇中我們看到 WebApp 如何像原生應用程式一樣地運作，並介紹 <a href="https://webapplate.github.io/webapplate/">webapplate</a>範本以協助讀者開發高品質的 Web 應用程式。</p>
+<p>webapplate 用到了 <a href="https://github.com/webapplate/webapplate/blob/master/package.json">40 多個函式庫</a>來搭建整個全 Javascript 的 WebApp 開發範本，請參考 webapplate 網站中的文件以了解 <a href="https://github.com/webapplate/webapplate/wiki/Structure">檔案的結構</a> 與其他使用上的細節。</p>
+<p>您對 WebApp 的感受如何？歡迎讀者留言建議感興趣的主題。</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/chrome-web-store/">Chrome Web Store</a></span><span><a href="../../categories/firefox/">Firefox</a></span><span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/open-source/">Open Source</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20191118133840id_/https://tech.mozilla.com.tw/?p=4803">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

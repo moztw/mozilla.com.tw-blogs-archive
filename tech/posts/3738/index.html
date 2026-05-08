@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>瀏覽器的預設 File Input 不好用！我想自訂美觀實用的照片上傳元件怎麼辦？ | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-03/">2014 年 3 月</a><b>&raquo;</b><a href="../../posts/3738/">瀏覽器的預設 File Input 不好用！我想自訂美觀實用的照片上傳元件怎麼辦？</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-03-24" class="published"><span class="posted-month">3月</span><span class="posted-date">24</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">瀏覽器的預設 File Input 不好用！我想自訂美觀實用的照片上傳元件怎麼辦？</h1>
+            </header>
+            <div class="entry-content"><p>接續前一篇介紹 <a href="../../posts/3502/">Canvas 刮刮樂</a>的文章，</p>
+<p>本篇介紹的是去年九月份 <a href="https://firefox.club.tw/campaign/every-moment/">Firefox OS 讓你盡情享受每一刻</a> 活動的照片上傳作法。</p>
+<p>有做過上傳表單的人一定對瀏覽器提供的預設上傳元件有一些意見，</p>
+<p>它的外觀光用 CSS 來設定樣式也救不了，而且上傳圖片沒有前端預覽很不直覺。</p>
+<p>幸好可以搭配&lt;label&gt;元素改變表單元素外觀，以及新的 FileReader API 以在上傳前預覽圖片。</p>
+<p>實際的範例請先看底下的 fiddle：</p>
+<p>想知道這是怎麼做的嗎？不囉嗦，以下馬上開始介紹……</p>
+<h2>如何不用 Javascript 自訂上傳元件外觀</h2>
+<p>會用 Javascript 的人大多會先想到，只要把原本的上傳元件藏起來，</p>
+<p>再從自訂上傳鈕的 <br>			onclick 內呼叫上傳元件的 <br>			click 即可。</p>
+<p>但這招在 IE10 實測時發現，選完圖後居然點下表單的送出鈕沒反應！</p>
+<p>（送出鈕同樣也是在自訂按鈕的 <br>			onclick  去呼叫 <br>			submit  ）</p>
+<p>仔細追蹤後發現此行為被當作不安全的動作而被擋下來了！</p>
+<p>因為 IE10 可能認為透過程式（而非人為的 <br>			click ）而編輯過的表單資料不安全。</p>
+<p>這部分的行為在網路上沒有找到正式說明文件，但根據 <a href="https://stackoverflow.com/questions/16676945/dynamically-submitting-a-file-upload-form-in-ie10-using-jquery/#answers-header">stackoverflow 上神人的實測結果</a>，</p>
+<p>上傳元件的 <br>			click 以及表單的 <br>			submit 兩者都是透過程式去驅動時就會被 IE 擋下來，</p>
+<p>只有透過程式驅動其中一種，或是使用原生表單元件功能的話就不會有此問題。</p>
+<p>哇～！那這下不剉賽了？難道真的要換回原生醜醜的表單元件嗎（掩面）。</p>
+<p>還好 <a href="https://www.w3.org/standards/">W3C 標準</a>中有一個很貼心的小設計……那就是<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"> 標籤</a>。</p>
+<p>它的作用除了說明表單元件的用途以外，更可增加元件的點擊範圍！</p>
+<p>最常見的地方是搭配小不拉幾的 <br>			checkbox  或 <br>			radio  來使用，</p>
+<p>讓使用者在選取選項時不必艱難地對準小小的按鈕，可以直接點對應的 <br>			label  文字來選取。</p>
+<p>更妙的是 <br>			label  搭配 <br>			file input  也有同樣的效果！</p>
+<p>簡單來說只要把原本的 <br>			file input  藏起來，</p>
+<p>再透過 CSS 把對應它的 <br>			label  自訂成想要的按鈕外觀，</p>
+<p>一個自訂外觀的上傳元件就完成了！完全不需用到 Javascript！</p>
+<p>這是 HTML 的部分：</p>
+<p>&lt;label class=&quot;choose-file&quot; id=&quot;upload&quot; for=&quot;id_image_large&quot;&gt;&lt;/label&gt;<br>&lt;input type=&quot;file&quot; id=&quot;id_image_large&quot; name=&quot;image_large&quot;&gt;</p>
+<p>					12</p>
+<p>						&lt;label class=&quot;choose-file&quot; id=&quot;upload&quot; for=&quot;id_image_large&quot;&gt;&lt;/label&gt;&lt;input type=&quot;file&quot; id=&quot;id_image_large&quot; name=&quot;image_large&quot;&gt;</p>
+<p>			label  的 <br>			for  屬性用來指定對應的表單元件 <br>			id ，如果不用 <br>			for  的話就必須把表單元件包在 <br>			label  標籤之內。</p>
+<p>以下是對應的 CSS：</p>
+<p>/<em> Hide file input </em>/<br>#id_image_large {<br>    display: none;<br>}<br>/<em> Custom upload button appearance</em>/<br>#upload {<br>  position: absolute;<br>  cursor: pointer;<br>  z-index: 1;<br>  left: 84px;<br>  top: 201px;<br>  display: block;<br>  width: 138px;<br>  height: 138px;<br>  background: url(https://firefox.club.tw/static/img/event/every-moment/upload/upload-pic.png);<br>}</p>
+<p>					12345678910111213141516</p>
+<p>						/<em> Hide file input </em>/#id_image_large {    display: none;}/<em> Custom upload button appearance</em>/#upload {  position: absolute;  cursor: pointer;  z-index: 1;  left: 84px;  top: 201px;  display: block;  width: 138px;  height: 138px;  background: url(https://firefox.club.tw/static/img/event/every-moment/upload/upload-pic.png);}</p>
+<p>很簡單對吧？</p>
+<h2>上傳前的照片預覽</h2>
+<p>照片上傳之前有一個重要的功能－預覽 ，</p>
+<p>使用者透過預覽可以確認自己選的圖看起來如何，</p>
+<p>甚至做一些簡單的調整。</p>
+<p>這個功能如果可以在瀏覽器本機端就完成是最好不過了，</p>
+<p>省去上傳等待半天又來回修改換圖的麻煩。</p>
+<p>透過 HTML5 的 <br>			FileReader  API （註 1）要做照片預覽現在非常容易，</p>
+<p>只要使用 <br>			readDataAsURL  將檔案載入即可：</p>
+<p>function loadImage(e) {<br>    var image = new Image();<br>    image.src = e.target.result;<br>}<br>function previewImage() {<br>    var reader = new FileReader();<br>    var file = document.getElementById(&quot;id_image_large&quot;).files[0];<br>    reader.readAsDataURL(file);<br>    reader.onload = loadImage;<br>}<br>$(&#39;#id_image_large&#39;).change(previewImage);</p>
+<p>					1234567891011</p>
+<p>						function loadImage(e) {    var image = new Image();    image.src = e.target.result;}function previewImage() {    var reader = new FileReader();    var file = document.getElementById(&quot;id_image_large&quot;).files[0];    reader.readAsDataURL(file);    reader.onload = loadImage;}$(&#39;#id_image_large&#39;).change(previewImage);</p>
+<p>			readDataAsURL  的作用是將本機的圖片檔案讀進瀏覽器中，</p>
+<p>並將圖片資料轉換為 Base64 編碼的 Data URL（註 2）。</p>
+<p>只要在 <br>			file input  的 <br>			change  事件中讀進檔案轉換為 URL，</p>
+<p>並且在 reader 的 <br>			onload  事件中將轉換完成的圖片 URL（<br>			e.target.result ）</p>
+<p>塞給目標圖片的（<br>			img  標籤） <br>			src  屬性即可。</p>
+<h3>拖曳改變圖片裁切位置</h3>
+<p>為了統一上傳圖片的大小，我想在上傳前就把預先裁切至適當比例，</p>
+<p>最簡單的作法可以直接把裁切範圍鎖定在中間，</p>
+<p>但考慮不同構圖方式只切中間可能會把重點切掉影響呈現效果，</p>
+<p>決定還是讓使用者在上傳前可以橫向拖曳圖片，</p>
+<p>以調整至最適合的裁切位置。</p>
+<p>不想把功能和程式做得太複雜，所以經過討論這次只支援橫向拖曳，</p>
+<p>利用 JQuery UI Draggable（註 3） 的限制移動功能，可以防止圖片被拖到外太空去，</p>
+<p>這個功能有兩個屬性可以設定：</p>
+<ul><li>axis 可以把拖曳限制在 x 軸或 y 軸上</li></ul>
+<ul><li>containment 可以把拖曳限制在指定元素的範圍之內</li></ul>
+<p>所以我們只需要將圖片依比例縮至符合外框大小，再依圖片和外框比例判斷要限制在哪一軸，</p>
+<p>並且做出一個大小剛好不會讓圖片被拖出界的元素即可，如下圖的淺藍色範圍：</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/draggable-container.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/draggable-container.png" alt="draggable-container" loading="lazy"></a></p>
+<p>簡單來說，假設圖片的寬高比例比外框寬，就會限制成橫向拖曳，</p>
+<p>因此我們就需要一個高度和圖片一樣，寬度比圖片長一些的 containment 元素。</p>
+<p>要如何算出它的寬度呢？如果上傳的照片寬度為 w，而外框寬度為 m，</p>
+<p>整張圖片的可拖曳寬度就是 <br>			2w - m ，以此作為 containment 元素的寬度，</p>
+<p>就可以將拖曳範圍恰恰限縮在不會超界的範圍。</p>
+<p>$(&#39;#dragger&#39;).draggable({<br>    containment: &quot;#container&quot;,<br>    scroll: false,<br>    axis: horizontal ? &#39;x&#39; : &#39;y&#39;,<br>    stop: function() {<br>        // convert and save current position<br>    }<br>});</p>
+<p>					12345678</p>
+<p>						$(&#39;#dragger&#39;).draggable({    containment: &quot;#container&quot;,    scroll: false,    axis: horizontal ? &#39;x&#39; : &#39;y&#39;,    stop: function() {        // convert and save current position    }});</p>
+<p>上面這段是用來啟動 Draggable 的程式，</p>
+<p>想知道如何把圖片縮放至適當比例請參考 <br>			resizeImage  函式，</p>
+<p>詳細計算元素寬高、比例、初始位置的邏輯詳見 <br>			initImagePosition  函式，</p>
+<p>本文就不多加詳述。</p>
+<h3>處理照片旋轉</h3>
+<p>最麻煩的問題來了，現在的智慧型手機大多有陀螺儀，</p>
+<p>大家可以用任何角度，愛怎麼拍就怎麼拍，</p>
+<p>轉置角度的資訊會存在照片裡。</p>
+<p>秀圖軟體就會依照轉置資訊把圖轉正。</p>
+<p>聽起來好像很簡單，</p>
+<p>但目前要在前端去處理轉置資訊需要透過第三方函式庫解析圖片裡的 EXIF 資料，</p>
+<p>再判斷八種不同的轉置角度來決定轉正的方式。</p>
+<p>在這個範例中引用的是 <a href="https://github.com/jseidelin/exif-js">exif.js</a>，<a href="https://www.nihilogic.dk/labs/exif/">作者 Nihilogic 的網站</a>有簡單的介紹和展示，</p>
+<p>運用這個函式庫就可以讀進圖片並解析其 EXIF 中的 Orientation 資訊：</p>
+<p>image.onload = function (e) {<br>    var bin = atob(e.target.src.split(&#39;,&#39;)[1]);<br>    var exif = EXIF.readFromBinaryFile(new BinaryFile(bin));<br>    var rotated = false;<br>    switch (exif.Orientation) {<br>        case 8:<br>            $(this).removeClass().addClass(&#39;rotate-90&#39;);<br>            rotated = true;<br>            break;<br>        case 3:<br>            $(this).removeClass().addClass(&#39;rotate180&#39;);<br>            break;<br>        case 6:<br>            $(this).removeClass().addClass(&#39;rotate90&#39;);<br>            rotated = true;<br>            break;<br>        default:<br>            break;<br>    }<br>}</p>
+<p>					1234567891011121314151617181920</p>
+<p>						image.onload = function (e) {    var bin = atob(e.target.src.split(&#39;,&#39;)[1]);    var exif = EXIF.readFromBinaryFile(new BinaryFile(bin));    var rotated = false;    switch (exif.Orientation) {        case 8:            $(this).removeClass().addClass(&#39;rotate-90&#39;);            rotated = true;            break;        case 3:            $(this).removeClass().addClass(&#39;rotate180&#39;);            break;        case 6:            $(this).removeClass().addClass(&#39;rotate90&#39;);            rotated = true;            break;        default:            break;    }}</p>
+<p>再依照不同的 Orientation 值做對應的圖片旋轉，</p>
+<p>Orientation 的值共有八種，這在 <a href="https://jpegclub.org/exif_orientation.html">JPEGclub</a> 上有詳細的解說，</p>
+<p>八種值其中四種包含了鏡像翻轉，在大部分的情況下不需考慮鏡像翻轉，</p>
+<p>沒有旋轉的情況也不需要處理，所以只要判斷 8、3、6三個值即可。</p>
+<h4>期待簡易的新標準</h4>
+<p>目前針對 HTML5 標準的草案中，</p>
+<p>有一個針對圖片旋轉作處理的 CSS 特性 <br>			image-orientation 。</p>
+<p>我在寫這篇文章的時候只有 Firefox 支援這個實驗性的特性，</p>
+<p>它的作用除了自行指定圖片的旋轉角度、翻轉方式以外，</p>
+<p>image-orientation: from-image;</p>
+<p>					1</p>
+<p>						image-orientation: from-image;</p>
+<p>這行 CSS 設定即可讓圖片依據 EXIF 中的資訊進行旋轉及翻轉。</p>
+<p>期待它能成為新的 HTML5 標準吧！</p>
+<h2>One more thing…再加個假掰光暈動畫</h2>
+<p>最後教大家用 CSS 的影格動畫（keyframe animation）做一個超搶眼的光暈閃爍動畫，</p>
+<p>把它放在要強調的按鈕後面，讓網站的使用者想不看到你的按鈕都沒辦法：</p>
+<p>@keyframes spot {<br>  0% {<br>    opacity: 1;<br>  }<br>  50% {<br>    opacity: 0;<br>  }<br>  100% {<br>    opacity: 1;<br>  }<br>}</p>
+<p>.spotlight {<br>  background: radial-gradient(ellipse at center, #ffffff 0%, rgba(255, 255, 255, 0) 70%);<br>  animation: spot 1.5s linear infinite;<br>}</p>
+<p>					12345678910111213141516</p>
+<p>						@keyframes spot {  0% {    opacity: 1;  }  50% {    opacity: 0;  }  100% {    opacity: 1;  }} .spotlight {  background: radial-gradient(ellipse at center, #ffffff 0%, rgba(255, 255, 255, 0) 70%);  animation: spot 1.5s linear infinite;}</p>
+<p>如果你對這段 CSS 的長相和它的作用感到疑惑，底下就稍微解釋一下運作原理：</p>
+<p>首先在 <br>			@keyframe  區塊中定義動畫進度百分之幾時需要漸變的屬性目標值，</p>
+<p>瀏覽器會根據時間動畫長度、時間函式（timing function）、</p>
+<p>以及目前動畫播放的進度，算出一個介於中間的值。</p>
+<p>以閃爍的動畫來說，只需要讓 <br>			opacity  屬性從 1 漸變成 0，再從 0 漸變成 1 即可，</p>
+<p>在範例中 <br>			.spotlight  選擇器中的 <br>			animation  屬性指定 <br>			spot  作為動畫的影格設定，</p>
+<p>假設 20 秒作為動畫長度，時間函式設為線性（Linear），</p>
+<p>那麼在剛開始播放第 0 秒的時候，等於是 <br>			keyframe  的 0%，</p>
+<p>光暈的 <br>			opacity  會是 1，也就是完全不透明，</p>
+<p>第 10 秒時，播放進度到達 50%，<br>			opacity  漸變為 0，完全變成透明了，</p>
+<p>那麼在第 15 秒的時候呢？15 秒對 20 秒來說是 75%，等於 50% 到 100% 的半路上，</p>
+<p>所以 <br>			opacity  的值是 0.5，呈現出半透明的效果，以此類推。</p>
+<p>以上就是這個動畫運算的基本原理。</p>
+<p>附帶一提最後的 <br>			infinte  設定可以讓動畫無限循環播放。</p>
+<p>關於 CSS 動畫更多詳細的說明、範例和各瀏覽器支援度請參考 MDN 的 <a href="https://developer.mozilla.org/zh-TW/docs/CSS_%E5%8B%95%E7%95%AB">CSS 動畫</a>文件。</p>
+<p>至於光暈的背景如果不想用圖片的話，可以參考本範例利用 CSS 的 <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/radial-gradient">radial - gradient</a>  功能。</p>
+<p>很驚訝原來這些功能都能在網頁上運作嗎？你也試著來做做看吧！</p>
+<h2>參考資料</h2>
+<p>註 1：<a href="https://developer.mozilla.org/en-US/docs/Web/API/FileReader">FileReader API</a> 是 HTML5 的新 API，讓瀏覽器得以讀取客戶端電腦的檔案。</p>
+<p>註 2：<a href="https://en.wikipedia.org/wiki/Data_URI_scheme">Data URL</a>也是 URL 的一種標準規範，可將完整檔案資料直接嵌入URL中。</p>
+<p>註 3：<a href="https://jqueryui.com/draggable/">JQuery UI Draggable</a> 是 <a href="https://jqueryui.com/">JQuery UI</a>套件中用來處理元素拖放的擴充套件。</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20141202231615id_/https://tech.mozilla.com.tw/?p=3738">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

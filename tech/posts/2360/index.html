@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>伸縮自如 – Gaia 的多解析度支援 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-07/">2013 年 7 月</a><b>&raquo;</b><a href="../../posts/2360/">伸縮自如 – Gaia 的多解析度支援</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-07-22" class="published"><span class="posted-month">7月</span><span class="posted-date">22</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">伸縮自如 – Gaia 的多解析度支援</h1>
+            </header>
+            <div class="entry-content"><p>雖然 Firefox OS 以 Android 無法深入開拓的低階手機為第一波市場主打，但這可不表示 Firefox OS 只能在小螢幕上執行。目前 Firefox OS 已初步支援 HVGA (320×480)、WVGA (480×800)、qHD (540×960) 三種解析度。以 Web 技術作為使用者介面的 Firefox OS 如何實踐這些解析度的支援？讓我們來看一些在 Gaia 中實作的軌跡。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221.jpg"><img src="../../assets/2360/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg" alt="Firefox OS on Galaxy SII, WVGA, 480x800" loading="lazy"></a>Firefox OS on Galaxy S-II, 480 × 800 (WVGA)</p>
+<h5>HIDPI 參數</h5>
+<p>在高解析度下，就要有對應的高解析度圖片來獲得理想的畫質。在 Gaia 中可以看到很多圖片是成對的，舉例來說向左的箭頭有 arrow-left.png 跟 arrow-left@2x.png 兩個圖檔。聰明的讀者應該已經猜到，後面以 @2x 結尾的圖片就是用在高解析度螢幕，它的長寬各是前者的兩倍。當我們以 HIDPI=1 為環境變數安裝 Gaia 的時候：</p>
+<p>$ HIDPI=1 make install-gaia</p>
+<p>Makefile 就會自動將 @2x.png 的圖片置換進去，便是支援高解析度裝置的第一步。</p>
+<h5>字體與版面的縮放：rem</h5>
+<p>當裝置解析度改變，字體跟圖片也需要跟著縮放至合適的大小。為了將不同的大小套用至整個程式，直到不久之前的做法，是使用 rem 這個單位。 rem 是相對於 &lt;html&gt; 的字型大小，舉例來說，若我們設定&lt;html&gt;的 font-size 為 10px ，則 1.5rem 就是 10px × 5 = 15px 。在 Gaia 中的 CSS 幾乎全部都是以 rem 為單位：</p>
+<p>#scan-title {</p>
+<p>position: absolute;</p>
+<p>top: 3rem;</p>
+<p>left: 5rem;</p>
+<p>right: 0;</p>
+<p>height: 2rem;</p>
+<p>line-height: 1.9rem;</p>
+<p>padding-left: .5rem;</p>
+<p>font-size: 1.4rem;</p>
+<p>…</p>
+<p>}</p>
+<p>這樣一來，只要改變 &lt;html&gt; 的 font-size 僅管使用 rem 是至今為止的作法，但如後面將說明的 CSS Pixel 跟的 Device Pixel Ratio 已正式實作之際，現已可不必特意全部使用 rem。</p>
+<h5>Background-size</h5>
+<p>另一方面，為了讓高解析度的圖片能在不同解析度上對應的尺寸都正確，圖片的大小也一律預先指定。像是如下的樣式：</p>
+<p>background: url(images/wallpaper_edit.png) no-repeat 25rem 11.5rem / 4.5rem;</p>
+<p>後方的 / 4.5rem，即 background-size 的縮略寫法，就是將圖片的大小預先指定好，好讓一份圖片在不同的裝置上能正確縮放到對應的大小，就算使用的圖片跟對應的螢幕的尺寸不一樣也沒關係。</p>
+<h5>Responsive.css</h5>
+<p>最後一步就是要得知該使用多大的 font-size 了。要判別不同解析度的螢幕，便是 Media Query 派上用場的時候。目前為止在 Gaia 上的 App 皆引入 Responsive.css 這個檔案來偵測 App 該使用的字型大小。舉一段例子：</p>
+<p> /<em>Portrait</em>/</p>
+<p>@media all and (min-device-width: 480px) and (max-device-width: 540px) and (max-device-aspect-ratio: 1/1) {</p>
+<p>html { font-size: 94%!important; }</p>
+<p>}</p>
+<p>…</p>
+<p>上面所節錄的條件，是用來設定在解析介於 WVGA (480×800) 但不到 qHD (540×960) 的裝置的 font-size 為 15px (100%為16px，故取94%=15.04px) 。對應到的是垂直方向螢幕。這個檔案算是暫時的解決方案，往後透過下述的 CSS 像素比例跟密度支援，將不再需要引入這個檔案。</p>
+<h5>CSS 像素比例 (CSS Device Pixel Ratio) 與像素密度 (Device Pixel Density)</h5>
+<p>Gecko 偵測行動裝置 CSS 像素比例的能力在最近已經完成。意即 1px 實際對應到的長度，要視裝置的像素密度而定。譬如說，在 CSS 像素比例是 1.5 的 Galaxy SII 上，我們寫在 CSS 裡的 1 個 pixel ，實際上會在裝置上畫出 1.5 個 pixel 。 responsive.css 的存在，便是想在 Gecko 完成這個功能前代勞這件事，兩者是等價的。往後 Gaia 就能用更簡潔的方式來達成 Responsive Design，使用以往的 px 跟 background-size 即可，不再需要特地保留 rem 跟 responsive.css 。</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/css/">CSS</a></span><span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20191118145726id_/https://tech.mozilla.com.tw/?p=2360">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

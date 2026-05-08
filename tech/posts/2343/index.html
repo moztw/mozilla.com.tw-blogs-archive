@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>ECMAScript 6 Features in Firefox | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../posts/2343/">ECMAScript 6 Features in Firefox</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time>日期不明</time></p>
+              <h1 class="entry-title">ECMAScript 6 Features in Firefox</h1>
+            </header>
+            <div class="entry-content"><p>所謂的 ECMAScript，其實就是我們日常在用的 Javascript，只是當初因為商標的問題，所以後來把這個語言的規範改叫作 ECMAScript。目前市面上的瀏覽器已經支援到 ECMAScript 5，也就是 ECMAScript 262 5th Edition了。但 ECMAScript 的下一個版本，ECMAScript 6，已經早在 2008 年就開始在討論和實作中了，並且有個 codename 叫 ECMAScript Harmony，所以當你在一些其他地方看到 ECMAScript 6 或 ECMAScript Harmony，其實它們都是指同一個東西。而 ECMAScript 6 除了加了很多新的語法跟功能之外，另一個很大的優點是，它完全跟現在的 ECMAScript 5 相容，也就是你現在所學的 Javascript 的功能，未來在 ECMAScript 6 都一樣可以執行。在 Javascript 愈來愈成熟的情況下，提倡著 “The Web is the Platform&quot; 的 Mozilla， 更是不留餘力的在 ECMAScript 6 的設計跟實作上投入大量的資源，所以今天這篇文章，就是要來介紹 Javascript 的 Pioneer， Mozilla 已經在 Firefox 上面實作完成，並且被大量使用的 ECMAScript 6 Feature。</p>
+<p>首先要介紹的就是 let 這個 keyword ，Javascript 原本用來宣告變數的 keyword 是 var ，但 var 的不方便地方在於它是 Function scope ，而不是我們常用的 Block scope 。 例如:</p>
+<p>function foo() {</p>
+<p>  for (var i = 0; i &lt;= 10; i++) {<br>    ...<br>  }</p>
+<p>  console.log(i); // print 10<br>}<br>對一般 C/C++ 的開發者，看到上面這個常見的迴圈，會很直覺的以為變數 i 的週期只有在 for loop 裡，但實際上， i 的 scope 不只在 for loop 裡，反而是在整個 function foo 裡面。如果想要讓 i 的 scope 只留在 for loop 裡的話，就只要把 var 換成 let 就好了，也就是:</p>
+<p>function foo() {</p>
+<p>  for (let i = 0; i &lt;= 10; i++) {<br>    ...<br>  }</p>
+<p>  console.log(i); // print &#39;undefined&#39;<br>}<br>let 還有另一個優點，就是如果一個變數重覆宣告的話，它會產生 TypeError 出來。</p>
+<p> if (x) {<br>  let foo;<br>  let foo;  // TypeError will be thrown<br>}<br>第二個常見的 Feature 就是 for of ，</p>
+<p>它有點像 for in ，只是 for in 是針對 object 的 property name  ，而 for of 是針對 Array 的 property value 。</p>
+<p>例如:</p>
+<p>let arr = [ 3, 5, 7 ];<br>arr.foo = &quot;hello&quot;;</p>
+<p>for (let i in arr) {<br>   console.log(i); // logs &quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;foo&quot;<br>}</p>
+<p>for (let i of arr) {<br>   console.log(i); // logs &quot;3&quot;, &quot;5&quot;, &quot;7&quot;<br>}<br>第三個 Feature 是跟 String 有關，像是常見的 startsWith， endsWith，這些 method 主要是用來檢查某些 String 的開頭或結尾是不是由某些字元或字串組成的，雖然這在其他語言是很常見的功能，但在 Javascript 上，它可是等到  ECMAScript 6 才變成規範的呢!</p>
+<p>最後一個，同時也是最複雜的一個，就是 Destructuring Assigment</p>
+<p>首先來個簡單的例子</p>
+<p>let a = 1; <br>let b = 2;<br>[a, b] = [b, a];<br>在第三行執行完後，a 與 b 的內容就會互換了，也就是 a = 2 , b = 1 。</p>
+<p>看起來蠻簡單的呀，怎麼會複雜呢~~~</p>
+<p>但其實這個功能的用法有更複雜的，而且在 Firefox 的 codebase 裡，幾乎每個用 Javascript 寫的 module 都會在一開始就用到這個功能。</p>
+<p>最常見的例子就是</p>
+<p>const {classes: Cc, interfaces: Ci, utils: Cu, results: Cr} = Components;<br>如果讀者不知道有 Destructuring Assigment 這個 syntax 的話，一定會想，這行 code 到底是怎麼跑得過呀 !!??</p>
+<p>等號的左邊怎麼沒有變數名稱?</p>
+<p>大括號裡面的 Cc, Ci, Cu 跟 Cr 又是從哪來的?</p>
+<p>Components 這 object 又是如何 assign 給左邊的 object ?</p>
+<p>左邊的大括號裡面的 name: value 又是要作什麼的 ?</p>
+<p>筆者一開始看到這語法時也是腦袋一大堆問號………….</p>
+<p>但其實這行，就等於下面的程式碼</p>
+<p>const Cc = Components.classes;<br>const Ci = Components.interfaces;<br>const Cu = Components.utils;<br>const Cr = Components.results;<br>再回頭看看原本那行程式，這語法還真的複雜許多了!!</p>
+<p>以上就是目前在 Firefox 裡常用的 ECMAScript 6 的 Feature 。如果讀者還是想多了解 Firefox 裡其他 ECMAScript 6 Feature 的話，可以看 Mozilla 的 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=harmony">Bug 694100</a> 。</p>
+<p>或者是想了解各家瀏覽器對 ECMAScript 6 支援程度的話，可以看下面這個 URL</p>
+<p><a href="https://kangax.github.io/es5-compat-table/es6/">http://kangax.github.io/es5-compat-table/es6/</a></p></div>
+            <footer class="entry-footer">
+              
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20130705134635id_/https://tech.mozilla.com.tw/?p=2343">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

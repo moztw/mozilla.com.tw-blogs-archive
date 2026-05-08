@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>99% CPU Usage！Why ? | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2012-06/">2012 年 6 月</a><b>&raquo;</b><a href="../../posts/139/">99% CPU Usage！Why ?</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2012-06-11" class="published"><span class="posted-month">6月</span><span class="posted-date">11</span><span class="posted-year">2012</span></time></p>
+              <h1 class="entry-title">99% CPU Usage！Why ?</h1>
+            </header>
+            <div class="entry-content"><p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/06/CPU-Usage-Why.jpg"><img src="../../assets/139/wp-content/uploads/2012/06/CPU-Usage-Why-1024x1024.jpg" alt="" loading="lazy"></a></p>
+<p>前陣子接到一個新任務，就是要把 B2G 移植到新的 Samsung Galaxy S2 手機上。雖然這支手機也是 Galaxy S2，不過，他的 model name 是 GT-I9100G ，跟台灣市售的 GT-I9100 是完全不同的平台，有興趣的朋友可以參考<a href="https://en.wikipedia.org/wiki/Samsung_Galaxy_S_II">這裡</a>。移植的過程中碰到了不少問題，在看到 B2G 成功的在新手機上跑起來，內心說真的還蠻感動的。移植成功後，當然要測試一下各個功能是否正常囉！嗯，看起來 Touch 功能是正常的，滑來滑去，還蠻順的。接著，再來放個電影看看， 哈哈！聲音和影像都正常呢！WiFi 連線也沒有問題，終於成功了。正當得意之際，突然發現怎麽 Touch 功能不會動了呢？當滑動螢幕時，系統一直把滑動 event 誤判為 Do you want to uninstall your &lt;app&gt;，難道是 input event 的偵測出了問題？</p>
+<p>Input event 實作的進入點目前是在 gecko/widget/gonk 這個目錄下的 nsAppShell.cpp，而 input event 的處理則是透過 Android framework 下的 libui 函式庫來實作，並且透過 widget/gonk/nsWindow.cpp 的 DispatchInputEvent () 函式將從 input device 所接收到的 event 傳到對應的 component 作處理。Input device 的 device nodes 目前是位於 /dev/input，有興趣的朋友可以 Trace 一下相關的程式碼。利用 logcat，我們可以得到 input event 的 debug 訊息，但是要先打開 gecko/widget/gonk/libui/InputReader.cpp 的 debug flag。</p>
+<p>#define LOG_NDEBUG 1<br>// Log debug messages for each raw event received from the EventHub.<br>#define DEBUG_RAW_EVENTS 1</p>
+<p>					123</p>
+<p>						#define LOG_NDEBUG 1// Log debug messages for each raw event received from the EventHub.#define DEBUG_RAW_EVENTS 1</p>
+<p>打開 debug flag 再重新 編輯後，我們可以得到 InputReader 相關的 log，經過我們的分析後，我們發現 input event 的偵測部分是正常運作的，那問題到底出在什麽地方呢 ？</p>
+<p>D/InputReader( 4518): syncTouch: pointerCount 1 -&gt; 1, touching ids 0x80000000 -&gt; 0x80000000<br>D/InputReader( 4518): Input event: device=5 type=0x0003 scancode=0x0035 keycode=0x0000<br>D/InputReader( 4518): Input event: device=5 type=0x0003 scancode=0x0036 keycode=0x0000<br>D/InputReader( 4518): Input event: device=5 type=0x0003 scancode=0x0030 keycode=0x0000<br>D/InputReader( 4518): Input event: device=5 type=0x0003 scancode=0x0032 keycode=0x0000<br>D/InputReader( 4518): Input event: device=5 type=0x0003 scancode=0x0039 keycode=0x0000<br>D/InputReader( 4518): Input event: device=5 type=0x0000 scancode=0x0002 keycode=0x0000<br>D/InputReader( 4518): Input event: device=5 type=0x0000 scancode=0x0000 keycode=0x0000</p>
+<p>					12345678</p>
+<p>						D/InputReader( 4518): syncTouch: pointerCount 1 -&gt; 1, touching ids 0x80000000 -&gt; 0x80000000D/InputReader( 4518): Input event: device=5 type=0x0003 scancode=0x0035 keycode=0x0000D/InputReader( 4518): Input event: device=5 type=0x0003 scancode=0x0036 keycode=0x0000D/InputReader( 4518): Input event: device=5 type=0x0003 scancode=0x0030 keycode=0x0000D/InputReader( 4518): Input event: device=5 type=0x0003 scancode=0x0032 keycode=0x0000D/InputReader( 4518): Input event: device=5 type=0x0003 scancode=0x0039 keycode=0x0000D/InputReader( 4518): Input event: device=5 type=0x0000 scancode=0x0002 keycode=0x0000D/InputReader( 4518): Input event: device=5 type=0x0000 scancode=0x0000 keycode=0x0000</p>
+<p>好吧，用 top 來看一下有沒有什麽線索好了。哇！B2G process 的 CPU usage 居然是 99％耶，由於目前 B2G 這個 project 是 multi-threads 的架構，因此，首先我們必需知道每個 threads 的 CPU usage：</p>
+<p>#top</p>
+<p>					1</p>
+<p>						#top</p>
+<p>Mem: 167724K used, 782204K free, 0K shrd, 3112K buff, 49140K cached<br>CPU: 68.1% usr  6.1% sys  0.0% nic 25.6% idle  0.0% io  0.0% irq  0.0% sirq<br>Load average: 7.33 8.06 8.51 3/170 14358<br>  PID  PPID USER     STAT   VSZ %VSZ %CPU COMMAND<br>14166 14163 root     R     158m 16.9 99.2 /system/b2g/b2g<br>14352 14299 root     R     1864  0.1  0.1 top<br>    7     2 root     SW       0  0.0  0.1 [events/0]<br> 9660     1 media    S &lt;  25136  2.6  0.0 /system/bin/mediaserver<br> 9525     1 media    S    19008  1.9  0.0 /system/bin/syslink_daemon.out -f /sys<br> 9520     1 radio    S     9560  1.0  0.0 /system/bin/rild<br> 9524     1 system   S     4728  0.4  0.0 /system/bin/npsmobex<br> 9521     1 root     S     3956  0.4  0.0 /system/bin/vold<br> 9523     1 root     S     3948  0.4  0.0 /system/bin/netd<br> 9541     1 root     S     3452  0.3  0.0 /sbin/adbd</p>
+<p>					1234567891011121314</p>
+<p>						Mem: 167724K used, 782204K free, 0K shrd, 3112K buff, 49140K cachedCPU: 68.1% usr  6.1% sys  0.0% nic 25.6% idle  0.0% io  0.0% irq  0.0% sirqLoad average: 7.33 8.06 8.51 3/170 14358  PID  PPID USER     STAT   VSZ %VSZ %CPU COMMAND14166 14163 root     R     158m 16.9 99.2 /system/b2g/b2g14352 14299 root     R     1864  0.1  0.1 top    7     2 root     SW       0  0.0  0.1 [events/0] 9660     1 media    S &lt;  25136  2.6  0.0 /system/bin/mediaserver 9525     1 media    S    19008  1.9  0.0 /system/bin/syslink_daemon.out -f /sys 9520     1 radio    S     9560  1.0  0.0 /system/bin/rild 9524     1 system   S     4728  0.4  0.0 /system/bin/npsmobex 9521     1 root     S     3956  0.4  0.0 /system/bin/vold 9523     1 root     S     3948  0.4  0.0 /system/bin/netd 9541     1 root     S     3452  0.3  0.0 /sbin/adbd</p>
+<p>我們可以利用 toolbox 所提供的 top 指令來獲得 Thread level 的 CPU usage 資訊。除了 top 指令外，B2G project 也支援了 perf 及 oprofile 這兩個常見的工具，對於 performance profiling 有興趣的朋友可以參考<a href="https://wiki.mozilla.org/B2G/Profiling">這裡</a>。</p>
+<p>toolbox top -t -m 10</p>
+<p>					1</p>
+<p>						toolbox top -t -m 10</p>
+<p>User 55%, System 42%, IOW 0%, IRQ 0%<br>User 340 + Nice 0 + Sys 264 + Idle 11 + IOW 0 + IRQ 0 + SIRQ 0 = 615</p>
+<p>  PID   TID CPU% S     VSS     RSS PCY UID      Thread          Proc<br>14166 14241  39% R 392632K 309500K  fg root     b2g             /system/b2g/b2g<br>14166 14166  38% S 392632K 309500K  fg root     b2g             /system/b2g/b2g<br>14166 14235  13% R 392632K 309500K  fg root     b2g             /system/b2g/b2g<br>14166 14194   3% R 392632K 309500K  fg root     b2g             /system/b2g/b2g<br>14166 14196   2% S 392632K 309500K  fg root     b2g             /system/b2g/b2g<br>15057 15057   0% R   1028K    420K  fg root     toolbox         toolbox<br>  874   874   0% S      0K      0K  fg root     mmcqd<br>14166 14205   0% S 392632K 309500K  fg root     b2g             /system/b2g/b2g<br>  800   800   0% S      0K      0K  fg root     khotplug/0<br> 1011  1011   0% S      0K      0K  fg root     OMAPVOUT</p>
+<p>					1234567891011121314</p>
+<p>						User 55%, System 42%, IOW 0%, IRQ 0%User 340 + Nice 0 + Sys 264 + Idle 11 + IOW 0 + IRQ 0 + SIRQ 0 = 615   PID   TID CPU% S     VSS     RSS PCY UID      Thread          Proc14166 14241  39% R 392632K 309500K  fg root     b2g             /system/b2g/b2g14166 14166  38% S 392632K 309500K  fg root     b2g             /system/b2g/b2g14166 14235  13% R 392632K 309500K  fg root     b2g             /system/b2g/b2g14166 14194   3% R 392632K 309500K  fg root     b2g             /system/b2g/b2g14166 14196   2% S 392632K 309500K  fg root     b2g             /system/b2g/b2g15057 15057   0% R   1028K    420K  fg root     toolbox         toolbox  874   874   0% S      0K      0K  fg root     mmcqd14166 14205   0% S 392632K 309500K  fg root     b2g             /system/b2g/b2g  800   800   0% S      0K      0K  fg root     khotplug/0 1011  1011   0% S      0K      0K  fg root     OMAPVOUT</p>
+<p>利用 toolbox 所提供的 top 指令，我們可以知道 TID = 14241 , 14166 及 TID ＝ 14235 這幾個 Threads 佔用了最多的 CPU 資源，因此，我們可以透過 GDB 這個工具來看看到底這幾個 Threads 發生了什麽事情。</p>
+<p>GDB 是「 The GNU Project Debugger」 的縮寫，對 GDB 這個工具不熟悉的朋友，可以參考 <a href="https://www.gnu.org/software/gdb/documentation/">GNU 的網站</a>。為了簡化 GDB 的設定， B2G project 提供了 簡單的 <a href="https://wiki.mozilla.org/B2G/gdb">make 指令</a>來設定 GDB，我們可以用 make run-gdb 這個指令來啟動 GDB。在執行了make run-gdb 指令後，應該會看到 gdb 的命令提示符號，這時，我們就可以利用 gdb 所支援的功能繼續 debug 了。</p>
+<p>vchang@vchang:~/project/b2g$ make run-gdb<br>(gdb)</p>
+<p>					12</p>
+<p>						vchang@vchang:~/project/b2g$ make run-gdb(gdb)</p>
+<p>我這裏先介紹幾個常用的 GDB 指令：</p>
+<h1>設定中斷點，</h1>
+<p>break location =&gt; location 可以是函式名稱，某個檔案的某一行或是指令的記憶體位置 </p>
+<h1>看 process 或是 Thread 的 backtrace，</h1>
+<p>backtrace<br>bt</p>
+<h1>列出 B2G process 所有的 Thread 資訊</h1>
+<p>info threads </p>
+<h1>列出目前設定的中斷點</h1>
+<p>info b</p>
+<h1>切換到不同的 Thread</h1>
+<p>thread [id]</p>
+<h1>單步執行</h1>
+<p>step</p>
+<h1>在同一函式單步執行</h1>
+<p>next</p>
+<h1>連續執行</h1>
+<p>continue </p>
+<h1>中斷目前指令</h1>
+<p>ctrl + c</p>
+<h1>遇到中斷點時執行的指令</h1>
+<p>commands [range...]<br>... command-list ...<br>end</p>
+<h1>關掉標頁數的功能</h1>
+<p>set pagination off</p>
+<p>					1234567891011121314151617181920212223242526272829303132333435</p>
+<p>						# 設定中斷點，break location =&gt; location 可以是函式名稱，某個檔案的某一行或是指令的記憶體位置  # 看 process 或是 Thread 的 backtrace，backtracebt # 列出 B2G process 所有的 Thread 資訊info threads  # 列出目前設定的中斷點info b # 切換到不同的 Threadthread [id] # 單步執行step # 在同一函式單步執行next # 連續執行continue  # 中斷目前指令ctrl + c # 遇到中斷點時執行的指令commands [range...]... command-list ...end # 關掉標頁數的功能set pagination off</p>
+<p>設定好 GDB 後，我們可以利用 top 指令所得到的 Thread ID 及 GDB 來確定是那一個 Threads 發生問題。首先，我們利用 info threads 得到 Id － Thread id 的對應關係：</p>
+<p>(gdb) info threads<br>  Id   Target Id         Frame<br>  22   Thread 14166.14241 poll () at bionic/libc/arch-arm/syscalls/poll.S:15<br>  21   Thread 14166.14240 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200<br>  20   Thread 14166.14235 sqlite3VXPrintf (pAccum=0x449ff89c, useExtended=, fmt=, ap=...)<br>  19   Thread 14166.14234 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200<br>  18   Thread 14166.14233 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200<br>  17   Thread 14166.14231 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200<br>  16   Thread 14166.14228 syscall () at bionic/libc/arch-arm/bionic/syscall.S:50<br>  15   Thread 14166.14210 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200<br>  14   Thread 14166.14208 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200<br>  13   Thread 14166.14207 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200<br>  12   Thread 14166.14202 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200<br>  11   Thread 14166.14205 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200<br>  10   Thread 14166.14203 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200<br>  9    Thread 14166.14200 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200<br>  8    Thread 14166.14199 0xffff0520 in ?? ()<br>  7    Thread 14166.14198 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200<br>  6    Thread 14166.14197 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200<br>  5    Thread 14166.14196 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200<br>  4    Thread 14166.14195 0xffff0520 in ?? ()<br>  3    Thread 14166.14194 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200<br>  2    Thread 14166.14193 syscall () at bionic/libc/arch-arm/bionic/syscall.S:50</p>
+<ul><li>1    Thread 14166.14166 0x82cb1090 in test (name=, entry=, pobj=, pc=, this=, obj=, cx=</li></ul>
+<p>					123456789101112131415161718192021222324</p>
+<p>						(gdb) info threads  Id   Target Id         Frame  22   Thread 14166.14241 poll () at bionic/libc/arch-arm/syscalls/poll.S:15  21   Thread 14166.14240 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200  20   Thread 14166.14235 sqlite3VXPrintf (pAccum=0x449ff89c, useExtended=, fmt=, ap=...)  19   Thread 14166.14234 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200  18   Thread 14166.14233 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200  17   Thread 14166.14231 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200  16   Thread 14166.14228 syscall () at bionic/libc/arch-arm/bionic/syscall.S:50  15   Thread 14166.14210 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200  14   Thread 14166.14208 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200  13   Thread 14166.14207 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200  12   Thread 14166.14202 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200  11   Thread 14166.14205 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200  10   Thread 14166.14203 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200  9    Thread 14166.14200 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200  8    Thread 14166.14199 0xffff0520 in ?? ()  7    Thread 14166.14198 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200  6    Thread 14166.14197 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200  5    Thread 14166.14196 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200  4    Thread 14166.14195 0xffff0520 in ?? ()  3    Thread 14166.14194 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200  2    Thread 14166.14193 syscall () at bionic/libc/arch-arm/bionic/syscall.S:50* 1    Thread 14166.14166 0x82cb1090 in test (name=, entry=, pobj=, pc=, this=, obj=, cx=</p>
+<p>接著利用 thread id 指令來切換目前的 Thread ，最後再利用 bt 指令來看這個 Thread 目前 stack 的 backtrace。利用 stack 的 backtrace 資訊，我們就可以知道目前這個 Thread 正在執行的函式了，有了這些資訊，再配合原始碼，就可以幫助我們判斷問題發生的原因了。</p>
+<p>在這個例子裡，我們利用 GDB 及 top 指令來幫忙解決將 B2G 移植到新手機時 input event 判斷錯誤的問題，以這些工具所收集到的資訊並加以分析之後，我們發現是 Timer Thread 進入了無窮迴圈。每隔幾個微秒 Timer Thread 就會傳送 timeout event 給其它的 Threads ，因而造成整個系統非常的忙碌，而無法正確處理 input event。雖然說 GDB 及 top 這兩個工具可以加速我們找到問題點，但是，問題真正發生的原因，還是需要透過追蹤原始碼才有辦法得知。原來，Timer Thread 為了更準確的處理 timeout event ，所以，當下一次 timeout event 的發生時間小於某個特定值時，Timer thread 會直接把 timeout event 取出並傳送給對應的 Thread，這樣可以避免因為排程所造成的時間誤差。但是，當我們將 B2G 移植到不同的手機上時，因為系統不同，所以誤判發生 timeout event 的時間，而造成整個系統都在處理 timeout event ，使得CPU 非常忙碌。</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20140827000653id_/https://tech.mozilla.com.tw/?p=139">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

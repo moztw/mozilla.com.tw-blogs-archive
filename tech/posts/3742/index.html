@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>超夯！視差捲軸動畫大解密！ | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-03/">2014 年 3 月</a><b>&raquo;</b><a href="../../posts/3742/">超夯！視差捲軸動畫大解密！</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-03-31" class="published"><span class="posted-month">3月</span><span class="posted-date">31</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">超夯！視差捲軸動畫大解密！</h1>
+            </header>
+            <div class="entry-content"><p>前面介紹過了去年<a href="https://firefox.club.tw/campaign/every-moment/">九月份活動頁</a>的 <a href="../../posts/3502/">Canvas 刮刮樂</a>、以及<a href="../../posts/3738/">照片上傳元件</a>。</p>
+<p>這次重頭戲來啦！</p>
+<p>登登登！傳說中的～視差動畫！</p>
+<h2>設定你的視差捲軸動畫</h2>
+<p><a href="https://zh.wikipedia.org/wiki/%E8%A7%86%E5%B7%AE"><img src="../../assets/3742/001-ba93abfe376a.gif" alt="視差效果" loading="lazy"></a>視差效果（圖片取自 Wikipedia）</p>
+<p>先構思好動畫的進行方式，<a href="https://zh.wikipedia.org/wiki/%E8%A7%86%E5%B7%AE">視差</a>故名思義就是景物因遠近不同造成視線內移動速度的差異，</p>
+<p>最常見的例子是在坐車時，距離較近的建築物很快從窗前經過，遠方的山卻看不出來有移動，</p>
+<p>因此本文前面展示的範例就是示範如何處理遠、中、近不同距離物體的動畫效果：</p>
+<p>三支 Firefox OS 手機從天而降！有沒有一種喜從天降的 fu 啊？</p>
+<p>想好動畫的進行方式後，就可以開始製作了，首先當然要先在網頁中放上三個手機圖，</p>
+<p>用 CSS 依據遠、中、近的不同設定好大小和位置，</p>
+<p>範例中的手機會從畫面外掉進來，所以 top 的啟始值都是負值，</p>
+<p>設定好後接下來就可以開始處理 Javascript 的部分，</p>
+<p>在看範例之前先簡單介紹函式庫 <a href="https://www.greensock.com/tweenmax/">TweenMax</a> + <a href="https://johnpolacek.github.io/superscrollorama/">Superscrollerama</a>：</p>
+<p>簡單來說 TweenMax 是一套轉場動畫運算的套件，</p>
+<p>只要設定好啟始值和終點值，加上路徑、時間函式，</p>
+<p>TweenMax 就會依照目前動畫播放的時間長度比例幫你算好目前的值。</p>
+<p>而 Superscrollerama 則是幫你把捲軸位置當作目前播放位置傳遞給 TweenMax。</p>
+<p>如此一來就可以在網頁上實作捲軸動畫了。以下是實際範例：</p>
+<p>    var controller = $.superscrollorama({<br>        playoutAnimations: false<br>    });<br>    var fallHook = $(&#39;#fall-hook&#39;);</p>
+<p>					1234</p>
+<p>						    var controller = $.superscrollorama({        playoutAnimations: false    });    var fallHook = $(&#39;#fall-hook&#39;);</p>
+<p>第一行的作用是先初始化 superscrollerama 控制器並放在 controller 變數備用，</p>
+<p>而 fallHook 則是用來對應捲動進度的元素，你可以把 hook 元素的高度當作時間軸的長度，</p>
+<p>一個網頁中可以有多個 hook 來控制不同角色的出場時機和長度，</p>
+<p>本範例內容較為簡單，只用了一個 hook，在 CSS 裡可以看到它的高度是 3000px，</p>
+<p>在這 3000px 被捲軸捲完之前三支手機掉落的動畫就會結束。</p>
+<p>    var phone1Fall = TweenMax.to($(&#39;#phone1&#39;), 1, {<br>        css: {<br>            top: &#39;450px&#39;<br>        }<br>    });<br>    var phone2Fall = TweenMax.to($(&#39;#phone2&#39;), 1, {<br>        css: {<br>            top: &#39;450px&#39;<br>        }<br>    });<br>    var phone3Fall = TweenMax.to($(&#39;#phone3&#39;), 1, {<br>        css: {<br>            top: &#39;450px&#39;<br>        }<br>    });</p>
+<p>					123456789101112131415</p>
+<p>						    var phone1Fall = TweenMax.to($(&#39;#phone1&#39;), 1, {        css: {            top: &#39;450px&#39;        }    });    var phone2Fall = TweenMax.to($(&#39;#phone2&#39;), 1, {        css: {            top: &#39;450px&#39;        }    });    var phone3Fall = TweenMax.to($(&#39;#phone3&#39;), 1, {        css: {            top: &#39;450px&#39;        }    });</p>
+<p>這段程式利用 TweenMax.to() 函式設定元素的動畫終點位置，</p>
+<p>第一個參數是套用此動畫的元素，例如 #phone1，第二個參數原本是用來指定動畫長度，</p>
+<p>但因為動畫的長度已改為由 hook 元素決定，這裡設定為 1 就好，</p>
+<p>第三個參數則是指定動畫最終的位置，本範例的手機目標是掉到畫面下方，</p>
+<p>fiddle 的高度是 400px左右，所以三支手機最終的 top 都設定為 450px。</p>
+<p>重點來了，最後只要把 TweenMax 物件加進 superscrollerama 控制器，</p>
+<p>並告訴控制器對應的 hook 元素、動畫的持續時間（捲動長度）和啟始時間（捲軸位置）即可：</p>
+<p>    controller.addTween(fallHook, phone3Fall, 3000, 0);<br>    controller.addTween(fallHook, phone2Fall, 2100, 500);<br>    controller.addTween(fallHook, phone1Fall, 800, 1000);</p>
+<p>					123</p>
+<p>						    controller.addTween(fallHook, phone3Fall, 3000, 0);    controller.addTween(fallHook, phone2Fall, 2100, 500);    controller.addTween(fallHook, phone1Fall, 800, 1000);</p>
+<p>controller 的 addTween() 的第一個參數設定 fallHook 為動畫的時間軸，</p>
+<p>第二個參數則是把上一段的 TweenMax 物件加進去，告訴控制器終點值為何，</p>
+<p>第三和第四個參數則分別是動畫的持續時間和啟始時間，且皆以像素為計算單位。</p>
+<p>遠景的手機移動最慢，所以持續時間最長 3000，</p>
+<p>而為了讓三支手機能在動畫進行到中間時可以連成一線，</p>
+<p>遠景的手機要先進場，進景的手機則要過了 1000px 以後才進場。</p>
+<p>才幾行 code，就完成一個捲軸動畫了，是不是比想像中的簡單多了？</p>
+<h2>實作小白點導覽列</h2>
+<p>要在捲軸動畫中實作導覽列很容易，</p>
+<p>只要把元素安排在目標位置，設定 id 或 name，例：<br>			&lt;div id=&quot;anchor2&quot;&gt; ，</p>
+<p>運用網頁原本就有的井號頁內連結功能即可：<br>			&lt;a class=&quot;nav&quot; href=&quot;#anchor2&quot;&gt; ，</p>
+<p>但點下去後發現一個問題－動畫畫面很容易整個跑版！</p>
+<p>這是因為頁內連結直接跳過中間的捲動過程，</p>
+<p>因此很多要在捲動過程中驅動的動畫沒有跑到，</p>
+<p>本範例的解決方式是運用一個 JQuery 外掛 <a href="https://github.com/flesler/jquery.localScroll">localScroll</a>：</p>
+<p>    $.localScroll({<br>        target: &#39;body&#39;, // could be a selector or a jQuery object too.<br>        queue: true,<br>        duration: 500,<br>        hash: true<br>    });</p>
+<p>					123456</p>
+<p>						    $.localScroll({        target: &#39;body&#39;, // could be a selector or a jQuery object too.        queue: true,        duration: 500,        hash: true    });</p>
+<p>加上這段 JQuery 程式後，點下頁內連結就不會直接跳到目的地，</p>
+<p>而是會變成流暢的捲動，動畫跟著捲動一起進行，自然就不容易跑版了。</p>
+<p>導覽列的另一個問題是，如果想要在捲動到目標時，</p>
+<p>讓相對應的導覽列元素亮起來，該怎麼做呢？</p>
+<p>這時就要引用一個 JQuery 外掛 <a href="https://imakewebthings.com/jquery-waypoints/">waypoints</a>，</p>
+<p>它的作用是偵測特定元素在捲動過程中進入畫面的時間點，</p>
+<p>透過 waypoint 就可以在捲動至目標元素時，將相對應的導覽列元素亮起來：</p>
+<p>    var $side_nav = $(&#39;#side-nav&#39;);</p>
+<p>    var side_nav_targets = [];<br>    // store possible nav targets in array for easier searching<br>    $side_nav.find(&#39;a&#39;).each(function (index, anchor) {<br>        side_nav_targets.push(anchor.getAttribute(&#39;href&#39;));<br>    });<br>    $(&#39;.nav-anchor&#39;).waypoint(function (direction) {<br>        $side_nav.find(&#39;a&#39;).removeClass(&#39;curr&#39;);</p>
+<p>        if (direction === &#39;down&#39;) {<br>            $side_nav.find(&#39;a[href=&quot;#&#39; + $(this).attr(&#39;id&#39;) + &#39;&quot;]&#39;).addClass(&#39;curr&#39;);<br>        } else {<br>            // find index in nav array of currently scrolled to target<br>            var cur_target_index = $.inArray(&#39;#&#39; + $(this).attr(&#39;id&#39;), side_nav_targets);</p>
+<p>            // if there&#39;s a previous target, update the active navs<br>            if (cur_target_index &gt; 0) {<br>                $side_nav.find(&#39;a[href=&quot;&#39; + side_nav_targets[cur_target_index - 1] + &#39;&quot;]&#39;).addClass(&#39;curr&#39;);<br>            }<br>        }<br>    });</p>
+<p>					12345678910111213141516171819202122</p>
+<p>						    var $side_nav = $(&#39;#side-nav&#39;);     var side_nav_targets = [];    // store possible nav targets in array for easier searching    $side_nav.find(&#39;a&#39;).each(function (index, anchor) {        side_nav_targets.push(anchor.getAttribute(&#39;href&#39;));    });    $(&#39;.nav-anchor&#39;).waypoint(function (direction) {        $side_nav.find(&#39;a&#39;).removeClass(&#39;curr&#39;);         if (direction === &#39;down&#39;) {            $side_nav.find(&#39;a[href=&quot;#&#39; + $(this).attr(&#39;id&#39;) + &#39;&quot;]&#39;).addClass(&#39;curr&#39;);        } else {            // find index in nav array of currently scrolled to target            var cur_target_index = $.inArray(&#39;#&#39; + $(this).attr(&#39;id&#39;), side_nav_targets);             // if there&#39;s a previous target, update the active navs            if (cur_target_index &gt; 0) {                $side_nav.find(&#39;a[href=&quot;&#39; + side_nav_targets[cur_target_index - 1] + &#39;&quot;]&#39;).addClass(&#39;curr&#39;);            }        }    });</p>
+<h2>One more thing…假掰的模糊效果</h2>
+<p>如果想做出假掰的淺景深效果，又不會用 photoshop，</p>
+<p>可以試著運用一個實驗性的 CSS 屬性：<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/filter">filter</a></p>
+<p>由於此屬性還在 Working Draft 階段，只有較新版本的瀏覽器支援，且寫法尚未統一：</p>
+<p>.blur {<br>    -webkit-filter: blur(5px);<br>    filter: url(&quot;data:image/svg+xml;utf8,&lt;svg height=\&quot;0\&quot; xmlns=\&quot;http://www.w3.org/2000/svg\&quot;&gt;&lt;filter id=\&quot;svgBlur\&quot; name=\&quot;svgBlur\&quot; x=\&quot;-5%\&quot; y=\&quot;-5%\&quot; width=\&quot;110%\&quot; height=\&quot;110%\&quot;&gt;&lt;feGaussianBlur in=\&quot;SourceGraphic\&quot; stdDeviation=\&quot;5\&quot;/&gt;&lt;/filter&gt;&lt;/svg&gt;#svgBlur&quot;);<br>}</p>
+<p>					1234</p>
+<p>						.blur {    -webkit-filter: blur(5px);    filter: url(&quot;data:image/svg+xml;utf8,&lt;svg height=\&quot;0\&quot; xmlns=\&quot;http://www.w3.org/2000/svg\&quot;&gt;&lt;filter id=\&quot;svgBlur\&quot; name=\&quot;svgBlur\&quot; x=\&quot;-5%\&quot; y=\&quot;-5%\&quot; width=\&quot;110%\&quot; height=\&quot;110%\&quot;&gt;&lt;feGaussianBlur in=\&quot;SourceGraphic\&quot; stdDeviation=\&quot;5\&quot;/&gt;&lt;/filter&gt;&lt;/svg&gt;#svgBlur&quot;);}</p>
+<p>這段 CSS 可以把原本清晰的手機圖變得模糊，</p>
+<p>把近景和遠景都變模糊，只留下中距離的物件是清晰的，</p>
+<p>看起來就像是淺景深了對吧？</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/css/">CSS</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20150326090622id_/https://tech.mozilla.com.tw/?p=3742">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

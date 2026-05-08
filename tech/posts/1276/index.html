@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>很夯的 Firefox OS App 大軍來襲，非測不可！ | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../posts/1276/">很夯的 Firefox OS App 大軍來襲，非測不可！</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time>日期不明</time></p>
+              <h1 class="entry-title">很夯的 Firefox OS App 大軍來襲，非測不可！</h1>
+            </header>
+            <div class="entry-content"><p>今天要來聊聊在 Firefox OS App 的測試，在開發前期，大部分的測試還是仰賴測試人員進行手動測試，然而，大量進行重覆測試其實是很消耗時間的。為了節省開發和測試上的時間，我們也開發了對應的測試工具，以提升開發的效率。</p>
+<p>在網路上，你可以找到有關 marionette automation framework 的介紹，這是由 Mozilla 內一個叫做 Automation Team 的團隊所開發，特別為了測試 Firefox OS 而特別開發的一套自動化系統。 Malini Das 和 Jonathan Griffin 投入了大量的精力在這套自動化測試系統上。</p>
+<p>Marionette 的特色是以另一套著名的網路自動化系統 Selenium 加以延伸。簡單的說，Marionette Server 在安裝時 Firefox OS 就必須被同時安裝進去，藉由預先留好的 socket port 啟動 JavaScript Remote Debugger。透過這個預留好的 Port，就可以編寫好的 JavaScript 自動化測試藉由這個 port 對 Firefox OS 進行測試。</p>
+<p>然而，Marionette 並不能針對 web content 進行自動化測試。為了加強對於 content 的支援度，Jonathan Griffin 另外用 Python 撰寫了一套 gaia-ui-tests 的套件，這個套件也同樣使用 Marionette 和預先安裝的 marionette server 進行溝通。 Gaia-ui-tests 的特色是它實做了判斷 HTML element 是否存在，以及它的屬性、參數等等資料。並且結合 Marionette 的框架，使得 Firefox OS Server 端不需要再做其它的更動。</p>
+<p>在實做 gaia-ui-test 時，最開始的 setup 必須先指定要被喚起的 App</p>
+<p>    # launch the app<br>    self.app = self.apps.launch(&#39;Browser&#39;)<br>接下來，就是等待指定的 element 出現在畫面上，然後再對 element 進行對應的動作</p>
+<p>    # Firefox/chrome locators<br>    _awesome_bar_locator = (&quot;id&quot;, &quot;url-input&quot;)</p>
+<p>    # Find awesome bar<br>    awesome_bar = self.marionette.find_element(*self._awesome_bar_locator)<br>    awesome_bar.click()<br>    awesome_bar.send_keys(&#39;http://mozqa.com/data/firefox/layout/mozilla.html&#39;)</p>
+<p>    self.marionette.find_element(*self._url_button_locator).click()<br>重覆這個動作，就可以進行 UI 介面的實體操作了。</p>
+<p>當完成一系列的指令之後，可以用 Assert 驗証結果是否正確，並將結果傳回 Marionette 的框架。</p>
+<p>    heading = self.marionette.find_element(&#39;id&#39;, &#39;page-title&#39;)<br>    self.assertEqual(heading.text, &#39;We believe that the internet should be public, open and accessible.&#39;)<br>藉由這個方式，就可以開始有效率的替自己寫的 App 做自動化測試，或是用這個工具來完成一些 UI 的自動指令。在開發的同時能夠有效率的幫忙開發者做大量的測試，測試的過程、結果，都是所見即所得，可以降少開發過程中不必要的 regression bug。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/02/images.jpg"><img src="../../assets/1276/wp-content/uploads/2013/02/images.jpg" alt="Firefox, Web Apps, Marketplace" loading="lazy"></a></p></div>
+            <footer class="entry-footer">
+              
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20130430161339id_/https://tech.mozilla.com.tw/?p=1276">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

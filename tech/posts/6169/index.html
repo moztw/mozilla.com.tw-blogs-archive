@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>XPConnect 遇到的小問題 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2015-03/">2015 年 3 月</a><b>&raquo;</b><a href="../../posts/6169/">XPConnect 遇到的小問題</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2015-03-30" class="published"><span class="posted-month">3月</span><span class="posted-date">30</span><span class="posted-year">2015</span></time></p>
+              <h1 class="entry-title">XPConnect 遇到的小問題</h1>
+            </header>
+            <div class="entry-content"><p>在 XPCOM 的世界裡，透過 XPConnect 的幫忙，C 和 JavaScript 實作的元件可以互相地呼叫，因此我們可以自由選用合適的語言來開發各自的元件。</p>
+<p>但是因為中間包了一層 wrapper，所以在某些特殊的情況下，程式的運作可能會不如你的預期：例如在 <a href="../../posts/986/">跨越語言的邊界 – 淺談 JS API 與 XPConnect</a> 有提到，動態改變 object property 時只會改變到 wrapper 而不會改變原本的物件。</p>
+<p>這在 XPCOM 以 interface 為溝通管道的方式之下，也通常沒有什麼問題，不過今天要討論的，是一個會發生問題的情形。</p>
+<p>首先，我們實作了一組 <br>			nsIDownloader 介面，然後因為下載通常很慢，所以這個介面使用了一個 <br>			nsIDownloadEventListener 的介面來通知下載的結果：</p>
+<p>interface nsIDownloadEventListener : nsISupports<br>{<br> void onComplete(in DOMString aUrl);<br> void onFailure(in DOMString aUrl);<br>};</p>
+<p>interface nsIDownloader : nsISupports<br>{<br> attribute nsIDownloadEventListener listener;<br> void download(in DOMString aUrl);<br>};</p>
+<p>					1234567891011</p>
+<p>						interface nsIDownloadEventListener : nsISupports{ void onComplete(in DOMString aUrl); void onFailure(in DOMString aUrl);}; interface nsIDownloader : nsISupports{ attribute nsIDownloadEventListener listener; void download(in DOMString aUrl);};</p>
+<p>這一切看起來是如此地美好，那我們就用 C 來實作這組介面吧（因為篇幅的關係，以下程式碼會省略部份錯誤檢查）：</p>
+<p>class nsDownloader : public nsIDownloader<br>{<br> // 略...</p>
+<p>private:<br> nsCOMPtr&lt;nsIDownloadEventListener&gt; mListener;<br>};</p>
+<p>					1234567</p>
+<p>						class nsDownloader : public nsIDownloader{ // 略... private: nsCOMPtr&lt;nsIDownloadEventListener&gt; mListener;};</p>
+<p>在這裡，<br>			nsDownloader 使用了一個 <br>			nsCOMPtr 來存放 listener 的指標。</p>
+<p>然後在另一個 class 裡，如果要使用 <br>			nsDownloader 的話，可能會這麼寫：</p>
+<p>class nsFoo<br> : public nsIFoo<br> , public nsIDownloadEventListener<br>{<br> // 略...</p>
+<p> nsresult Init() {<br> mDownloader = do_CreateInstance(NS_DOWNLOADER_CONTRACT_ID);<br> return mDownloader-&gt;SetListener(this);<br> }</p>
+<p> nsresult Bar(const nsAString&amp; aUrl) {<br> if (mDownloader) {<br> return mDownloader-&gt;Download(aUrl);<br> }<br> return NS_ERROR_FAILURE;<br> }</p>
+<p>private:<br> nsCOMPtr&lt;nsIDownloader&gt; mDownloader;<br>};</p>
+<p>					123456789101112131415161718192021</p>
+<p>						class nsFoo : public nsIFoo , public nsIDownloadEventListener{ // 略...  nsresult Init() { mDownloader = do_CreateInstance(NS_DOWNLOADER_CONTRACT_ID); return mDownloader-&gt;SetListener(this); }  nsresult Bar(const nsAString&amp; aUrl) { if (mDownloader) { return mDownloader-&gt;Download(aUrl); } return NS_ERROR_FAILURE; } private: nsCOMPtr&lt;nsIDownloader&gt; mDownloader;};</p>
+<p>大功告成，一切正常…正當你這麼以為的時候，reviewer 就跳出來告訴你：這段程式碼會有 memory leak。</p>
+<p>因為 <br>			nsFoo 握有 <br>			nsDownloader ，而 <br>			nsDownloader 也握有 <br>			nsFoo ，這個問題就是在 <a href="../../posts/828/">說說 nsCOMPtr 這東西</a> 裡面提過的環狀參照。</p>
+<p>怎麼辦呢？有兩個解法：<a href="../../posts/828/">說說 nsCOMPtr 這東西</a> 告訴我們如果參照的對象有實作 <br>			nsIWeakReference 的話，就可以使用 <br>			nsWeakPtr 來解決這個問題，或是使用 <a href="../../posts/4351/">淺談 Cycle Collection</a> 提到的 Cycle Collection 機制。</p>
+<p>我們先用 <br>			nsWeakPtr 來試著一解決問題，所以 <br>			nsDownloader 就變成這樣：</p>
+<p>class nsDownloader : public nsIDownloader<br>{<br> // 略...</p>
+<p>private:<br> nsWeakPtr mListener;<br>};</p>
+<p>					1234567</p>
+<p>						class nsDownloader : public nsIDownloader{ // 略... private: nsWeakPtr mListener;};</p>
+<p>但是 <br>			nsFoo 沒有實作 <br>			nsIWeakReference 呀！怎麼辦？</p>
+<p>當然，我們可以修改 &lt;span class=&quot;lang:default decode:true <a href="https://www.svenskkasinon.com/">casino pa natet</a>  crayon-inline “&gt;nsFoo 讓它實作 <br>			nsIWeakReference ，當你這樣告訴 <br>			nsFoo 的作者時，他可能會說因為 <br>			nsDownloader 的生命週期被包含在 <br>			nsFoo 的裡面，也就是說 <br>			nsDownloader 裡面的 <br>			mListener 不會是一個 dangling pointer，於是他讓你用 raw pointer 直接指向 listener，然後就有了下列的修改。</p>
+<p>class nsDownloader : public nsIDownloader<br>{<br> // 略...</p>
+<p>private:<br> nsIDownloadEventListener* mListener;<br>};</p>
+<p>					1234567</p>
+<p>						class nsDownloader : public nsIDownloader{ // 略... private: nsIDownloadEventListener* mListener;};</p>
+<p>因為 raw pointer 也算是一種 weak reference，這麼一來，環狀參照的問題解決了，程式似乎也正常地執行了。</p>
+<p>故事就這麼結束了嗎？</p>
+<p>過了幾天，另外一位仁兄用 JavaScript 寫了另一份 <br>			nsFoo 的實作。</p>
+<p>function nsFooJS() {<br> this._downloader = Cc[DOWNLOADER_CONTRACT_ID].createInstance(Ci.nsIDownloader);<br> this._downloader.listener = this;<br>}</p>
+<p>nsFooJS.prototype = {<br> // 略...</p>
+<p> QueryInterface: XPCOMUtils.generateQI([Ci.nsIFoo, Ci.nsIDownloadEventListener]),</p>
+<p> bar: function(aUrl) {<br> this._downloader.download(aUrl);<br> }<br>};</p>
+<p>					1234567891011121314</p>
+<p>						function nsFooJS() { this._downloader = Cc[DOWNLOADER_CONTRACT_ID].createInstance(Ci.nsIDownloader); this._downloader.listener = this;} nsFooJS.prototype = { // 略...  QueryInterface: XPCOMUtils.generateQI([Ci.nsIFoo, Ci.nsIDownloadEventListener]),  bar: function(aUrl) { this._downloader.download(aUrl); }};</p>
+<p>然後就悲劇了…</p>
+<p>NS_ERROR_UNEXPECTED: Component returned failure code: 0x8000ffff (NS_ERROR_UNEXPECTED) [nsIDownloader.download]</p>
+<p>					1</p>
+<p>						NS_ERROR_UNEXPECTED: Component returned failure code: 0x8000ffff (NS_ERROR_UNEXPECTED) [nsIDownloader.download]</p>
+<p>為什麼呼叫 <br>			nsIDownloader.download 會失敗呢？這個 <br>			NS_ERROR_UNEXPECTED 又是哪裡來的？且讓我們繼續看下去。</p>
+<p><a href="https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Language_bindings/XPConnect/XPConnect_wrappers">XPConnect wrappers</a> 告訴我們，從 C 的 code 要執行 JavaScript 的程式碼，會透過 <br>			nsXPCWrappedJS 來操作，另外在 <a href="https://dxr.mozilla.org/mozilla-central/source/js/xpconnect/src/XPCWrappedJS.cpp">XPCWrappedJS.cpp</a> 裡面有一段註解提到 nsXPCWrappedJS object 的生命週期，意思是說當 nsXPCWrappedJS object 的參考計數降為 1 的話，表示只有它握有的那個 JavaScript object 指向它，這時候如果也沒有任何一個 weak reference 指向這個 nsXPCWrappedJS object 的話，表示 C 這邊已經不會再有人會存取這個物件了，那麼這個物件會立刻被銷毀！也就是說，使用 raw pointer 存的 listener 不管它實際上的 JavaScript object 是不是還活著，它的 nsXPCWrappedJS object 都會失效，而解法就是把 raw pointer 改成 <br>			nsWeakPtr 。</p>
+<p>這就是最有趣的地方了，當你因為某種需求而要握有一個物件的參考時，你必須要求它支援 <br>			nsWeakPtr ，不然就只能使用 strong reference。你不能使用 raw pointer，否則若該物件是用 C 實作的話沒事，當那個物件如果是用 JavaScript 來實作的話就會發生 <br>			NS_ERROR_UNEXPECTED 錯誤。</p>
+<p>好，為了避免上述的問題，這時候我們先修改 <br>			nsDownlaoder ，讓它改用 <br>			nsWeakPtr</p>
+<p>class nsDownloader : public nsIDownloader<br>{<br> // 略...</p>
+<p>private:<br> nsWeakPtr mListener;<br>}</p>
+<p>					1234567</p>
+<p>						class nsDownloader : public nsIDownloader{ // 略... private: nsWeakPtr mListener;}</p>
+<p>要讓 <br>			nsFooJS 支援 <br>			nsWeakPtr ，在 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=66950">Bug 66950</a> 裡面有提到，只要讓 JavaScript object 在 <br>			QueryInterface 裡宣告有實作 <br>			nsISupportsWeakReference 即可，然後你會發現其實有很多 JavaScript 實作的元件都有宣告這個介面。</p>
+<p>nsFooJS.prototype = {<br> // 略...</p>
+<p> QueryInterface: XPCOMUtils.generateQI([Ci.nsIFoo, Ci.nsIDownloadEventListener, Ci.nsISupportsWeakReference]),<br>};</p>
+<p>					12345</p>
+<p>						nsFooJS.prototype = { // 略...  QueryInterface: XPCOMUtils.generateQI([Ci.nsIFoo, Ci.nsIDownloadEventListener, Ci.nsISupportsWeakReference]),};</p>
+<p>如果要讓 <br>			nsFoo 支援 <br>			nsWeakPtr 的話，可以參考 <a href="https://developer.mozilla.org/en-US/docs/Weak_reference">Weak Reference</a> 的介紹。</p>
+<p>可是如果要考慮並不是所有的對象都可以支援 <br>			nsWeakPtr 的話，那麼就只好使用 <br>			nsCOMPtr ，然後用 Cycle Collection 來處理可能發生的環狀參照問題了。</p>
+<p><a href="https://pixabay.com/en/child-statue-bronze-outside-438135/">圖片出處</a></p>
+<p>[1] <a href="../../posts/986/">跨越語言的邊界 – 淺談 JS API 與 XPConnect</a></p>
+<p>[2] <a href="../../posts/828/">說說 nsCOMPtr 這東西</a></p>
+<p>[3] <a href="../../posts/4351/">淺談 Cycle Collection</a></p>
+<p>[4] <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Tech/XPCOM/Language_bindings/XPConnect/XPConnect_wrappers">XPConnect wrappers</a></p>
+<p>[5] <a href="https://dxr.mozilla.org/mozilla-central/source/js/xpconnect/src/XPCWrappedJS.cpp">XPCWrappedJS.cpp</a></p>
+<p>[6] <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=66950">Bug 66950</a></p>
+<p>[7] <a href="https://developer.mozilla.org/en-US/docs/Weak_reference">Weak Reference</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox/">Firefox</a></span><span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200919191842id_/https://tech.mozilla.com.tw/?p=6169">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

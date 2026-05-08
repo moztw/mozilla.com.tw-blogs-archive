@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>沒想到 CSS 也做的到？！ | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2012-08/">2012 年 8 月</a><b>&raquo;</b><a href="../../posts/642/">沒想到 CSS 也做的到？！</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2012-08-20" class="published"><span class="posted-month">8月</span><span class="posted-date">20</span><span class="posted-year">2012</span></time></p>
+              <h1 class="entry-title">沒想到 CSS 也做的到？！</h1>
+            </header>
+            <div class="entry-content"><p>一個「生動」的網站絕對少不了 Javascript (JS) 的幫忙，很多有趣的特效交給 JS 或甚至丟給 Jquery 就對了！不過我們仔細看看 JS 裡到底做了什麼事讓我們的網站活起來呢，其實大部分的特效，JS 只是幫我們動態的去改變元素的 CSS 而已。那可以直接就在 CSS 中完成特效嗎？！完。全。沒。問。題。</p>
+<p>舉例來說，最常見的特效就是當滑鼠移過去的時候，可以換個底圖或改變字的顏色，我們來瞧瞧 CSS 怎麼辦到的吧：</p>
+<p>html：</p>
+<p>&lt;div class=&quot;sample&quot;&gt;<br>    sample<br> &lt;/div&gt;</p>
+<p>					123</p>
+<p>						&lt;div class=&quot;sample&quot;&gt;    sample &lt;/div&gt;</p>
+<p>css：</p>
+<p>.sample{<br>    margin:10px;<br>    background:url(b.png);<br>    width:220px;<br>    height:220px;<br>    color:#f00;<br>}<br>.sample:hover{<br>   background:url(a.png);<br>   color:#000;<br>   font-size:18px;<br>}</p>
+<p>					123456789101112</p>
+<p>						.sample{    margin:10px;    background:url(b.png);    width:220px;    height:220px;    color:#f00;}.sample:hover{   background:url(a.png);   color:#000;   font-size:18px;}</p>
+<p>我們只要多定義該元素的 “:hover&quot; 這個虛擬類別 (pesudo class) 的 CSS 就可以了！！</p>
+<p>不相信嗎？！這裡有 <a href="https://jsfiddle.net/mpizza/3tKh6/2/">live demo</a></p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.33.27.png"><img src="../../assets/642/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.33.27-300x148.png" alt="" loading="lazy"></a></p>
+<p>除此之外，當滑鼠移到導覽列上，會出現下拉式選單，也可以單純用 CSS 就做出來哦！！</p>
+<p>先來看一下 <a href="https://jsfiddle.net/mpizza/ZNZ4N/">live demo</a></p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.43.28.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.43.28.png" alt="" loading="lazy"></a></p>
+<p>在 demo 中我們可以發現到下拉式選單 (class level_2) 的 CSS 是透過 top:-1000px; 把他丟到外太空去</p>
+<p> .navlist&gt;li .level_2{<br>  position:absolute;<br>  top:-1000px;<br>  left:-1px;<br> }</p>
+<p>					12345</p>
+<p>						 .navlist&gt;li .level_2{  position:absolute;  top:-1000px;  left:-1px; }</p>
+<p>當滑鼠移到的父元素 .navlist&gt;li 時，我們再設定他的 top:20px;  讓他回到地球上，登登~就完成了！！！</p>
+<p> .navlist&gt;li:hover .level_2{<br>  top:20px;<br> }</p>
+<p>					123</p>
+<p>						 .navlist&gt;li:hover .level_2{  top:20px; }</p>
+<p>上面兩個例子，可以發現「香蕉人」是用 :hover 去取代 JS 中 mouseover 發生後所做的事情，除此之外 :active 對應的 event 就是 mousedown。這時候一定會有人客會問，那要怎麼解決 click 這個 event 呢？！ 嗯…這時候只能問香蕉了！！好的～香蕉現在就來告訴人客，click event 並沒有辦法靠 CSS 單槍匹馬，<a href="https://www.kylinpoker.com/">扑克牌制作</a> 這時候真的就需要 JS 協助了，只需要少少的幾行 JS 就可以了~</p>
+<p>一樣我們先來看 <a href="https://jsfiddle.net/mpizza/h2yGB/4/">live demo</a></p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.49.013.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.49.013.png" alt="" loading="lazy"></a><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.48.561.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.48.561.png" alt="" loading="lazy"></a></p>
+<p>在這個例子中，香蕉人想做一個簡單的開關，當 user 點下去的時候會由「關到開」或「開到關」，</p>
+<p>JS 的部分，只要 #handle 這個元素&quot;聽&quot;到 click 這個 event，就會去更改 #container 的 class</p>
+<p> $(function(){<br>  var box=$(&#39;#container&#39;);<br>  $(&#39;#handle&#39;).click(function(){<br>      if(box.attr(&#39;class&#39;)===&#39;on-status&#39;){<br>        box.removeClass(&#39;on-status&#39;);<br>        box.addClass(&#39;off-status&#39;);<br>       }else{<br>        box.removeClass(&#39;off-status&#39;);<br>        box.addClass(&#39;on-status&#39;);<br>       }<br>   });<br> });</p>
+<p>					123456789101112</p>
+<p>						 $(function(){  var box=$(&#39;#container&#39;);  $(&#39;#handle&#39;).click(function(){      if(box.attr(&#39;class&#39;)===&#39;on-status&#39;){        box.removeClass(&#39;on-status&#39;);        box.addClass(&#39;off-status&#39;);       }else{        box.removeClass(&#39;off-status&#39;);        box.addClass(&#39;on-status&#39;);       }   }); });</p>
+<p>接下來所有的變化全部交給 CSS 囉！！</p>
+<p>先設定 .content 以及 #handle 預設的 CSS</p>
+<p> div.content{<br>  position:absolute;<br>  top:7px;<br>  left:10px;<br>  width:15px;<br>  height:15px;<br>}<br>div#handle{<br>  top:0px;<br>  left:0px;<br>  border:1px solid #f00;<br>  width:28px;<br>  height:28px;<br>  border-radius: 28px;<br>  -webkit-border-radius:28px;<br>  -moz-border-radius:28px;<br>  background:#f00;<br>}</p>
+<p>					123456789101112131415161718</p>
+<p>						 div.content{  position:absolute;  top:7px;  left:10px;  width:15px;  height:15px;}div#handle{  top:0px;  left:0px;  border:1px solid #f00;  width:28px;  height:28px;  border-radius: 28px;  -webkit-border-radius:28px;  -moz-border-radius:28px;  background:#f00;}</p>
+<p>當#handle 聽到 click event 後，將 #container 的 class 改成 off-status</p>
+<p>在 off-status 的 CSS 定義:</p>
+<p>div.off-status div#off{<br> left:40px;<br>}<br>div.off-status div#on{<br>  display:none;<br>}</p>
+<p>					123456</p>
+<p>						div.off-status div#off{ left:40px;}div.off-status div#on{  display:none;}</p>
+<p>反之，在 on-status 的 css</p>
+<p>div.on-status div#off{<br> display:none;<br>}</p>
+<p>div.on-status div#handle{<br> left:40px;<br> background:#00f;<br> border:1px solid #00f;<br>}</p>
+<p>					123456789</p>
+<p>						div.on-status div#off{ display:none;} div.on-status div#handle{ left:40px; background:#00f; border:1px solid #00f;}</p>
+<p>是不是很酷呢！！！</p>
+<p>在 CSS3 定義更多的 animation *1 之後，各元素之間都可以靠 CSS 做出更 fancy 的效果，例如 Mozilla Taiwan <a href="https://mozilla.com.tw/community/">社群頁面</a> 中切換角色時的動畫也是透過同樣的原理做出來的。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.13.582.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.13.582-300x114.png" alt="" loading="lazy"></a></p>
+<p>說了這麼多，一定有人會問說 JS 用起來很舒服很開心啊，為什麼要改成 CSS 呢？其實也沒有什麼不好，但是當你的網頁碰到不同 layout 的時候，其中透過 JS 處理 CSS 的部分就會很難解了，那單純用 CSS 怎麼救呢? 哈哈～這時候就要靠 Media Queries *2了！</p>
+<p>揪~~竟~~ Media Queries 的出現帶給 CSS 什麼樣的助力呢? 讓我們再看看香蕉人下一篇的分析囉~</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1.png"><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1.png"><img src="../../assets/642/005-c292164cfa1c.png" alt="" loading="lazy"></a></a></p>
+<p>*1 <a href="https://developer.mozilla.org/en/CSS/CSS_animations">https://developer.mozilla.org/en/CSS/CSS_animations</a></p>
+<p>*2 <a href="https://www.w3.org/TR/css3-mediaqueries/">http://www.w3.org/TR/css3-mediaqueries/</a></p>
+<p>*3 圖片創作 by Sarah Deng</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/css/">CSS</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200919181159id_/https://tech.mozilla.com.tw/?p=642">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

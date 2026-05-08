@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>打造你的第一支 NFC 程式 – Hello，NFC！ | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-12/">2013 年 12 月</a><b>&raquo;</b><a href="../../posts/3610/">打造你的第一支 NFC 程式 – Hello，NFC！</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-12-30" class="published"><span class="posted-month">12月</span><span class="posted-date">30</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">打造你的第一支 NFC 程式 – Hello，NFC！</h1>
+            </header>
+            <div class="entry-content"><p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/12/nfc-promo.jpg"><img src="../../assets/3610/wp-content/uploads/2013/12/nfc-promo-300x165.jpg" alt="nfc-promo" loading="lazy"></a></p>
+<p>（圖片來源：<a href="https://www.android-apk.com/wp-content/uploads/2013/05/sony-nfc-promo.jpg">http://www.android-apk.com/wp-content/uploads/2013/05/sony-nfc-promo.jpg</a>）</p>
+<p>想像有一天，看到朋友們拿著手機熱烈的討論著某位正妹的照片，你不用擠破頭跟大家搶手機來看，你只需要將兩隻手機輕輕一碰，正妹的照片咻一下的就傳了過來。回家要搭捷運，再也不需要在人擠人的捷運站匆忙的找著悠遊卡，只要拿出手機，感應一下就可通過，達到卡機合一的境界。晚上要睡覺前，輕輕感應床頭邊的貼紙，手機立刻就調成靜音模式並且設定好隔日的鬧鐘。</p>
+<p>如此輕鬆方便的生活，NFC 都可以為您做到！</p>
+<h2>那 NFC 到底是什麼呢？</h2>
+<p>NFC (Near Field Communication) 中文稱為近場通訊，是由 Nokia，Philips 和 SONY 共同研發的一種短距離通訊技術，允許兩件設備在20公分內進行非接觸式的資料傳輸[1]。</p>
+<p>NFC 這項技術在近幾年來是越來越熱門，新出的 Android 手機大都支援 NFC，也因此衍生出越來越多的應用和產品，像是利用 NFC 在手機間分享資料，NFC 付款等等。也有比較特別的像 NFC 印表機，NFC 冰箱等新奇的產品。</p>
+<p>不過要成為一位專業的 NFC 玩家，並不是一定要購買市面上五花八門的產品，其實我們也可以客製化自己的 NFC，以下就來介紹如何利用 Firefox OS 來撰寫自己的第一支 NFC 程式！</p>
+<h2>打造我的 Hello, NFC !</h2>
+<p>首先要準備以下材料:</p>
+<ol><li>一隻支援 NFC 的手機 (目前支援 NFC 的 Firefox OS 手機是 Nexus4)。</li></ol>
+<ol><li>一張可讀寫的 NFC Tag。</li></ol>
+<ol><li>B2G 開發環境。</li></ol>
+<p>就只要這樣，接下來就可以開始 Coding 囉 ~</p>
+<p>我們的目標是要來撰寫一支當手機感應到 NFC Tag 時，可以印出 Hello, NFC! 的程式。而第一件事就是要告訴系統當感應到 NFC Tag 時，必須要通知我們。</p>
+<p>而在 Firefox OS 裡，是利用 Web Activities [2] 來通知應用程式有關 NFC 的訊息，因此首先我們先在 webapp.manifest 增加下列屬性</p>
+<p>&quot;activities&quot;: {<br>  &quot;nfc-ndef-discovered&quot;: {<br>  }<br>}</p>
+<p>					1234</p>
+<p>						&quot;activities&quot;: {  &quot;nfc-ndef-discovered&quot;: {  }}</p>
+<p>看到這裡，相信各位一定有個疑問，什麼是 NDEF ?</p>
+<p>這裡的 NDEF (NFC Data Exchange Format) [3]指的是 NFC Tag 裡儲存的資料格式，是 NFC Forum 用來統一不同 NFC 裝置傳輸的界面，簡而言之，就是一種公定的資料格式，而在稍候的文章會有更進一步的介紹。</p>
+<p>而除了 manifest 外，在 js code 中，也要新增處理 activity 的程式碼</p>
+<p>navigator.mozSetMessageHandler(&#39;activity&#39;, activityHandler);</p>
+<p>function activityHandler(activity) {<br>  var activityName = activity.source.name;<br>  var data = activity.source.data;</p>
+<p>  switch (activityName) {<br>    case &#39;nfc-ndef-discovered&#39;:<br>      console.log(&#39;Hello, NFC!&#39;);<br>      handleNDEF(data);<br>      break;<br>  }<br>}</p>
+<p>					12345678910111213</p>
+<p>						navigator.mozSetMessageHandler(&#39;activity&#39;, activityHandler); function activityHandler(activity) {  var activityName = activity.source.name;  var data = activity.source.data;   switch (activityName) {    case &#39;nfc-ndef-discovered&#39;:      console.log(&#39;Hello, NFC!&#39;);      handleNDEF(data);      break;  }}</p>
+<p>寫到這裡，其實已經大功告成了，各位可以拿出手機去感應一下手邊的 NFC Tag，相信就可以從 log 上看到令人感動的 Hello, NFC! 了。如果沒有看到的話，請記得去設定頁面將 NFC 打開。</p>
+<p>不過相信這短短的10行 code 是沒有辦法滿足大家的，因此我們可以再更進一步將 Tag 的內容讀出，而要讀取 Tag 裡的資料，就需要跟 NDEF message 打交道，不過在處理 NDEF 之前，讓我們先來了解一下 NDEF 的格式。</p>
+<p>從圖一可以看出一個 NDEF Message 是由許多個 NDEF Record 所組成。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Ndef-Format-Overview.png"><img src="../../assets/3610/wp-content/uploads/2013/12/Ndef-Format-Overview-300x160.png" alt="NFC Ndef Format" loading="lazy"></a></p>
+<p>圖一、NDEF 格式</p>
+<p>而在 NDEF Record 中的 TNF (Type Name Format) 欄位則定義了這些 Record 的內容。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/12/TNF.png"><img src="../../assets/3610/wp-content/uploads/2013/12/TNF-300x165.png" alt="NFC TNF" loading="lazy"></a></p>
+<p>圖二、TNF</p>
+<p>從圖二可以看到除了 RFC 所定義的標準格式外，還有 NFC Forum 自己定義的 RTD (Record Type Definition)[4]，因此當我們要判斷 NDEF 裡的內容時，首先要先檢查 TNF ，如果是 RTD type 的話就要再檢查是哪一種 RTD 。</p>
+<p>假設今天我們想要得到 NFC Tag 裡文字的內容，利用下列程式碼就可以判斷感應到的 Tag 是否儲存文字並將資料讀出。</p>
+<p>function handleNDEF(data) {<br>  if (data.records[0].tnf == 1 &amp;&amp; data.records[0].type == &#39;T&#39;) {<br>    // Assume there is only one record for simplicity.<br>    let textPayload = data.records[0].payload;<br>  } else {<br>    // Not Text Data<br>  }<br>}</p>
+<p>					12345678</p>
+<p>						function handleNDEF(data) {  if (data.records[0].tnf == 1 &amp;&amp; data.records[0].type == &#39;T&#39;) {    // Assume there is only one record for simplicity.    let textPayload = data.records[0].payload;  } else {    // Not Text Data  }}</p>
+<p>程式碼中的 textPayload 就儲存了文字的內容，而這樣我們也就完成了一支可以讀取 NFC Tag 的程式了，是不是非常容易！</p>
+<p>當然除了讀寫 NFC Tag 以外，NFC 也支援所謂的點對點 (P2P) 模式，我們可以在兩隻支援 NFC 的手機間互相傳送資料，像是照片，音樂，聯絡人資訊 … 等等。</p>
+<p>而 Firefox OS 當然也支援大家來共同開發這樣的應用程式，不過由於筆者懶惰篇幅有限，就不在此贅述了。</p>
+<p>有興趣的人可以加入我們或參考Wiki[5]，相信一定很快就可以寫出更厲害的 NFC App！</p>
+<p>參考資料：</p>
+<p>[1] <a href="https://en.wikipedia.org/wiki/Near_field_communication">http://en.wikipedia.org/wiki/Near_field_communication</a></p>
+<p>[2] <a href="https://developer.mozilla.org/zh-TW/docs/WebAPI/Web_Activities">https://developer.mozilla.org/zh-TW/docs/WebAPI/Web_Activities</a></p>
+<p>[3] <a href="https://developer.nokia.com/Community/Wiki/Understanding_NFC_Data_Exchange_Format_%28NDEF%29_messages">http://developer.nokia.com/Community/Wiki/Understanding_NFC_Data_Exchange_Format_%28NDEF%29_messages</a></p>
+<p>[4] NFC Record Type Definition (RTD) Technical Specification</p>
+<p>[5] <a href="https://wiki.mozilla.org/WebAPI/WebNFC">https://wiki.mozilla.org/WebAPI/WebNFC</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200919192659id_/https://tech.mozilla.com.tw/?p=3610">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>淺談 Cycle Collection | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-05/">2014 年 5 月</a><b>&raquo;</b><a href="../../posts/4351/">淺談 Cycle Collection</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-05-26" class="published"><span class="posted-month">5月</span><span class="posted-date">26</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">淺談 Cycle Collection</h1>
+            </header>
+            <div class="entry-content"><h3>什麼是 Cycle Collection ？</h3>
+<p>Gecko 專案中，常常會使用 smart pointer 來管理動態配置的記憶體的釋放。當記憶體的 reference count 為零時，就判定為不會再被使用。然而如果物件互相持有，形成了 reference cycle，也就是謀智台客這篇「<a href="../../posts/828/">說說 nsCOMPtr 這東西</a>」提到的環狀參照，就會造成每個物件的 reference count 都無法歸零。<br>哎呀呀，此時即使它們不再被使用，這些物件還是會一直佔用記憶體。這樣的 garbage cycle 就成為記憶體洩漏( memory leak )，真是工程師的惡夢呢。</p>
+<p>為了避免這種情形發生，軟體工程師只能選擇：</p>
+<ul><li>手動的在適當的時機打破 reference cycle</li></ul>
+<ul><li>使用 weak pointer 來避免 cycle 咬住記憶體。( 如何用 weak pointer 解決 reference cycle 呢？ 請參考謀智台客文章 [[1]](<a href="../../posts/828/">https://tech.mozilla.com.tw/posts/828/%E8%AA%AA%E8%AA%AA-nscomptr-%E9%80%99%E6%9D%B1%E8%A5%BF%20(nsPtr</a>)) ）</li></ul>
+<p>然而這些方式需要較多的人為判斷，在大型專案中很容易犯錯。尤其在 Gecko 專案，許多類別使用上很容易出現 reference cycle 的情形。像是 DOM objects 多半都需要特別注意，甚至有的設計上就是會形成 reference cycle，單單只是繼承該類別就可能有 cycle（例如：nsWrapperCache類別）。因此 Gecko 使用一個稱為「Cycle Collection」 的機制，自動回收不需要的 reference cycle。</p>
+<h3>如何解決 Reference Cycle ？</h3>
+<p>Cycle collector 藉由觀察 reference count 增減的情況， 收集可能已形成 garbage cycle 的物件。接著透過這些物件的 cycle collection helper class 得知它們用強指標指向哪些物件，並持續走訪( traverse )這些物件。最後會做出一個在 heap 中物件的存取關係圖( graph )，當發現有一群物件的 reference 只被彼此持有時，就認定其為 garbage cycle 。此時 cycle collector 會透過 helper class 打斷( unlink ) 彼此持有的狀態，讓 reference count 歸零，最後透過 reference counting 的機制來回收這些記憶體。</p>
+<p>Cycle collector 不會走訪所有擁有強指標的物件，只會針對所謂的 cycle collection participant 進行檢查。如果想參與這個 cycle collection 過程的類別，就要宣告剛剛提到的 helper class 。實作的方式等等會聊到，先讓我們看看這個 CC participant 負責做什麼事吧。</p>
+<p>它主要提供這三個函式：<br>Trace：告訴 cycle collector 該類別會直接持有哪些 JavaScript object 。<br>Traverse：告訴 cycle collector 所有要走訪的 C++ 強指標。<br>Unlink： 清除所有持有的 reference count 。 （包括 C++ 與 JavaScript objects ）</p>
+<p>這三個函式負責告訴 cycle collector 如何走訪與打斷環狀參照。Traverse 和 Unlink 是每個類別都要實作的。而 Trace 只有當類別直接持有 JavaScript object resource 才需要實作。 （例如：JS::Heap&lt;JSObject*&gt;, JS::Value, jsval ）</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/04/CC_refCycle.png"><img src="../../assets/4351/wp-content/uploads/2014/04/CC_refCycle.png" alt="Reference cycle would hold the reference count." loading="lazy"></a></p>
+<p>若物件因環狀參照而保有 reference count，需 unlink 才能釋放。</p>
+<h3>如何寫出可參與 Cycle Collection 的類別 ？</h3>
+<p>該怎麼寫才能正確釋放記憶體呢？ Programmer 需要為可能形成 cycle 的類別宣告 cycle collection participant，並且實作所需要的函式，像是剛剛提到的 Traverse、Unlink 。<br>聽起來要寫很多東西，還好 Gecko 中有許多方便的巨集可以用。本文將介紹較常用的巨集，想再深入了解的朋友，請參考[nsCycleCollectionParticipant.h [2]](https://mxr.mozilla.org/mozilla-central/source/xpcom/glue/nsCycleCollectionParticipant.h) 的檔案內容 。</p>
+<p>首先，要在 header file 中選一個適合的巨集來宣告 CC participant helper class 。</p>
+<p>// 如果不需要 Trace 函式，請寫。<br>NS_DECL_CYCLE_COLLECTION_CLASS(_class)</p>
+<p>// 如果需要 Trace 函式，則寫<br>NS_DECL_CYCLE_COLLECTION_SCRIPT_HOLDER_CLASS(_class)</p>
+<p>// 不需要 Trace , 繼承自 _base (_base class 要有 CC participant 實作)<br>NS_DECL_CYCLE_COLLECTION_CLASS_INHERITED(_class, _base)</p>
+<p>// 需要 Trace , 繼承自 _base (_base class 要有 CC participant 實作)<br>NS_DECL_CYCLE_COLLECTION_SCRIPT_HOLDER_CLASS_INHERITED(_class, _base)</p>
+<p>					1234567891011</p>
+<p>						// 如果不需要 Trace 函式，請寫。NS_DECL_CYCLE_COLLECTION_CLASS(_class) // 如果需要 Trace 函式，則寫NS_DECL_CYCLE_COLLECTION_SCRIPT_HOLDER_CLASS(_class) // 不需要 Trace , 繼承自 _base (_base class 要有 CC participant 實作)NS_DECL_CYCLE_COLLECTION_CLASS_INHERITED(_class, _base) // 需要 Trace , 繼承自 _base (_base class 要有 CC participant 實作)NS_DECL_CYCLE_COLLECTION_SCRIPT_HOLDER_CLASS_INHERITED(_class, _base)</p>
+<p>然後，在 source file 中需求實作 Trace, Traverse, Unlink 函式，這裡列出一些常用的寫法。</p>
+<p>// 開始實作 Cycle Collection Participant<br>NS_IMPL_CYCLE_COLLECTION_CLASS(_class)</p>
+<p>// 實作 Trace<br>NS_IMPL_CYCLE_COLLECTION_TRACE_BEGIN_INHERITED(_class, _base)<br>  NS_IMPL_CYCLE_COLLECTION_TRACE_JS_MEMBER_CALLBACK(mSomeObj)<br>  NS_IMPL_CYCLE_COLLECTION_TRACE_JSVAL_MEMBER_CALLBACK(mSomeJSVal)<br>NS_IMPL_CYCLE_COLLECTION_TRACE_END</p>
+<p>// 實作 Traverse<br>NS_IMPL_CYCLE_COLLECTION_TRAVERSE_BEGIN_INHERITED(_class, _base)<br>  NS_IMPL_CYCLE_COLLECTION_TRAVERSE_SCRIPT_OBJECTS<br>  NS_IMPL_CYCLE_COLLECTION_TRAVERSE(mStrongPtr)  <br>NS_IMPL_CYCLE_COLLECTION_TRAVERSE_END</p>
+<p>// 實作 Unlink<br>NS_IMPL_CYCLE_COLLECTION_UNLINK_BEGIN_INHERITED(_class, _base)<br>  NS_IMPL_CYCLE_COLLECTION_UNLINK(mSomeMember)<br>  tmp-&gt;SomeCleanUpFunction();<br>NS_IMPL_CYCLE_COLLECTION_UNLINK_END</p>
+<p>					1234567891011121314151617181920</p>
+<p>						// 開始實作 Cycle Collection ParticipantNS_IMPL_CYCLE_COLLECTION_CLASS(_class) // 實作 TraceNS_IMPL_CYCLE_COLLECTION_TRACE_BEGIN_INHERITED(_class, _base)  NS_IMPL_CYCLE_COLLECTION_TRACE_JS_MEMBER_CALLBACK(mSomeObj)  NS_IMPL_CYCLE_COLLECTION_TRACE_JSVAL_MEMBER_CALLBACK(mSomeJSVal)NS_IMPL_CYCLE_COLLECTION_TRACE_END // 實作 TraverseNS_IMPL_CYCLE_COLLECTION_TRAVERSE_BEGIN_INHERITED(_class, _base)  NS_IMPL_CYCLE_COLLECTION_TRAVERSE_SCRIPT_OBJECTS  NS_IMPL_CYCLE_COLLECTION_TRAVERSE(mStrongPtr)  NS_IMPL_CYCLE_COLLECTION_TRAVERSE_END // 實作 UnlinkNS_IMPL_CYCLE_COLLECTION_UNLINK_BEGIN_INHERITED(_class, _base)  NS_IMPL_CYCLE_COLLECTION_UNLINK(mSomeMember)  tmp-&gt;SomeCleanUpFunction();NS_IMPL_CYCLE_COLLECTION_UNLINK_END</p>
+<p>在 _BEGIN 與 _END 之間，除了可以寫巨集外，也可以寫一般的程式邏輯判斷與函式呼叫。如果想呼叫自己的 member function ，只要加上 <br>			tmp-&gt; 就可以。上面的範例 <br>			_class 繼承了父類別 <br>			_base ，如果不需要繼承，請使用沒有  _INHERITED 字尾的對應巨集。</p>
+<p>Trace<br>Trace 函式中要記得回報所有的 JavaScript reference ， <br>			JS::Heap&lt;JSObject*&gt; 可利用 <br>			NS_IMPL_CYCLE_COLLECTION_TRACE_JS_MEMBER_CALLBACK 回報 ,  <br>			JS::Value 與 <br>			jsval 可利用 <br>			NS_IMPL_CYCLE_COLLECTION_TRACE_JSVAL_MEMBER_CALLBACK 回報。</p>
+<p>Traverse<br>實作 Traverse 有兩個重點。首先，要用 <br>			NS_IMPL_CYCLE_COLLECTION_TRAVERSE 回報所有的強指標 。另外，如果該類別有直接持有 JavaScript reference 還要寫 <br>			NS_IMPL_CYCLE_COLLECTION_TRAVERSE_SCRIPT_OBJECTS ，表示該類別需要 trace JavaScript object。</p>
+<p>Unlink<br>比較需要注意的是 Unlink 函式，它要做的事情是破除 reference cycle，這有時需要對自己類別有一定了解。較單純的情況只要將所有持有 reference count 的成員用 <br>			NS_IMPL_CYCLE_COLLECTION_UNLINK 放掉，較複雜的情況 Unlink 函式內還會寫一些關閉服務、移除 observer、放掉 wrapper 等等的工作。另外，如果你的類別有呼叫 <br>			mozilla::HoldJSObjects(this)，要記得在 Unlink 的時候呼叫 <br>			mozilla::DropJSObjects(this)。HoldJSObjects 通常會在建構子中呼叫，它告知 cycle collector 與 garbage collector 自己持有 JavaScript objects，當物件不再需要持有 JS object 時，就須要呼叫 DropJSObjects。(註：garbage collector 的說明請參考先前的謀智台客文 [[4]](<a href="../../posts/1605/">https://tech.mozilla.com.tw/posts/1605/%E4%BD%A0%E4%B8%9F%E6%88%91%E6%92%BF%EF%BC%81%E7%A5%9E%E5%A5%87%E7%9A%84-firefox-%E5%85%A7%E9%83%A8%E8%A8%98%E6%86%B6%E9%AB%94%E5%9B%9E%E6%94%B6%E6%A9%9F%E5%88%B6</a>) )</p>
+<p>最後，還要記得在 source file 實作 interface query 函式並覆寫 <br>			AddRef() 和 <br>			Release() 。它們都有方便的巨集可幫忙完成。</p>
+<p>// 實作 interface query<br>NS_INTERFACE_MAP_BEGIN_CYCLE_COLLECTION(_class)<br>  NS_INTERFACE_MAP_ENTRY(nsISomeInterface)<br>  . . .<br>  NS_INTERFACE_MAP_ENTRY(nsISupports)<br>NS_INTERFACE_MAP_END</p>
+<p>// 實作 reference count 函式<br>NS_IMPL_CYCLE_COLLECTING_ADDREF(_class)<br>NS_IMPL_CYCLE_COLLECTING_RELEASE_INHERITED(_class)</p>
+<p>					12345678910</p>
+<p>						// 實作 interface queryNS_INTERFACE_MAP_BEGIN_CYCLE_COLLECTION(_class)  NS_INTERFACE_MAP_ENTRY(nsISomeInterface)  . . .  NS_INTERFACE_MAP_ENTRY(nsISupports)NS_INTERFACE_MAP_END // 實作 reference count 函式NS_IMPL_CYCLE_COLLECTING_ADDREF(_class)NS_IMPL_CYCLE_COLLECTING_RELEASE_INHERITED(_class)</p>
+<p>和之前的範例一樣，加上 _INHERITED 就可以直接繼承有 cycle collection 能力的父類別 。</p>
+<p>// 透過繼承實作 interface query<br>NS_INTERFACE_MAP_BEGIN_CYCLE_COLLECTION_INHERITED(_class)<br>NS_INTERFACE_MAP_END_INHERITING(_base)</p>
+<p>// 透過繼承實作 reference count 函式<br>NS_IMPL_ADDREF_INHERITED(_class, _base)<br>NS_IMPL_RELEASE_INHERITED(_class, _base)</p>
+<p>					1234567</p>
+<p>						// 透過繼承實作 interface queryNS_INTERFACE_MAP_BEGIN_CYCLE_COLLECTION_INHERITED(_class)NS_INTERFACE_MAP_END_INHERITING(_base) // 透過繼承實作 reference count 函式NS_IMPL_ADDREF_INHERITED(_class, _base)NS_IMPL_RELEASE_INHERITED(_class, _base)</p>
+<p>透過這樣子的寫法，只要小心實作三個主要的函式，cycle collector 就可以正確釋放 reference cycle 的記憶體了，是不是很方便呢？大家在 Gecko 專案中或許會注意到一些不同的寫法，有的 CC participant 甚至沒有手動實作 Traverse 和 Unlink ，這是因為 <a href="https://mxr.mozilla.org/mozilla-central/source/xpcom/glue/nsCycleCollectionParticipant.h">nsCycleCollectionParticipant.h</a> 中提供了許多不同的巨集，在一些簡單的情況下可用更少的行數來幫你實作這些函式，但用法上都是很類似的。</p>
+<p>一開始不知道從何下手的朋友，可以參考 DOMRequest 的寫法。由於 DOMRequest 有 JS::Heap&lt;JS::Value&gt; 型態的成員變數，且它的父類別 DOMEventTargetHelper 是個 CC participant ，所以 <a href="https://dxr.mozilla.org/mozilla-central/source/dom/base/DOMRequest.h?from=DOMRequest.h">DOMRequest.h</a> 中使用下面的巨集宣告。</p>
+<p>NS_DECL_CYCLE_COLLECTION_SCRIPT_HOLDER_CLASS_INHERITED(DOMRequest, DOMEventTargetHelper)</p>
+<p>					1</p>
+<p>						NS_DECL_CYCLE_COLLECTION_SCRIPT_HOLDER_CLASS_INHERITED(DOMRequest, DOMEventTargetHelper)</p>
+<p>實作的部份請參考 <a href="https://dxr.mozilla.org/mozilla-central/source/dom/base/DOMRequest.cpp?from=DOMRequest.cpp">DOMRequest.cpp</a> ，針對 <br>			JS::Heap&lt;JS::Value&gt; mResult 用巨集實作 Trace ，針對 <br>			nsCOMPtr&lt;nsISupports&gt; mError 用巨集實作 Traverse ，並在 Unlink 函式中釋放這兩個成員變數的 reference。下面列出這三個函式的實作範例給大家參考。</p>
+<p>NS_IMPL_CYCLE_COLLECTION_CLASS(DOMRequest)</p>
+<p>NS_IMPL_CYCLE_COLLECTION_TRACE_BEGIN_INHERITED(DOMRequest,<br>                                               DOMEventTargetHelper)<br>  NS_IMPL_CYCLE_COLLECTION_TRACE_JSVAL_MEMBER_CALLBACK(mResult)<br>NS_IMPL_CYCLE_COLLECTION_TRACE_END</p>
+<p>NS_IMPL_CYCLE_COLLECTION_TRAVERSE_BEGIN_INHERITED(DOMRequest,<br>                                                  DOMEventTargetHelper)<br>  NS_IMPL_CYCLE_COLLECTION_TRAVERSE(mError)<br>NS_IMPL_CYCLE_COLLECTION_TRAVERSE_END</p>
+<p>NS_IMPL_CYCLE_COLLECTION_UNLINK_BEGIN_INHERITED(DOMRequest,<br>                                                DOMEventTargetHelper)<br>  NS_IMPL_CYCLE_COLLECTION_UNLINK(mError)<br>  tmp-&gt;mResult = JSVAL_VOID;<br>NS_IMPL_CYCLE_COLLECTION_UNLINK_END</p>
+<p>					1234567891011121314151617</p>
+<p>						NS_IMPL_CYCLE_COLLECTION_CLASS(DOMRequest) NS_IMPL_CYCLE_COLLECTION_TRACE_BEGIN_INHERITED(DOMRequest,                                               DOMEventTargetHelper)  NS_IMPL_CYCLE_COLLECTION_TRACE_JSVAL_MEMBER_CALLBACK(mResult)NS_IMPL_CYCLE_COLLECTION_TRACE_END NS_IMPL_CYCLE_COLLECTION_TRAVERSE_BEGIN_INHERITED(DOMRequest,                                                  DOMEventTargetHelper)  NS_IMPL_CYCLE_COLLECTION_TRAVERSE(mError)NS_IMPL_CYCLE_COLLECTION_TRAVERSE_END NS_IMPL_CYCLE_COLLECTION_UNLINK_BEGIN_INHERITED(DOMRequest,                                                DOMEventTargetHelper)  NS_IMPL_CYCLE_COLLECTION_UNLINK(mError)  tmp-&gt;mResult = JSVAL_VOID;NS_IMPL_CYCLE_COLLECTION_UNLINK_END</p>
+<p>			NS_IMPL_CYCLE_COLLECTION_UNLINK 會呼叫該變數的 <br>			ImplCycleCollectionUnlink() 函式，以 nsCOMPtr 為例，該函式會將自己設為 null pointer 。如果變數沒有實作 <br>			ImplCycleCollectionUnlink()，亦可直接透過賦值清掉 reference 來達到 unlink 的效果。</p>
+<h3>參考資料：</h3>
+<p>[1] <a href="../../posts/828/">說說 nsCOMPtr 這東西</a> (謀智台客)</p>
+<p>[2] <a href="https://mxr.mozilla.org/mozilla-central/source/xpcom/glue/nsCycleCollectionParticipant.h">nsCycleCollectionParticipant.h</a> (Mozilla Cross-Reference)</p>
+<p>[3] <a href="https://developer.mozilla.org/en-US/docs/Interfacing_with_the_XPCOM_cycle_collector">Interfacing with the XPCOM cycle collector</a> (Mozilla Developer Network)</p>
+<p>[4] <a href="../../posts/1605/">你丟我撿！神奇的 Firefox 內部記憶體回收機制</a> (謀智台客)</p>
+<p>[5] <a href="https://blog.kylehuey.com/post/27564411715/cycle-collection">Cycle Collection</a>  (by Kyle Huey)</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox/">Firefox</a></span><span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20140703035427id_/https://tech.mozilla.com.tw/?p=4351">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

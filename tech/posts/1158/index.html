@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>在 Firefox OS 裡 如何使用 built-in profiler | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../posts/1158/">在 Firefox OS 裡 如何使用 built-in profiler</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time>日期不明</time></p>
+              <h1 class="entry-title">在 Firefox OS 裡 如何使用 built-in profiler</h1>
+            </header>
+            <div class="entry-content"><p>Profiling 這個技術可以提供系統執行時的歷程，讓我們評估並找出系統效能的瓶頸。Firefox OS 目前提供了 built-in profiler， 我們可以利用 profile.sh 這個 script 來幫助我們從 device 擷取 profiling information，並且利用 cleopatra 這個工具來分析 profiling information。在我們開始使用 profiler 之前，我們需要 Firefox OS 的 local build，並且需要將你的 device 接到電腦上，並確定你可以使用 ADB 這個工具從 device 上傳和下載資料。一切就緒後，就讓我們開始使用 profile.sh 來擷取系統的 profiling information 吧。</p>
+<p>我們可以在 Firefox OS 原始碼的根目錄下找到 profile.sh，這個 script 目前提供了下列這些功能：</p>
+<p>./profile.sh start <br>./profile.sh ps <br>./profile.sh capture [pid or name] <br>./profile.sh stop <br>./profile.sh ls <br>./profile.sh signal [pid] <br>./profile.sh pull pid [NAME [HHMM]] <br>./profile.sh symbolicate filename <br>./profile.sh help<br>我們可以利用 profile.sh help 這個指令來取得詳細的說明。</p>
+<p>在這些指令當中，最常用的就是 profile.sh start 及 profile.sh capture 指令。profile.sh start 指令可以重新啟動 Firefox OS 並且開始記錄系統執行時的歷程，當我們下了這個指令後，FireFox OS 就會啟動 built-in profiler，然後記錄系統執行時的 profiling information (program counter (PC), stack pointer (SP) , frame pointer (FP) 及 timestamp) 。利用這些資訊及 symbol table，我們就可以知道系統執行過那些 functions 及其執行的次數。目前 built-in profiler 是利用 Periodically Sampling 及 Static Instrument 這兩種方式來記錄系統執行的歷程。Periodically Sampling 的方式跟 Oprofile 的想法是類似的，Firefox OS 在啟動 built-in profiler 時會產生一個新的 Thread，這個 Thread 會定期的產生 SIGPROF signal 給 Firefox OS process， Firefox OS process 收到 SIGPROF signal 後，透過 signal handler來記錄 profiling information。我們也可以利用 Static Instrument 的方式，在 performance critical 的 function 加上 SAMPLE_LABEL (name space, function name) 來記錄 profiling information。在得到了 profiling information 後，我們可以利用 profile.sh capture 這個指令將 profiling information 從電話拷貝到 host PC。其命名格式為 profile_HHMM_PID_NAME.txt。接下來我們需要利用分析工具來幫助我們分析 profiling information。我們可以將 profiling information 上傳到下面這個網址。</p>
+<p>http://people.mozilla.com/~bgirard/cleopatra/</p>
+<p>接下來，我們就可以得到 cleopatra 分析的結果了。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543.png"><img src="../../assets/1158/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543-1024x482.png" alt="" loading="lazy"></a></p>
+<p>我們還可以針對可能的 performance bottleneck 作細部的分析如下圖，</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1345021.png"><img src="../../assets/1158/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1345021.png" alt="" loading="lazy"></a></p>
+<p>眼尖的讀者可能會發現，我們的 profiling information 還有包括 Javascript 喔，是不是很 Cool 呢 ？</p>
+<p>[1] <a href="https://developer.mozilla.org/en-US/docs/Performance/Profiling_with_the_Built-in_Profiler">https://developer.mozilla.org/en-US/docs/Performance/Profiling_with_the_Built-in_Profiler</a></p></div>
+            <footer class="entry-footer">
+              
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20130530152914id_/https://tech.mozilla.com.tw/?p=1158">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

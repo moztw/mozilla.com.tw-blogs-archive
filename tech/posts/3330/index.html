@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>Gecko JavaScript 之 “改 code 卻不 build code&quot; 小徑。 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-12/">2013 年 12 月</a><b>&raquo;</b><a href="../../posts/3330/">Gecko JavaScript 之 “改 code 卻不 build code&quot; 小徑。</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-12-02" class="published"><span class="posted-month">12月</span><span class="posted-date">2</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">Gecko JavaScript 之 “改 code 卻不 build code&quot; 小徑。</h1>
+            </header>
+            <div class="entry-content"><p><a href="https://www.123rf.com/photo_8515474_3d-abstract-digital-code-connection.html"><img src="../../assets/3330/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg" alt="8515474-3d-abstract-digital-code-connection" loading="lazy"></a> [1]</p>
+<p>問：</p>
+<p>常常我們會收到某些 Gecko 的問題，但卻是 log 不足或是可能需要在手機上摹擬某些特殊/額外的資訊才有可能重現問題。而我們又確定這個問題，大概會從 Gecko 的 JavaScript 檔案下手。但是，我又不想抓/編譯程式碼，這個症狀可有解？</p>
+<p>答：</p>
+<p>有的！！的確是有方法可以透過不抓/編譯程式碼的手續就可以把想做的事情達成的。</p>
+<p>(記得拿出一台 firefox OS 的機器邊看邊操作嘿，(啥，沒機器？？ 那就去&quot;買&quot;一台啊！！！！))</p>
+<p>首先，我們先確認一下，你所想看的部份的 log 有沒有打開 [2]。</p>
+<p>舉個 RIL (Radio Interface Layer) [3] 的例子來說，</p>
+<ol><li>ril_consts.js</li></ol>
+<p>// Set to true to debug all RIL layers<br>this.DEBUG_ALL = false;</p>
+<p>					12</p>
+<p>						// Set to true to debug all RIL layersthis.DEBUG_ALL = false;</p>
+<ol><li>RadioInterfaceLayer.js</li></ol>
+<p>// Read debug setting from pref<br>let debugPref = false;<br>try {<br>  debugPref = Services.prefs.getBoolPref(&quot;ril.debugging.enabled&quot;);<br>} catch(e) {<br>  debugPref = false;<br>}<br>DEBUG = RIL.DEBUG_RIL || debugPref;</p>
+<p>					12345678</p>
+<p>						// Read debug setting from preflet debugPref = false;try {  debugPref = Services.prefs.getBoolPref(&quot;ril.debugging.enabled&quot;);} catch(e) {  debugPref = false;}DEBUG = RIL.DEBUG_RIL || debugPref;</p>
+<p>喔喔！ ril 相關的 log 沒開！！！！</p>
+<p>可是，還好有 preference 可以手動的去打開它。</p>
+<p>來吧~我們就來動手把它給打開吧。</p>
+<p>1.1 adb pull /system/b2g/defaults/pref/user.js /tmp<br>1.2 把 ril.debugging.enabled 這個值修改成 true.<br>      pref(&quot;ril.debugging.enabled&quot;, true);<br>1.3 adb remount<br>1.3 adb push /tmp/user.js /system/b2g/defaults/pref/<br>1.4 adb reboot</p>
+<p>					123456</p>
+<p>						1.1 adb pull /system/b2g/defaults/pref/user.js /tmp1.2 把 ril.debugging.enabled 這個值修改成 true.      pref(&quot;ril.debugging.enabled&quot;, true);1.3 adb remount1.3 adb push /tmp/user.js /system/b2g/defaults/pref/1.4 adb reboot</p>
+<p>adb logcat 來看一下，是不是可以看到 “RadioInterfaceLayer&quot; 這個關鍵字出現在 log 裏面了呢(如下面的範例)？</p>
+<p>I/Gecko   (  107): -<em>- RadioInterfaceLayer: Registered mobileconnection target: [object ChromeMessageSender]<br>I/Gecko   (  107): -</em>- RadioInterfaceLayer: Received &#39;RIL:RegisterIccMsg&#39; message from content process<br>I/Gecko   (  107): -<em>- RadioInterfaceLayer: Registered icc target: [object ChromeMessageSender]<br>I/Gecko   (  107): -</em>- RadioInterfaceLayer: Received &#39;RIL:GetRilContext&#39; message from content process<br>I/Gecko   (  107): -*- RadioInterface[0]: Received message from worker: {&quot;voice&quot;:{&quot;signalStrength&quot;:-53,&quot;relSignalStrength&quot;:100},&quot;data&quot;:{&quot;signalStrength&quot;:-53,&quot;relSignalStrength&quot;:100},&quot;rilMessageType&quot;:&quot;signalstrengthchange&quot;}</p>
+<p>					12345</p>
+<p>						I/Gecko   (  107): -<em>- RadioInterfaceLayer: Registered mobileconnection target: [object ChromeMessageSender]I/Gecko   (  107): -</em>- RadioInterfaceLayer: Received &#39;RIL:RegisterIccMsg&#39; message from content processI/Gecko   (  107): -<em>- RadioInterfaceLayer: Registered icc target: [object ChromeMessageSender]I/Gecko   (  107): -</em>- RadioInterfaceLayer: Received &#39;RIL:GetRilContext&#39; message from content processI/Gecko   (  107): -*- RadioInterface[0]: Received message from worker: {&quot;voice&quot;:{&quot;signalStrength&quot;:-53,&quot;relSignalStrength&quot;:100},&quot;data&quot;:{&quot;signalStrength&quot;:-53,&quot;relSignalStrength&quot;:100},&quot;rilMessageType&quot;:&quot;signalstrengthchange&quot;}</p>
+<p>這時候，你會問說，可是 我需要的資訊不是現有的 log 裏面就包含的。 那我該怎麼辦？？？</p>
+<p>我有沒有辦法不去編譯程式碼，同時變造一些資料好讓我可以做一些測試？</p>
+<p>那我們就來看下一個例子囉！！</p>
+<p>舉個偽IMEI來當作範例。</p>
+<ol><li>確認當前 IMEI 為何。</li></ol>
+<p>進撥號畫面，輸入*#06# [4]，查看一下當下手機告訴你這台機器的 IMEI 是什麼！</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03.png"><img src="../../assets/3330/wp-content/uploads/2013/10/2013-10-30-00-57-03-200x300.png" alt="2013-10-30-00-57-03" loading="lazy"></a></p>
+<ol><li>從手機中把需要的檔案拉出來：</li></ol>
+<p> 2.1 adb pull /system/b2g/omni.ja /tmp<br> 2.2 cd tmp<br> 2.3 unzip omni.ja<br> 2.4 cd omni<br> 2.5 find -name ril_worker.js</p>
+<p>					12345</p>
+<p>						 2.1 adb pull /system/b2g/omni.ja /tmp 2.2 cd tmp 2.3 unzip omni.ja 2.4 cd omni 2.5 find -name ril_worker.js</p>
+<ol><li>修改步驟2.5中所找到的檔案，將 IMEI 偽造成我們想要的資料：</li></ol>
+<p>在此，我們將 IMEI 假造成為&quot;123456789012345″。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified.png"><img src="../../assets/3330/wp-content/uploads/2013/10/modified-300x100.png" alt="modified" loading="lazy"></a></p>
+<ol><li>打包/跟新檔案：</li></ol>
+<p>4.1 zip -r omni.ja *<br>4.2 adb remount<br>4.3 adb push omni.ja /system/b2g<br>4.3 adb reboot</p>
+<p>					1234</p>
+<p>						4.1 zip -r omni.ja *4.2 adb remount4.3 adb push omni.ja /system/b2g4.3 adb reboot</p>
+<ol><li>重新查詢 IMEI ：</li></ol>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53.png"><img src="../../assets/3330/wp-content/uploads/2013/10/2013-10-30-13-32-53-200x300.png" alt="2013-10-30-13-32-53" loading="lazy"></a></p>
+<p>完成了。。。 IMEI 被我們偽造成123456789012345了。</p>
+<p>修改 Gecko 裏面的 JavaScript 檔案，卻不重新 build code ，是不是相當的簡單呢？</p>
+<p>有沒有想試試看的東西了？</p>
+<p>還等什麼？快點去試一把吧！！</p>
+<p>註：</p>
+<p>請確定你所使用的機器是開發者的版本，並且取得 root 的權限，上面的步驟才玩的下去喔。</p>
+<p>參考資料：</p>
+<p>[1] <a href="https://www.123rf.com/photo_8515474_3d-abstract-digital-code-connection.html">圖片來源 – http://www.123rf.com/photo_8515474_3d-abstract-digital-code-connection.html</a></p>
+<p>[2] <a href="https://wiki.mozilla.org/B2G/QA/Tips_And_Tricks#Changing_preferences">https://wiki.mozilla.org/B2G/QA/Tips_And_Tricks#Changing_preferences</a></p>
+<p>[3] <a href="https://wiki.mozilla.org/B2G/RIL">https://wiki.mozilla.org/B2G/RIL</a></p>
+<p>[4] 3GPP TS 22.030 version 11.0.0 Release 11, 6.7 Presentation of IMEI</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/?p=3330">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

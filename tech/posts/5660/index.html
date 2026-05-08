@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>四個 SVG 動畫應用範例 － Firefox 十週年活動網站技術解密 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-11/">2014 年 11 月</a><b>&raquo;</b><a href="../../posts/5660/">四個 SVG 動畫應用範例 － Firefox 十週年活動網站技術解密</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-11-12" class="published"><span class="posted-month">11月</span><span class="posted-date">12</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">四個 SVG 動畫應用範例 － Firefox 十週年活動網站技術解密</h1>
+            </header>
+            <div class="entry-content"><p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/11/10years-svg.png"><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/11/10years-svg.png"><img src="../../assets/5660/wp-content/uploads/2014/11/10years-svg-150x150.png" alt="10years-svg" loading="lazy"></a></a>不知道大家有沒有注意到，這次的 <a href="https://mozilla.com.tw/10years/firefox-family/">Firefox 十週年活動網站</a>上出現了一些特殊的動畫元素。這些元素不是 GIF 圖素，也不需要複雜的動畫套件，而是運用了 SVG 本身具備的動畫功能。</p>
+<p>使用 SVG 來做動畫有幾個好處：</p>
+<ul><li>首先因為是向量圖形，所以任意縮放變形都不怕出現鋸齒顆粒。</li></ul>
+<ul><li>多數向量繪圖軟體都支援 SVG 輸出，詳細支援度可參考 <a href="https://en.wikipedia.org/wiki/Comparison_of_vector_graphics_editors#File_format_support">Wikipedia 上的比較表</a>。</li></ul>
+<ul><li>除了進行一些數值型的動畫漸變（位置、顏色等）以外，也支援路徑和形狀漸變。</li></ul>
+<ul><li>可內嵌於網頁中，並搭配 CSS/Javascript 進行樣式變化、設定動畫、互動功能等。</li></ul>
+<ul><li>支援導引線動畫。</li></ul>
+<ul><li>可透過 xlink : href 屬性重用元素。</li></ul>
+<p>以下的四個範例將會一一示範這些 SVG 的特異功能。</p>
+<h2>線條繪製動畫</h2>
+<p>See the Pen SVG Line Drawing Animation by Eddie Lin (@yshlin) on CodePen.0</p>
+<p>可以看到<a href="https://mozilla.com.tw/10years/firefox-family/">幸福的狐家元件活動網頁</a>裡，在往下捲動的過程中，附加元件的圖示線條流暢地繪製出來，這是如何做到的呢？首先當然需要 SVG 圖素，這部分需要先請設計師在向量圖軟體中繪製完成，再透過軟體匯出為 SVG 檔案。有了 SVG 檔案以後接下來的就簡單了，只需要運用兩個 SVG 圖形元素的屬性：<br>			stroke-dasharray 、<br>			stroke-dashoffset 。</p>
+<p>			stroke-dasharray 的用途是指定線條的虛線樣式，通常由一組數字陣列所組成，在繪製虛線時會依據陣列內的數字決定線條或間隔的長度，詳細的使用方式可參考 <a href="https://developer.mozilla.org/zh-TW/docs/Web/SVG/Attribute/stroke-dasharray">MDN 說明文件</a>，在這裡只需要用到最簡單的單一值用法，簡單來說 <br>			stroke-dasharray=&quot;5&quot; 代表了虛線會以 5px 的長度及 5px 的間隔來繪製，那麼如果 <br>			stroke-dasharray 內指定的長度完全和線條的長度一樣（或更長），會發生什麼事呢？我們會看到完整的實線被繪製出來，並且不會有任何短少或接縫出現，例如線條長度有 100px，而 <br>			stroke-dasharray=&quot;100&quot;，則我們會得到和原本沒設定時一模一樣的 100px 實線。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/11/stroke-dasharray.svg_1.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2014/11/stroke-dasharray.svg_1.png" alt="" loading="lazy"></a></p>
+<p>那麼為什麼要做這樣的設定呢？其實我們是要運用虛線接下來的 100px 間隔來幫助我們完成繪製動畫。設定了 <br>			stroke-dasharray=&quot;100&quot; 之後，後面的 100px 間隔並非不存在，只是目前的位置看不到罷了。因此我們只需要再運用 <br>			stroke-dashoffset 屬性，改變虛線繪製的啟始位置即可。比如說設定 <br>			stroke-dashoffset=&quot;50&quot;，我們會看到 100px 線條只畫出了一半，而當 <br>			stroke-dashoffset=&quot;100&quot; 時，我們發現整個線條都不見了！</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/11/stroke-dashoffset.svg_1.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2014/11/stroke-dashoffset.svg_1.png" alt="" loading="lazy"></a></p>
+<p>這樣一來我們只要透過 SVG 的 <br>			animate 元素設定，或是 CSS、Javascript 來漸進式地改變 <br>			stroke-dashoffset 的數值，就可以做出線條繪製的動畫效果囉！以下示範 CSS 動畫的設定方式：</p>
+<p>@keyframes draw {<br>  to {<br>    stroke-dashoffset: 0;<br>  }<br>}</p>
+<p>.logo-outline path {<br>  animation: draw 3s linear infinite;<br>}</p>
+<p>					123456789</p>
+<p>						@keyframes draw {  to {    stroke-dashoffset: 0;  }} .logo-outline path {  animation: draw 3s linear infinite;}</p>
+<p>可以看到 CSS 動畫中除了針對一般 HTML 屬性以外，也可對 svg 圖形特有的屬性進行漸變。這裡建議在 SVG 路徑內的 <br>			stroke-dasharray 、<br>			stroke-dashoffset上設定和線條總長度一樣的值，比如說<br>			stroke-dasharray=&quot;100&quot; stroke-dashoffset=&quot;100&quot;，並在<br>			@keyframes中指定<br>			to，讓<br>			stroke-dashoffset的數值漸變為 0，這樣就能達到繪製線條的動畫效果，且指定<br>			to的好處是<br>			@keyframes設定可以重用在總長度不同的路徑圖形之上，不需要為了各別的路徑分別作設定。</p>
+<p>這邊比較麻煩的地方是需要預先取得線條的總長度，如果線條是 <br>			circle、<br>			rect、<br>			line 等等簡單形狀的話，長度可以透過簡單的公式自己算出來，如果是 <br>			polyline 的話稍微麻煩一點，線段少的就當作多條 <br>			line  來運算加總，線段多的可能直接用目視猜測慢慢逼近。那麼如果是包含複雜曲線的 <br>			path 元素呢？其實這反而相對簡單，只需要利用 Javascript 取得元素之後，呼叫 <br>			getTotalLength() 函式即可，有時候 <br>			getTotalLengh() 取得的數字會有些微的誤差，這部分要再視圖形的狀況個別調整。</p>
+<p>另外如果想要讓線條繪製動畫可以配合捲軸動畫來運作，可以參考活動網站的作法（<a href="https://github.com/elin-moco/bedrock/blob/master/media/js/mocotw/10years-firefox-family.js#L449">Github 連結在此</a>）。</p>
+<h2>多影格動畫</h2>
+<p>See the Pen SVG Waving Smoke by Eddie Lin (@yshlin) on CodePen.0</p>
+<p>SVG 動畫很方便的地方在於，我們只需要設定形狀或路徑的關鍵畫格（<a href="https://en.wikipedia.org/wiki/Key_frame">keyframes</a>），它會自動補齊中間的漸變動畫。這個範例中要做的是類似卡通裡波浪式的冒煙效果。首先我們需要四組 S 型路徑以組成一組波浪動畫：</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/11/smoke-waves.svg_1.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2014/11/smoke-waves.svg_1.png" alt="" loading="lazy"></a></p>
+<p>這個範例的四組路徑的定義值分別為<br>			d=&quot;M 5 5 c -3 2, -3 8, 0 10 s 3 8, 0 10&quot;、<br>			d=&quot;M 3 5 c 0 3, 4 7, 4 10 s -4 7, -4 10&quot;、<br>			d=&quot;M 5 5 c 3 2, 3 8, 0 10 s -3 8&quot;、<br>			d=&quot;M 7 5 c 0 3, -4 7, -4 10 s 4 7, 4 10&quot; 。接下來要做的就是將它們加入動畫的關鍵畫格設定中，讓我們在 <br>			path 元素內加上一個 <br>			animate 元素如下：</p>
+<p>&lt;path id=&quot;smoke&quot; fill=&quot;none&quot; stroke=&quot;#999999&quot; stroke-width=&quot;6&quot; <br>      stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;<br>  &lt;animate attributeName=&quot;d&quot;<br>           values=&quot;M 5 5 c -3 2, -3 8, 0 10 s 3 8, 0 10;M 3 5 c 0 3, 4 7, 4 10 s -4 7, -4 10;M 5 5 c 3 2, 3 8, 0 10 s -3 8, 0 10;M 7 5 c 0 3, -4 7, -4 10 s 4 7, 4 10;M 5 5 c -3 2, -3 8, 0 10 s 3 8, 0 10&quot;<br>           dur=&quot;1s&quot;<br>           repeatCount=&quot;indefinite&quot;/&gt;<br>&lt;/path&gt;</p>
+<p>					1234567</p>
+<p>						&lt;path id=&quot;smoke&quot; fill=&quot;none&quot; stroke=&quot;#999999&quot; stroke-width=&quot;6&quot;       stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;  &lt;animate attributeName=&quot;d&quot;           values=&quot;M 5 5 c -3 2, -3 8, 0 10 s 3 8, 0 10;M 3 5 c 0 3, 4 7, 4 10 s -4 7, -4 10;M 5 5 c 3 2, 3 8, 0 10 s -3 8, 0 10;M 7 5 c 0 3, -4 7, -4 10 s 4 7, 4 10;M 5 5 c -3 2, -3 8, 0 10 s 3 8, 0 10&quot;           dur=&quot;1s&quot;           repeatCount=&quot;indefinite&quot;/&gt;&lt;/path&gt;</p>
+<p>			attributeName是用來指定要漸變的屬性，這裡設定<br>			attributeName=&quot;d&quot;以進行路徑值的漸變。通常簡單的情況我們只在 <br>			animate 元素上加上 <br>			from  或 <br>			to 屬性，讓圖形只針對頭尾兩組設定值進行漸變，但在這個範例中需要多個關鍵畫格才能讓動畫流暢地漸變，因此我們改用 <br>			values  屬性。<br>			values 屬性的用法如上例，只要用分號 ; 來區隔每個關鍵畫格的設定值即可，要注意的是為了讓動畫能夠完成循環，最後一個關鍵畫格要和第一格一樣，因此範例中有五組關鍵畫格設定。<br>			dur 屬性是設定動畫的時間長度，如果像現在有五組關鍵畫格設定的話， <br>			dur 可以針對中間產生的四組漸變區段各別設定不同的時間長度，在這個範例中只設定了一個總長度 <br>			dur=&quot;1s&quot;，如此一來三個區段的時間長度就會平均分配，也就是變成每一段 0.25 秒。最後因為要讓它無限循環所以要設定 <br>			repeatCount=&quot;indefinite&quot; 。</p>
+<p>有了一條波浪後，接下來就是想辦法複製三條出來。為了將來維護方便，我不希望同樣的東西被複製貼上三次，以免到時要更改設定時要改三次。這時就可以使用 <br>			xlink:href 屬性。首先在 svg 元素上加上 <br>			xmlns:xlink 屬性以引用 <br>			xlink 的命名空間定義：</p>
+<p>&lt;svg version=&quot;1.1&quot; <br>     xmlns=&quot;http://www.w3.org/2000/svg&quot; <br>     xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;</p>
+<p>					123</p>
+<p>						&lt;svg version=&quot;1.1&quot;      xmlns=&quot;http://www.w3.org/2000/svg&quot;      xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;</p>
+<p>接著在波浪的 <br>			path 元素底下加上兩個 <br>			use 元素：</p>
+<p>  &lt;use xlink:href=&quot;#smoke&quot; transform=&quot;translate(10,0)&quot; /&gt;<br>  &lt;use xlink:href=&quot;#smoke&quot; transform=&quot;translate(20,0)&quot; /&gt;</p>
+<p>					12</p>
+<p>						  &lt;use xlink:href=&quot;#smoke&quot; transform=&quot;translate(10,0)&quot; /&gt;  &lt;use xlink:href=&quot;#smoke&quot; transform=&quot;translate(20,0)&quot; /&gt;</p>
+<p>			xlink:href=&quot;#smoke&quot;透過 <br>			path 的 id 來引用波浪動畫路徑，達到複製的效果，而<br>			transform=&quot;translate(10,0)&quot;則是指定複製出來路徑的位移，這邊設定讓三條波浪動畫水平間隔 10 像素排列。如此一來就完成冒煙的動畫啦！</p>
+<h2>導引線動畫</h2>
+<p>See the Pen SVG Animate Along Path by Eddie Lin (@yshlin) on CodePen.0</p>
+<p>導引線動畫的效果就是讓圖形可以沿著指定的路徑移動，要達到這個效果首先需要一條繪製好的路徑，要注意的是導引線路徑只支援 <br>			path 元素，所以如果發現匯出的 SVG 內容出現 <br>			polyline 或是其它元素，那麼可能要想辦法在向量圖軟體中進行轉換（可以試著切斷封閉路徑、或接上一小段曲線路徑再匯出）。假設我們已經把 <br>			path 元素準備好，並設定 <br>			id=&quot;wire&quot;：</p>
+<p>&lt;path d=&quot;M-1,1.499h83c0,0,10.5,1,10.5,11.25s-10.25,12.25-10.25,12.25h-43.5c0,0-10.75,0.75-11.75,11.5s9.75,12.25,9.75,12.25H343.5&quot;<br>      stroke=&quot;none&quot; fill=&quot;none&quot; id=&quot;wire&quot;&gt;&lt;/path&gt;</p>
+<p>					12</p>
+<p>						&lt;path d=&quot;M-1,1.499h83c0,0,10.5,1,10.5,11.25s-10.25,12.25-10.25,12.25h-43.5c0,0-10.75,0.75-11.75,11.5s9.75,12.25,9.75,12.25H343.5&quot;      stroke=&quot;none&quot; fill=&quot;none&quot; id=&quot;wire&quot;&gt;&lt;/path&gt;</p>
+<p>而我們想讓一個 <br>			circle 元素沿著此路徑移動，只需要在 <br>			circle 元素內加上一個 <br>			animateMotion 子元素如下：</p>
+<p>&lt;circle cx=&quot;&quot; cy=&quot;&quot; r=&quot;5&quot; fill=&quot;#529fd9&quot;&gt;<br>  &lt;animateMotion dur=&quot;1.6s&quot; repeatCount=&quot;indefinite&quot;&gt;<br>    &lt;mpath xlink:href=&quot;#wire&quot;&gt;&lt;/mpath&gt;<br>  &lt;/animateMotion&gt;<br>&lt;/circle&gt;</p>
+<p>					12345</p>
+<p>						&lt;circle cx=&quot;&quot; cy=&quot;&quot; r=&quot;5&quot; fill=&quot;#529fd9&quot;&gt;  &lt;animateMotion dur=&quot;1.6s&quot; repeatCount=&quot;indefinite&quot;&gt;    &lt;mpath xlink:href=&quot;#wire&quot;&gt;&lt;/mpath&gt;  &lt;/animateMotion&gt;&lt;/circle&gt;</p>
+<p>其中 <br>			dur 和 <br>			repeatCount 屬性就和前述 <br>			animate 元素的屬性作用相同，接著在 <br>			animateMotion 元素內再加上一個 <br>			mpath 子元素，並設定屬性值 <br>			xlink:href=&quot;#wire&quot;，透過 <br>			path 的 id <br>			#wire 來指定行進路徑。<a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element/animateMotion">詳細說明文件請見 MDN</a>。</p>
+<h2>環形進度列</h2>
+<p>See the Pen SVG Progress Circle by Eddie Lin (@yshlin) on CodePen.0</p>
+<p>這個範例中將示範 SVG 如何搭配 Javascript 來做動畫，實際的應用在這次<a href="https://mozilla.com.tw/10years/browser-survey/">十週年活動的問卷調查結果</a>中，往下捲動可以看到環形的進度列逐漸填滿至指定的百分比。首先要準備的 SVG 很簡單，只需要兩個圓圈，內容如下：</p>
+<p>  &lt;circle class=&quot;gauge&quot; cx=&quot;200&quot; cy=&quot;200&quot; r=&quot;100&quot;&gt;&lt;/circle&gt;<br>  &lt;circle stroke-dasharray=&quot;629&quot; stroke-dashoffset=&quot;629&quot; class=&quot;arc&quot; cx=&quot;200&quot; cy=&quot;200&quot; r=&quot;100&quot; data-to=&quot;88&quot;&gt;&lt;/circle&gt;</p>
+<p>					12</p>
+<p>						  &lt;circle class=&quot;gauge&quot; cx=&quot;200&quot; cy=&quot;200&quot; r=&quot;100&quot;&gt;&lt;/circle&gt;  &lt;circle stroke-dasharray=&quot;629&quot; stroke-dashoffset=&quot;629&quot; class=&quot;arc&quot; cx=&quot;200&quot; cy=&quot;200&quot; r=&quot;100&quot; data-to=&quot;88&quot;&gt;&lt;/circle&gt;</p>
+<p>第一行的 <br>			circle 是靜態的灰色底，而第二行的 <br>			circle 元素則是我們要用 Javascript 來控制增長的進度列。這邊一樣運用前述線條繪製動畫的作法，設定<br>			stroke-dasharray 及 <br>			stroke-dashoffset ，而線條的總長度即圓周的長度 2r * pi，範例中 r 值（即半徑）為 100，因此圓周總長為 628.31，為了避免填滿時出現細縫，採用無條件進位，也就是 629，我們先把這個數值設定在<br>			stroke-dasharray 、 <br>			stroke-dashoffset 屬性中，讓進度列一開始即為歸零的狀態。接著把目標的進度值（百分比）放在進度列元素的 <br>			data-to 自訂屬性中，以便 Javascript 可以直接從元素中取得目標值，不用針對每個進度列個別設定在 Javascript 之中。</p>
+<p>接下來我們針對進度列的 circle 元素設定漸變：</p>
+<p>.arc {<br>  .transition(stroke-dashoffset 1s linear);<br>}</p>
+<p>					123</p>
+<p>						.arc {  .transition(stroke-dashoffset 1s linear);}</p>
+<p>詳細的樣式設定就不在此贅述，可直接參考上面的 Codepen。這邊透過 CSS 設定了 <br>			.arc 元素的 <br>			stroke-dashoffset 屬性，使數值在改變時進行 1 秒鐘的線性漸變。這樣一來我們就不必使用 Javascript 去運算補齊中間的漸變值。</p>
+<p>最後就是透過 Javascript 將 <br>			stroke-dashoffset 依照比例設定為目標值，範例中的重點在這段程式碼：</p>
+<p>var toOffset = (100 - to) * fullOffset / 100;<br>$(&#39;#go&#39;).click(function() {<br>  progressCircle.attr(&#39;stroke-dashoffset&#39;, toOffset);<br>});</p>
+<p>					1234</p>
+<p>						var toOffset = (100 - to) * fullOffset / 100;$(&#39;#go&#39;).click(function() {  progressCircle.attr(&#39;stroke-dashoffset&#39;, toOffset);});</p>
+<p>先算出 <br>			stroke-dashoffset  的目標值 <br>			toOffset，接著在按鈕 <br>			#go  按下時改變 <br>			stroke-dashoffset 的值，以啟動前面在 CSS 中設定的漸變動畫。</p>
+<p>若想支援一口氣啟動多個不同進度的進度列，可以參考<a href="https://github.com/elin-moco/bedrock/blob/master/media/js/mocotw/10years-browser-survey.js#L46-L73">活動網頁 Github 的 JQuery Plugin 寫法</a>。</p>
+<p>另外<a href="https://mozilla.com.tw/10years/browser-survey/">問卷統計結果頁</a>中還使用了 <a href="https://imakewebthings.com/jquery-waypoints/">JQuery Waypoints 套件</a>以在捲動至進度列時驅動它，用法<a href="https://github.com/elin-moco/bedrock/blob/master/media/js/mocotw/10years-browser-survey.js#L108-L120">詳見此活動網頁 Github</a>。</p>
+<h2>偵測相容性</h2>
+<p>關於 SVG 以及 SVG SMIL 動畫（註 1）的瀏覽器相容性，在 <a href="https://mozilla.com.tw/newsletter/2014-09-30/">27 期電子報</a>有介紹過的 <a href="https://caniuse.com/">caniuse.com</a> 網站中可以查詢得到，詳見這兩個連結－<a href="https://caniuse.com/#feat=svg">Can I use SVG?</a> <a href="https://caniuse.com/#feat=svg-smil">Can I use SVG SMIL animation?</a></p>
+<p>那麼問題是，SVG SMIL 動畫 和透過 CSS、Javascript 設定的動畫，支援度有沒有不同呢？經測試 IE9 以上有支援靜態 SVG，但目前完全不支援 SMIL，透過 CSS 設定的 animation、transition 也沒有任何作用，但透過 Javascript 進行的漸變則可以正常運作。而支援 SMIL 的瀏覽器版本如 Firefox、Chrome、Safari、Opera 等則同時也支援 CSS、Javascript 漸變動畫。</p>
+<p>因此若要最大化相容性可考慮使用 Javascript 來進行動畫的設定（註 2）。若只想簡單地使用 SMIL 或 CSS 來設定動畫，在不支援 SVG 動畫時降級為靜態圖片或 GIF 等等，則可透過 <br>			Modernizr.svg 、<br>			Modernizr.smil 來偵測瀏覽器支援（註 3）。</p>
+<h2>Firefox 十週年系列活動</h2>
+<p>最後，如果你還沒聽過 <a href="https://mozilla.com.tw/10years/">Firefox 十週年系列活動</a>，別忘了參加<a href="https://mozilla.com.tw/10years/firefox-family/">幸福的狐家元件線上活動</a>轉輪抽大獎，並領票參加 11/22 ~ 11/23 在華山文創園區舉辦的<a href="https://mozilla.com.tw/10years/firefox-day/">網路自由日展覽活動</a>哦！</p>
+<h2>附註</h2>
+<ul><li>註 1：SVG SMIL (<a href="https://www.w3.org/TR/REC-smil">Synchronized Multimedia Integration Language</a>) 泛指以 XML 形式在 SVG 圖形內設定的動畫，除了前面用到過的 animate、animateMotion 元素以外還有 animateTransform 等，<a href="https://developer.mozilla.org/en-US/docs/Web/SVG/SVG_animation_with_SMIL">詳見 MDN 說明文件</a>。</li></ul>
+<ul><li>註 2：除了簡單的數值型漸變外，若要用 Javascript 實作依循時間函式的數值型漸變或是路徑形狀的漸變，可透過額外的 Javascript 套件如 <a href="https://snapsvg.io/">Snap.svg</a>。</li></ul>
+<ul><li>註 3：在 <a href="https://modernizr.com/">Modernizr 網站</a>上可自訂想偵測的功能，產生對應的 Javascript 腳本並嵌入你的網頁。讓你在開發時可以偵測瀏覽器的支援度以執行對應的 CSS/Javascript。</li></ul></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/css/">CSS</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20171022001056id_/https://tech.mozilla.com.tw/?p=5660">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

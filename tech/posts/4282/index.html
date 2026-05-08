@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>Address-Sanitizer(ASAN): 一個 C/C++ 記憶體偵錯的工具 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-05/">2014 年 5 月</a><b>&raquo;</b><a href="../../posts/4282/">Address-Sanitizer(ASAN): 一個 C/C++ 記憶體偵錯的工具</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-05-19" class="published"><span class="posted-month">5月</span><span class="posted-date">19</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">Address-Sanitizer(ASAN): 一個 C/C++ 記憶體偵錯的工具</h1>
+            </header>
+            <div class="entry-content"><p>LLVM 有一系列以 Sanitizer 結尾的偵錯工具(ASAN/TSAN/MSAN/DFSAN/LSAN)[[1]](https://clang.llvm.org/docs/)，每個工具各司其職，在此我們介紹其中的 ASAN[[2]](https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer)。</p>
+<p>Memory Corruption 一直是個非常難除錯非常讓人苦惱的問題， ASAN 正是一個幫助大家處理這樣問題的工具， ASAN 內建於 LLVM 3.1 和 gcc 4.8[[3]](https://gcc.gnu.org/gcc-4.8/changes.html)，其可偵測出以下的問題：</p>
+<ul><li>Use after free (dangling pointer dereference)</li></ul>
+<ul><li>Heap buffer overflow</li></ul>
+<ul><li>Stack buffer overflow</li></ul>
+<ul><li>Global buffer overflow</li></ul>
+<ul><li>Use after return</li></ul>
+<p>對 ASAN 演算法有興趣的夥伴可以參考<a href="https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerAlgorithm">官網頁面說明</a></p>
+<p>##</p>
+<h2>使用方式 (Using ASAN)</h2>
+<ol><li>編譯時要加上使用 ASAN 的 flag (-fsanitize=address)</li></ol>
+<ol><li>執行檔中就直接插入了記憶體偵錯的程式碼</li></ol>
+<ol><li>直接跑執行檔，如果有偵測到錯誤會在輸出訊息中看到結果</li></ol>
+<p>以下是一個使用 ASAN 的範例</p>
+<p>(compile)<br>% cat tests/use-after-free.c<br>#include &lt;stdlib.h&gt;<br>int main() {<br>char <em>x = (char</em>)malloc(10 <em> sizeof(char</em>));<br>free(x);<br>return x[5];<br>}</p>
+<p>% ../clang_build_Linux/Release+Asserts/bin/clang -fsanitize=address -O1 -fno-omit-frame-pointer -g tests/use-after-free.c</p>
+<p>					1234567891011</p>
+<p>						(compile)% cat tests/use-after-free.c #include &lt;stdlib.h&gt;int main() {char <em>x = (char</em>)malloc(10 <em> sizeof(char</em>));free(x);return x[5];} % ../clang_build_Linux/Release+Asserts/bin/clang -fsanitize=address -O1 -fno-omit-frame-pointer -g tests/use-after-free.c</p>
+<p>[其它的 flag ]</p>
+<p>-O1 : 是為了得到較佳的效能</p>
+<p>-fno-omit-frame-pointer: 是為了在錯誤訊息中能得到正確的 stack trace</p>
+<p>(Execute and Output)<br>% ./a.out<br>==9901==ERROR: AddressSanitizer: heap-use-after-free on address 0x60700000dfb5 at <br>pc 0x45917b bp 0x7fff4490c700 sp 0x7fff4490c6f8<br>READ of size 1 at 0x60700000dfb5 thread T0<br>    #0 0x45917a in main use-after-free.c:5<br>    #1 0x7fce9f25e76c in __libc_start_main /build/buildd/eglibc-2.15/csu/libc-start.c:226<br>    #2 0x459074 in _start (a.out+0x459074)<br>0x60700000dfb5 is located 5 bytes inside of 80-byte region [0x60700000dfb0,0x60700000e000)<br>freed by thread T0 here:<br>    #0 0x4441ee in __interceptor_free projects/compiler-rt/lib/asan/asan_malloc_linux.cc:64<br>    #1 0x45914a in main use-after-free.c:4<br>    #2 0x7fce9f25e76c in __libc_start_main /build/buildd/eglibc-2.15/csu/libc-start.c:226<br>previously allocated by thread T0 here:<br>    #0 0x44436e in __interceptor_malloc projects/compiler-rt/lib/asan/asan_malloc_linux.cc:74<br>    #1 0x45913f in main use-after-free.c:3<br>    #2 0x7fce9f25e76c in __libc_start_main /build/buildd/eglibc-2.15/csu/libc-start.c:226<br>SUMMARY: AddressSanitizer: heap-use-after-free use-after-free.c:5 main</p>
+<p>					12345678910111213141516171819</p>
+<p>						(Execute and Output)% ./a.out ==9901==ERROR: AddressSanitizer: heap-use-after-free on address 0x60700000dfb5 at pc 0x45917b bp 0x7fff4490c700 sp 0x7fff4490c6f8READ of size 1 at 0x60700000dfb5 thread T0    #0 0x45917a in main use-after-free.c:5    #1 0x7fce9f25e76c in __libc_start_main /build/buildd/eglibc-2.15/csu/libc-start.c:226    #2 0x459074 in _start (a.out+0x459074)0x60700000dfb5 is located 5 bytes inside of 80-byte region [0x60700000dfb0,0x60700000e000)freed by thread T0 here:    #0 0x4441ee in __interceptor_free projects/compiler-rt/lib/asan/asan_malloc_linux.cc:64    #1 0x45914a in main use-after-free.c:4    #2 0x7fce9f25e76c in __libc_start_main /build/buildd/eglibc-2.15/csu/libc-start.c:226previously allocated by thread T0 here:    #0 0x44436e in __interceptor_malloc projects/compiler-rt/lib/asan/asan_malloc_linux.cc:74    #1 0x45913f in main use-after-free.c:3    #2 0x7fce9f25e76c in __libc_start_main /build/buildd/eglibc-2.15/csu/libc-start.c:226SUMMARY: AddressSanitizer: heap-use-after-free use-after-free.c:5 main</p>
+<p>從結果我們可以看出 ASAN 有偵測到 heap-use-after-free 的錯誤，接著提供了 pc/bp/sp 這幾個有用暫存器的值，再來是發生錯誤的 call stack 以及何處去 allocate 何處已經被 free 的 call stack，最後有一個這次偵測錯誤的總結。</p>
+<p>##</p>
+<h2>ASAN on Android[[4]](https://code.google.com/p/address-sanitizer/wiki/Android)</h2>
+<p>Android 在 Jelly Bean 支援了 Address-sanitizer。</p>
+<p>開啟方式非常簡單，只要在 Android.mk 裡加上</p>
+<p>“LOCAL_ADDRESS_SANITIZE := true”</p>
+<p>					1</p>
+<p>						“LOCAL_ADDRESS_SANITIZE := true”</p>
+<p>執行包含新編譯的執行檔前，需要把 asanwrapper 以及 libasan_preload.so 分別放到 system/bin/ 以及 system/lib/，最後是要將執行產生的錯誤訊息利用一個 python 進行解析。</p>
+<p>(用 b2g-info 當作範例)</p>
+<ol><li>rebuild b2g-info as b2g-info__asan</li></ol>
+<p>  (add &quot;LOCAL_ADDRESS_SANITIZER := true&quot; in Android.mk)</p>
+<ol><li>Push “asanwrapper” and “b2g-info__asan” into “system/bin/”</li></ol>
+<p>   Push “libasan_preload.so” into “system/lib/”</p>
+<ol><li>adb shell &quot;asanwrapper /system/bin/b2g-info&quot; &gt; err.txt</li><li>modify err.txt (remove /system/bin and /system/lib)</li><li>copy &quot;b2g-info__asan&quot; and &quot;libc.so&quot; from &quot;out/target/product/mako/symbols/&quot;</li><li>cat err.txt 2&gt;&amp;1 | ~/workspace/Nexus-4/external/compiler-rt/lib/asan/scripts/asan_symbolize.py --demangle</li></ol>
+<p>   #0 0xb6f809c7 in main /home/xxx/workspace/Nexus-4/gonk-misc/b2g-info/b2g-info.cpp:342:0<br>   #1 0xb5954b4f in __libc_init /home/xxx/workspace/Nexus-4/bionic/libc/bionic/libc_init_dynamic.cpp:112:</p>
+<p>					1234567891011</p>
+<p>						(用 b2g-info 當作範例)1. rebuild b2g-info as b2g-info__asan  (add &quot;LOCAL_ADDRESS_SANITIZER := true&quot; in Android.mk)2. Push “asanwrapper” and “b2g-info__asan” into “system/bin/”   Push “libasan_preload.so” into “system/lib/”3. adb shell &quot;asanwrapper /system/bin/b2g-info&quot; &gt; err.txt4. modify err.txt (remove /system/bin and /system/lib)5. copy &quot;b2g-info__asan&quot; and &quot;libc.so&quot; from &quot;out/target/product/mako/symbols/&quot;6. cat err.txt 2&gt;&amp;1 | ~/workspace/Nexus-4/external/compiler-rt/lib/asan/scripts/asan_symbolize.py --demangle   #0 0xb6f809c7 in main /home/xxx/workspace/Nexus-4/gonk-misc/b2g-info/b2g-info.cpp:342:0   #1 0xb5954b4f in __libc_init /home/xxx/workspace/Nexus-4/bionic/libc/bionic/libc_init_dynamic.cpp:112:</p>
+<p>##</p>
+<h2>ASAN on firefox [[5]](https://developer.mozilla.org/en-US/docs/Building_Firefox_with_Address_Sanitizer)</h2>
+<p>下載(Download Executable file with ASAN)</p>
+<p>我們可以直接從下面連結取得有 ASAN 功能的 firefox：</p>
+<ol><li><a href="https://ftp.mozilla.org/pub/mozilla.org/firefox/tinderbox-builds/mozilla-central-linux64-asan/">mozilla-central optimized builds</a> (recommended for testing)</li></ol>
+<ol><li><a href="https://ftp.mozilla.org/pub/mozilla.org/firefox/tinderbox-builds/mozilla-central-linux64-asan-debug/">mozilla-central debug builds</a> (recommended for debugging if the optimized builds don’t do the job)</li></ol>
+<p>自行編譯(Build by myself)</p>
+<p>必須要先建立包含下面內容的 .mozconfig，再進行編譯，我們就可以編譯出帶有 ASAN 的執行檔。</p>
+<p>mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/objdir-ff-asan<br>mk_add_options MOZ_MAKE_FLAGS=-j12</p>
+<h1>Enable ASan specific code and build workarounds</h1>
+<p>ac_add_options --enable-address-sanitizer</p>
+<h1>Ensure you set this to your LLVM_HOME path</h1>
+<p>export LLVM_HOME=&quot;/path/to/your/llvm&quot;</p>
+<h1>Set CC/CXX based on LLVM_HOME</h1>
+<p>export CC=&quot;$LLVM_HOME/build/bin/clang&quot;<br>export CXX=&quot;$LLVM_HOME/build/bin/clang++&quot;</p>
+<h1>Add ASan to our compiler flags</h1>
+<p>export CFLAGS=&quot;-fsanitize=address -Dxmalloc=myxmalloc&quot;<br>export CXXFLAGS=&quot;-fsanitize=address -Dxmalloc=myxmalloc&quot;</p>
+<h1>Additionally, we need the ASan flag during linking. Normally, our C/CXXFLAGS would</h1>
+<h1>be used during linking as well but there is at least one place in our build where</h1>
+<h1>our CFLAGS are not added during linking.</h1>
+<h1>Note: The use of this flag causes Clang to automatically link the ASan runtime :)</h1>
+<p>export LDFLAGS=&quot;-fsanitize=address&quot;</p>
+<h1>Avoid using ASan flags when building host tools like nsinstall</h1>
+<p>export HOST_CFLAGS=&quot; &quot;<br>export HOST_CXXFLAGS=&quot; &quot;<br>export HOST_LDFLAGS=&quot; &quot;</p>
+<h1>These three are required by ASan</h1>
+<p>ac_add_options --disable-jemalloc<br>ac_add_options --disable-crashreporter<br>ac_add_options --disable-elf-hack</p>
+<h1>Keep symbols to symbolize ASan traces later</h1>
+<p>export MOZ_DEBUG_SYMBOLS=1<br>ac_add_options --enable-debug-symbols<br>ac_add_options --disable-install-strip</p>
+<h1>Settings for a debug+opt build</h1>
+<p>ac_add_options --enable-optimize<br>ac_add_options --enable-debug</p>
+<h1>Settings for an opt build</h1>
+<p>#ac_add_options --enable-optimize<br>#ac_add_options --disable-debug</p>
+<p>					123456789101112131415161718192021222324252627282930313233343536373839404142434445</p>
+<p>						mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/objdir-ff-asanmk_add_options MOZ_MAKE_FLAGS=-j12 # Enable ASan specific code and build workaroundsac_add_options --enable-address-sanitizer # Ensure you set this to your LLVM_HOME pathexport LLVM_HOME=&quot;/path/to/your/llvm&quot; # Set CC/CXX based on LLVM_HOMEexport CC=&quot;$LLVM_HOME/build/bin/clang&quot;export CXX=&quot;$LLVM_HOME/build/bin/clang++&quot; # Add ASan to our compiler flagsexport CFLAGS=&quot;-fsanitize=address -Dxmalloc=myxmalloc&quot;export CXXFLAGS=&quot;-fsanitize=address -Dxmalloc=myxmalloc&quot; # Additionally, we need the ASan flag during linking. Normally, our C/CXXFLAGS would# be used during linking as well but there is at least one place in our build where# our CFLAGS are not added during linking.# Note: The use of this flag causes Clang to automatically link the ASan runtime :)export LDFLAGS=&quot;-fsanitize=address&quot; # Avoid using ASan flags when building host tools like nsinstallexport HOST_CFLAGS=&quot; &quot;export HOST_CXXFLAGS=&quot; &quot;export HOST_LDFLAGS=&quot; &quot; # These three are required by ASanac_add_options --disable-jemallocac_add_options --disable-crashreporterac_add_options --disable-elf-hack # Keep symbols to symbolize ASan traces laterexport MOZ_DEBUG_SYMBOLS=1ac_add_options --enable-debug-symbolsac_add_options --disable-install-strip # Settings for a debug+opt buildac_add_options --enable-optimizeac_add_options --enable-debug # Settings for an opt build#ac_add_options --enable-optimize#ac_add_options --disable-debug</p>
+<p>##</p>
+<h2>結語</h2>
+<p>以上就是對於 ASAN 簡單的介紹， ASAN 跟所有偵錯的工具一樣都要付出一些代價(更大的記憶體使用量、較差的效能)，然而確實可以利用它找出一些用人眼或人腦會忽略的程式錯誤甚至是一些潛在的問題，因此需要善用這樣的工具讓我們的生活更好臭蟲更少(笑)。</p>
+<h2>參考資料</h2>
+<p>[1] <a href="https://clang.llvm.org/docs/">http://clang.llvm.org/docs/</a></p>
+<p>[2]<a href="https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer">https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer</a></p>
+<p>[3] <a href="https://gcc.gnu.org/gcc-4.8/changes.html">http://gcc.gnu.org/gcc-4.8/changes.html</a></p>
+<p>[4] <a href="https://code.google.com/p/address-sanitizer/wiki/Android">https://code.google.com/p/address-sanitizer/wiki/Android</a></p>
+<p>[5] <a href="https://developer.mozilla.org/en-US/docs/Building_Firefox_with_Address_Sanitizer">https://developer.mozilla.org/en-US/docs/Building_Firefox_with_Address_Sanitizer</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox/">Firefox</a></span><span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/mozilla/">Mozilla</a></span><span><a href="../../categories/open-source/">Open Source</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200803152554id_/https://tech.mozilla.com.tw/?p=4282">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

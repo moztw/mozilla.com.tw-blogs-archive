@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>九個適應性設計小撇步，把你的網站打造成變形金剛！（下篇） | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-08/">2014 年 8 月</a><b>&raquo;</b><a href="../../posts/4901/">九個適應性設計小撇步，把你的網站打造成變形金剛！（下篇）</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-08-19" class="published"><span class="posted-month">8月</span><span class="posted-date">19</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">九個適應性設計小撇步，把你的網站打造成變形金剛！（下篇）</h1>
+            </header>
+            <div class="entry-content"><p>接續<a href="../../posts/4759/">上一篇</a>所介紹的一些基本 CSS 排版小技巧，本文第一部分開始介紹 CSS <a href="https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Media_queries">media queries</a> 常見的使用方式，以及一些在開發初期就要先注意的地方；第二部分則介紹一些適應性設計相關的工具及 Javascript 套件。希望這些小撇步可以幫助你在開發網站上事半功倍囉！</p>
+<h2>運用 CSS media queries</h2>
+<h3>撇步四：排版避免設定高度及絕對位置，寬度設定儘量集中</h3>
+<p>右下角可拖曳縮放↗<br>從這個範例中可以看到有三個不同顏色 <br>			div 分別包了三個白底的文字區塊，假設有個前端需求是三個文字區塊要隨著螢幕寬度動態改變寬度，這時最好的作法是將三個區塊指定同樣的 <br>			class，這樣一來在設定 media queries 時就只需要覆寫一個 <br>			class 的設定：</p>
+<p>.container {<br>    width: 500px;<br>}</p>
+<p>@media only screen and (max-width: 540px) {<br>    .container {<br>        width: 400px;<br>    }<br>}</p>
+<p>@media only screen and (max-width: 440px) {<br>    .container {<br>        width: 300px;<br>    }<br>}</p>
+<p>					123456789101112131415</p>
+<p>						.container {    width: 500px;} @media only screen and (max-width: 540px) {    .container {        width: 400px;    }} @media only screen and (max-width: 440px) {    .container {        width: 300px;    }}</p>
+<p>這樣一來當螢幕寬度小於 <br>			540px  時，三個文字區塊的寬度就會縮成 <br>			400px，以此類推。若三個文字區塊各自用三個不同的 CSS 選擇器來指定寬度，那麼 media queries 也必須使用同樣的三個 CSS 選擇器來覆寫原本的 CSS，當寬度設定要改變時，要修改的地方就變得更多。另外也可以看到這個範例中沒有設定任何的高度以及絕對定位，這也是為了維護方便的考量。</p>
+<p>為了讓大家能夠實際瞭解沒有注意這些規則的後果，這次破例來個錯誤示範：</p>
+<p>右下角可拖曳縮放↗<br>在這個錯誤示範中我刻意使用了三組不同的 CSS 選擇器來設定三個文字區塊，並且還很假掰的設定高度和絕對定位來進行排版。當然正常人對於這種排版應該是不會這樣實做的，我只是要提醒大家儘量少用這樣的排版方式，否則將來會很難維護。</p>
+<p>雖然表面上看起來有達到一模一樣的效果，但可以看到這邊 CSS 的行數從原本的 32 行爆增到 93 行，足足多了兩倍！且來回修改 px 值對位置不僅曠日費時，如果到時候需求改變突然要增加一個區塊在最上方時，這樣的 code 要改下去只能用欲哭無淚來形容，慎之！</p>
+<h3>撇步五：隱藏暫不需要的選單、展開隱藏的頁籤</h3>
+<p>在 RWD 網站中常用技巧之一就是把選項太多的選單暫時藏起來，等到點擊或是游標經過再顯示出來：</p>
+<p>右下角可拖曳縮放↗<br>大家試著拖曳這個 jsfiddle 範例的右下角，可以發現寬度拉到小於 <br>			400px 時，原本左邊的綠色選單就不見了，縮成一個綠色選單鈕，滑鼠放上去時選單就會自動展開，要做到這個選單效果其實只需要加上底下的 media queries 設定：</p>
+<p>@media only screen and (max-width: 400px) {<br>    nav {<br>        position: fixed;<br>    }<br>    nav &gt; ul {<br>        display: none;<br>    }<br>    #menu-toggle {<br>        display: block;<br>    }<br>    nav:hover &gt; ul {<br>        display: block;<br>        margin-top: 30px;<br>    }<br>}</p>
+<p>					123456789101112131415</p>
+<p>						@media only screen and (max-width: 400px) {    nav {        position: fixed;    }    nav &gt; ul {        display: none;    }    #menu-toggle {        display: block;    }    nav:hover &gt; ul {        display: block;        margin-top: 30px;    }}</p>
+<p>把 <br>			nav 設定為 <br>			position: fixed 是為了讓選單鈕常駐在上方，<br>			nav &gt; ul 設定為 <br>			display: none 把選單內容隱藏起來，而原本有一個隱藏的選單鈕元素 <br>			#menu-toggle 則在此時設定為 <br>			display: block，這樣就只剩下一個選單鈕浮在上方了。如何讓選單在游標經過時展開來呢？其實很簡單，只要運用 CSS 的 <br>			:hover 選擇器，<br>			nav:hover &gt; ul 這個選擇器設定了當游標經過 nav 元素時，將 <br>			nav 元素內的第一層 <br>			ul 顯示出來。因為 <br>			nav 元素沒有特別設定寬高或顯示模式，所以它的 <br>			:hover 感應範圍將完全符合內含元素。也就是說，當選單收合時，<br>			nav 的感應範圍也縮小到和 <br>			#menu-toggle 一樣大小，而當選單展開時，<br>			nav 的感應範圍就是 <br>			#menu-toggle 以及 <br>			nav &gt; ul 所聯集起來的範圍，如此一來選單展開時，就算游標移到 <br>			nav &gt; ul 內也不必擔心選單會消失。若將 <br>			:hover 選擇器掛在 <br>			#menu-toggle 上，游標只要一離開選單鈕，選單就會收合，使用者就永遠無法點擊選單的內容了。</p>
+<p>另一個 RWD 常見的作法是把原本隱藏在不同頁籤的內容顯示出來。因為手機上畫面空間不足，通常不適合使用頁籤，這時不如把內容直接展開來，使用者只要向下滑動即可輕鬆 瀏覽內容。大家試試拖曳底下 jsfiddle 的右下角，寬度縮到 <br>			400px 以下時三個頁籤的內容就會展開來。</p>
+<p>右下角可拖曳縮放↗<br>在這個範例中使用了一個純 CSS 的頁籤，基本原理是透過 <br>			label 連帶驅動 <br>			radio 鈕，再使用 CSS 選擇器選擇 <br>			checked <br>			radio 鈕，並將它鄰近的頁籤內容顯示出來。這是其中一個頁籤的 HTML 定義：</p>
+<p>&lt;li&gt;<br>    &lt;input type=&quot;radio&quot; name=&quot;tabs&quot; id=&quot;tab3&quot; /&gt;<br>    &lt;label for=&quot;tab3&quot;&gt;邀請&lt;/label&gt;<br>    &lt;div id=&quot;tab-content3&quot; class=&quot;tab-content&quot;&gt;<br>      &lt;p&gt;Mozilla 基金會邀請支持此宣言理念的眾人，一同探索實踐這份網際網路願景的新方法 &lt;/p&gt;<br>    &lt;/div&gt;<br>&lt;/li&gt;</p>
+<p>					1234567</p>
+<p>						&lt;li&gt;    &lt;input type=&quot;radio&quot; name=&quot;tabs&quot; id=&quot;tab3&quot; /&gt;    &lt;label for=&quot;tab3&quot;&gt;邀請&lt;/label&gt;    &lt;div id=&quot;tab-content3&quot; class=&quot;tab-content&quot;&gt;      &lt;p&gt;Mozilla 基金會邀請支持此宣言理念的眾人，一同探索實踐這份網際網路願景的新方法 &lt;/p&gt;    &lt;/div&gt;&lt;/li&gt;</p>
+<p>頁籤鈕的部分是 <br>			label 元素，可以看到它透過 <br>			for=&quot;tab3&quot; 的設定對應到一個隱形的 <br>			radio 鈕，這樣一來只要頁籤被按下，此 <br>			radio 的狀態就會顯示為 <br>			checked，而其它頁籤對應的 <br>			radio 鈕 <br>			checked 狀態則會消失。使用 <br>			radio 鈕正是因為它的特性和頁籤很像，同一時間只能選取其一，且只要透過 CSS 選擇器 <br>			:checked 即可偵測其狀態進而改變頁籤以及內容的樣式：</p>
+<p>.tabs [name=&quot;tabs&quot;]:checked + label { <br>    top: 0;<br>    padding-top: 17px; <br>    background: #FFF; <br>}<br>.tabs [name=&quot;tabs&quot;]:checked ~ .tab-content {<br>    display: block;<br>}</p>
+<p>					12345678</p>
+<p>						.tabs [name=&quot;tabs&quot;]:checked + label {     top: 0;    padding-top: 17px;     background: #FFF; }.tabs [name=&quot;tabs&quot;]:checked ~ .tab-content {    display: block;}</p>
+<p>這段 CSS 就是奇蹟發生的所在，可以看到這邊用了兩次 <br>			.tabs [name=&quot;tabs&quot;]:checked 選擇器，第一次搭配 <br>			+ 選擇器，選擇鄰近的下一個 sibling label 元素（也就是頁籤），把頁籤設定成白色並往上浮起。第二次則是搭配 <br>			~ 選擇器選擇較遠的頁籤內容元素 <br>			.tab-content，將其設為 <br>			display: block 以顯示其內容。這樣一來我們就有一組純 CSS 的頁籤了。這裡用到兩個大家可能較少見的 CSS sibling 選擇器，有興趣可以看一下 MDN 上的這兩頁文件：<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Adjacent_sibling_selectors">Adjacent sibling selectors</a>、<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/General_sibling_selectors">General sibling selectors</a>。</p>
+<p>那麼又要如何讓它在螢幕變小時展開呢？其實也不是太難：</p>
+<p>@media only screen and (max-width: 400px) {<br>  .tabs {<br>    width: 100%;<br>  }<br>  .tabs li {<br>    float: none;<br>    margin-top: 20px;<br>  }<br>  .tabs .tab-content {<br>    position: relative;<br>    display: block;<br>    top: 0;<br>  }<br>  .tabs label {<br>    top: 0;<br>    padding-top: 17px; <br>    background: #FFF;       <br>  }<br>  .tabs label:hover {<br>    background: #FFF;<br>  }<br>}</p>
+<p>					12345678910111213141516171819202122</p>
+<p>						@media only screen and (max-width: 400px) {  .tabs {    width: 100%;  }  .tabs li {    float: none;    margin-top: 20px;  }  .tabs .tab-content {    position: relative;    display: block;    top: 0;  }  .tabs label {    top: 0;    padding-top: 17px;     background: #FFF;         }  .tabs label:hover {    background: #FFF;  }}</p>
+<p>首先把 <br>			.tabs 寬度設為百分比，讓內容隨螢幕寬度自動調整。然後取消 <br>			.tabs li 的浮動狀態，設定<br>			float: none，讓 <br>			.tabs li 依序往下排列，接著把所有的 <br>			.tab-content 設為 <br>			display: block 強制顯示出來，最後再把 <br>			label 調整為統一的樣式即可。</p>
+<p>這個撇步介紹了兩個透過 media queries 在小螢幕裝置上顯示／隱藏內容的範例，這些內容隱藏起來並不是再也不會被用到，而是要等游標經過或者點擊等事件才會顯現。但如果你發現網頁裡有太多元素內容在不同的 media queries 設定裡被藏起來完全沒機會使用到，那麼就要好好思考這些元素存在的必要性。當然也可以使用 Javascript 動態載入內容、或是在後端偵測 <br>			User Agent 標頭偵測再決定要不要送出這些元素到前端來。</p>
+<h3>撇步六：使用相對字級設定</h3>
+<p>右下角可拖曳縮放↗<br>如果網頁內某些文字區塊的字體是有相對大小關係的，那麼建議可以使用相對字級設定。以這個範例來看，假設三行字前後兩行是相對於中間那行較大／較小的字體，那麼其實我們只需要明確設定中間那行字的字體大小，前後兩行字分別套用 <br>			large/<br>			small 兩個 <br>			class，可以看到上面 jsfiddle 中兩個 <br>			class 的定義 ：</p>
+<p>.large {<br>    font-size: larger;<br>}<br>.small {<br>    font-size: smaller;<br>}</p>
+<p>					123456</p>
+<p>						.large {    font-size: larger;}.small {    font-size: smaller;}</p>
+<p>這裡使用的是 <br>			larger/<br>			smaller 兩組相對值，你也可以使用 <br>			em 或者百分比等單位來指定相對的大小比例，詳細的相對字級設定請參閱 <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/font-size">MDN 說明文件</a>。</p>
+<p>有了相對字級設定，在加上 media queries 時也會輕鬆一些：</p>
+<p>@media only screen and (max-width: 500px) {<br>    #container {<br>        font-size: 15px;<br>    }<br>}<br>@media only screen and (max-width: 300px) {<br>    #container {<br>        font-size: 10px;<br>    }<br>}</p>
+<p>					12345678910</p>
+<p>						@media only screen and (max-width: 500px) {    #container {        font-size: 15px;    }}@media only screen and (max-width: 300px) {    #container {        font-size: 10px;    }}</p>
+<p>只需要更改中間文字的基準字體大小，前後兩行字就會自動根據基準字體套用比例進行縮放，大家可以拖曳這個範例 jsfiddle 的右下角試試看。</p>
+<h2>善用各種工具及套件</h2>
+<h3>撇步七：使用 Firefox 特有開發工具－適應性設計檢視</h3>
+<p>你現在用的是最新版本的 Firefox 嗎？從 2012 年的 Firefox 15.0 開始誕生了一個方便的新工具－適應性設計檢視 (Responsive Design View)，如果你現在用的就是 Firefox，馬上試試按下快速鍵 Ctrl+Shift+M (Windows 及 Linux 平台) 或者 Cmd+Opt+M (Mac 平台)，或是從網頁開發者選單裡啟用，要關閉只要再按一次快速鍵或是從選單裡再選擇一次即可。請看以下短片介紹：</p>
+<p>x<br>當然你如果有 Android 手機，可以安裝 <a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox&amp;utm_source=mozilla">Firefox for Android</a> 並參考<a href="https://developer.mozilla.org/zh-TW/docs/Tools/Remote_Debugging/Firefox_for_Android">此 MDN 線上文件</a>直接從<a href="https://mozilla.com.tw/firefox/desktop/">桌面版 Firefox</a> 連接手機測試及除錯你的行動網頁。其它像 Android 的 Chrome 瀏覽器以及 iOS 的 Safari 瀏覽器也支援透過電腦連接手機進行網頁除錯。</p>
+<h3>撇步八：Javascript 界的 media queries－enquire.js 及 Modernizr</h3>
+<p>前面提到過 RWD 不等於 media queries，如果你以為 Javascript 只有乾坐在一旁看戲的份那可就錯了。善用 Javascript 搭配 CSS，開發 RWD 網站可說是如虎添翼呀。</p>
+<p>首先介紹 <a href="https://wicky.nillia.ms/enquire.js/">enquire.js</a>，它的特色就是寫法和 media queries 非常類似:</p>
+<p>enquire.register(&quot;screen and (max-width: 760px)&quot;, {<br>    match : function() {<br>        // Match tablet<br>    },<br>    unmatch : function() {<br>        // Larger than tablet<br>    }<br>}).register(&quot;screen and (max-width: 480px)&quot;, {<br>    match : function() {<br>        // Match mobile landscape<br>    },<br>    unmatch : function() {<br>        // Larger than mobile landscape<br>    }<br>});</p>
+<p>					123456789101112131415</p>
+<p>						enquire.register(&quot;screen and (max-width: 760px)&quot;, {    match : function() {        // Match tablet    },    unmatch : function() {        // Larger than tablet    }}).register(&quot;screen and (max-width: 480px)&quot;, {    match : function() {        // Match mobile landscape    },    unmatch : function() {        // Larger than mobile landscape    }});</p>
+<p>可以看到 <br>			enquire.register() 方法的第一個參數 “screen and (max-width: 760px)&quot;，其意義就和 <a href="https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Media_queries">CSS media queries 的設定</a>是一樣的。</p>
+<p>而 <a href="https://modernizr.com/">Modernizr</a> 的用途則是偵測目前瀏覽器是否支援特定功能（如 Canvas、HTML5 Video/Audio 等等），在 Javascript 中只要使用 Modernizr 物件就可以針對各種瀏覽器的先進功能進行偵測，如 <br>			Modernizr.canvas 回傳 <br>			true 表示瀏覽器支援 Canvas 功能，這時就可以在 Javascript 裡作判斷並加上對應的功能。</p>
+<p>除了可以在 Javascript 中偵測瀏覽器支援外，Modernizr 還可針對你要偵測的功能在 <br>			html 標籤上加上相對應的 <br>			class，如 <br>			&lt;html class=&quot;cssanimations&quot;&gt; 表示目前的瀏覽器支援 CSS 動畫，這樣一來只要在 CSS 裡針對 Modernizr 加的 <br>			class 進行設定（例如在 CSS 動畫定義選擇器前面都加上 <br>			.cssanimations），即可偵測不同瀏覽器的支援度而呈現出不同的結果。</p>
+<p>Modernizr 的另一個功能是可以讓你在偵測到某些功能不支援時（這邊不限於 Modernizr 本身支援偵測的功能），動態載入<a href="https://github.com/Modernizr/Modernizr/wiki/HTML5-Cross-browser-Polyfills">向下相容的 polyfills 套件</a>。拿 enquire.js 來舉例，搭配 Modernizr 可以偵測瀏覽器是否支援 enquire.js 套件所使用到的 <br>			window.matchMedia 功能，如果未支援則載入 <a href="https://github.com/weblinc/media-match">media-match polyfills 向下相容套件</a>：</p>
+<p>Modernizr.load([<br>    //first test need for polyfill<br>    {<br>        test: window.matchMedia,<br>        nope: &quot;/path/to/polyfill.js&quot;<br>    },</p>
+<p>    //and then load enquire<br>    &quot;/path/to/enquire.js&quot;,<br>    &quot;/path/to/your/script.js&quot;<br>]);</p>
+<p>					1234567891011</p>
+<p>						Modernizr.load([    //first test need for polyfill    {        test: window.matchMedia,        nope: &quot;/path/to/polyfill.js&quot;    },     //and then load enquire    &quot;/path/to/enquire.js&quot;,    &quot;/path/to/your/script.js&quot;]);</p>
+<p>善用這些工具搭配不同的 CSS 和 Javascript 套件，可以有效增加你的網頁支援度。</p>
+<h3>撇步九：使用支援適應性設計的 Javascript 套件</h3>
+<p>在研究比較適用的 Javascript 套件時，可以先把適應性設計的支援考慮進去，這裡介紹兩個實用的套件： <a href="https://owlgraphic.com/owlcarousel/">Owl Carousel 輪播看板</a>、以及前陣子很流行的<a href="https://masonry.desandro.com/">Masonry 排版引擎</a>等等。</p>
+<p>右下角可拖曳縮放↗<br>OwlCarousel 除了可以流暢支援觸控事件以外，還提供了一些進階設定，讓開發者可以指定特定螢幕大小下同時出現的看板數目：</p>
+<p>$(&quot;#owl-example&quot;).owlCarousel({<br>    itemsCustom: [[600,5],[500,4],[400,3],[300,2],[200,1]]<br>});</p>
+<p>					123</p>
+<p>						$(&quot;#owl-example&quot;).owlCarousel({    itemsCustom: [[600,5],[500,4],[400,3],[300,2],[200,1]]});</p>
+<p>這個範例裡透過 itemsCustom 設定傳入一個二維陣例，分別指定不同螢幕大小的看板數目，例如 <br>			[500,4] 表示螢幕寬度小於 500px 時只顯示四個看板。這邊設定成螢幕寬度每少 100px，看板就少顯示一個。大家可以拖曳上面 jsfiddle 的右下角看看效果。</p>
+<p>實際的應用可以參考 <a href="https://myfirefox.com.tw/">MyFirefox 行動版首頁</a>以及<a href="https://myfirefox.com.tw/videos/">狐電視行動版</a>（要用手機開啟才看得到）。</p>
+<p>右下角可拖曳縮放↗<br>Masonry 神奇的地方就是它幾乎不需要多餘的設定，就可以使不規則排列的區塊自動向上填補空白，而且畫面變小時還會自動往下跑，大家可以試著拖曳右下角調整 jsfiddle 大小看看。</p>
+<p>有時候會發現填補後仍出現小塊空白或參差不齊，想減少這種狀況發生，有三個秘訣：</p>
+<ul><li>所有區塊的長寬必須有倍數關係，例如最小區塊長度單位是 60px，那麼所有區塊的長度都要是 60px 的倍數。</li></ul>
+<ul><li>最小的區塊數目要最多，以利填補空位。</li></ul>
+<ul><li>嘗試交換區塊前後順序以達到最佳效果（第一個區塊寬度必須是最小的，因為 Masonry 會拿它作為基本單位）</li></ul>
+<p>Masonry 排版引擎同樣也應用在我們的 <a href="https://myfirefox.com.tw/">MyFirefox 桌面版首頁</a>以及<a href="https://tech.mozilla.com.tw/authors/">謀智台客編輯牆</a>。</p>
+<h2>總結</h2>
+<p>看完這兩篇文章以後，是不是對適應性設計有更深入的了解呢？這些小撇步是不是也可以拿來應用在自己的網站上？</p>
+<p>網頁設計的世界博大精深，同樣的問題可能有很多種解決方式，這一系列兩篇文章提到的小技巧並不是全部，也不一定適用於所有人。保持開放的態度，並勇於嘗試，總會找到最適合自己的方式。也歡迎大家留言分享自己的小撇步喔～</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/css/">CSS</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20180819075847id_/https://tech.mozilla.com.tw/?p=4901">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

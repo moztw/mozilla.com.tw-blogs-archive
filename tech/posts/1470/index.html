@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>缺它不可！靈活運用 Firefox OS Gaia 的單元測試 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../posts/1470/">缺它不可！靈活運用 Firefox OS Gaia 的單元測試</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time>日期不明</time></p>
+              <h1 class="entry-title">缺它不可！靈活運用 Firefox OS Gaia 的單元測試</h1>
+            </header>
+            <div class="entry-content"><p>單元測試一直以來都是確保軟體品質的一種方式，在日益錯綜複雜的軟體中更是重要。Firefox OS 的應用層 Gaia 理所當然的也由單元測試來確保軟體品質。設置妥當後，當你打開任意編輯器對 Javascript 檔案編輯，並且按下『Save』的那一刻，unit test agent 就會默默的被喚起，針對您的修改一項項的進行檢測。當所有測試項目都妥當的通過之後，您將會看到一個優雅的圖示跳出來，告知你的測試均已通過。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed.png"><img src="../../assets/1470/wp-content/uploads/2013/01/testing-passed-300x225.png" alt="" loading="lazy"></a></p>
+<p>Gaia 的單元測試將會針對修改的部份執行該部份的單元測試，可確保修改的時候所有的測項都可以通過。錯誤的時候當然也會跳出個讓你很難忽視的紅色圖示，提醒你本次修改沒有通過測試。</p>
+<p><img src="../../assets/1470/wp-content/uploads/2013/01/螢幕擷圖存為-2013-01-15-162446.png" alt="" loading="lazy"></p>
+<p>要如何設置 Gaia 的單元測試環境呢？首先你會需要以下環境：</p>
+<ul><li><a href="https://nodejs.org/">node.js</a></li></ul>
+<ul><li><a href="https://nightly.mozilla.org/">Firefox nightly</a></li></ul>
+<ul><li><a href="https://wiki.mozilla.org/Gaia/Hacking">Gaia 開發環境</a></li></ul>
+<p>因為本文重點是單元測試環境，上面環境的安裝方法就不再贅述。準備好上面的環境後，切換到 gaia 目錄，鍵入以下的指令即可執行 test agent server</p>
+<p>$ make test-agent-server<br>接下來則需要建立 gaia 除錯環境，請開另外一個終端機視窗鍵入下面指令（本步驟將會建立 debug 版本的 gaia profile）</p>
+<p>$ DEBUG=1 make<br>最後把 firefox nightly 套用由 DEBUG=1 make 生成的 profile 檔即可執行並完成設定</p>
+<p>$ firefox-nightly -profile &lt;YOUR_GAIA_PROFILE&gt; http://test-agent.gaiamobile.org:8080/<br>注意！如果你在 Mac OS 上面開發，profile 目錄必須使用絕對路徑。</p>
+<p>這樣就設定完成了，你可以打開已經有撰寫單元測試的 javascript 檔案如 gaia/apps/calendar/js/app.js，修改之後儲存，就會看到相關的單元測試開始執行了！</p>
+<h2>如何運作？</h2>
+<p>其實運作原理很簡單。 gaia 利用 node.js 來監控檔案系統的變化，並且利用 websocket 通知 nightly browser 要執行哪個單元測試檔案，nightly 執行完畢後，再把結果回傳給 node.js。最後再由 node.js 發出 notification 後，就是使用者看到的通過或失敗的測試通知囉！</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/01/test-agent1.png"><img src="../../assets/1470/wp-content/uploads/2013/01/test-agent1.png" alt="" loading="lazy"></a></p>
+<p>既然 node.js 也是 javascript 的執行環境，為什麼不直接在 node.js 裡面執行單元測試呢？主要的原因是 Firefox Nightly 是一個接近 Firefox OS 的運行環境，也有些 API 在 Firefox nightly 才可以使用。所以在 Firefox nightly 裡面跑是比較合理的方式。</p>
+<h2>撰寫新的單元測試</h2>
+<p>看完了如何執行單元測試，那如果加了新功能要加入單元測試要怎麼作呢？正巧最近修改了 Gaia 的 Calendar app，為其加入 offline 的錯誤訊息的 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=809537">Bug 809537</a> 就需要為離線功能加入單元測試。在這個 bug 裡面我新增了兩個需要測試的部份：</p>
+<ul><li>新的 <a href="https://github.com/yurenju/gaia/commit/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66#diff-4">Errors View</a>，用來顯示主頁的錯誤訊息</li></ul>
+<ul><li>在 <a href="https://github.com/yurenju/gaia/commit/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66#diff-3">caldav provider</a> 裡面的 getAccount, findCalendars, syncEvents, createEvent, updateEvent, deleteEvent 新增偵測離線狀態的功能，當離線時 callback 會帶一個錯誤訊息。</li></ul>
+<p><a href="https://github.com/yurenju/gaia/blob/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66/apps/calendar/js/views/errors.js">Errors View</a> 繼承自 <a href="https://github.com/yurenju/gaia/blob/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66/apps/calendar/js/view.js">View</a> (js/view.js)，其中最主要的功能是對處理來自 syncController 的  ‘offline’ event，當 handleEvent 收到 ‘offline’ 之後，會採用繼承自 View 的 showErrors 來顯示錯誤訊息，摘要重要的源碼如下：</p>
+<p>Calendar.ns(&#39;Views&#39;).Errors = (function() {</p>
+<p>  function Errors() {<br>    Calendar.View.apply(this, arguments);<br>    this.app.syncController.on(&#39;offline&#39;, this);<br>  }</p>
+<p>  Errors.prototype = {<br>    __proto__: Calendar.View.prototype,</p>
+<p>(ignore...)</p>
+<p>    handleEvent: function(event) {<br>      switch (event.type) {<br>        case &#39;offline&#39;:<br>          this.showErrors([{name: &#39;offline&#39;}]);<br>          break;<br>      }<br>    }<br>  }; (ignore...)<br>}());<br>針對 caldav provider 的修改，則是新增了 bailWhenOffline 在 offline 的時候新增一個 Error 並且作為 callback 的參數傳回。比如說下面的 findCalendars 就會先確認如果目前是 offline 就不會 request service。</p>
+<p>findCalendars: function(account, callback) {<br>  if (this.bailWhenOffline(callback)) {<br>    return;<br>  }<br>  this.service.request(&#39;caldav&#39;, &#39;findCalendars&#39;, account, callback);<br>},</p>
+<p>(ignore...)</p>
+<p>bailWhenOffline: function(callback) {<br>  if (!this.offlineMessage &amp;&amp; &#39;mozL10n&#39; in window.navigator) {<br>    this.offlineMessage = window.navigator.mozL10n.get(&#39;error-offline&#39;);<br>  }</p>
+<p>  var ret = this.app.offline() &amp;&amp; callback;<br>  if (ret) {<br>    var error = new Error();<br>    error.name = &#39;offline&#39;;<br>    error.message = this.offlineMessage;<br>    callback(error);<br>  }<br>  return ret;<br>}<br>在 <a href="https://github.com/yurenju/gaia/blob/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66/apps/calendar/js/views/errors.js">Erros View</a> 裡面，最需要測試的是 handleEvent 到 showErrors 是否正確的傳入了 { name: “offline” }，而 showErrors 已經在 view_test.js 裡面測試過了不需要重複測試，所以測試的方法是作一個 Mock 的 showErrors function 塞入原本的 Errors View 物件內，如下圖所示</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/01/mock-showerrors2.png"><img src="../../assets/1470/wp-content/uploads/2013/01/mock-showerrors2.png" alt="" loading="lazy"></a></p>
+<p>原本的 showErrors 會在手機上顯示錯誤訊息，但我們用 Mock 的 showErrors 之後就只會把傳入的 error name 直接 assign 到 errorName 裡面，如此一來我們對 syncController 發出 “offline” 事件，再確認 errorName 最後是不是拿到了 “offline” 來判斷 handleEvent 是否正常的運行。</p>
+<p>requireApp(&#39;calendar/test/unit/helper.js&#39;, function() {<br>  requireLib(&#39;views/errors.js&#39;);<br>});</p>
+<p>suite(&#39;views/errors&#39;, function() {<br>  var subject, app, errorName;</p>
+<p>  setup(function() {<br>    app = testSupport.calendar.app();<br>    subject = new Calendar.Views.Errors({<br>      app: app<br>    });</p>
+<p>    subject.showErrors = function(list) {<br>      errorName = list[0].name;<br>    }<br>  });</p>
+<p>  test(&#39;offline event&#39;, function() {<br>    subject.app.syncController.emit(&#39;offline&#39;);<br>    assert.deepEqual(errorName, &#39;offline&#39;);<br>  });<br>});<br>至於 offline 訊息基本上是從 navigator.onLine 這個屬性得知的，所以在撰寫程式的時候我們把偵測 offline 的功能封裝在 app:offline() 裡面：</p>
+<p>/**</p>
+<ul><li>Returns the offline status.</li></ul>
+<p>*/<br>offline: function() {<br>  return (navigator &amp;&amp; &#39;onLine&#39; in navigator) ? !navigator.onLine : true;<br>}<br>在執行單元測試的時候動態的把原本的 offline 儲存到 realOffline，接著塞一個每次都會回傳 true 的 offline()，如此一來就可以測試離線狀況時上述的 function 如 getAccount, findCalendar 會不會在 callback 裡面帶入 offline error 的錯誤，舉個測試 getAccount 離線狀況的例子：</p>
+<p>test(&#39;offline handling&#39;, function(done) {<br>  var realOffline = app.offline;<br>  app.offline = function() { return true };<br>  subject.getAccount(input, function cb(cbError, cbResult) {<br>    done(function() {<br>      app.offline = realOffline;<br>      assert.equal(cbError.name, &#39;offline&#39;);<br>    })<br>  })<br>});<br>我們將 Mock 的 offline function 替換進去，並且執行 getAcount，並且確定 cbError.name 是 offline 就可以確認我們加入的功能是可以正常運作的了。</p>
+<p>感謝單元測試以及 Javascript 的動態特性！</p>
+<p>我們可以在測試的時候非常容易的替換一些 Mock 物件進去來達到單元測試的效果。而且可別小看這些單元測試，當你的程式日益複雜的時候，這些單元測試就是保證軟體品質的第一道防線，也會讓開發的時候感到更加安心喔。</p></div>
+            <footer class="entry-footer">
+              
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20130530053954id_/https://tech.mozilla.com.tw/?p=1470">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>還原 b2g crash 案發現場 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-08/">2013 年 8 月</a><b>&raquo;</b><a href="../../posts/2470/">還原 b2g crash 案發現場</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-08-19" class="published"><span class="posted-month">8月</span><span class="posted-date">19</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">還原 b2g crash 案發現場</h1>
+            </header>
+            <div class="entry-content"><p>在 Firefox OS 系統中，若 b2g process 發生 crash 時，一般來說是透過 gdb debugger 來除錯，但現實生活中並不是每次系統 crash 都有機會知道複製步驟，能夠將問題重新複製。因此事後針對 gecko crash 分析對於 platform 工程師來說是相當重要的課題。Firefox OS 支援產生 crash dump，本文將介紹將 stack backtrace 功能開啟，以及解析 stack backtrace symbol 的方法作簡單介紹。</p>
+<p>breakpad 是由 library 以及強大的工具組合而成，整體概念分為 build system、user&quot;s system 以及 crash collector。</p>
+<p>本篇主要簡述 build system 以及 user&quot;s system 這兩個區塊。由於篇幅關係，User&quot;s System 至 Crash Collector 這段會在未來篇幅描述。若欲觀看 b2g crash 統計可至網頁:  <a href="https://crash-stats.mozilla.com/home/products/B2G">https://crash-stats.mozilla.com/home/products/B2G</a> 了解詳情。在 bugzilla bugreport 流程中，若遇到 crash 問題，通常會附上 minidump 資料，以便有效的讓開發者得到 crash 資訊，以便有效率的 debug。<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=851664">Bug 851664</a> 便是一很好的範例。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad.png"><img src="../../assets/2470/wp-content/uploads/2013/07/breakpad-274x300.png" alt="breakpad" loading="lazy"></a></p>
+<p>圖片來源：<a href="https://code.google.com/p/google-breakpad/wiki/GettingStartedWithBreakpad">GettingStartedWithBreakpad</a></p>
+<p>Firefox OS 本質上是倚靠 google breakpad 來產生 stack backtrace 存成 minidump 檔案格式，breakpad 使用 minidump <a href="https://www.theinnocents.org/">オンライン カジノ</a>  格式原因如下：</p>
+<p>(a)  傳統 core file 檔案容量過於龐大難以透過網路有效率地回報問題</p>
+<p>(b)  Windows 先天不支援 core file，而 minidump 格式是 Microsoft  定義，在難以說服 Windows 支援 coredump 情況下，選擇用 minidump 格式是比較簡單的作法</p>
+<p>(c)  breakpad 只需要支援 minidump，簡化實作複雜度</p>
+<p>細節如 Breakpad&quot;s symbol 格式請見 [[5]](https://code.google.com/p/google-breakpad/wiki/SymbolFiles)</p>
+<p>Build System</p>
+<p>以下簡述開啟 minidump  的方法：</p>
+<p>實際上nighly/release build 會預設啟用 crashreporter，若是 dev build 則要手動啟用 crashreporter。</p>
+<p>(1) 強制啟用 Crashreporter</p>
+<p>簡單來說，可以從/system/bin/b2g.sh 加上環境變數啟動 crashreporter 機制</p>
+<p>例如執行：</p>
+<p>MOZ_CRASHREPORTER=&quot;1&quot; /system/b2g/b2g.sh</p>
+<p>					1</p>
+<p>						MOZ_CRASHREPORTER=&quot;1&quot; /system/b2g/b2g.sh</p>
+<p>(2) 在 b2g 目錄下更新 build symbol：</p>
+<p>. setup.sh &amp;&amp; make buildsymbols</p>
+<p>					1</p>
+<p>						. setup.sh &amp;&amp; make buildsymbols</p>
+<p>symbol 會存放於 objdir-gecko/dist/crashreporter-symbols，並在該目錄下儲存 symbol files 路徑於  &lt;filename&gt;-&lt;platform&gt;-symbols.txt</p>
+<p>User&quot;s System</p>
+<p>(3) 當 crash  發生</p>
+<p>每當 b2g process 遇到 Segmentation Fault，dmp and extra 檔案會被存放於</p>
+<p>/data/b2g/mozilla/&lt;path_to_profile_dir&gt;/minidumps。</p>
+<p>其中 &lt;path_to_profile_dir&gt; 命名在此範例像是 “80htzzs8.default”</p>
+<p>而/data/b2g/mozilla/Crash Reports 資料夾下的 LastCrashFilename  則會顯示最後一次 crash 的 stack dump。</p>
+<p>註：後來的gecko版本將 minidump存放於 /data/b2g/mozilla/Crash Reports/pending</p>
+<p>(4) 取出 minidump：</p>
+<p>adb pull /data/b2g/mozilla/80htzzs8.default/minidumps minidumps/</p>
+<p>					1</p>
+<p>						adb pull /data/b2g/mozilla/80htzzs8.default/minidumps minidumps/</p>
+<p>(5) 解析 minidump：</p>
+<p>minidump_stackwalk &lt;dmpfile&gt; objdir-gecko/dist/crashreporter-symbols/ &gt; dmp_result.txt</p>
+<p>					1</p>
+<p>						minidump_stackwalk &lt;dmpfile&gt; objdir-gecko/dist/crashreporter-symbols/ &gt; dmp_result.txt</p>
+<p>Note：minidump_stackwalk 可從此處下載或自行編譯 breakpad</p>
+<p><a href="https://hg.mozilla.org/build/tools/file/tip/breakpad/">http://hg.mozilla.org/build/tools/file/tip/breakpad/</a></p>
+<p>(6) 檢視 dmp_result.txt 便可得到完整的 stack backtrace</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512.png"><img src="../../assets/2470/wp-content/uploads/2013/07/crashreporter-512-150x150.png" alt="crashreporter-512" loading="lazy"></a></p>
+<p>References:</p>
+<p>[1] <a href="https://code.google.com/p/google-breakpad/wiki/GettingStartedWithBreakpad">http://code.google.com/p/google-breakpad/wiki/GettingStartedWithBreakpad</a></p>
+<p>[2] <a href="https://developer.mozilla.org/en-US/docs/Environment_variables_affecting_crash_reporting">https://developer.mozilla.org/en-US/docs/Environment_variables_affecting_crash_reporting</a></p>
+<p>[3] <a href="https://code.google.com/p/google-breakpad/wiki/MozillaBrownBagTalk">http://code.google.com/p/google-breakpad/wiki/MozillaBrownBagTalk</a></p>
+<p>[4] <a href="https://code.google.com/p/google-breakpad/wiki/StackWalking">http://code.google.com/p/google-breakpad/wiki/StackWalking</a></p>
+<p>[5] <a href="https://code.google.com/p/google-breakpad/wiki/SymbolFiles">http://code.google.com/p/google-breakpad/wiki/SymbolFiles</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20191118142104id_/https://tech.mozilla.com.tw/?p=2470">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2015-01/">2015 年 1 月</a><b>&raquo;</b><a href="../../posts/5832/">自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2015-01-19" class="published"><span class="posted-month">1月</span><span class="posted-date">19</span><span class="posted-year">2015</span></time></p>
+              <h1 class="entry-title">自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件</h1>
+            </header>
+            <div class="entry-content"><p>Firefox 最受歡迎的特色之一就是量多而且質精的附加元件 (Add-on)，在 Firefox Add-ons 網站 [[1]](https://tech.mozilla.com.tw/#ref-1) 您可以找到各式各樣的附加元件滿足您的各種上網需求。在這篇文章中我們將會介紹如何利用 Firefox Add-on SDK [[2]](https://tech.mozilla.com.tw/#ref-2) 來撰寫簡單的附加元件。我們會教您如何利用附加元件來改變網頁的外觀與行為，即使不是自己架設的網站，我們也能隨心所欲的改善它們的使用經驗。</p>
+<h2>準備工作</h2>
+<p>為了減輕開發者的負擔，Mozilla 推出了 Add-on SDK [[2]](https://tech.mozilla.com.tw/#ref-2) 來取代原來基於 XUL 技術 [[3]](https://tech.mozilla.com.tw/#ref-3) 的附加元件框架。相較於傳統的 XUL， Add-on SDK 提供了更多簡單易用的 API 來簡化開發流程，另外也提供了許多新的使用者介面元素來配合新版的 Firefox 介面。</p>
+<p>為了能夠使用最新的 API，建議您先更新Firefox到最新版 [[4]](https://tech.mozilla.com.tw/#ref-4) 。</p>
+<p>您還需要安裝最新版的 Add-on SDK [[5]](https://tech.mozilla.com.tw/#ref-5)，以下將以 Linux 平台作為教學範例 ( OS X 也適用 )，若是使用 Windows 請參考 [[5]](https://tech.mozilla.com.tw/#ref-5)。</p>
+<p>首先下載最新版的 <a href="https://ftp.mozilla.org/pub/mozilla.org/labs/jetpack/jetpack-sdk-latest.zip">Add-on SDK</a>，解壓縮以後執行裡面的 activate 指令：</p>
+<p>source bin/activate #如果你用 bash<br>bash bin/activate   #如果你用其他的 shell</p>
+<p>					12</p>
+<p>						source bin/activate #如果你用 bashbash bin/activate   #如果你用其他的 shell</p>
+<p>此時您會注意到您的 shell prompt 前面會出現以下字串：</p>
+<p>(Add-on-sdk-1.17) $    #版本號可能不同</p>
+<p>					1</p>
+<p>						(Add-on-sdk-1.17) $    #版本號可能不同</p>
+<p>這樣表示您已經在 Add-on SDK 的環境下了，您會得到一個新的指令 — cfx，我們將會仔細介紹它的用法。（註：當您關閉 shell 以後就會自動退出 Add-on SDK，當您下次要繼續使用時必須重新執行 bin/activate。）</p>
+<h2>初始化一個新的專案</h2>
+<p>Web 工程師都知道要學習 HTML, JavaScrprt, CSS 最好的資源就是 Mozilla Developer Network [[6]](https://tech.mozilla.com.tw/#ref-6)。我們就試著用 Firefox Add-on 來把 MDN 調教改造成我們想要的樣子。我們會先示範如何插入 JavaScript 來改變 MDN的背景顏色，接著我們再示範如何在 MDN 的首頁上插入自己的按鈕，並且可以讓按鈕執行我們自己定義的 JavaScript。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png"><img src="../../assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-1024x769.png" alt="Original MDN" loading="lazy"></a>套用 Add-on 之前的 MDN 網站</p>
+<p>假設我們把這個新的專案叫作 mdn-mod ，第一步我們先讓 Add-on SDK 幫我們生成必要的檔案與目錄結構：</p>
+<p>mkdir mdn-mod<br>cd mdn-mod<br>cfx init</p>
+<p>					123</p>
+<p>						mkdir mdn-modcd mdn-modcfx init</p>
+<p>當執行完 cfx init之後，我們的  mdn-mod 資料夾就會出現以下的檔案：</p>
+<p>.<br>├── data   // Add-on 需要的資源檔案<br>├── lib    // Add-on 主要的 JavaScript 程式碼<br>│   └── main.js    // 程式的進入點<br>├── package.json   // 定義這個 Add-on 的 metadata<br>└── test   // 測試檔案，之後再介紹<br>    └── test-main.js</p>
+<p>					1234567</p>
+<p>						.├── data   // Add-on 需要的資源檔案├── lib    // Add-on 主要的 JavaScript 程式碼│   └── main.js    // 程式的進入點├── package.json   // 定義這個 Add-on 的 metadata└── test   // 測試檔案，之後再介紹    └── test-main.js</p>
+<p>首先我們需要打開 package.json 填寫程式名稱、版本號、作者、授權條款等等資料，只要照著自動生成的欄位填入即可，若是有不清楚的可以參考這篇文件 [[7]](https://tech.mozilla.com.tw/#ref-7)。</p>
+<h2>用 page-mod 插入 JavaScript 到指定網站</h2>
+<p>Add-on SDK 提供的一個實用 API 叫作 page-mod [[8]](https://tech.mozilla.com.tw/#ref-8)，其用途是當 Firefox 開到指定的網站時，就插入一段自己的 JavaScript 到頁面上，因此可以改變特定網站的行為。</p>
+<p>首先我們打開 lib/main.js，加入以下幾行程式碼：</p>
+<p>var pageMod = require(&quot;sdk/page-mod&quot;);<br>var data = require(&quot;sdk/self&quot;).data;</p>
+<p>pageMod.PageMod({<br>    include: &quot;*.mozilla.org&quot;,<br>    contentScriptFile: data.url(&quot;my-script.js&quot;)<br>});</p>
+<p>					1234567</p>
+<p>						var pageMod = require(&quot;sdk/page-mod&quot;);var data = require(&quot;sdk/self&quot;).data; pageMod.PageMod({    include: &quot;*.mozilla.org&quot;,    contentScriptFile: data.url(&quot;my-script.js&quot;)});</p>
+<p>第五行的 include: &quot;<em>.mozilla.org&quot; 就是我們希望套用的網址（&quot;</em>&quot; 代表萬用字元），只要 Firefox 開啟的網址是 mozilla.org 結尾的，就會被插入 contentScriptFile 指定的 JavaScript 檔案。在這裡我們使用了 data.url(&quot;my-script.js&quot;)，意思是放在 data/ 資料夾下的  my-script.js  檔案。</p>
+<h2>改變 MDN 背景顏色</h2>
+<p>但是目前為止我們還沒真的定義 my-script.js 要執行什麼，所以我們馬上新增一個檔案 data/my-script.js，插入以下一行簡單的程式碼：</p>
+<p>document.body.style.background=&quot;red&quot;;</p>
+<p>					1</p>
+<p>						document.body.style.background=&quot;red&quot;;</p>
+<p>這行代碼把 body tag 的背景設成紅色，等同於以下這段 CSS 的效果：</p>
+<p>body {<br>   background-color: red;<br>}</p>
+<p>					123</p>
+<p>						body {   background-color: red;}</p>
+<h2>使用乾淨的瀏覽器進行測試</h2>
+<p>完成上述步驟以後，我們的 Add-on 已經可以準備測試了。但是我們日常使用的 Firefox 可能有很多個人設定，或是安裝了很多其他 Add-on，會干擾我們的測試。此時我們只要執行</p>
+<p>cfx run</p>
+<p>					1</p>
+<p>						cfx run</p>
+<p>Add-on SDK 就會幫我們開啟一個完全乾淨的 Firefox profile，讓我們可以在近乎出廠設定的 Firefox 底下測試我們的 Add-on。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png"><img src="../../assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-1024x890.png" alt="乾淨的 Firefox Profile" loading="lazy"></a>乾淨的 Firefox Profile</p>
+<p>當我們在新開的 Firefox 裡面開啟 <a href="https://developer.mozilla.org/">http://developer.mozilla.org/</a>，毫不意外的 MDN 的背景就變成紅色了！</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color.png"><img src="../../assets/5832/wp-content/uploads/2014/12/color-1024x766.png" alt="color" loading="lazy"></a>MDN 的背景已經被改成紅色</p>
+<h2>添加新按鈕</h2>
+<p>除了改變現有的頁面以外，我們也可以自由的插入任何自己想要的元件。讓我們再次打開data/my-script.js，加入以下程式碼：</p>
+<p>var button = &quot;&lt;button onClick=&#39;alert(\&quot;Hi!\&quot;)&#39;&gt;CLICK ME&lt;/button&gt;&quot;;<br>document.body.innerHTML = button + document.body.innerHTML;</p>
+<p>					12</p>
+<p>						var button = &quot;&lt;button onClick=&#39;alert(\&quot;Hi!\&quot;)&#39;&gt;CLICK ME&lt;/button&gt;&quot;;document.body.innerHTML = button + document.body.innerHTML;</p>
+<p>再這段程式碼裡面，我們定義了一個 html5 的按鈕，並且讓它被按下 (觸發 onClick 事件) 時會跳出一個訊息框說「Hi!」 ( alert(&quot;Hi!&quot;) )。</p>
+<p>下一行緊接著就把這個按鈕插入到 body tag 的最前面，於是當我們再次執行  cfx run 來瀏覽 MDN 時，就會看到畫面最上方出現了一個按鈕。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png"><img src="../../assets/5832/wp-content/uploads/2014/12/button.png" alt="button" loading="lazy"></a>出現了 CLICK ME 按鈕</p>
+<p>按下按鈕馬上跳出寫著「Hi!」的訊息框。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert.png"><img src="../../assets/5832/wp-content/uploads/2014/12/alert-1024x609.png" alt="alert" loading="lazy"></a>跳出了寫著「Hi!」的訊息框</p>
+<h2>打包出貨</h2>
+<p>如此一來我們的 Add-on 就大功告成了！如果要把這個 Add-on 包裝成可以分享的 xpi [[9]](https://tech.mozilla.com.tw/#ref-9) 格式，只要執行</p>
+<p>cfx xpi</p>
+<p>					1</p>
+<p>						cfx xpi</p>
+<p>即可。Add-on SDK 會生成一個副檔名為 .xpi 的安裝檔，不論是要直接傳給親朋好友或是拿去 Firefox 官方的附加元件商城 [[1]](https://tech.mozilla.com.tw/#ref-1) 上架都可以！</p>
+<p>以上就是一個簡單的 Add-on 教學，在後續的文章中我們還會介紹如何讓您的附加元件可以有自己的設定頁面，以及如何增加工具列按鈕、右鍵選單等等更進階的技巧，下回分曉！</p>
+<h2>References</h2>
+<p>[1] Firefox Add-on Gallery <a href="https://add-ons.mozilla.org/">https://Add-ons.mozilla.org</a></p>
+<p>[2] Firefox Add-on SDK (MDN) <a href="https://developer.mozilla.org/en-US/Add-ons/SDK">https://developer.mozilla.org/en-US/Add-ons/SDK</a></p>
+<p>[3] Overlay Extension using XUL <a href="https://developer.mozilla.org/en-US/Add-ons/Overlay_Extensions">https://developer.mozilla.org/en-US/Add-ons/Overlay_Extensions</a></p>
+<p>[4] Get Firefox <a href="https://moztw.org/firefox/">http://moztw.org/firefox/</a></p>
+<p>[5] Install the Add-on SDK <a href="https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Installation">https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Installation</a></p>
+<p>[6] MDN 中文版 <a href="https://developer.mozilla.org/zh-TW/">https://developer.mozilla.org/zh-TW/</a></p>
+<p>[7] package.json 格式說明 <a href="https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/package_json">https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/package_json</a></p>
+<p>[8] page-mod <a href="https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/page-mod">https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/page-mod</a></p>
+<p>[9] cfx xpi <a href="https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/cfx#cfx_xpi">https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/cfx#cfx_xpi</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox/">Firefox</a></span><span><a href="../../categories/javascript/">Javascript</a></span><span><a href="../../categories/open-source/">Open Source</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/?p=5832">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

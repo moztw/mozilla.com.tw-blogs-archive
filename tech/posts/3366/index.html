@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>Emscripten 與拼音輸入法的相遇 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-11/">2013 年 11 月</a><b>&raquo;</b><a href="../../posts/3366/">Emscripten 與拼音輸入法的相遇</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-11-18" class="published"><span class="posted-month">11月</span><span class="posted-date">18</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">Emscripten 與拼音輸入法的相遇</h1>
+            </header>
+            <div class="entry-content"><p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/11/emscripten_logo.jpg"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2013/11/emscripten_logo.jpg" alt="Emscripten Logo" loading="lazy"></a></p>
+<p>在提到 Emscripten 之前，我們先來回顧一下 JavaScript 的發展歷史。</p>
+<h2>JavaScript 的歷史</h2>
+<p>JavaScript 在 1995 年問市時，目標是在瀏覽器中打造一種輕量的腳本語言，用來輔助頁面的呈現以及與使用者互動。為了這個目的，JavaScript 被設計成非常靈活，讓開發者在撰寫過程中不會被太多的規則限制住。雖然想保有彈性的背後通常就得犧牲效能，但如果 JavaScript 只是被用來增加網頁的互動性的話，似乎也不會有什麼大問題。</p>
+<p>但是科技的走向總是難以預料的，應用程式的領地漸漸從作業系統裡移到了網路環境，Web Application 變成熱門關鍵字，JavaScript 的效能成為最大的瓶頸。終於在 2008 年左右，各家瀏覽器開始釋出各種支援 JIT （Just-In-Time） 編譯的 JavaScript 引擎，讓瀏覽器可以在它判斷需要時將部份的 JavaScript code 即時編譯成 native code 來執行，效能因此獲得提升。</p>
+<p>JIT 引擎雖然解決了當時的瓶頸，但 JavaScript 的效能還是沒有辦法與真正的 native code 相提並論，主要的限制就在於 JavaScript 的靈活性讓它不容易被最佳化。舉例來說，JavaScript 選擇採用與大部份的腳本語言相同的動態型別（dynamic typing）機制，在編輯時期沒有辦法確定變數的型態，因此 JIT 引擎就必需為未來在執行時期可能進行的各種變數型態轉換預作準備，浪費了許多資源。</p>
+<h2>asm.js 與 Emscripten</h2>
+<p>為了解決這樣的問題，David Herman、Luke Wagner 和 Alon Zakai 等人提出了一種 JavaScript 的子集，命名叫 asm.js。這個子集的目的是讓開發者避開 JavaScript 中無法最佳化的部份，例如：不直接使用 JavaScript 的物件，改成透過長陣列來模擬記憶體的管理，避免使用引擎的 garbage collection 等等。由於 asm.js 單純是 JavaScript 的子集，並未加入任何新的語法，所以寫出來的程式碼在所有的瀏覽器上都是可以被解讀且執行的，只是當瀏覽器真正支援 asm.js 的規範時，其 JIT 引擎就能採用更有效率的最佳化方式來進行編譯，進而獲得更好的執行效能。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/11/%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96%E5%AD%98%E7%82%BA-2013-11-04-170720-2.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2013/11/%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96%E5%AD%98%E7%82%BA-2013-11-04-170720-2.png" alt="Emscripten code sample" loading="lazy"></a></p>
+<p>圖一、Emscripten 編譯出來的程式碼片段</p>
+<p>圖一是用 Emscripten 編譯出來的 JavaScript 程式碼片段，你應該可以想像如果要用人腦寫出符合 asm.js 規範的程式碼，似乎不是那麼容易（這就是為什麼它會以組合語言 asm 命名）。事實上，Mozilla 並不打算讓人直接撰寫 asm.js，他們開發了一個叫 Emscripten 的編譯器，讓開發者可以直接把 C/C++ 的原始碼「編譯」成 JavaScript 的程式碼，聽起來是不是輕鬆多了！</p>
+<p>到底 Emscripten 有多強大呢？我們先來看看官方的 demo 好了。<a href="https://www.unrealengine.com/html5/">Unreal Engine 3</a> 是 Mozilla 與知名遊戲 3D 引擎 Unreal 合作的 demo 專案。Unreal 將他們家的 3D 引擎透過 Emscripten 轉成 JavaScript，然後在網頁中打造了一個 3D 的遊戲世界，而且是真的可以走動的喲！</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot.png"><img src="../../assets/3366/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png" alt="Unreal Screenshot" loading="lazy"></a></p>
+<p> 圖二、Unreal Engine 3 (<a href="https://www.unrealengine.com/html5/">http://www.unrealengine.com/html5/</a>)</p>
+<h2>拼音輸入法</h2>
+<p>終於要提到拼音輸入法了！</p>
+<p>在 Firefox OS 中，我們原先採用人工的方式將一份以 C++ 寫成的 Open Source 拼音輸入法改寫成 JavaScript 版本並放進 gaia 裡，但在手機上的效能一直不太理想，除了字詞的搜尋速度較慢外，佔用的記憶體也比想像中的多。因此在 v1.2 中，我們引入了 Emscripten 來改寫拼音輸入法，獲得了不錯的成效，讓我們一起來看看在實際應用上的一些效能分析。</p>
+<p>我們將拼音輸入法的核心引擎獨立出來，在 ubuntu 12.04 上分別以 gcc 4.6.4 與 Emscripten 編譯成 native code 與 JavaScript 版本，接著在同一台 PC 上輸入不同的字串讓引擎搜尋相關的字詞，每個字串執行 10,000 次搜尋後比較其總執行時間，其中 Emscripten version 是在 Firefox Nightly 26 上執行，以下是比較結果：</p>
+<p>Native Code</p>
+<p>a:<br>0ms</p>
+<p>b:<br>360ms</p>
+<p>c:<br>640ms</p>
+<p>d:<br>420ms</p>
+<p>e:<br>20ms</p>
+<p>f:<br>220ms</p>
+<p>g:<br>320ms</p>
+<p>h:<br>480ms</p>
+<p>z:<br>1100ms</p>
+<p>ba:<br>20ms</p>
+<p>da:<br>20ms</p>
+<p>fa:<br>0ms</p>
+<p>ga:<br>0ms</p>
+<p>ha:<br>0ms</p>
+<p>Emscripten Version</p>
+<p>a:<br>72ms</p>
+<p>b:<br>1078ms</p>
+<p>c:<br>1577ms</p>
+<p>d:<br>1182ms</p>
+<p>e:<br>170ms</p>
+<p>f:<br>744ms</p>
+<p>g:<br>981ms</p>
+<p>h:<br>1311ms</p>
+<p>z:<br>2385ms</p>
+<p>ba:<br>192ms</p>
+<p>da:<br>176ms</p>
+<p>fa:<br>157ms</p>
+<p>ga:<br>153ms</p>
+<p>ha:<br>124ms</p>
+<p>表一、Native Code vs. Emscripten</p>
+<p>在表一中，我們可以看到不同字串的搜尋時間相差很多，這是因為當我們輸入 “ba&quot; 時，引擎會幫我們找出所有開頭符合 “ba&quot; 的字或詞組，而不同的組合會搜尋到的結果數量亦有所不同，所以搜尋時間便會有所差異。例如在我們的字典中，符合 “a&quot; 開頭的文字只有 7 個，但是符合 “z&quot; 開頭的文字有 1,431 個。</p>
+<p>我們可以看到 Emscripten version 在 native code 版本執行時間超過 100ms 的測試項目中，執行時間大約會是 native code 的 2~3 倍，但是在 native code 低於 100ms 執行時間的測試項目中，Emscripten 花費的時間倍數就比較多，這很可能是因為其中包含了 Emscripten version 在初始化引擎資料時固定需要花費的時間。但是整體而言，對於一個腳本語言來說，這樣執行效能應該已經可以適用在更多需要大量計算的應用領域了。</p>
+<p>我們再來比較看看在實際的手機上，原先人工改寫的版本與 Emscripten version 效能上到底有什麼差異。下表是在同一台手機上，針對每個不同的字串執行 10 次搜尋後，平均出來每一次搜尋所需的執行時間比較：</p>
+<p>Handwork Version</p>
+<p>a:<br>22.8ms</p>
+<p>b:<br>133.1ms</p>
+<p>c:<br>188.9ms</p>
+<p>n:<br>80.7ms</p>
+<p>z:<br>273.0ms</p>
+<p>Memory Usage: 19.70MB<br>Emscripten Version</p>
+<p>a:<br>3.2ms</p>
+<p>b:<br>47.3ms</p>
+<p>c:<br>65.3ms</p>
+<p>n:<br>26.7ms</p>
+<p>z:<br>97.5ms</p>
+<p>Memory Usage: 11.82MB</p>
+<p>表二、Handwork vs. Emscripten</p>
+<p>可以注意到在表二中，兩者使用的是相同的演算法，但 Emscripten version 明顯地獲得了三倍以上的執行效能提升，而且也將記憶體用量降低至原先的 2/3 以下，成效相當顯著！</p>
+<p>事實上，Firefox 到現在都仍不斷地在改善 JavaScript 引擎的執行效能，從 TraceMonkey、IonMonkey 到 OdinMonkey，每一代的執行效能都有明顯的進步。我們可以預期未來在全世界開發人員的貢獻下，Firefox 的 JIT 引擎還會不斷的更新，說不定 JavaScript 的效能直逼 native code 的日子就在不遠的將來！</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52.png"><img src="../../assets/3366/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png" alt="Pinyin IME Screenshot" loading="lazy"></a></p>
+<p>圖三、Firefox OS 上的拼音輸入法</p>
+<h4>參考文獻</h4>
+<ul><li>asm.js: <a href="https://asmjs.org/">http://asmjs.org</a></li></ul>
+<ul><li>Emscripten: <a href="https://github.com/kripken/emscripten">https://github.com/kripken/emscripten</a></li></ul></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200919194731id_/https://tech.mozilla.com.tw/?p=3366">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

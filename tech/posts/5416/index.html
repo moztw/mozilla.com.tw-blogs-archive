@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>標準化的錄影API | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-11/">2014 年 11 月</a><b>&raquo;</b><a href="../../posts/5416/">標準化的錄影API</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-11-28" class="published"><span class="posted-month">11月</span><span class="posted-date">28</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">標準化的錄影API</h1>
+            </header>
+            <div class="entry-content"><p>當 HTML5 發展日漸成熟之際，在多媒體的輸出原生支援方面，目前已經支援了大多數網路常見的格式，所以開發者可以使用 <br>			audio  或是 <br>			video  tag 來進行影音播放控制。但輸入方面，目前各家瀏覽器並無統一的 API 實作，為解決此問題，W3C 委員會在 2013 年開始制定了MediaRecorder API[3]，讓開發者可以有統一個的介面處理來自使用者端的照像機影像資料語麥克風的音訊資料，並加以壓縮成可以在網路傳遞的格式。</p>
+<p>如果有常在關注謀智台客文章的，相信已經知道 <br>			GetUserMedia  可以用來打電話，拍照，作語音辨識等等應用[2][4][5][6]，但是直接利用此 API 取得的影音資料是未壓縮過的，將此種資料在網路上傳遞是當沒效率的。雖然 JavaScript 可以實作相對應的壓縮演算法來處理上述資料，但一般而言如果沒有使用平台提供最佳化的程式庫來加速並降低 CPU 使用率，將會面臨到嚴重的效率問題，更別提即時壓縮處理了。為了能達到支援即時錄制的效果，Mozilla 領先業界依據 W3C MediaStream Recording 規格書實作了 MediaRecorder API，至今此 API 目前已經可以在各個以Gecko 開發的平台使用囉。所以開發者可以使用此 API 進行開發，無論使用者使用了桌面版的 Firefox，移動版的 Firefox，甚至最夯的 Firefox OS 系統，皆可順利執行。因此 API 仍再更新，為避免不相容因素，建譯下載安裝 nightly 的版本來進行開發使用。</p>
+<p>此 API 使用上相當簡單，首先要藉由 <br>			navigator.getUserMedia  先取得 MediaStream 物件</p>
+<p>navigator.getUserMedia = (navigator.getUserMedia || navigator.mozGetUserMedia);<br>if (navigator.getUserMedia) {<br> navigator.getUserMedia(<br> {<br> video:true,<br> audio:true<br> },<br> function(stream) { /<em> do recording </em>/ }<br> function(error) { /<em> do something </em>/ }<br> );<br>} else {<br> alert(&quot;Sorry, the browser you are using doesn\&quot;t support getUserMedia&quot;);<br> return;<br>}</p>
+<p>					1234567891011121314</p>
+<p>						navigator.getUserMedia = (navigator.getUserMedia || navigator.mozGetUserMedia);if (navigator.getUserMedia) { navigator.getUserMedia( { video:true, audio:true }, function(stream) { /<em> do recording </em>/ } function(error) { /<em> do something </em>/ } );} else { alert(&quot;Sorry, the browser you are using doesn\&quot;t support getUserMedia&quot;); return;}</p>
+<p>接下來，在 do recording 函式區塊中，加入處理 stream 的程式碼，並對已宣告的 <br>			mediaRecorder  作初始化</p>
+<p>mediaRecorder = new MediaRecorder(stream);</p>
+<p>					1</p>
+<p>						mediaRecorder = new MediaRecorder(stream);</p>
+<p>那壓製過的影音資料跑那去了呢? 我們可以在呼叫 start 函式之前，宣告處理 <br>			MediaRecorder  的 <br>			ondataavailable  事件函式回傳的 callback blob object。此範利為將底層壓好的資料存入 <br>			mBlob  物件。</p>
+<p>mediaRecorder.ondataavailable = function(e) {<br> if (mBlob) {<br> mBlob = new Blob([mBlob, aData.data], {type: aData.data.type});<br> } else {<br> mBlob = new Blob([aData.data], {type: aData.data.type});<br> }<br>}</p>
+<p>					1234567</p>
+<p>						mediaRecorder.ondataavailable = function(e) { if (mBlob) { mBlob = new Blob([mBlob, aData.data], {type: aData.data.type}); } else { mBlob = new Blob([aData.data], {type: aData.data.type}); }}</p>
+<p>加入開始按鈕在 <br>			click  事件讓使用者開始錄影:</p>
+<p>start.onclick = function() {<br> mediaRecorder.start();<br>}</p>
+<p>					123</p>
+<p>						start.onclick = function() { mediaRecorder.start();}</p>
+<p>如果使用者想停止的話，則有按紐在 &lt;span class=&quot;lang:js decode:true <a href="https://www.theinnocents.org/">オンライン カジノ</a>  crayon-inline “&gt;click  事件讓使用者停止錄影</p>
+<p>stop.onclick = function() {<br> mediaRecorder.stop();<br>}</p>
+<p>					123</p>
+<p>						stop.onclick = function() { mediaRecorder.stop();}</p>
+<p>如果要進行播放則可以使用 <br>			video  tag 播放剛剛存在 <br>			mBlob  的資料</p>
+<p>play.onclick = function() {<br> _FReader = new FileReader();<br> _FReader.readAsDataURL(mBlob);<br> _FReader.onload = function (_FREvent) {<br> document.getElementById(&quot;videoelem&quot;).src = _FREvent.target.result;<br> document.getElementById(&quot;videoelem&quot;).play();<br> };<br>}</p>
+<p>					12345678</p>
+<p>						play.onclick = function() { _FReader = new FileReader(); _FReader.readAsDataURL(mBlob); _FReader.onload = function (_FREvent) { document.getElementById(&quot;videoelem&quot;).src = _FREvent.target.result; document.getElementById(&quot;videoelem&quot;).play(); };}</p>
+<p>目前 mediaRecorder API 會直接錄製 MediaStream 包含的影音資料，</p>
+<p>在呼叫 <br>			getUserMedia  所傳進去的 <br>			audio  或是 <br>			video  布林值就需要決定產出的內容，因此我們可獲得有三種不同的產出。</p>
+<p>*Audio Only</p>
+<p>*Video Only</p>
+<p>*Video Audio</p>
+<p>而 <br>			mediaRecorder 在實作時為了達到最佳化，則產出的影音格式有些許不同，表列如下</p>
+<p>平台<br>Video<br>Audio<br>Audio Video</p>
+<p>Firefox on Desktop<br>WebM opus<br>opus<br>WebM</p>
+<p>Firefox on Android<br>N/A<em>[1]<br>opus<br>N/A</em>[1]</p>
+<p>Firefox OS<br>mp4<br>opus<br>mp4</p>
+<p>[1] 尚未實作</p>
+<p>以上範例大家可以參考下列網址相關的程式碼:</p>
+<p><a href="https://people.mozilla.org/~rlin/mr/MR.html">MediaStream Recording Test Landing Page</a></p>
+<p>參考資料:</p>
+<p>[2]<a href="../../posts/1638/">過年不忘長知識！啥？瀏覽器也可以開視訊會議</a></p>
+<p>[3]<a href="https://w3c.github.io/mediacapture-record/MediaRecorder.html">MediaStream Recording</a></p>
+<p>[4]<a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder_API/Using_the_MediaRecorder_API">Using the MediaRecorder API</a></p>
+<p>[5]<a href="https://www.html5rocks.com/en/tutorials/getusermedia/intro/">Capturing Audio &amp; Video in HTML5</a></p>
+<p>[6]<a href="https://syl22-00.github.io/pocketsphinx.js/">Speech Recognition in JavaScript</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox/">Firefox</a></span><span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200919180624id_/https://tech.mozilla.com.tw/?p=5416">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

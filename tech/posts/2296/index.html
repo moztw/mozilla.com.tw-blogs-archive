@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>快來幫忙找，IPDL 在哪裡？ | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-07/">2013 年 7 月</a><b>&raquo;</b><a href="../../posts/2296/">快來幫忙找，IPDL 在哪裡？</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-07-01" class="published"><span class="posted-month">7月</span><span class="posted-date">1</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">快來幫忙找，IPDL 在哪裡？</h1>
+            </header>
+            <div class="entry-content"><p>截止目前為止，<a href="../../posts/1950/">Mozilla 的 IPC</a> 在我心目中依然是個仰之彌高，鑽之彌堅，瞻之在前，忽焉在後[1]的神秘技術，雖然簡單地說，它就只是 Content Process 和 Chrome Process 溝通橋樑…而已（心虛）。</p>
+<p>有了 IPC 這座橋，接下來是讓程式設計師知道如何利用 IPC 這座橋，就如同專供定義 XPCOM/DOM 物件的 IDL/WebIDL 一樣，IPDL 便是用來定義 IPC 的語言（IPC Protocol Definition Language），也一樣會在編譯期自動產生對應的物件型別定義，再由程式設計師將功能實作出來；但與 IDL/WebIDL 不同的是，因為 IPDL 定義的是 Gecko 核心的功能，因此一定要用 C 實作。</p>
+<p>在開發 Firefox OS 的 Web API 過程中，IPDL 是一個讓人避之唯恐不及知易行難的元素，因為定義與實作必需遵循一套命名規則，但是<a href="https://wiki.mozilla.org/IPDL">可供參考的文件</a>相對不多，又實作 IPDL 的程式碼容易混淆且與應用相關，即使是參考現有程式仍然會有不小的學習曲線。</p>
+<p>不過它很重要，所以我們要跟它做朋友、接近它、靠近它、了解它、把它的底摸得清清楚楚[2]－雖然我現在跟它並不太熟。</p>
+<p>回到正題，IPDL 在哪裡？</p>
+<p>若把 IPDL 當成一個定義 IPC 的工具語言，這是個沒有意義的問題（雖然它本來就是）；不過更多時候，我們所謂的 IPDL 指的是 IPDL 所定義出來的 IPC 架構，以此而言，IPDL 就在 Content Process 和 Chrome Process 之間…嗯，你知道，我知道，獨眼龍也知道[3]，但是當我處理 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=859215">Bug 859215</a> 的時候，第一次看到活生生的 IPDL，還是沒辦法具現化想像它所定義出來的各個物件，在整個流程中所在的位置和呼叫順序。</p>
+<p><a href="https://bugzilla.mozilla.org/show_bug.cgi?id=859215">Bug 859215</a> 要處理的是新增一組讀寫 <a href="https://www.svenskkasinon.com/">casino online</a>  SIM 卡裡 SMSC Address 的 API，在複製貼上嘗試實作的過程中，所以我畫了張圖當作筆記，一眼就能看 IPDL 的整個架構和各個物件在流程中扮演的角色，而且比<a href="https://whereswaldo.com/index.html#findwaldo/map4">威利在哪裡</a>簡單得多（先看完這一篇再去玩吧）。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/06/All.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2013/06/All.png" alt="Bug 859215程式流程簡圖" loading="lazy"></a>Bug 859215程式流程簡圖（點小圖看大圖）</p>
+<p>上圖是取得 SMSC Address 的 API – getSmscAddress()，從呼叫到取得結果的完整執行流程，又由於這張圖是針對 Mobile Message DOM 做的，還是需要讀者對 Mobile Message DOM 有一點瞭解，並參考對應的 <a href="https://bugzilla.mozilla.org/page.cgi?id=splinter.html&amp;bug=859215&amp;attachment=754717">IPDL patch</a></p>
+<p>如前所述，在 IPC 的大架構之下，IPDL 的定義及實作方式與使用場合的相關性很大，例如圖中 Content Process 往 Chrome Process 的 IPC，Client 的角色便不是由標準說明上的 SmsRequestChild 擔任，而是由 SmsIPCService 擔任。因此本文呈現的只是 IPDL 的其中一種樣子，換個位置可能也就換了腦袋樣子，但若能在 trace code 的同時畫出 IPDL 的流程，相信能有效地提高掌握度（而且忘記了也好查）。</p>
+<p>最後補充一些小細節：</p>
+<ul><li>為什麼 Content Process 的 SmsService 能呼叫到 SmsIPCService 參考<a href="https://mxr.mozilla.org/mozilla-central/source/dom/mobilemessage/src/SmsServicesFactory.cpp#24">程式碼</a>，要在 Content Process 取得 SmsService ，實際上會拿到 SmsIPCService；相對地在 Chrome Process 中則會拿到 SmsService。 因此 SmsIPCService 必需支援所有 SmsService 的介面，並將之轉成 IPC 往 Chorme Process 送。</li></ul>
+<ul><li>pSMS.ipdl 和 pSmsRequest.ipdl 的關係 pSMS.ipdl 定義了整個 IPC 的訊息架構，包含 SmsIPCService 往 smsRequestParent 和 smsRequestParent 往 smsRequestClient 兩個方向的介面，以及圖中 SmsIPCService 往 smsRequestParent 方向的訊息格式。 而 pSmsRequest.ipdl 定義的是圖中 smsRequestParent 送往 smsRequestChild 的訊息格式。</li></ul>
+<p>[1] 出自論語，顏回說的</p>
+<p>[2] 出自小孩不笨，李老師說的前幾段是為了提起各位的興趣來著，絕對不是騙稿費</p>
+<p>[3] 出自賭俠，劉德華賭俠說的</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200803150451id_/https://tech.mozilla.com.tw/?p=2296">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

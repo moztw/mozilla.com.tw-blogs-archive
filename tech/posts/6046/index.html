@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>如何在 Firefox OS 上建立瀏覽器 APP | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2015-03/">2015 年 3 月</a><b>&raquo;</b><a href="../../posts/6046/">如何在 Firefox OS 上建立瀏覽器 APP</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2015-03-23" class="published"><span class="posted-month">3月</span><span class="posted-date">23</span><span class="posted-year">2015</span></time></p>
+              <h1 class="entry-title">如何在 Firefox OS 上建立瀏覽器 APP</h1>
+            </header>
+            <div class="entry-content"><p>Firefox OS 上的瀏覽器 APP 利用 Gecko 提供的 Browser API 來管理網頁瀏覽，並利用 HTML5 技術提供使用者界面。根據不同的實作它可以實現分頁，瀏覽歷史，書籤… 等等功能。這篇文章示範如何建立一個可以在 Firefox OS 裝置上使用的瀏覽器 APP，它包含了最基本的網誌列跟上一頁/下一頁功能。</p>
+<p>文章範例的原始碼可以在這裡下載：</p>
+<p><a href="https://github.com/begeeben/firefox-os-browser-sample">https://github.com/begeeben/firefox-os-browser-sample</a></p>
+<h2>基本工具： WebIDE</h2>
+<p>Firefox 34 以及之後的版本都包含了 WebIDE。開發瀏覽器 APP 的並不一定需要一台 Firefox OS 手機，我們可以在 WebIDE 上用 Firefox OS simulator 來執行這個 APP。使用 WebIDE 可以很容易的從範本建立一個 APP，並做 HTML/CSS/JS 編輯。要開啟 WebIDE，從上面的標題列選 Tools &gt; Web Developer &gt; WebIDE :</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/Fullscreen_2015_2_3_%E4%B8%8B%E5%8D%884_13.png"><img src="../../assets/6046/wp-content/uploads/2015/02/Fullscreen_2015_2_3_下午4_13.png" alt="open webide" loading="lazy"></a></p>
+<h2>使用範本建立 APP：</h2>
+<p>首先，從 WebIDE 的空白範本建立一個 APP。Privileged APP 才能有 browser 權限使用 Browser API，它提供了一些在 Firefox OS 上才能用的 method 和 event 來管理 <br>			iframe。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/Firefox_WebIDE.png"><img src="../../assets/6046/wp-content/uploads/2015/02/Firefox_WebIDE.png" alt="new priviledged app" loading="lazy"></a></p>
+<p>建好的 APP 看起來像下面這張圖，接下來我們要開始寫 code 做瀏覽器 APP 需要的功能。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/Firefox_WebIDE__mybrowser.png"><img src="../../assets/6046/wp-content/uploads/2015/02/Firefox_WebIDE__mybrowser.png" alt="mybrowser empty" loading="lazy"></a></p>
+<h2>設定 manifest.webapp：</h2>
+<p>從範本建立好的 APP 已經在 manifest.webapp 裡設定 <br>			type  為 <br>			privileged：</p>
+<p>  &quot;type&quot;: &quot;privileged&quot;,</p>
+<p>					1</p>
+<p>						  &quot;type&quot;: &quot;privileged&quot;,</p>
+<p>要使用 Browser API 我們需要加上 <br>			browser 權限：</p>
+<p>  &quot;permissions&quot;: {<br>    &quot;browser&quot;: {}<br>  },</p>
+<p>					123</p>
+<p>						  &quot;permissions&quot;: {    &quot;browser&quot;: {}  },</p>
+<h2>HTML 結構:</h2>
+<p>這個瀏覽器 APP 上面會有一條工具列，畫面中央會拿來放用來瀏覽網頁用的 <br>			iframe，之後將用 javascript 來產生這個 <br>			iframe。這個 APP 剛開啟的時候預設顯示 “Hello myBrowser!&quot;。</p>
+<p>&lt;!-- browser toolbar --&gt;<br>&lt;div id=&quot;toolbar&quot;&gt;<br>    &lt;button id=&quot;goback-button&quot; type=&quot;button&quot; disabled&gt;&lt;&lt;/button&gt;<br>    &lt;button id=&quot;goforward-button&quot; type=&quot;button&quot; disabled&gt;&gt;&lt;/button&gt;<br>    &lt;!-- url bar displays page url or page title --&gt;<br>    &lt;form id=&quot;url-bar&quot;&gt;<br>        &lt;input id=&quot;url-input&quot; type=&quot;text&quot;&gt;&lt;/input&gt;<br>    &lt;/form&gt;<br>    &lt;button id=&quot;url-button&quot; form=&quot;url-bar&quot;&gt;GO&lt;/button&gt;<br>&lt;/div&gt;<br>&lt;!-- the container for the browser frame --&gt;<br>&lt;div id=&quot;frame-container&quot; class=&quot;empty&quot;&gt;<br>    &lt;div id=&quot;empty-frame&quot;&gt;<br>        &lt;h1&gt;Hello myBrowser!&lt;/h1&gt;<br>    &lt;/div&gt;<br>&lt;/div&gt;</p>
+<p>					12345678910111213141516</p>
+<p>						&lt;!-- browser toolbar --&gt;&lt;div id=&quot;toolbar&quot;&gt;    &lt;button id=&quot;goback-button&quot; type=&quot;button&quot; disabled&gt;&lt;&lt;/button&gt;    &lt;button id=&quot;goforward-button&quot; type=&quot;button&quot; disabled&gt;&gt;&lt;/button&gt;    &lt;!-- url bar displays page url or page title --&gt;    &lt;form id=&quot;url-bar&quot;&gt;        &lt;input id=&quot;url-input&quot; type=&quot;text&quot;&gt;&lt;/input&gt;    &lt;/form&gt;    &lt;button id=&quot;url-button&quot; form=&quot;url-bar&quot;&gt;GO&lt;/button&gt;&lt;/div&gt;&lt;!-- the container for the browser frame --&gt;&lt;div id=&quot;frame-container&quot; class=&quot;empty&quot;&gt;    &lt;div id=&quot;empty-frame&quot;&gt;        &lt;h1&gt;Hello myBrowser!&lt;/h1&gt;    &lt;/div&gt;&lt;/div&gt;</p>
+<p>預設看起來長這樣：</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/Blank_Skitch_Document.png"><img src="../../assets/6046/wp-content/uploads/2015/02/Blank_Skitch_Document.png" alt="browser startup" loading="lazy"></a></p>
+<h2>管理瀏覽網頁的 iframe：</h2>
+<p>要提供 iframe 裡面網頁的資訊到使用者界面上，需要接收處理 <br>			mozbrowser event。在 <br>			iframe 上加 <br>			mozbrowser 參數，就可以在這 <br>			iframe 上使用 Browser API。在這裡為了要把 UI 和 mozbrowser 的處理邏輯分開，我們建立一個 tab.js，這樣也預留了未來可以做多分頁瀏覽的彈性。</p>
+<p>/**</p>
+<ul><li>Returns an iframe which runs in a child process with Browser API enabled</li><li>and fullscreen is allowed</li></ul>
+<p> *</p>
+<ul><li>@param  {String} [url] Optional URL</li><li>@return {iframe}       An OOP mozbrowser iframe</li></ul>
+<p> */<br>function createIFrame (url) {<br>  var iframe = document.createElement(&#39;iframe&#39;);<br>  iframe.setAttribute(&#39;mozbrowser&#39;, true);<br>  iframe.setAttribute(&#39;mozallowfullscreen&#39;, true);<br>  iframe.setAttribute(&#39;remote&#39;, true);</p>
+<p>  if (url) {<br>    iframe.src = url;<br>  }</p>
+<p>  return iframe;<br>}</p>
+<p>					12345678910111213141516171819</p>
+<p>						/*<em> </em> Returns an iframe which runs in a child process with Browser API enabled <em> and fullscreen is allowed </em> <em> @param  {String} [url] Optional URL </em> @return {iframe}       An OOP mozbrowser iframe */function createIFrame (url) {  var iframe = document.createElement(&#39;iframe&#39;);  iframe.setAttribute(&#39;mozbrowser&#39;, true);  iframe.setAttribute(&#39;mozallowfullscreen&#39;, true);  iframe.setAttribute(&#39;remote&#39;, true);   if (url) {    iframe.src = url;  }   return iframe;}</p>
+<p>在 <br>			iframe 加上 <br>			mozallowfullscreen 參數可以允許網頁使用全螢幕。在網頁裡面在要顯示全螢幕的 element 上呼叫 <br>			Element.mozRequestFullscreen 。</p>
+<p>加了 <br>			remote 參數讓 <br>			iframe 跑在另一個獨立的 child process 上。這是為了避免惡意的網站直接存取瀏覽器 APP 本身。(目前的 Firefox OS 版本還沒有允許 Nested OOP，因此這個參數在我們的範例還沒有作用，需要等 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1020135">Bug 1020135</a> – (nested-oop) [meta] Allow nested oop &lt;iframe mozbrowser&gt;)</p>
+<p>Tab object 在建構的時候會建立一個 <br>			iframe ，並且開始聽這個 <br>			iframe 上的 <br>			mozbrowser event。</p>
+<p>/**</p>
+<ul><li>The browser tab constructor.</li></ul>
+<p> *</p>
+<ul><li>Creates an iframe and attaches mozbrowser events for web browsing.</li></ul>
+<p> *</p>
+<ul><li>Implements EventListener Interface.</li></ul>
+<p> *</p>
+<ul><li>@param {String} url An optional plaintext URL</li></ul>
+<p> */<br>function Tab (url) {<br>  this.iframe = createIFrame(url);<br>  this.title = null;<br>  this.url = url;</p>
+<p>  this.iframe.addEventListener(&#39;mozbrowserloadstart&#39;, this);<br>  this.iframe.addEventListener(&#39;mozbrowserlocationchange&#39;, this);<br>  this.iframe.addEventListener(&#39;mozbrowsertitlechange&#39;, this);<br>  this.iframe.addEventListener(&#39;mozbrowserloadend&#39;, this);<br>  this.iframe.addEventListener(&#39;mozbrowsererror&#39;, this);<br>};</p>
+<p>					1234567891011121314151617181920</p>
+<p>						/*<em> </em> The browser tab constructor. <em> </em> Creates an iframe and attaches mozbrowser events for web browsing. <em> </em> Implements EventListener Interface. <em> </em> @param {String} url An optional plaintext URL */function Tab (url) {  this.iframe = createIFrame(url);  this.title = null;  this.url = url;   this.iframe.addEventListener(&#39;mozbrowserloadstart&#39;, this);  this.iframe.addEventListener(&#39;mozbrowserlocationchange&#39;, this);  this.iframe.addEventListener(&#39;mozbrowsertitlechange&#39;, this);  this.iframe.addEventListener(&#39;mozbrowserloadend&#39;, this);  this.iframe.addEventListener(&#39;mozbrowsererror&#39;, this);};</p>
+<p>除了這五個 event 以外，這個簡單的 APP 還有很多 <br>			mozbrowser event 沒用到。這些 event 提供很多 <br>			iframe 有用的資訊，比如說 <br>			title ，URL，讀取進度，context menu 等等。</p>
+<p>例如，我們可以用 <br>			mozbrowsertitlechange event 來收到 <br>			iframe 裡面網頁的 <br>			title 。在 tab.js 裡面當收到 <br>			title 的時候，發出一個 <br>			CustomEvent  ‘<br>			tab:titlechange’ 通知其他組件更新頁面的 title。</p>
+<p>Tab.prototype.mozbrowsertitlechange = function _mozbrowsertitlechange (e) {<br>  if (e.detail) {<br>    this.title = e.detail;<br>  }</p>
+<p>  var event = new CustomEvent(&#39;tab:titlechange&#39;, { detail: this });<br>  window.dispatchEvent(event);<br>};</p>
+<p>					12345678</p>
+<p>						Tab.prototype.mozbrowsertitlechange = function _mozbrowsertitlechange (e) {  if (e.detail) {    this.title = e.detail;  }   var event = new CustomEvent(&#39;tab:titlechange&#39;, { detail: this });  window.dispatchEvent(event);};</p>
+<p>這裡示範在 ‘<br>			tab:titlechange ‘ event 的時候更新網頁 <br>			title。如果要做分頁總覽功能，也要用一樣的方式更新各個頁面的 <br>			title。</p>
+<p>/**</p>
+<ul><li>Display the title of the currentTab on titlechange event.</li></ul>
+<p> */<br>window.addEventListener(&#39;tab:titlechange&#39;, function (e) {<br>  if (currentTab === e.detail) {<br>    urlInput.value = currentTab.title;<br>  }<br>});</p>
+<p>					12345678</p>
+<p>						/*<em> </em> Display the title of the currentTab on titlechange event. */window.addEventListener(&#39;tab:titlechange&#39;, function (e) {  if (currentTab === e.detail) {    urlInput.value = currentTab.title;  }});</p>
+<h2>在使用者送出 input 的時候瀏覽網頁：</h2>
+<p>在網址列裡面直接打搜尋條件很普遍而且很方便。當使用者送出 URL 的時候，先判斷這是不是一個有效的 URL，如果不是，就當做搜尋條件，使用搜尋引擎 URI 來搜尋。</p>
+<p>/**</p>
+<ul><li>The default search engine URI</li></ul>
+<p> *</p>
+<ul><li>@type {String}</li></ul>
+<p> */<br>var searchEngineUri = &#39;https://search.yahoo.com/search?p={searchTerms}&#39;;</p>
+<p>/**</p>
+<ul><li>Using an input element to check the validity of the input URL. If the input</li><li>is not valid, returns a search URL.</li></ul>
+<p> *</p>
+<ul><li>@param  {String} input           A plaintext URL or search terms</li><li>@param  {String} searchEngineUri The search engine to be used</li><li>@return {String}                 A valid URL</li></ul>
+<p> */<br>function getUrlFromInput(input, searchEngineUri) {<br>  var urlValidate = document.createElement(&#39;input&#39;);<br>  urlValidate.setAttribute(&#39;type&#39;, &#39;url&#39;);<br>  urlValidate.setAttribute(&#39;value&#39;, input);</p>
+<p>  if (!urlValidate.validity.valid) {<br>    var uri = searchEngineUri.replace(&#39;{searchTerms}&#39;, input);<br>    return uri;<br>  }</p>
+<p>  return input;<br>}</p>
+<p>					123456789101112131415161718192021222324252627</p>
+<p>						/*<em> </em> The default search engine URI <em> </em> @type {String} <em>/var searchEngineUri = &#39;https://search.yahoo.com/search?p={searchTerms}&#39;; /</em><em> </em> Using an input element to check the validity of the input URL. If the input <em> is not valid, returns a search URL. </em> <em> @param  {String} input           A plaintext URL or search terms </em> @param  {String} searchEngineUri The search engine to be used <em> @return {String}                 A valid URL </em>/function getUrlFromInput(input, searchEngineUri) {  var urlValidate = document.createElement(&#39;input&#39;);  urlValidate.setAttribute(&#39;type&#39;, &#39;url&#39;);  urlValidate.setAttribute(&#39;value&#39;, input);   if (!urlValidate.validity.valid) {    var uri = searchEngineUri.replace(&#39;{searchTerms}&#39;, input);    return uri;  }   return input;}</p>
+<p>接下來確認有沒有 Tab object，沒有的話就新建一個，把 URL 傳給 Tab 並設定成 <br>			iframe 的 <br>			src 。</p>
+<p>/**</p>
+<ul><li>Check the input and browse the address with a Tab object on url submit.</li></ul>
+<p> */<br>window.addEventListener(&#39;submit&#39;, function (e) {<br>  e.preventDefault();</p>
+<p>  if (!currentUrlInput.trim()) {<br>    return;<br>  }</p>
+<p>  if (frameContainer.classList.contains(&#39;empty&#39;)) {<br>    frameContainer.classList.remove(&#39;empty&#39;);<br>  }</p>
+<p>  var url = getUrlFromInput(currentUrlInput.trim(), searchEngineUri);</p>
+<p>  if (!currentTab) {<br>    currentTab = new Tab(url);<br>    frameContainer.appendChild(currentTab.iframe);<br>  } else if (currentUrlInput === currentTab.title) {<br>    currentTab.reload();<br>  } else {<br>    currentTab.goToUrl(url);<br>  }<br>});</p>
+<p>					12345678910111213141516171819202122232425</p>
+<p>						/*<em> </em> Check the input and browse the address with a Tab object on url submit. */window.addEventListener(&#39;submit&#39;, function (e) {  e.preventDefault();   if (!currentUrlInput.trim()) {    return;  }   if (frameContainer.classList.contains(&#39;empty&#39;)) {    frameContainer.classList.remove(&#39;empty&#39;);  }   var url = getUrlFromInput(currentUrlInput.trim(), searchEngineUri);   if (!currentTab) {    currentTab = new Tab(url);    frameContainer.appendChild(currentTab.iframe);  } else if (currentUrlInput === currentTab.title) {    currentTab.reload();  } else {    currentTab.goToUrl(url);  }});</p>
+<p>			currentTab.reload 裡面用了 <br>			iframe.reload 這個 Browser API 來重新讀取頁面。</p>
+<p>/**</p>
+<ul><li>Reload the current page.</li></ul>
+<p> */<br>Tab.prototype.reload = function _reload () {<br>  this.iframe.reload();<br>};</p>
+<p>					123456</p>
+<p>						/*<em> </em> Reload the current page. */Tab.prototype.reload = function _reload () {  this.iframe.reload();};</p>
+<h2>開啟或關閉上一頁或下一頁按鈕：</h2>
+<p>最後要用 Browser API 檢查網頁能不能回上一頁或到下一頁。<br>			iframe.getCanGoBack 會回傳一個 <br>			DOMRequest，在 <br>			onsuccess callback 裡面我們可以知道檢查的結果。這邊用 Promise 包起來讓他比較方便存取。</p>
+<p>/**</p>
+<ul><li>Check if the iframe can go backward in the navigation history.</li></ul>
+<p> *</p>
+<ul><li>@return {Promise} Resolve with true if it can go backward.</li></ul>
+<p> */<br>Tab.prototype.getCanGoBack = function _getCanGoBack () {<br>  var self = this;</p>
+<p>  return new Promise(function (resolve, reject) {<br>    var request = self.iframe.getCanGoBack();</p>
+<p>    request.onsuccess = function () {<br>      if (this.result) {<br>        resolve(true);<br>      } else {<br>        resolve(false);<br>      }<br>    };<br>  });<br>};</p>
+<p>					1234567891011121314151617181920</p>
+<p>						/*<em> </em> Check if the iframe can go backward in the navigation history. <em> </em> @return {Promise} Resolve with true if it can go backward. */Tab.prototype.getCanGoBack = function _getCanGoBack () {  var self = this;   return new Promise(function (resolve, reject) {    var request = self.iframe.getCanGoBack();     request.onsuccess = function () {      if (this.result) {        resolve(true);      } else {        resolve(false);      }    };  });};</p>
+<p>在網頁讀取完以後檢查能不能回上一頁，也就是當 <br>			mozbrowserloadend event 發生的時候。</p>
+<p>/**</p>
+<ul><li>Enable/disable goback and goforward buttons accordingly when the</li><li>currentTab is loaded.</li></ul>
+<p> */<br>window.addEventListener(&#39;tab:loadend&#39;, function (e) {<br>  if (currentTab === e.detail) {<br>    currentTab.getCanGoBack().then(function(canGoBack) {<br>      gobackButton.disabled = !canGoBack;<br>    });</p>
+<p>    currentTab.getCanGoForward().then(function(canGoForward) {<br>      goforwardButton.disabled = !canGoForward;<br>    });<br>  }<br>});</p>
+<p>					123456789101112131415</p>
+<p>						/*<em> </em> Enable/disable goback and goforward buttons accordingly when the <em> currentTab is loaded. </em>/window.addEventListener(&#39;tab:loadend&#39;, function (e) {  if (currentTab === e.detail) {    currentTab.getCanGoBack().then(function(canGoBack) {      gobackButton.disabled = !canGoBack;    });     currentTab.getCanGoForward().then(function(canGoForward) {      goforwardButton.disabled = !canGoForward;    });  }});</p>
+<h2>執行 APP：</h2>
+<p>手邊可能沒有 Firefox OS 手機能用，不過你還是可以在 WebIDE 裡面用 Firefox OS simulator 來跑 APP：</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/01/Firefox_WebIDE.png"><img src="../../assets/6046/wp-content/uploads/2015/01/Firefox_WebIDE.png" alt="Firefox_WebIDE_installing_simulator" loading="lazy"></a></p>
+<p>按右上方的 Select Runtime 選一個版本：</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/01/Fullscreen_2015_1_27_%E4%B8%8B%E5%8D%882_44.png"><img src="../../assets/6046/wp-content/uploads/2015/01/Fullscreen_2015_1_27_下午2_44.png" alt="Firefox_WebIDE_choose_simulator" loading="lazy"></a></p>
+<p>當 Firefox OS 跑起來後，按上面中間的那些按鈕，你就可以執行和 debug 這個 APP。現在你有了一個新的 Firefox OS 瀏覽器 APP！</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/Blank_Skitch_Document1.png"><img src="../../assets/6046/wp-content/uploads/2015/02/Blank_Skitch_Document1.png" alt="mybrowser finished" loading="lazy"></a></p>
+<h2>結語：</h2>
+<p>要讓這個簡單的瀏覽器 APP 好用還缺很多功能，比如說書籤，設定，搜尋建議，分享… 等。你將會需要 HTML storage 和 <br>			mozActivity 來實現這些功能。歡迎實現你的點子，然後分享到 Firefox OS 的 Marketplace 上！</p>
+<h2>參考閱讀：</h2>
+<p><a href="https://hacks.mozilla.org/2014/08/building-the-firefox-browser-for-firefox-os/">https://hacks.mozilla.org/2014/08/building-the-firefox-browser-for-firefox-os/</a></p>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Using_the_Browser_API">https://developer.mozilla.org/en-US/docs/Web/API/Using_the_Browser_API</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20201019212030id_/https://tech.mozilla.com.tw/?p=6046">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

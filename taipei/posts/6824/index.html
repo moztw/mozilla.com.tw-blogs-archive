@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Taiwan 部落格封存">
+  <title>更輕鬆使用自動補完函式庫 (Polyfill) | Mozilla Taiwan 部落格封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-11/">2014 年 11 月</a><b>&raquo;</b><a href="../../posts/6824/">更輕鬆使用自動補完函式庫 (Polyfill)</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-11-26" class="published"><span class="posted-month">11月</span><span class="posted-date">26</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">更輕鬆使用自動補完函式庫 (Polyfill)</h1>
+            </header>
+            <div class="entry-content"><p>自動補完函式庫 (即 Polyfill)，是讓舊版瀏覽器也能支援新程式碼的絕妙方法。但目前 polyfill 的使用方式實屬不易，我們《金融時報 (<a href="https://www.ft.com/">Financial Times</a>，FT)》則自行建構了新的服務，以期能更輕鬆的利用這類函式庫。希望你也能<a href="https://cdn.polyfill.io/">一同使用</a>，並<a href="https://github.com/Financial-Times/polyfill-service">協助改善</a>。</p>
+<p><img src="../../assets/6824/wp-content/uploads/unicorn.jpg" alt="unicorn" loading="lazy"><br>打個比方，一匹普通的馬裝上自動補完函式庫就成了獨角獸。</p>
+<h3>難題</h3>
+<p>我們想要解決的幾個問題：</p>
+<ul><li>開發者不一定知道需補完哪項功能。往往是一堆使用者照樣沿用舊版 IE 載入網站之後，才發現整個網站根本沒用。這時輪到你開始除錯，設法找出是哪項功能出了問題。問題起源有時明顯好找，但大多數情況下都很難發現；而且舊版瀏覽器也往往缺乏新的開發者工具。</li></ul>
+<ul><li>每一種功能往往有多個補完函式庫可用，但不容易知道哪個函式庫可達到最佳效益。</li></ul>
+<ul><li>某些補完函式庫需搭配開發者用不到的一堆函式庫，才能提供完整的功能集 (如 ES6)。若需要修正某些很簡單的東西，應該不用將這些程式碼全數加入瀏覽器。</li></ul>
+<ul><li>較新版的瀏覽器可能不需要補完函式庫，但一般補完函式庫可用於所有瀏覽器。若只為了要改善舊版瀏覽器的相容性，卻會影響新版瀏覽器的效能。我們不想因此對效能妥協。只有在瀏覽器缺乏某項功能的原生實作時，我們才會提供補完函式庫。</li></ul>
+<h3>我們的解決方案：自動補完函式庫當做一項服務</h3>
+<p>為了解決這些問題，我們建立了補完函式庫的服務。這個概念有點像驗光。先檢查你的眼睛，再針對視力問題配付合適的眼鏡。我們對瀏覽器執行類似的流程：</p>
+<ul><li>開發者先在自己的頁面中插入指令碼標籤  用來載入並執行此補完函式庫服務。</li></ul>
+<ul><li>該服務將分析瀏覽器的「user-agent」標頭，以及所需功能的清單 (或使用可補完的所有事項預設清單)，再列出此瀏覽器所需的補完函式庫清單。</li></ul>
+<ul><li>補完函式庫將透過拓撲排序，以根據相依性的次序完成排列。</li></ul>
+<ul><li>將此套件最小化並透過 CDN 提供 (感謝 Fastly 的支援)。</li></ul>
+<p>我們真的需要這種解決方案嗎？看看「<a href="https://modernizr.com/">Modernizr</a>」這個功能偵測大福袋是如何使用的吧！一般合理的情況都能透過自訂的 Modernizr 套件包解決。但是絕大部分的 Modernizr 使用者只用了預設版本，通常取自於 cdnjs.com 或 <a href="https://github.com/h5bp/html5-boilerplate/blob/master/src/index.html">html5boilerplate 的一部分</a>。如果你根本用不到 Modernizr 的功能偵測，又何必把整個東西裝進來呢？或許你誤解了函式庫的功能，也把 Modernizr 當做只是「修理工具」？我必須承認，第一次聽到這個函式庫的名稱時就是這樣想。而且當我發現 Modernizr 只是用來偵測瀏覽器功能的新舊，而非真正補強整個瀏覽器所缺乏的功能時，心裡很是失望。</p>
+<p>從另一個方面來看，補完函式庫的服務其實就是修理工具。如果你不想耗時間只是初步了解舊款瀏覽器的小缺點，那也情有可原。只要讓其他人找出這些小缺點，則我們不需又耗時費力去了解細節，就能承接前人的工作成果也不錯。</p>
+<p>看到這裡，你是否對自動補完函式庫感興趣呢？可參閱原文內所提供的程式碼進一步了解！</p>
+<p>原文連結：<a href="https://hacks.mozilla.org/2014/11/an-easier-way-of-using-polyfills/">An easier way of using polyfills</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox/">Firefox</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-for-android/">Firefox for Android</a></li><li><a href="../../categories/firefox-for-ios/">Firefox for iOS</a></li><li><a href="../../categories/firefox-os/">Firefox OS</a></li><li><a href="../../categories/identity/">Identity</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/privacy/">Privacy</a></li><li><a href="../../categories/security/">Security</a></li><li><a href="../../categories/web-app/">Web App</a></li><li><a href="../../categories/新聞訊息/">新聞訊息</a></li><li><a href="../../categories/未分類/">未分類</a></li><li><a href="../../categories/校園大使/">校園大使</a></li><li><a href="../../categories/活動/">活動</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-10/">2016 年 10 月 (10)</option><option value="../../months/2016-09/">2016 年 9 月 (10)</option><option value="../../months/2016-08/">2016 年 8 月 (11)</option><option value="../../months/2016-07/">2016 年 7 月 (6)</option><option value="../../months/2016-06/">2016 年 6 月 (1)</option><option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-04/">2016 年 4 月 (7)</option><option value="../../months/2016-03/">2016 年 3 月 (16)</option><option value="../../months/2016-02/">2016 年 2 月 (11)</option><option value="../../months/2016-01/">2016 年 1 月 (4)</option><option value="../../months/2015-12/">2015 年 12 月 (10)</option><option value="../../months/2015-11/">2015 年 11 月 (8)</option><option value="../../months/2015-09/">2015 年 9 月 (3)</option><option value="../../months/2015-08/">2015 年 8 月 (13)</option><option value="../../months/2015-07/">2015 年 7 月 (10)</option><option value="../../months/2015-06/">2015 年 6 月 (3)</option><option value="../../months/2015-05/">2015 年 5 月 (12)</option><option value="../../months/2015-04/">2015 年 4 月 (14)</option><option value="../../months/2015-03/">2015 年 3 月 (16)</option><option value="../../months/2015-02/">2015 年 2 月 (11)</option><option value="../../months/2015-01/">2015 年 1 月 (11)</option><option value="../../months/2014-12/">2014 年 12 月 (11)</option><option value="../../months/2014-11/">2014 年 11 月 (17)</option><option value="../../months/2014-10/">2014 年 10 月 (15)</option><option value="../../months/2014-09/">2014 年 9 月 (13)</option><option value="../../months/2014-08/">2014 年 8 月 (14)</option><option value="../../months/2014-07/">2014 年 7 月 (12)</option><option value="../../months/2014-06/">2014 年 6 月 (15)</option><option value="../../months/2014-05/">2014 年 5 月 (17)</option><option value="../../months/2014-04/">2014 年 4 月 (18)</option><option value="../../months/2014-03/">2014 年 3 月 (21)</option><option value="../../months/2014-02/">2014 年 2 月 (23)</option><option value="../../months/2014-01/">2014 年 1 月 (11)</option><option value="../../months/2013-12/">2013 年 12 月 (21)</option><option value="../../months/2013-11/">2013 年 11 月 (22)</option><option value="../../months/2013-10/">2013 年 10 月 (21)</option><option value="../../months/2013-09/">2013 年 9 月 (15)</option><option value="../../months/2013-08/">2013 年 8 月 (21)</option><option value="../../months/2013-07/">2013 年 7 月 (21)</option><option value="../../months/2013-06/">2013 年 6 月 (15)</option><option value="../../months/2013-05/">2013 年 5 月 (11)</option><option value="../../months/2013-04/">2013 年 4 月 (23)</option><option value="../../months/2013-03/">2013 年 3 月 (10)</option><option value="../../months/2013-02/">2013 年 2 月 (15)</option><option value="../../months/2013-01/">2013 年 1 月 (12)</option><option value="../../months/2012-12/">2012 年 12 月 (11)</option><option value="../../months/2012-11/">2012 年 11 月 (18)</option><option value="../../months/2012-10/">2012 年 10 月 (23)</option><option value="../../months/2012-09/">2012 年 9 月 (12)</option><option value="../../months/2012-08/">2012 年 8 月 (8)</option><option value="../../months/2012-07/">2012 年 7 月 (14)</option><option value="../../months/2012-06/">2012 年 6 月 (6)</option><option value="../../months/2012-05/">2012 年 5 月 (12)</option><option value="../../months/2012-04/">2012 年 4 月 (13)</option><option value="../../months/2012-03/">2012 年 3 月 (9)</option><option value="../../months/2012-02/">2012 年 2 月 (6)</option><option value="../../months/2012-01/">2012 年 1 月 (3)</option><option value="../../months/2011-12/">2011 年 12 月 (6)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Taiwan 部落格封存，由 <a href="https://web.archive.org/web/20201231235959id_/https://blog.mozilla.com.tw/?p=6824">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

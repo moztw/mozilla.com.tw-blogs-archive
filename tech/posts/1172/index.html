@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>Gecko 的 New DOM bindings | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2012-12/">2012 年 12 月</a><b>&raquo;</b><a href="../../posts/1172/">Gecko 的 New DOM bindings</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2012-12-10" class="published"><span class="posted-month">12月</span><span class="posted-date">10</span><span class="posted-year">2012</span></time></p>
+              <h1 class="entry-title">Gecko 的 New DOM bindings</h1>
+            </header>
+            <div class="entry-content"><p>注意：本篇討論 Gecko 內部 DOM bindings 的實作，可能會有比較多的程式碼。</p>
+<p>目前網頁的通用語言是 JavaScript，可是主流瀏覽器大多由 C++ 開發實作，DOM bindings 就是一些處理如何從 JavaScript 引擎使用以 C++ 實作的 DOM API 的程式碼。有關 Mozilla 過往的 DOM bindings 的相關資訊，可以參考 <a href="https://jstenback.wordpress.com/2012/04/07/history-of-mozillas-dom-bindings/">Mozilla DOM bindings 的一段歷史</a>。</p>
+<p>在此篇文章完成時，Gecko 內部使用最多的還是基於 XPConnect 上所謂的「New style DOM bindings」，使用 ScriptableHelper 來幫助把 XPCOM 元件暴露在網頁上，此方法仍然有一些記憶體管理及速度上的缺點，以及 <a href="https://developer.mozilla.org/en-US/docs/XPIDL">XPIDL</a> 與 <a href="https://www.w3.org/TR/WebIDL/">WebIDL</a> 一些語意上的差別，導致各種加速的方法，處理語意問題的 wrapper，都需要手工針對不同的 API 打造。於是有一天在法國巴黎一些開發 DOM bindings 的人集合起來，討論新的方法。詳細可以參考 <a href="https://jstenback.wordpress.com/2012/04/11/new-dom-bindings/">New DOM bindings 的歷史</a>。</p>
+<p>新的 DOM bindings 因為在法國巴黎討論開發出來，所以在早期總是被稱作「Paris Bindings」這個令人困惑的名字。以下我們叫它「WebIDL DOM binding」。它的速度比原有的 XPConnect 快上許多，因為這些 DOM API 其實用不到 XPCOM 的許多功能，透過 WebIDL DOM bindings 可以省掉一些 virtual function 的開銷，還可以省掉 XPCOM 處理 thread 安全的花費，以後透過新的 JIT 技術，從 JavaScript 呼叫 DOM API 甚至可以直接呼叫到 C++ 的實作。最終，可能所有 DOM API 都可以不需要 XPCOM，描述 API 的語言都統一為 WebIDL。</p>
+<p>假設我們已經有一個使用 XPConnect 的 binding 存在，要怎麼把它轉成 WebIDL DOM binding 呢？以 <a href="https://mxr.mozilla.org/mozilla-central/source/dom/power/nsIDOMWakeLock.idl">WakeLock</a> 為例，首先我們要新增一個新的 WakeLock.webidl 檔案到 <a href="https://mxr.mozilla.org/mozilla-central/source/dom/webidl/">dom/webidl</a> 目錄下：</p>
+<p>interface WakeLock {<br>  readonly attribute DOMString topic;<br>  [Throws]<br>  void unlock();<br>};</p>
+<p>					12345</p>
+<p>						interface WakeLock {  readonly attribute DOMString topic;  [Throws]  void unlock();};</p>
+<p>然後把剛剛新增的 WakeLock.webidl 加到 <a href="https://mxr.mozilla.org/mozilla-central/source/dom/webidl/WebIDL.mk">dom/webidl/WebIDL.mk</a> 的 webidl_files 中。</p>
+<p>--- a/dom/webidl/WebIDL.mk<br>+++ b/dom/webidl/WebIDL.mk<br>@@ -60,9 +60,10 @@ webidl_files = \<br>   URL.webidl \<br>+  WakeLock.webidl \</p>
+<p>					12345</p>
+<p>						--- a/dom/webidl/WebIDL.mk+++ b/dom/webidl/WebIDL.mk@@ -60,9 +60,10 @@ webidl_files = \   URL.webidl \+  WakeLock.webidl \</p>
+<p>然後我們可以到 objdir/dom/bindings 目錄下打 make WakeLock-example 就會產生出 WakeLock-example.cpp 和 WakeLock-example.h 兩個檔案可以當作範本。最重要的是在 class 的建構子內記得呼叫 SetIsDOMBinding() 。</p>
+<p>如果被修改的 class 和 WakeLock 一樣不是活在 mozilla::dom 這個 namespace 下，記得還要修改 <a href="https://mxr.mozilla.org/mozilla-central/source/dom/bindings/">dom/bindings</a> 目錄下的 <a href="https://mxr.mozilla.org/mozilla-central/source/dom/bindings/Bindings.conf">Bindings.conf</a> 這個檔案，裡面是描述各個 interface 的一些特徵：</p>
+<p>&#39;WakeLock&#39;: {<br>    # class 的全名<br>    &#39;nativeType&#39;: &#39;mozilla::dom::power::WakeLock&#39;,<br>    # 要 include 的檔案<br>    &#39;headerFile&#39;: &#39;WakeLock.h&#39;<br>},</p>
+<p>					123456</p>
+<p>						&#39;WakeLock&#39;: {    # class 的全名    &#39;nativeType&#39;: &#39;mozilla::dom::power::WakeLock&#39;,    # 要 include 的檔案    &#39;headerFile&#39;: &#39;WakeLock.h&#39;},</p>
+<p>這樣我們新的 WebIDL DOM binding 就完成一半了！接下來要改一些程式碼，WakeLock 要繼承 nsWrapperCache</p>
+<p>--- a/dom/power/WakeLock.cpp<br>+++ b/dom/power/WakeLock.cpp<br>@@ -21,22 +26,40 @@<br> class WakeLock<br>   : public nsIDOMMozWakeLock<br>   , public nsIDOMEventListener<br>+  , public nsWrapperCache</p>
+<p>					1234567</p>
+<p>						--- a/dom/power/WakeLock.cpp+++ b/dom/power/WakeLock.cpp@@ -21,22 +26,40 @@ class WakeLock   : public nsIDOMMozWakeLock   , public nsIDOMEventListener+  , public nsWrapperCache</p>
+<p>然後 WakeLock 的實作還要加上兩個 function，都可以在剛剛的範例程式裡面看到，分別是 GetParentObject 和 WrapObject，記得 GetParentObject 必須每次都傳回一樣的指標，指向自己的 parent object，而 WrapObject 則直接使用範例裡面的程式碼就可以：</p>
+<p>nsIDOMWindow* GetParentObject() const<br>{<br>  nsCOMPtr window = do_QueryReferent(mWindow);<br>  return window.get();<br>}</p>
+<p>					12345</p>
+<p>						nsIDOMWindow* GetParentObject() const{  nsCOMPtr window = do_QueryReferent(mWindow);  return window.get();}</p>
+<p>最後要改的地方就是一些 WebIDL 產生出來的 function signature 會和 XPIDL 有些不一樣，有些 function 可以直接沿用，有些會丟例外的 function 就要改用不同的方式來傳回 error code，如：</p>
+<p>void Unlock(ErrorResult&amp; aRv)<br>{<br>  nsresult rv = Unlock(); // 舊 XPIDL function<br>  if (NS_FAILED(rv)) {<br>    aRv.Throw(rv);<br>  }<br>}</p>
+<p>					1234567</p>
+<p>						void Unlock(ErrorResult&amp; aRv){  nsresult rv = Unlock(); // 舊 XPIDL function  if (NS_FAILED(rv)) {    aRv.Throw(rv);  }}</p>
+<p>以上是一些比較大項的修改，還有一些零碎的修改最好還是親自操作一遍比較容易理解，且每個不同的 class 可能都會有各自需要處理的問題，就不一一列出。對於如何使用這個新的 WebIDL DOM bindings 可以參考 MDN 文章 <a href="https://developer.mozilla.org/en-US/docs/Mozilla/WebIDL_bindings">WebIDL bindings</a>。</p>
+<p>以上都還在開發中，隨時都可能會改變，文件也還不齊全，有興趣的人可以到 Bugzilla 搜尋「Paris Bindings」、「New DOM Bindings」、「JSClass-based DOM Bindings」或是「WebIDL Bindings」。</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20140723195735id_/https://tech.mozilla.com.tw/?p=1172">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>鑽進 Firefox OS 開發：淺談 Internal string | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../posts/1317/">鑽進 Firefox OS 開發：淺談 Internal string</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time>日期不明</time></p>
+              <h1 class="entry-title">鑽進 Firefox OS 開發：淺談 Internal string</h1>
+            </header>
+            <div class="entry-content"><p>不論是哪個語言的程式設計師，都時常需要和語言或是框架的字串 (String) 打交道。舉凡傳遞訊息、寫 log，或當作資訊來儲存等等都會用到。今天就來和大家聊聊，在 Firefox OS 裡面，string 是怎麼被使用的。</p>
+<p>Internal string / External string</p>
+<p>首先要提到的是，我們稱在 Mozilla codebase 中所用到的字串為 “internal string”，而“對外“的字串類別則稱為 “external string”。由於我大部分時間都在改動 Mozilla codebase，所以本文主要針對 internal string 所寫，參考自 MDN 上的 <a href="https://developer.mozilla.org/en-US/docs/Mozilla_internal_string_guide">Mozilla internal string guide</a> 以及我個人的開發經驗，若您是 Extention 或是 XULRunner app 的開發者，想知道字串怎麼使用，請見 MDN 上的 <a href="https://developer.mozilla.org/en-US/docs/Mozilla_external_string_guide">Mozilla external string guide</a> 這篇文章。</p>
+<p>ns[C]String</p>
+<p>如果你看過 Firefox OS 內部的 Gecko 程式碼，你會找到兩種比較常見的 String 類別: nsString 和 nsCString。它們的差別在於 nsString 用來存放寬字元 (wide character，16-bit)，nsCString 則是存放窄字元 (narrow character，8-bit)。實際的應用中，我們常常需要對兩者做轉換，而其間的轉換必須透過特別的 helper classes 或是 helper methods，想直接把 nsCString 的物件轉型成 nsString 是無效的，反之亦然。更多詳情請見 <a href="https://developer.mozilla.org/en-US/docs/Mozilla_internal_string_guide#Unicode_Conversion_ns.2ACString_vs._ns.2AString">Unicode Conversion ns<em>CString vs. ns</em>String</a> 。</p>
+<p>ns[C]String 是字串類別的實作，事實上在函式間的介面，我們會宣告傳送的是 nsAString/nsACString，也就是 nsString/nsCString 的基底類別(base class). 兩個類別中間都多了個 A，即 abstract 之意，可以看出它們是兩個抽象類別(abstract class)(註)。在實作 DOM API 的時候，常會需要在 IDL 裡定義字串參數，此時，若使用 C++ 實作這個 IDL，則用來接收這個字串參數的類別就是 nsA[C]String，詳見 <a href="https://developer.mozilla.org/en-US/docs/Mozilla_internal_string_guide#IDL_String_types">IDL String types</a> 一節。</p>
+<p>nsAuto[C]String</p>
+<p>nsAuto[C]String 是一個繼承自 ns[C]String 的類別，這兩者最大的不同點在於 ns[C]String 會把 buffer 放在 heap，但 nsAuto[C]String 則是會在 stack 上先配置一個 64 個字元大小的空間。顯而易見的，如果你的字串少於 64 個字元，那麼用 nsAuto[C]String 就可以省去執行時期的動態配置時間。反過來說，如果指定一個大於 64 個字元長度的字串給 nsAuto[C]String 變數，就必須另外配置一塊 heap 上的 buffer，這種情況下請直接使用 ns[C]String。</p>
+<p>Literal String</p>
+<p>Literal String 指的是“寫在程式碼裡面的字串“。例如我們會寫 LOG(“Connecting failed”)，則 “Connecting failed” 便是一個 Literal String。我們有時會想要呼叫一個函式，它需要一個 ns[C]String 字串參數，但我們卻想要傳 literal string，該怎麼辦呢? 其實只要透過 NS_LITERAL_[C]STRING() 這個巨集就可以將 literal string 轉成 ns[C]String，MDN 上提供了很清楚的範例：</p>
+<p>// call Init(const PRUnichar*)</p>
+<p>Init(NS_LITERAL_STRING(“start value”).get());</p>
+<p>// call Init(const nsAString&amp;)</p>
+<p>Init(NS_LITERAL_STRING(“start value”));</p>
+<p>// call Init(const nsACString&amp;)</p>
+<p>Init(NS_LITERAL_CSTRING(“start value”));</p>
+<p>宣告字串成員變數 (member variable) 時的注意事項</p>
+<p>當我們定義了一個類別，且這個類別必須持有字串時，請宣告這個變數為 ns[C]String，而不要宣告成字串物件的指標 ns[C]String*。這是因為 ns[C]String 其實是非常小的物件，與其在建構子中再 new 出一個 ns[C]String 物件，不如直接宣告物件實體。</p>
+<p>另一個常見的錯誤是在類別內宣告一個 nsAuto[C]String 的成員變數，上面我們提到 nsAuto[C]String 會預留一塊 64 字元寬度的 buffer 在其內部，因此這也會造成此類別的物件變得過大，使用上請務必小心。</p>
+<p>想要知道更多和 internal string 相關的功能以及 API 嗎？請參考 <a href="https://developer.mozilla.org/en-US/docs/Mozilla_internal_string_guide">Mozilla internal string guide</a> 或是 <a href="https://mxr.mozilla.org/mozilla-central/source/xpcom/string/public/nsTSubstring.h">xpcom/string/public/nsTSubstring.h</a> 這個標頭檔。</p>
+<p>註：隨著時間演變，nsA[C]String 已經不是抽象類別了，但仍舊是 ns[C]String 的基底類別。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/01/Firefox-OS1.jpg"><img src="../../assets/1317/002-060999a55faa.jpg" alt="" loading="lazy"></a></p></div>
+            <footer class="entry-footer">
+              
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20130530093804id_/https://tech.mozilla.com.tw/?p=1317">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

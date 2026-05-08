@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>深入研究 Firefox OS Emulator for RIL | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-08/">2013 年 8 月</a><b>&raquo;</b><a href="../../posts/2601/">深入研究 Firefox OS Emulator for RIL</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-08-27" class="published"><span class="posted-month">8月</span><span class="posted-date">27</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">深入研究 Firefox OS Emulator for RIL</h1>
+            </header>
+            <div class="entry-content"><p>在先前的文章當中，有跟各位讀者介紹過 <a href="../../posts/127/">Firefox Os Emulator</a> 和 <a href="../../posts/563/">Marionette tests</a>，也有進一步討論如何 <a href="../../posts/1231/">Hacking Firefox OS emulator</a>。想必各位都很了解 Emulator 和 Marionette 對 RIL (Radio Interface Layer) Developer 有多麼重要吧 (茶~)！</p>
+<p>但是 Emulator 畢竟只是一個模擬器，功能不比市面上真正手機中的還要完整，所以很容易遇到一個問題是 Emulator 的支援不夠完整，導致無法撰寫某個 RIL 相關的 Marionette 測試項。別擔心，在以下的文章中，筆者會跟各位介紹如何解決這樣的問題。</p>
+<p>以 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=860585">Bug 860585</a> 為例，筆者想要撰寫 cardLock 相關的 Marionette 測試項，但是卻發現 Emulator 對 cardLock 的支援並不完整 [1]。所以為了要能撰寫 Marionette 測試項，必須要先修正 Emulator 的行為。首先，在 hardware/ril/reference-ril/reference-ril.c 中查看 cardLock 相關的 RIL Request [2] 有沒有被正確的處理：</p>
+<p>static void<br>onRequest (int request, void *data, size_t datalen, RIL_Token t) {<br>  ...<br>  switch (request) {<br>    ...<br>    case RIL_REQUEST_ENTER_SIM_PIN:<br>    case RIL_REQUEST_ENTER_SIM_PUK:<br>    case RIL_REQUEST_ENTER_SIM_PIN2:<br>    case RIL_REQUEST_ENTER_SIM_PUK2:<br>    case RIL_REQUEST_CHANGE_SIM_PIN:<br>    case RIL_REQUEST_CHANGE_SIM_PIN2:<br>      requestEnterSimPin(data, datalen, t);<br>      break;<br>    ...<br>  }<br>}</p>
+<p>static void requestEnterSimPin(void<em> data, size_t datalen, RIL_Token t)<br>{<br>  ...<br>  if ( datalen == sizeof(char</em>) ) {<br>    asprintf(&amp;cmd, &quot;AT+CPIN=%s&quot;, strings[0]);<br>  } else if ( datalen == 2<em>sizeof(char</em>) ) {<br>    asprintf(&amp;cmd, &quot;AT+CPIN=%s,%s&quot;, strings[0], strings[1]);<br>  } else<br>    goto error;<br>  ...<br>}</p>
+<p>					12345678910111213141516171819202122232425262728</p>
+<p>						static voidonRequest (int request, void <em>data, size_t datalen, RIL_Token t) {  ...  switch (request) {    ...    case RIL_REQUEST_ENTER_SIM_PIN:    case RIL_REQUEST_ENTER_SIM_PUK:    case RIL_REQUEST_ENTER_SIM_PIN2:    case RIL_REQUEST_ENTER_SIM_PUK2:    case RIL_REQUEST_CHANGE_SIM_PIN:    case RIL_REQUEST_CHANGE_SIM_PIN2:      requestEnterSimPin(data, datalen, t);      break;    ...  }} static void requestEnterSimPin(void</em> data, size_t datalen, RIL_Token t){  ...  if ( datalen == sizeof(char<em>) ) {    asprintf(&amp;cmd, &quot;AT+CPIN=%s&quot;, strings[0]);  } else if ( datalen == 2</em>sizeof(char*) ) {    asprintf(&amp;cmd, &quot;AT+CPIN=%s,%s&quot;, strings[0], strings[1]);  } else    goto error;  ...}</p>
+<p>果然筆者發現在 RIL_REQUEST_*_SIM_PIN 中沒有取得正確的參數使用 [3]，導致 AT+CPIN [4] 也不能被 qemu 正確的處理。</p>
+<p>除此之外，還有另外一個問題：RIL_REQUEST_*_SIM_PIN 應該要回傳還剩下幾次重試，而這部分也並沒有處理完整。這時就必須去詳讀標準文件，在 AT command 的標準文件當中有一個定義 AT+CPINR 的指令用來取得剩下重試次數 [5]，我們則需要在 Emulator 中實做這個指令。首先，要在 external/qemu/telephony/android_modem.c 中新增 CPINR 的實作 [6]:</p>
+<p>static const struct {<br>  const char<em> cmd; /</em> command coming from libreference-ril.so, if first character is &#39;!&#39;, then the rest is a prefix only <em>/<br>  const char</em> answer; /<em> default answer, NULL if needs specific handling or if OK is good enough </em>/<br>  ResponseHandler handler; /<em> specific handler, ignored if &#39;answer&#39; is not NULL, NULL if OK is good enough </em>/<br>} sDefaultResponses[] =<br>{<br>  ...<br>  { &quot;!+CPINR=&quot;, NULL, handleGetRemainingRetries }, /<em> get remaining PIN retries</em>/<br>  ...<br>};</p>
+<p>					12345678910</p>
+<p>						static const struct {  const char<em> cmd; /</em> command coming from libreference-ril.so, if first character is &#39;!&#39;, then the rest is a prefix only <em>/  const char</em> answer; /<em> default answer, NULL if needs specific handling or if OK is good enough </em>/  ResponseHandler handler; /<em> specific handler, ignored if &#39;answer&#39; is not NULL, NULL if OK is good enough </em>/} sDefaultResponses[] ={  ...  { &quot;!+CPINR=&quot;, NULL, handleGetRemainingRetries }, /<em> get remaining PIN retries</em>/  ...};</p>
+<p>+CPINR 前面的 “!&quot; 表示，所有 +CPINR 開頭的指令就會呼叫 handleGetRemainingRetries 來處理。</p>
+<p>static const char<em><br>handleGetRemainingRetries( const char</em> cmd, AModem modem )<br>{<br>  ...<br>}</p>
+<p>					12345</p>
+<p>						static const char<em>handleGetRemainingRetries( const char</em> cmd, AModem modem ){  ...}</p>
+<p>接下來，在 requestEnterSimPin 中利用 CPINR 這個 AT command 取得剩下重試次數 [7]，也別忘記該有的錯誤處理也是要有唷！</p>
+<p>static void requestEnterSimPin(void* data, size_t datalen, RIL_Token t)<br>{<br>  ...<br>  asprintf(&amp;cmd, &quot;AT+CPINR=SIM PIN&quot;);<br>  err = at_send_command_singleline(cmd, &quot;+CPINR:&quot;, &amp;p_response);<br>  free(cmd);<br>  ...<br>}</p>
+<p>					12345678</p>
+<p>						static void requestEnterSimPin(void* data, size_t datalen, RIL_Token t){  ...  asprintf(&amp;cmd, &quot;AT+CPINR=SIM PIN&quot;);  err = at_send_command_singleline(cmd, &quot;+CPINR:&quot;, &amp;p_response);  free(cmd);  ...}</p>
+<p>最後把 CPINR 的結果，放在 RIL_REQUEST_*_SIM_PIN 的回應中。</p>
+<p>static void requestEnterSimPin(void* data, size_t datalen, RIL_Token t)<br>{<br>  ...<br>  RIL_onRequestComplete(t, RIL_E_PASSWORD_INCORRECT, &amp;retries, sizeof(int));<br>  ...<br>}</p>
+<p>					123456</p>
+<p>						static void requestEnterSimPin(void* data, size_t datalen, RIL_Token t){  ...  RIL_onRequestComplete(t, RIL_E_PASSWORD_INCORRECT, &amp;retries, sizeof(int));  ...}</p>
+<p>大功告成！是不是沒有想像中的難呢？</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/07/fb_social_avatar.png"><img src="../../assets/2601/wp-content/uploads/2013/07/fb_social_avatar-300x300.png" alt="fb_social_avatar" loading="lazy"></a>(圖片來源: <a href="https://www.facebook.com/events/521174541265704/">Mozilla Tawian 粉絲團</a>)</p>
+<p>[1] 詳細內容請參考 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=860682">bug 860682</a>。</p>
+<p>[2] 所有的 RIL request 可以參考 <a href="https://github.com/mozilla-b2g/platform_hardware_ril/blob/master/include/telephony/ril.h">https://github.com/mozilla-b2g/platform_hardware_ril/blob/master/include/telephony/ril.h</a>。</p>
+<p>[3] 修正的內容請參考 <a href="https://github.com/mozilla-b2g/platform_hardware_ril/commit/bb187871945e104a24d6e78f1abf790abd657140">commit bb1878</a>。</p>
+<p>[4] 為 AT command 中用來處理 sim lock 的指令，請參考 spec. 3GPP TS 27.007, session 8.3。</p>
+<p>[5] 為 AT command 中用來取得剩餘重試次數的指令，請參考 spec. 3GPP TS 27.007, session 8.65。</p>
+<p>[6] 詳細的修改內容請參考 <a href="https://github.com/mozilla-b2g/platform_external_qemu/commit/a68ae4b86996e34c9993e6ee8a86a031b1d0a43f">commit a68ae4</a>。</p>
+<p>[7] 詳細的修改內容請參考 <a href="https://github.com/mozilla-b2g/platform_hardware_ril/commit/da1d3d8516ea3027c53077b0faeae1bbf9779143">commit da1d3d</a>。</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20191118134225id_/https://tech.mozilla.com.tw/?p=2601">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

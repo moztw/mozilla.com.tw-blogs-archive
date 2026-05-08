@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>Firefox OS Marionette Test on Emulator | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2012-09/">2012 年 9 月</a><b>&raquo;</b><a href="../../posts/563/">Firefox OS Marionette Test on Emulator</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2012-09-03" class="published"><span class="posted-month">9月</span><span class="posted-date">3</span><span class="posted-year">2012</span></time></p>
+              <h1 class="entry-title">Firefox OS Marionette Test on Emulator</h1>
+            </header>
+            <div class="entry-content"><p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/07/B2G-Marionette.jpg"><img src="../../assets/563/wp-content/uploads/2012/07/B2G-Marionette-1024x1024.jpg" alt="" loading="lazy"></a></p>
+<p>謀智台客曾在五月份時為各位介紹 Firefox OS (原 Boot To Gecko, 簡稱 B2G) 的模擬器 — <a href="../../posts/127/">B2G on Emulator</a>。今天則要就模擬器進行進一步的說明，與各位分享如何基於模擬器和 Marionette automation driver 進行 Boot To Gecko 的開發測試。</p>
+<p><a href="https://developer.mozilla.org/en/Marionette">Marionette</a> 是一套自動測試框架，它可以用來測試 UI 或是 Gecko 內部的 JS/XPCOM 元件與 API。Marionette 的使用也非常地簡單，我們可以將它視為一遠端伺服器，開發者只需要連上它，便能輕易地執行撰寫好的 test script。當然，在使用 Mationette 測試 Boot To Gecko 之前，我們得要確定已經建立好 Boot To Gecko emulator 的開發環境，其建立步驟可以參考 “<a href="https://developer.mozilla.org/en/Mozilla/Boot_to_Gecko/Preparing_for_your_first_B2G_build">Preparing your first B2G build</a>“。若是開發環境已建置完成，那麼只要底下的這行指令，我們就能進行 Marionette 測試了。</p>
+<p>./test.sh</p>
+<p>					1</p>
+<p>						./test.sh</p>
+<p>如果不想要執行 B2G 目錄下的所有測試檔，我們也可以指定測試檔路徑，只執行我們感興趣的測試檔案。</p>
+<p>./test.sh patch_to_tests</p>
+<p>					1</p>
+<p>						./test.sh patch_to_tests</p>
+<p>執行完後，會看見類似的結果，底下的 “OK&quot; 表示測試成功，&quot;FAILED&quot; 當然就是測試失敗啦!</p>
+<p>TEST-START test_incoming_answer_hangup.js<br>/mozilla/B2G-emu/gecko/dom/telephony/test/marionette/test_incoming_answer_hangup.js, runTest (marionette_test.MarionetteJSTestCase) ... ok</p>
+<p>START LOG:<br>INFO Verifying initial state. Mon Jul 02 2012 13:26:31 GMT+0000 (GMT)<br>INFO Initial call list: OK Mon Jul 02 2012 13:26:31 GMT+0000 (GMT)<br>INFO Simulating an incoming call. Mon Jul 02 2012 13:26:31 GMT+0000 (GMT)<br>INFO Received &#39;incoming&#39; call event. Mon Jul 02 2012 13:26:31 GMT+0000 (GMT)<br>INFO Call list is now: inbound from 5555552368 : incoming,OK Mon Jul 02 2012 13:26:31 GMT+0000 (GMT)<br>INFO Answering the incoming call. Mon Jul 02 2012 13:26:31 GMT+0000 (GMT)<br>INFO Received &#39;connecting&#39; call event. Mon Jul 02 2012 13:26:31 GMT+0000 (GMT)<br>INFO Received &#39;connected&#39; call event. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)<br>INFO Call list is now: inbound from 5555552368 : active,OK Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)<br>INFO Hanging up the incoming call. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)<br>INFO Received &#39;disconnecting&#39; call event. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)<br>END LOG:<br>----------------------------------------------------------------------<br>Ran 1 test in 6.733s</p>
+<p>OK</p>
+<p>					1234567891011121314151617181920</p>
+<p>						TEST-START test_incoming_answer_hangup.js/mozilla/B2G-emu/gecko/dom/telephony/test/marionette/test_incoming_answer_hangup.js, runTest (marionette_test.MarionetteJSTestCase) ... ok START LOG:INFO Verifying initial state. Mon Jul 02 2012 13:26:31 GMT+0000 (GMT)INFO Initial call list: OK Mon Jul 02 2012 13:26:31 GMT+0000 (GMT)INFO Simulating an incoming call. Mon Jul 02 2012 13:26:31 GMT+0000 (GMT)INFO Received &#39;incoming&#39; call event. Mon Jul 02 2012 13:26:31 GMT+0000 (GMT)INFO Call list is now: inbound from 5555552368 : incoming,OK Mon Jul 02 2012 13:26:31 GMT+0000 (GMT)INFO Answering the incoming call. Mon Jul 02 2012 13:26:31 GMT+0000 (GMT)INFO Received &#39;connecting&#39; call event. Mon Jul 02 2012 13:26:31 GMT+0000 (GMT)INFO Received &#39;connected&#39; call event. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)INFO Call list is now: inbound from 5555552368 : active,OK Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)INFO Hanging up the incoming call. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)INFO Received &#39;disconnecting&#39; call event. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)END LOG:----------------------------------------------------------------------Ran 1 test in 6.733s OK</p>
+<p>TEST-START test_incoming_reject.js<br>/mozilla/B2G-emu/gecko/dom/telephony/test/marionette/test_incoming_reject.js, runTest (marionette_test.MarionetteJSTestCase) ... ERROR</p>
+<p>======================================================================<br>ERROR: /orkSpace/mozilla/B2G-emu/gecko/dom/telephony/test/marionette/test_incoming_reject.js, runTest (marionette_test.MarionetteJSTestCase)<br>----------------------------------------------------------------------<br>Traceback (most recent call last):<br>  File &quot;/mozilla/B2G-emu/gecko/testing/marionette/client/marionette/marionette_test.py&quot;, line 176, in runTest<br>    results = self.marionette.execute_js_script(js, args)<br>  File &quot;/mozilla/B2G-emu/gecko/testing/marionette/client/marionette/marionette.py&quot;, line 334, in execute_js_script<br>    newSandbox=new_sandbox)<br>  File &quot;/mozilla/B2G-emu/gecko/testing/marionette/client/marionette/marionette.py&quot;, line 150, in _send_message<br>    self._handle_error(response)<br>  File &quot;/mozilla/B2G-emu/gecko/testing/marionette/client/marionette/marionette.py&quot;, line 199, in _handle_error<br>    raise ScriptTimeoutException(message=message, status=status, stacktrace=stacktrace)<br>ScriptTimeoutException: timed out</p>
+<p>START LOG:<br>INFO Verifying initial state. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)<br>INFO Initial call list: OK Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)<br>INFO Simulating an incoming call. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)<br>INFO Received &#39;incoming&#39; call event. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)<br>INFO Call list is now: inbound from 5555552368 : incoming,OK Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)<br>INFO Reject the incoming call. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)<br>INFO Received &#39;disconnecting&#39; call event. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)<br>END LOG:<br>----------------------------------------------------------------------<br>Ran 1 test in 10.632s</p>
+<p>FAILED (errors=1)</p>
+<p>					123456789101112131415161718192021222324252627282930</p>
+<p>						TEST-START test_incoming_reject.js/mozilla/B2G-emu/gecko/dom/telephony/test/marionette/test_incoming_reject.js, runTest (marionette_test.MarionetteJSTestCase) ... ERROR ======================================================================ERROR: /orkSpace/mozilla/B2G-emu/gecko/dom/telephony/test/marionette/test_incoming_reject.js, runTest (marionette_test.MarionetteJSTestCase)----------------------------------------------------------------------Traceback (most recent call last):  File &quot;/mozilla/B2G-emu/gecko/testing/marionette/client/marionette/marionette_test.py&quot;, line 176, in runTest    results = self.marionette.execute_js_script(js, args)  File &quot;/mozilla/B2G-emu/gecko/testing/marionette/client/marionette/marionette.py&quot;, line 334, in execute_js_script    newSandbox=new_sandbox)  File &quot;/mozilla/B2G-emu/gecko/testing/marionette/client/marionette/marionette.py&quot;, line 150, in _send_message    self._handle_error(response)  File &quot;/mozilla/B2G-emu/gecko/testing/marionette/client/marionette/marionette.py&quot;, line 199, in _handle_error    raise ScriptTimeoutException(message=message, status=status, stacktrace=stacktrace)ScriptTimeoutException: timed out START LOG:INFO Verifying initial state. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)INFO Initial call list: OK Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)INFO Simulating an incoming call. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)INFO Received &#39;incoming&#39; call event. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)INFO Call list is now: inbound from 5555552368 : incoming,OK Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)INFO Reject the incoming call. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)INFO Received &#39;disconnecting&#39; call event. Mon Jul 02 2012 13:26:32 GMT+0000 (GMT)END LOG:----------------------------------------------------------------------Ran 1 test in 10.632s FAILED (errors=1)</p>
+<p>寫到這裡，我們已經對 Marionette 的使用有個粗略的介紹，想必各位讀者已經迫不及待地想多了解一些，好為 B2G 不同的 API 和 features 撰寫 tests 了吧! Marionette 支援以 JavaScript 撰寫的 tests，這些 tests 的檔名必須依循 “test_<em>.js&quot; 或是 “browser_</em>.js&quot; 的命名規則。此外，所有的 Marionette JavaScript tests 在結束之前都必須呼叫 finish()，當 finish() 被呼叫後，Marionette 便會收集 tests 裡的 assertions 並回報測試結果。</p>
+<p>function test() {<br>  /<em> 測試程式 </em>/<br>  finish();<br>}</p>
+<p>					1234</p>
+<p>						function test() {  /<em> 測試程式 </em>/  finish();}</p>
+<p>Marionette 提供三種常用的 assertion functions，分別為</p>
+<p>is(value1, value2, message);</p>
+<p>					1</p>
+<p>						is(value1, value2, message);</p>
+<p>用以判斷 value1 與 value2 是否相同。判斷失敗會使得最後的測試失敗。開發者可以指定 message 為錯誤訊息。</p>
+<p>isnot(value1, value2, message);</p>
+<p>					1</p>
+<p>						isnot(value1, value2, message);</p>
+<p>用來判斷兩個變數是否相同的function。</p>
+<p>ok(value, message);</p>
+<p>					1</p>
+<p>						ok(value, message);</p>
+<p>則可判斷 value 是否為真。</p>
+<p>除了這三個 assertion functions 之外，另一個好用的 function 則非 runEmulatorCmd(cmd, callBack); 莫屬了。在開發測試時，有時候我們會需要傳送特定指令到 emulator 的通訊埠，像是手機撥號或接聽的指令，此時我們便可能透過 runEmulatorCmd() 簡易地進行測試。callBack 是optional parameter，當它被呼叫時，我們能得到一個存有 ‘cmd’ 執行結果的 array。再搭配前面提及的 assertion functions, 我們就能進一步判斷 cmd 的結果是否如我們預期囉。</p>
+<p>最後，我們以「手機通話」相關功能測試為例，總結上述介紹。首先，用 ‘gsm call’ 撥號；接著用 ‘gsm list’ 取得電話列表，並以callBack 取得 result array, 以判斷來電號碼是否為 phoneNumber，並且電話狀態是否是 incoming。</p>
+<p>function test () {</p>
+<p>... ...</p>
+<p>runEmulatorCmd(&quot;gsm call &quot; + phoneNumber);</p>
+<p>... ...</p>
+<p>runEmulatorCmd(&quot;gsm list&quot;, function(result) {</p>
+<p>is(result[0], &quot;inbound from &quot; + phoneNumber + &quot; : incoming&quot;);</p>
+<p>is(result[1], &quot;OK&quot;);</p>
+<p>});</p>
+<p>... ...</p>
+<p>finish();</p>
+<p>}</p>
+<p>					123456789101112131415161718192021</p>
+<p>						function test () { ... ... runEmulatorCmd(&quot;gsm call &quot; + phoneNumber); ... ... runEmulatorCmd(&quot;gsm list&quot;, function(result) { is(result[0], &quot;inbound from &quot; + phoneNumber + &quot; : incoming&quot;); is(result[1], &quot;OK&quot;); }); ... ... finish(); }</p>
+<p>除了上述提及的 “gsm call&quot; 和 “gsm list&quot; 指令之外，讀者可以到 <a href="https://developer.android.com/tools/devices/emulator.html">http://developer.android.com/tools/devices/emulator.html</a> 得到完整的指令列表，撰寫更多項功能的測試。</p>
+<p>怎麼樣? 是不是開始躍躍欲試了呢? 歡迎加入我們，一起 Happy Hacking! 😀</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20160528211225id_/https://tech.mozilla.com.tw/?p=563">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>淺談 W3C Sensor API的發展 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2015-07/">2015 年 7 月</a><b>&raquo;</b><a href="../../posts/6218/">淺談 W3C Sensor API的發展</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2015-07-06" class="published"><span class="posted-month">7月</span><span class="posted-date">6</span><span class="posted-year">2015</span></time></p>
+              <h1 class="entry-title">淺談 W3C Sensor API的發展</h1>
+            </header>
+            <div class="entry-content"><p>感測器元件是連接實體世界和數位世界的橋樑，將物理現象轉化為電子訊號帶入軟體的次元。感測器元件的存在更是人機互動體驗的必要條件，如利用加速規（accelerometer）、陀螺儀（gyroscope）等動作感測器把手機當方向盤的 <a href="https://www.youtube.com/watch?v=_oV3ksYrRyA#t=3m38s">REAL RACING</a>賽車遊戲、 利用近距感測器（proximity sensor）當伏地挺身計數器的 <a href="https://www.youtube.com/watch?v=6yW_D_Suj64#t=6m44s">Runtastic Fitness</a>、或是利用振動馬達（vibration motor）自動旋轉的全景相機 <a href="https://www.youtube.com/watch?v=Brfr7--6ESc">Cycloramic</a>，都是常見的應用範例，另外還有一些瘋狂的應用像 <a href="https://www.youtube.com/watch?v=pXr84w1cWIU#t=5s">Send Me To Heaven</a>。正因感測器扮演穿梭兩界的角色，所以制定它的界面也格外重要。接下來我們會先回顧目前的 W3C Sensor API，並參考 iOS與 Android上的 Sensor API設計，最後綜合討論下一代 W3C Sensor API可能的發展。</p>
+<h2>回顧目前的 W3C Sensor API</h2>
+<p>如果我們想要藉由 W3C Sensor API來取得裝置的感測器資料，可以使用 DeviceMotion與 DeviceOrientation來實作。DeviceMotion可以藉由加速規與陀螺儀來讀取裝置的瞬間加速度，而 DeviceOrientation則可透過磁力計與地磁比較來取得裝置的旋轉角度。</p>
+<h3>DeviceMotion</h3>
+<p>DeviceMotion是一種 Event，固定的週期會讀取一次，我們可以透過事先設定的 Event Handler來拿到當前最新的資料：</p>
+<p>function handler(event) {</p>
+<p>    var x = event.acceleration.x;<br>    var y = event.acceleration.y;<br>    var z = event.acceleration.z;</p>
+<p>    // Process data here.<br>}</p>
+<p>window.addEventListener(&quot;devicemotion&quot;, handler, true);</p>
+<p>					12345678910</p>
+<p>						function handler(event) {     var x = event.acceleration.x;    var y = event.acceleration.y;    var z = event.acceleration.z;     // Process data here.} window.addEventListener(&quot;devicemotion&quot;, handler, true);</p>
+<h3>DeviceOrientation</h3>
+<p><img src="../../assets/6218/001-3b3c6d2dd11b.png" alt="axes.png" loading="lazy"></p>
+<p>如 DeviceMotion，DeviceOrientation也是一種 Event，每次有新資料時就會觸發：</p>
+<p>function handler(event) {</p>
+<p>    // alpha: rotation around z-axis<br>    var rotateDegrees = event.alpha;<br>    // beta: rotation around x-axis<br>    var frontToBack = event.beta;<br>    // gamma: rotation around y-axis<br>    var leftToRight = event.gamma;</p>
+<p>    // Process data here.<br>}</p>
+<p>window.addEventListener(&quot;deviceorientation&quot;, handler, true);</p>
+<p>					12345678910111213</p>
+<p>						function handler(event) {     // alpha: rotation around z-axis    var rotateDegrees = event.alpha;    // beta: rotation around x-axis    var frontToBack = event.beta;    // gamma: rotation around y-axis    var leftToRight = event.gamma;     // Process data here.} window.addEventListener(&quot;deviceorientation&quot;, handler, true);</p>
+<h3>Sensor API目前的缺點</h3>
+<p>上面簡單的回顧目前的功能後，我們來看看目前的 API有哪些缺點。</p>
+<h4>無法取得 Sensor的 raw data</h4>
+<p>…The information provided by the events is not raw sensor data, but rather high-level data which is agnostic to the underlying source of information. Common sources of information include gyroscopes, compasses and accelerometers.</p>
+<p>從 <a href="https://w3c.github.io/deviceorientation/spec-source-orientation.html#introduction">Device API的介紹</a>來看，Low Level的 API並不存在，它的目的是為了提供 “rather high-level data&quot;，希望程式設計師可以忽略感測器的原始資料，直接得到計算後的旋轉角度、加速度等，更專注於開發上層的應用。而從負責制定 API的 <a href="https://www.w3.org/2009/dap/#mission">Device Working Group</a>的成立宗旨來看：</p>
+<p>…enable the development of Web Applications and Web Widgets that interact with devices services such as Calendar, Contacts, Camera, etc.</p>
+<p>W3C的目標更像是制定 Service而非 API。原始的作者之一 Jose Cantera曾經<a href="https://lists.w3.org/Archives/Public/public-geolocation/2011Oct/0000.html">向 W3C反應</a>過他當初的設計是希望有 Low level的 Sensor API，但似乎沒有獲得回應。雖然很感謝 W3C替程式設計師們著想，但這樣的設計反而會限制我們無法取得原始的感測器資料。</p>
+<h4>無法在任意的時間點拿到感測器資料</h4>
+<p>我們<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1057185">無法在任意的時間點拿到感測器資料</a>，只有在 Sensor Event的 Callback被觸發時才能拿到感測器的資料，而觸發的條件是感測器的值有改變或是週期到了。</p>
+<h2>iOS與 Android上的 Sensor api</h2>
+<p>知己知彼，百戰不殆；不知彼而知己，一勝一負；不知彼不知己，每戰必殆。</p>
+<p>— 《孫子兵法》</p>
+<p>初步了解現在 W3C Sensor API的問題和現況後，我們來看看 Sensor API在其他(對手)平台是如何運作的，借鏡他人的發展或許有助於下一代 W3C Sensor API的設計。</p>
+<ul><li>iOS 從各別獨立的 UIXXX API(e.g. <a href="https://developer.apple.com/library/prerelease/ios/documentation/UIKit/Reference/UIAcceleration_Class/index.html">UIAcceleration</a>)邁向使用統一的 framework：<a href="https://developer.apple.com/library/ios/documentation/CoreMotion/Reference/CoreMotion_Reference/">CoreMotion</a>來取得感測器資料</li></ul>
+<ul><li>感測器都繼承同一個 base class：CMLogItem</li></ul>
+<ul><li>使用 CMMotionManager作為讀取所有動作感測器(accel , gyro, … )的界面</li></ul>
+<ul><li>每種感測器種類都有獨特的資料結構，讓資料處理變得更簡易</li></ul>
+<ul><li>Android 有<a href="https://developer.android.com/guide/topics/sensors/sensors_overview.html#sensors-intro">好幾種 framework</a>可以選擇 <a href="https://developer.android.com/reference/android/hardware/SensorManager.html">SensorManager</a>:支援各種類型的感測器，有多種讀取方式可供選擇</li></ul>
+<ul><li><a href="https://developer.android.com/reference/android/hardware/Sensor.html">Sensor</a>:提供數種方法讀取某一種類型的感測器</li></ul>
+<ul><li>…..</li></ul>
+<ul><li>有 <a href="https://source.android.com/devices/sensors/batching.html">Batch mode</a>的機制</li></ul>
+<ul><li>各類感測器沒有獨特的資料結構，而是使用陣列(Array)來存取資料。與 iOS相比，這樣的設計更易於新增感測器種類，但缺點是在處理資料時需要額外的資訊。</li></ul>
+<ul><li>兩個平台都可以提供感測器的原始資料及校正資料(<a href="https://en.wikipedia.org/wiki/Sensor_fusion">Sensor fusion</a>)。關於兩種資料的差異及使用時機可以看 Dave Edson寫的 <a href="https://blogs.windows.com/buildingapps/2010/09/08/using-the-accelerometer-on-windows-phone-7/">Using the Accelerometer on Windows Phone 7</a>來了解。</li></ul>
+<ul><li>兩個平台都可以設定感測器的讀取頻率</li></ul>
+<p>W3C Sensor API未來的發展或許可以如 iOS般， 由各自獨立邁向使用統一的界面，並引進如 Android的Batch機制來減少 I/O，讓感測器更方便被管理。提供原始資料與提供 “rather high-level data&quot;這件事其實沒有衝突，Low Level API的消失也限制了使用者設定感測器的讀取頻率的能力，這些都是我們希望在下一代 Sensor API可以改善的地方。</p>
+<h2>下一代 Sensor API可能的發展</h2>
+<p>總結上面的問題與需求，想像中的下一代 W3C Sensor API會長得像:</p>
+<p>// 確認裝置上有沒有加速規<br>if (sensors.Accelerometer === undefined) {<br>  console.error(&#39;No accelerometer found&#39;);<br>  return;<br>}</p>
+<p>// 創建加速規物件並設定讀取頻率和batch<br>var num = 10;<br>var accel = new sensors.Accelerometer({ frequency: 50 }, { batch: num });</p>
+<p>// 開始讀取加速規<br>accel.start()</p>
+<p>accel.onupdate = function() {<br>  // 讀取第n筆資料<br>  for(var n = 0 ; n &lt; num ; n++) {<br>    console.log(&quot;x-axis: &quot;, accel.x[n]);<br>    console.log(&quot;y-axis: &quot;, accel.y[n]);<br>    console.log(&quot;z-axis: &quot;, accel.z[n]);<br>  }<br>};</p>
+<p>// 停止讀取加速規<br>if (accel.isActive()) {<br>  accel.stop()<br>}</p>
+<p>					123456789101112131415161718192021222324252627</p>
+<p>						// 確認裝置上有沒有加速規if (sensors.Accelerometer === undefined) {  console.error(&#39;No accelerometer found&#39;);  return;}  // 創建加速規物件並設定讀取頻率和batchvar num = 10;var accel = new sensors.Accelerometer({ frequency: 50 }, { batch: num }); // 開始讀取加速規accel.start() accel.onupdate = function() {  // 讀取第n筆資料  for(var n = 0 ; n &lt; num ; n++) {    console.log(&quot;x-axis: &quot;, accel.x[n]);    console.log(&quot;y-axis: &quot;, accel.y[n]);    console.log(&quot;z-axis: &quot;, accel.z[n]);  }}; // 停止讀取加速規if (accel.isActive()) {  accel.stop()}</p>
+<p>目前 W3C下一代 Sensor API的討論都有<a href="https://github.com/w3c/sensors">公開在Github</a>, 有興趣的讀者可以直接上去參與討論，一起為明天的Web貢獻一份心力。</p>
+<p>參考資料：<a href="https://smus.com/web-sensor-api/">http://smus.com/web-sensor-api/</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20201019212745id_/https://tech.mozilla.com.tw/?p=6218">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

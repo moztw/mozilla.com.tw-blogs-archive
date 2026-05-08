@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>跨越語言的邊界 – 淺談 JS API 與 XPConnect | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2012-11/">2012 年 11 月</a><b>&raquo;</b><a href="../../posts/986/">跨越語言的邊界 – 淺談 JS API 與 XPConnect</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2012-11-05" class="published"><span class="posted-month">11月</span><span class="posted-date">5</span><span class="posted-year">2012</span></time></p>
+              <h1 class="entry-title">跨越語言的邊界 – 淺談 JS API 與 XPConnect</h1>
+            </header>
+            <div class="entry-content"><p>開發 Mozilla 專案主要會使用兩種程式語言：C++ 與 JavaScript。第一次接觸到這份代碼時，我心中就產生了一個疑問：C++ 是強型態、靜態編譯的語言，而 JavaScript 則是弱型態、直譯式的語言，這兩種特性截然不同的程式語言該如何溝通呢？以下讓我們來分析一下 C++ 與 JavaScript 間若要相互溝通需要打通哪些關節。</p>
+<p>首先要解決的是基本資料型別以及命名空間的問題，若想從 C++ 中存取 JavaScript 的執行期資訊，就需要使用 JavaScript Engine（以下簡稱 JS Engine）所提供的 JS API，這個作法就等於是直接接觸 JS Engine 所維護的資料結構來模擬對應的 JavaScript 語法。由於我們是向 JS Engine 取得資料，而一個 JS Engine 上同時會載入複數個 JavaScript 腳本，命名空間的差異會讓相同的一段 var foo = a+b; 在不同腳本上執行時產生出不同的結果，所以你需要告訴 JS Engine 對應程式的文本（context）才能得出正確的結果，因此大多數的 JS API 都需要使用者提供對應的 JSContext。此外，由於 JavaScript 的弱型態特性，在 JS API 中提供了一個通用的變數型別 jsval 來描述，直到真正需要取出變數內容時再透過的 helper function 取得實際內容。更深入的 JS API 說明可以參考 MDN 上頭的 JS API User Guide [1]。以下來看一段範例程式感受一下 JS API 的用法：</p>
+<p>//Javascript:<br>var x = y.myprop;</p>
+<p>					12</p>
+<p>						//Javascript:var x = y.myprop;</p>
+<p>//C++:<br>JSContext *cx = ... // get JS context from somewhere<br>jsval x, y;</p>
+<p>// get variable y<br>if (!JS_GetProperty(cx, JS_GetGlobalForScopeChain(cx), &quot;y&quot;, &amp;y)) {<br>    JS_ReportError(cx, &quot;variable y is undefined.&quot;);<br>    return JS_FALSE;<br>}<br>// make sure variable y is a JS object<br>if (JSVAL_IS_PRIMITIVE(y)) {<br>    JS_ReportError(cx, &quot;variable y must be an object.&quot;);<br>    return JS_FALSE;<br>}<br>// get y.myprop and store the value in x<br>if (!JS_GetProperty(cx, JSVAL_TO_OBJECT(y), &quot;myprop&quot;, &amp;x)) {<br>    JS_ReportError(cx, &quot;fail to get property on variable y.&quot;);<br>    return JS_FALSE;<br>}</p>
+<p>					12345678910111213141516171819</p>
+<p>						//C++:JSContext *cx = ... // get JS context from somewherejsval x, y; // get variable yif (!JS_GetProperty(cx, JS_GetGlobalForScopeChain(cx), &quot;y&quot;, &amp;y)) {    JS_ReportError(cx, &quot;variable y is undefined.&quot;);    return JS_FALSE;}// make sure variable y is a JS objectif (JSVAL_IS_PRIMITIVE(y)) {    JS_ReportError(cx, &quot;variable y must be an object.&quot;);    return JS_FALSE;}// get y.myprop and store the value in xif (!JS_GetProperty(cx, JSVAL_TO_OBJECT(y), &quot;myprop&quot;, &amp;x)) {    JS_ReportError(cx, &quot;fail to get property on variable y.&quot;);    return JS_FALSE;}</p>
+<p>這兩段代碼所作的事情一模一樣，但 C++ 版本多出許多型別檢查與異常處理的步驟，所以你會發現離開 JS Engine 的保護傘寫起程式來特別的囉唆。更囉唆多的 JS API 範例可以參考 JS API Cookbook [2]。</p>
+<p>因此，光是能在 C++ 存取 JS Engine 還不夠 developer-friendly，而 Mozilla 專案中最重要的軟體元件開發模式 XPCOM [3]，若能以 XPCOM 元件的形式任意引用 C++ 或 JavaScript 的代碼，就能以更高階、更方便的寫法來達成 C++ 與 JavaScript 間的溝通，這時候就該讓 XPConnect 登場了！XPConnect 就是基於 JS API，提供在Javascript實作與引用 XPCOM 元件的各種功能，我們用以下範例說明 XPConnect 運作模式：</p>
+<p>//Javascript:<br>var obs = Component.classes[&quot;@mozilla.org/observer-service;1&quot;]<br>                   .getService(Component.interfaces.nsIObserverService);<br>obs.addObserver(someObserver, &quot;some-topic&quot;, false);</p>
+<p>					1234</p>
+<p>						//Javascript:var obs = Component.classes[&quot;@mozilla.org/observer-service;1&quot;]                   .getService(Component.interfaces.nsIObserverService);obs.addObserver(someObserver, &quot;some-topic&quot;, false);</p>
+<p>第一步要解決的問題是：在 JavaScript 中如何搜索到指定界面的實作？藉由 Components.classes 可以從 Contract ID 找出對應的 Concrete class，而透過這個 Concrete class 就可以用來取得物件的實體，並且轉型成所需的界面。等等！轉型在弱型態的 JavaScript 有什麼作用？對於 JavaScript object 而言的確沒有所謂型態，但是 XPCOM 在使用時必須透過此型別快速辨認對應物件有實作所需的界面，就能儘早確認取出的 XPCOM 元件是否符合需求。早期發現、早期治療，不然等實際使用物件時才發現 function 找不到就很難除錯了。</p>
+<p>第二步就是使用該界面提供的 attribute 與 function，我們在第一步所取得的物件實際上是個 wrapper  [4]，這個 wrapper 的作用是用來檢查存取的合法性以及彌補 C++ 與 JavaScript 對物件操作的差異，比如說 JavaScript 能動態增加 object property，這個操作就只會改變 wrapper 而不會影響到原本的 XPCOM 物件；而傳入參數型別、個數是否符合也會由 XPConnect 一併檢查 [5]。讓 XPCOM 能夠融入原本 JavaScript 的語法，使用起來就跟 JavaScript object 一樣簡單。</p>
+<p>若是從 C++ 引用由 JavaScript 實作的 XPCOM 元件，同樣也會由 XPConnect 將 JavaScript object 包裝成標準的 C++ 物件。有了這麼方便的跨語言機制，就可以根據實作的需求挑選適合的語言撰寫，是不是覺得程式寫來格外輕鬆了呢？</p>
+<h3>References:</h3>
+<ul><li><a href="https://developer.mozilla.org/en-US/docs/SpiderMonkey/JSAPI_User_Guide">https://developer.mozilla.org/en-US/docs/SpiderMonkey/JSAPI_User_Guide</a></li></ul>
+<ul><li><a href="https://developer.mozilla.org/en-US/docs/SpiderMonkey/JSAPI_Cookbook">https://developer.mozilla.org/en-US/docs/SpiderMonkey/JSAPI_Cookbook</a></li></ul>
+<ul><li><a href="https://developer.mozilla.org/en-US/docs/XPCOM">https://developer.mozilla.org/en-US/docs/XPCOM</a></li></ul>
+<ul><li><a href="https://developer.mozilla.org/en-US/docs/XPConnect_wrappers">https://developer.mozilla.org/en-US/docs/XPConnect_wrappers</a></li></ul>
+<ul><li><a href="https://developer.mozilla.org/en-US/docs/XPIDL#Types">https://developer.mozilla.org/en-US/docs/XPIDL#Types</a></li></ul></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/javascript/">Javascript</a></span><span><a href="../../categories/mozilla/">Mozilla</a></span><span><a href="../../categories/open-source/">Open Source</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20150615111314id_/https://tech.mozilla.com.tw/?p=986">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

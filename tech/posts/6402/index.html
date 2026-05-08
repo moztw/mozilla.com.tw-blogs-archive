@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>如何利用Firefox OS現有的Components打造自己的Web App | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2015-04/">2015 年 4 月</a><b>&raquo;</b><a href="../../posts/6402/">如何利用Firefox OS現有的Components打造自己的Web App</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2015-04-27" class="published"><span class="posted-month">4月</span><span class="posted-date">27</span><span class="posted-year">2015</span></time></p>
+              <h1 class="entry-title">如何利用Firefox OS現有的Components打造自己的Web App</h1>
+            </header>
+            <div class="entry-content"><p>Web這幾年最夯的主題之一就是Web Components <a href="https://www.w3.org/TR/components-intro/">[1</a>]<a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components">[3</a>]。透過它，我們能使用其他人開發好的Widgests來提高開發效率，不過風險是目前有些瀏覽器支援並不完全或必須手動開啟支援<a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components#Enabling_Web_Components_in_Firefox">[6</a>]，而我相信不久後所有瀏覽器就會完全支援囉<a href="https://www.w3.org/standards/techs/components#w3c_all">[2</a>]！</p>
+<p>今天，小弟想跟各位簡介如何使用Firefox OS的Gaia Team所開發的gaia components <a href="https://developer.mozilla.org/en-US/Apps/Design/Firefox_OS_building_blocks">[4</a>]<a href="https://github.com/gaia-components">[5</a>]，來打造你的Web App。（註一、二）</p>
+<p>Gaia Components主要用bower來管理相關套件<a href="https://developer.mozilla.org/en-US/Apps/Design/Firefox_OS_building_blocks">[4</a>]，因此要先在自己的開發環境裝bower。</p>
+<p>$ npm install bower</p>
+<p>					1</p>
+<p>						$ npm install bower</p>
+<p>接著將以一個相當簡單的<a href="https://hermescheng.github.io/demo-gaia-components/">demo app</a>為例，它使用gaia components來快速做出分享心得到FB的web app的外觀。透過bower安裝以下gaia components（註三）。</p>
+<p>$ bower install gaia-components/gaia-theme<br>$ bower install gaia-components/gaia-component<br>$ bower install gaia-components/gaia-icons<br>$ bower install gaia-components/gaia-button<br>$ bower install gaia-components/gaia-text-input<br>$ bower install gaia-components/gaia-sub-header</p>
+<p>					123456</p>
+<p>						$ bower install gaia-components/gaia-theme$ bower install gaia-components/gaia-component$ bower install gaia-components/gaia-icons$ bower install gaia-components/gaia-button$ bower install gaia-components/gaia-text-input$ bower install gaia-components/gaia-sub-header</p>
+<p>當成功安裝後，bower_components資料夾下將有已安裝的套件，以我的環境為例。</p>
+<p>hermesc@hermesc-desktop:~/workspace/app-space/demo-gaia-components/bower_components$ ll<br>total 32<br>drwxrwxr-x 8 hermesc hermesc 4096  4月 17 13:31 ./<br>drwxrwxr-x 4 hermesc hermesc 4096  4月 17 13:31 ../<br>drwxrwxr-x 2 hermesc hermesc 4096  4月 17 13:31 gaia-button/<br>drwxrwxr-x 2 hermesc hermesc 4096  4月 17 13:31 gaia-component/<br>drwxrwxr-x 4 hermesc hermesc 4096  4月 17 13:31 gaia-icons/<br>drwxrwxr-x 2 hermesc hermesc 4096  4月 17 13:31 gaia-sub-header/<br>drwxrwxr-x 2 hermesc hermesc 4096  4月 17 13:31 gaia-text-input/<br>drwxrwxr-x 3 hermesc hermesc 4096  4月 17 13:31 gaia-theme/</p>
+<p>					12345678910</p>
+<p>						hermesc@hermesc-desktop:~/workspace/app-space/demo-gaia-components/bower_components$ lltotal 32drwxrwxr-x 8 hermesc hermesc 4096  4月 17 13:31 ./drwxrwxr-x 4 hermesc hermesc 4096  4月 17 13:31 ../drwxrwxr-x 2 hermesc hermesc 4096  4月 17 13:31 gaia-button/drwxrwxr-x 2 hermesc hermesc 4096  4月 17 13:31 gaia-component/drwxrwxr-x 4 hermesc hermesc 4096  4月 17 13:31 gaia-icons/drwxrwxr-x 2 hermesc hermesc 4096  4月 17 13:31 gaia-sub-header/drwxrwxr-x 2 hermesc hermesc 4096  4月 17 13:31 gaia-text-input/drwxrwxr-x 3 hermesc hermesc 4096  4月 17 13:31 gaia-theme/</p>
+<p>接著只需透過習慣的&lt;script&gt; tag引用即可使用該gaia components。</p>
+<p>我們在這app中先透過&lt;gaia-sub-header&gt;標示出這區塊是給user輸入要分享的內容。</p>
+<p>&lt;gaia-sub-header&gt;Facebook sharing&lt;/gaia-sub-header&gt;</p>
+<p>					1</p>
+<p>						&lt;gaia-sub-header&gt;Facebook sharing&lt;/gaia-sub-header&gt;</p>
+<p>接著使用[](https://developer.mozilla.org/en-US/Apps/Design/Firefox_OS_building_blocks/Input_area/2.3)與[](https://developer.mozilla.org/en-US/Apps/Design/Firefox_OS_building_blocks/Buttons/2.3)來快速建立輸入欄位與分享按鈕。</p>
+<p>&lt;gaia-text-input placeholder=&quot;what&#39;s on your mind&quot; required&gt;&lt;/gaia-text-input&gt;<br>&lt;gaia-button circular&gt;&lt;i data-icon=&quot;facebook&quot;&gt;&lt;/i&gt;&lt;/gaia-button&gt;</p>
+<p>					12</p>
+<p>						&lt;gaia-text-input placeholder=&quot;what&#39;s on your mind&quot; required&gt;&lt;/gaia-text-input&gt;&lt;gaia-button circular&gt;&lt;i data-icon=&quot;facebook&quot;&gt;&lt;/i&gt;&lt;/gaia-button&gt;</p>
+<p>只需這樣，就能快速做出一個帶有Firefox OS風格的標題、輸入欄位與按鈕的web app， 並將時間專注於功能與邏輯上囉。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/04/fb.png"><img src="../../assets/6402/wp-content/uploads/2015/04/fb-300x74.png" alt="fb" loading="lazy"></a></p>
+<ul><li>註一：Gaia Components目前只有部分封裝成Web Components，其他陸續開發中。</li></ul>
+<ul><li>註二：Firefox OS在接下來幾個版本才會支援Web Components，因此開發而成的web app目前只能在支援的瀏覽器上執行。</li></ul>
+<ul><li>註三：有哪些gaia components可以使用，可以追蹤MDN的Firefox OS Building Blocks<a href="https://developer.mozilla.org/en-US/Apps/Design/Firefox_OS_building_blocks">[4</a>]，或者直接找github<a href="https://github.com/gaia-components">[5</a>]。</li></ul>
+<p>[1] W3C introduction: <a href="https://www.w3.org/TR/components-intro/">http://www.w3.org/TR/components-intro/</a></p>
+<p>[2] Current Status: <a href="https://www.w3.org/standards/techs/components#w3c_all">http://www.w3.org/standards/techs/components#w3c_all</a></p>
+<p>[3] <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components">https://developer.mozilla.org/en-US/docs/Web/Web_Components</a></p>
+<p>[4] <a href="https://developer.mozilla.org/en-US/Apps/Design/Firefox_OS_building_blocks">https://developer.mozilla.org/en-US/Apps/Design/Firefox_OS_building_blocks</a></p>
+<p>[5] <a href="https://github.com/gaia-components">https://github.com/gaia-components</a></p>
+<p>[6] <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components#Enabling_Web_Components_in_Firefox">https://developer.mozilla.org/en-US/docs/Web/Web_Components#Enabling_Web_Components_in_Firefox</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20201231235959id_/https://tech.mozilla.com.tw/?p=6402">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

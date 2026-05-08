@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>平價智慧手機大解密－Firefox OS 記憶體管理與優化 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-07/">2014 年 7 月</a><b>&raquo;</b><a href="../../posts/4667/">平價智慧手機大解密－Firefox OS 記憶體管理與優化</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-07-01" class="published"><span class="posted-month">7月</span><span class="posted-date">1</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">平價智慧手機大解密－Firefox OS 記憶體管理與優化</h1>
+            </header>
+            <div class="entry-content"><p>先前 Alan 跟大家介紹過“<a href="../../posts/1826/">凡走過必留下痕跡 – 如何獲得 memory allocation 的 footprint</a>”，教大家如何生成 memory footpoint 來找出 memory leak 和減少記憶體使用量。今天，我要介紹的是 Firefox OS 如何在有限的記憶體下管理記憶體資源，並針對其進行優化。</p>
+<h2>在 Firefox OS 上，如何獲得更多的記憶體資源？</h2>
+<p>在 Firefox OS 上，有三種事件可以讓系統在記憶體不足的狀況下獲得更多的的資源。它們分別是：</p>
+<ol><li>Low memory killer（LMK）</li></ol>
+<ol><li>Memory pressure event</li></ol>
+<ol><li>Out of memory killer（OOM)</li></ol>
+<p>LMK 是 Android 原本就有的機制，我們把它整合進 Firefox OS。當快取或可用記憶體低於某個臨界值時，LMK 會嘗試去殺 oom_adj &gt;= 0 的行程來獲得更多的記憶體資源。各類行程的臨界值會在 b2g/app/b2g.js 做設定，以下表為例，快取及可用記憶體都小於 20MB 的時候，oom_adj為10（BACKGROUND）的行程會被LMK所殺掉；快取及可用記憶體都小於 8MB 的時候，oom_adj為8（BACKGROUND_HOMESCREEN）的行程會被殺掉；如果快取及可用記憶體都小於 4MB，oom_adj為0（MASTER）的行程，也就是 b2g，將會被 LMK 殺掉。順帶一提，LMK 殺行程是漸近式的，如果連 b2g 都被殺掉了，通常這種狀況一定是有 memory leak。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/06/oom_adj.png"><img src="../../assets/4667/wp-content/uploads/2014/06/oom_adj.png" alt="oom_adj" loading="lazy"></a></p>
+<p>當 memory pressure event 被觸發，註冊觀察 memory pressure event 的 service 就會執行相對應的動作，例如，清除或最小化快取（b2g 的暫存資料）。觸發 memory pressure event 的設定值在 b2g/app/b2g.js ，目前的預設值（notifyLowMemUnderKB）為 14MB。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/06/notify_trigger.png"><img src="../../assets/4667/wp-content/uploads/2014/06/notify_trigger.png" alt="notify_trigger" loading="lazy"></a></p>
+<p>當可用記憶體低於一個臨界值，Linux kernel 提供的 OOM 就會根據行程的記憶體用量及 oom_score_adj 計算出來的分數，殺掉一個合適的行程，以獲取更多的記憶體來滿足系統的需求。觸發 OOM 的可用記憶體臨界值（min_free_kbytes）預設為 1352KB。</p>
+<h2>如何讓這三種事件可以在 Firefox OS 上完美運作，達到效能的優化？</h2>
+<p>先說問題好了，如果這三個事件沒有配合好，會發生什麼問題？</p>
+<ol><li>假如 LMK 各類行程的臨界值設太低，系統反應會很慢。在記憶體不夠的狀況下，無法殺掉不需要的行程以獲得更多記憶體，進而造成效能不佳；若臨界值設太高，行程會很容易被 LMK 殺掉，使用者在使用上會覺得不便。</li></ol>
+<ol><li>Memory pressure event 設定值設的太高，系統會提早進行清除或最小化快取。這在記憶體充足的狀況下是沒有必要的，會造成 CPU 資源被搶走，使用者覺得系統效能不佳；設的太低，無法及時釋放出記憶體資源。</li></ol>
+<ol><li>由於 OOM 與 LMK 演算法的不同，假如 OOM 比 LMK 更早被觸發，有可能會造成前台或後台的行程還存在的狀況下，b2g 或是其它 system application 提早被殺掉。這會造成嚴重的穩定性問題。</li></ol>
+<p>所以我們需要找出一組參數，來解決以上的問題：</p>
+<ol><li>使用者在操作手機的時候，不會感覺到效能不佳。換句話說，前台行程在執行的時候，後台行程是允許被殺掉的，以釋放更多的記憶體。為了達到此一目的，BACKGROUND_HOMESCREEN.KillUnderKB 及 BACKGROUND.KillUnderKB 是可以稍微調大一點。</li></ol>
+<ol><li>在可感知的行程被殺掉之前先觸發 memory pressure event 。也就是說 notifyLowMemUnderKB 最好是介於 BACKGROUND_HOMESCREEN.KillUnderKB 和 BACKGROUND_PERCEIVABLE.KillUnderKB 這兩個值之間。</li></ol>
+<ol><li>必須要讓 LMK 在 OOM 之前運作。所以 min_free_kbytes 必須比 MASTER.KillUnderKB 來的小。</li></ol>
+<p>以 Tarako（sc6821，128MB memory device）為例，根據 adb shell b2g-info dump 出來的記憶體相關設定如下：</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/06/lmk-parameters.png"><img src="../../assets/4667/wp-content/uploads/2014/06/lmk-parameters.png" alt="lmk-parameters" loading="lazy"></a></p>
+<h2>如何快速的針對平台做校調？</h2>
+<p>除了直接修改 b2g/app/b2g.js 的參數以外，Firefox OS 提供一個更方便的方式讓大家可以快速的驗証自己的參數。開發者可以借由修改手機內部的 /system/b2g/defaults/pref/dev-pref.js 來增加想要調整的參數。這個檔案內的參數會覆蓋掉 b2g/app/b2g.js 的預設值。</p>
+<p>當然，我們對超低價手機的記憶體優化絕對不止這些，更多的技術探討都在 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=929945">bugzilla</a>上，趕快加入火狐的行列，一起改變世界吧。</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20150319101930id_/https://tech.mozilla.com.tw/?p=4667">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

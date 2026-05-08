@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>在 Firefox OS 取圖片色彩平均值之二三事 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-10/">2014 年 10 月</a><b>&raquo;</b><a href="../../posts/5355/">在 Firefox OS 取圖片色彩平均值之二三事</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-10-06" class="published"><span class="posted-month">10月</span><span class="posted-date">6</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">在 Firefox OS 取圖片色彩平均值之二三事</h1>
+            </header>
+            <div class="entry-content"><p>在 Mozilla 開發 Firefox OS 的歷程中，使用者體驗是我們非常著重的項目。在近期開發的 Firefox OS 版本（2.0）上，我們大幅修改了鎖定畫面（Lock Screen，或稱螢幕鎖）的外觀。下圖左是舊版畫面，圖右是新版畫面。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/OldNotification.png"><img src="../../assets/5355/wp-content/uploads/2014/09/OldNotification-168x300.png" alt="OldNotification" loading="lazy"></a> <a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/NewLockscreen.png"><img src="../../assets/5355/wp-content/uploads/2014/09/NewLockscreen-168x300.png" alt="NewLockscreen" loading="lazy"></a><br>在新版的鎖定畫面中，當手機收到通知（簡訊、未接來電等等）並將之顯示於鎖定畫面時，我們會在鎖定畫面上覆蓋一層半透明的純色圖層，用來強調這些通知訊息，也讓通知文字更容易閱讀。這個圖層的純色是由桌面背景圖片的顏色平均出來。例如，左上的鎖定畫面背景，算出來的平均色為      #7D6A8A 或 hsl(275, 13%, 48%)，而右上圖背景的顏色則為      #496A3F 或 hsl(106, 25%, 33%)。下圖是右上圖的手機收到通知時，蓋上純色圖層的範例。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/NewLockscreenWithNotification.png"><img src="../../assets/5355/wp-content/uploads/2014/09/NewLockscreenWithNotification-168x300.png" alt="NewLockscreenWithNotification" loading="lazy"></a></p>
+<h2>取得一張圖片的平均顏色值</h2>
+<p>假設變數 <br>			img 已經為存有一張圖片的 <br>			HTMLImageElement，也就是一個 <br>			&lt;img alt=&quot;&quot; /&gt;。則我們使用以下的 JavaScript 程式碼，搭配動態產生的 Canvas 元素及它提供的各種函式，來取得這張圖片的每一個像素值：</p>
+<p>var canvas = document.createElement(&#39;canvas&#39;);<br>canvas.width = img.width;<br>canvas.height = img.height;</p>
+<p>// 把圖片畫到 Canvas 上面<br>var context = canvas.getContext(&#39;2d&#39;);<br>context.drawImage(img, 0, 0, img.width, img.height);</p>
+<p>// 取得畫好的圖片的像素資料<br>var data = context.getImageData(0, 0, img.width, img.height).data;<br>var r = 0, g = 0, b = 0;</p>
+<p>// 取所有像素的平均值（每個像素的值域為 0 到 255）<br>for (var row = 0; row &lt; img.height; row++) {<br>  for (var col = 0; col &lt; img.width; col++) {<br>    r += data[((img.width <em> row) + col) </em> 4];<br>    g += data[((img.width <em> row) + col) </em> 4 + 1];<br>    b += data[((img.width <em> row) + col) </em> 4 + 2];<br>  }<br>}</p>
+<p>r /= (img.width <em> img.height);<br>g /= (img.width </em> img.height);<br>b /= (img.width * img.height);</p>
+<p>r = Math.round(r);<br>g = Math.round(g);<br>b = Math.round(b);</p>
+<p>// 最後的 CSS 屬性值<br>var cssColor = &#39;rgb(&#39; + r + &#39;, &#39; + g + &#39;, &#39; + b + &#39;)&#39;;</p>
+<p>					12345678910111213141516171819202122232425262728293031</p>
+<p>						var canvas = document.createElement(&#39;canvas&#39;);canvas.width = img.width;canvas.height = img.height; // 把圖片畫到 Canvas 上面var context = canvas.getContext(&#39;2d&#39;);context.drawImage(img, 0, 0, img.width, img.height); // 取得畫好的圖片的像素資料var data = context.getImageData(0, 0, img.width, img.height).data;var r = 0, g = 0, b = 0; // 取所有像素的平均值（每個像素的值域為 0 到 255）for (var row = 0; row &lt; img.height; row++) {  for (var col = 0; col &lt; img.width; col++) {    r += data[((img.width <em> row) + col) </em> 4];    g += data[((img.width <em> row) + col) </em> 4 + 1];    b += data[((img.width <em> row) + col) </em> 4 + 2];  }} r /= (img.width <em> img.height);g /= (img.width </em> img.height);b /= (img.width * img.height); r = Math.round(r);g = Math.round(g);b = Math.round(b); // 最後的 CSS 屬性值var cssColor = &#39;rgb(&#39; + r + &#39;, &#39; + g + &#39;, &#39; + b + &#39;)&#39;;</p>
+<p>在上面這段程式碼中，我們使用 <br>			CanvasRenderingContext2D::drawImage() 將 <br>			img 的圖片畫到 Canvas 上面，再使用 <br>			CanvasRenderingContext2D::getImageData() 取得 Canvas 上面的每個像素的 R、G 、B、A 值（這次的目的並沒有使用到透明度（alpha）的 A 值）。我們再針對這些 R、G、B 值取算數平均，便可取得整張圖的平均顏色。</p>
+<h2>繞個路－－轉為 HSL 色彩空間</h2>
+<p>接下來， 因為 Firefox OS 的 UX 設計師要求算出來的顏色還要再調整其飽和度和明度，所以我們還要將取好平均的 R、G、B 值由 RGB 色彩空間轉為 HSL 色彩空間（使用<a href="https://en.wikipedia.org/wiki/HSL_and_HSV#Hue_and_chroma">維基百科提供之公式</a>）：</p>
+<p>// 公式所用的 r、g、b、s、l 值域為 0 到 1，<br>// 所以我們剛剛從 Canvas 取得的像素資料要先除以 255<br>r /= 255;<br>g /= 255;<br>b /= 255;</p>
+<p>var M = Math.max(r, g, b);<br>var m = Math.min(r, g, b);<br>var C = M - m;<br>var h, s, l;</p>
+<p>l = 0.5 <em> (M + m);<br>if (C === 0) {<br>  h = s = 0; // 色度是 0，是灰階照片。那就設飽和度為 0，而且任意設個色相是 0 度吧！<br>} else {<br>  switch (M) {<br>    case r:<br>      h = ((g - b) / C) % 6;<br>      break;<br>    case g:<br>      h = ((b - r) / C) + 2;<br>      break;<br>    case b:<br>      h = ((r - g) / C) + 4;<br>      break;<br>  }<br>  h </em>= 60;<br>  h = (h + 360) % 360;<br>  s = C / (1 - Math.abs(2 * l - 1));<br>}</p>
+<p>/<em> 在這邊，我們做一些 UX 要求的飽和度、明度調整。實際的調整內容就省略囉 </em>/</p>
+<p>// 如前所述，公式所用的 s、l 值域為 0 到 1，<br>// 但 CSS 屬性值域為 0% 到 100%，所以還要轉換一下。<br>h = Math.ceil(h);<br>s = Math.ceil(s <em> 100) + &#39;%&#39;;<br>l = Math.ceil(l </em> 100) + &#39;%&#39;;</p>
+<p>// 最後的 CSS 屬性值<br>var cssColor = &#39;hsl(&#39; + h + &#39;, &#39; + s + &#39;, &#39; + l + &#39;)&#39;;</p>
+<p>					1234567891011121314151617181920212223242526272829303132333435363738394041</p>
+<p>						// 公式所用的 r、g、b、s、l 值域為 0 到 1，// 所以我們剛剛從 Canvas 取得的像素資料要先除以 255r /= 255;g /= 255;b /= 255; var M = Math.max(r, g, b);var m = Math.min(r, g, b);var C = M - m;var h, s, l; l = 0.5 <em> (M + m);if (C === 0) {  h = s = 0; // 色度是 0，是灰階照片。那就設飽和度為 0，而且任意設個色相是 0 度吧！} else {  switch (M) {    case r:      h = ((g - b) / C) % 6;      break;    case g:      h = ((b - r) / C) + 2;      break;    case b:      h = ((r - g) / C) + 4;      break;  }  h </em>= 60;  h = (h + 360) % 360;  s = C / (1 - Math.abs(2 <em> l - 1));} /</em> 在這邊，我們做一些 UX 要求的飽和度、明度調整。實際的調整內容就省略囉 <em>/ // 如前所述，公式所用的 s、l 值域為 0 到 1，// 但 CSS 屬性值域為 0% 到 100%，所以還要轉換一下。h = Math.ceil(h);s = Math.ceil(s </em> 100) + &#39;%&#39;;l = Math.ceil(l * 100) + &#39;%&#39;; // 最後的 CSS 屬性值var cssColor = &#39;hsl(&#39; + h + &#39;, &#39; + s + &#39;, &#39; + l + &#39;)&#39;;</p>
+<p>由於 CSS 可以援使用 HSL 色彩空間指定色彩，所以將最後算好的顏色放到圖層的 CSS 時，不用再轉回 RGB 色彩空間囉！</p>
+<h2>在手機平台上改善效能，又不會太失真</h2>
+<p>實際上在 Firefox OS 手機實作取均色的演算法，由於現有行動裝置的運算效能較為受限，所以我們可以使用縮減取樣（downsampling），縮減畫上 Canvas 的圖案大小，並減少取出 Canvas 當中像素的數目，藉以降低運算時間。下面程式碼會將短邊縮成 100px 長（假設圖片的短邊長已經超過 100px了）：</p>
+<p>var SAMPLE_IMAGE_SIZE_BASE = 100;</p>
+<p>var sampleImageWidth;<br>var sampleImageHeight;</p>
+<p>if (img.height &gt; img.width) {<br>  sampleImageWidth =<br>    Math.floor(SAMPLE_IMAGE_SIZE_BASE <em> window.devicePixelRatio);<br>  sampleImageHeight =<br>    Math.floor(sampleImageWidth </em> (img.height / img.width));<br>} else {<br>  sampleImageHeight =<br>    Math.floor(SAMPLE_IMAGE_SIZE_BASE <em> window.devicePixelRatio);<br>  sampleImageWidth =<br>    Math.floor(sampleImageHeight </em> (img.width / img.height));<br>}<br>// 接下來我們都用sampleImageWidth 和 sampleImageHeight<br>// 來取代前面平均值演算當中的 img.width 和 img.height，<br>// 然後繼續前面的平均值演算</p>
+<p>					12345678910111213141516171819</p>
+<p>						var SAMPLE_IMAGE_SIZE_BASE = 100; var sampleImageWidth;var sampleImageHeight; if (img.height &gt; img.width) {  sampleImageWidth =    Math.floor(SAMPLE_IMAGE_SIZE_BASE <em> window.devicePixelRatio);  sampleImageHeight =    Math.floor(sampleImageWidth </em> (img.height / img.width));} else {  sampleImageHeight =    Math.floor(SAMPLE_IMAGE_SIZE_BASE <em> window.devicePixelRatio);  sampleImageWidth =    Math.floor(sampleImageHeight </em> (img.width / img.height));}// 接下來我們都用sampleImageWidth 和 sampleImageHeight// 來取代前面平均值演算當中的 img.width 和 img.height，// 然後繼續前面的平均值演算</p>
+<p>依據我們一開始取平均色的需求，我們並不用取非常精確的平均色數值；而 100px 是一個在「誤差值」和「增進效能」的取捨當中，一個不錯的數字。</p>
+<h2>結語及參考資料</h2>
+<p>或許有人想嘗試如果直接在 <br>			CanvasRenderingContext2D::drawImage() 設定 1px 的 <br>			dw 和 <br>			dh 參數，是否底層 Gecko 會幫我們直接畫一個「圖片顏色平均值」的像素？可惜不會。像是<a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/CenteredRedInBlue.png">這張 480×854 大的範例圖</a>，只有正中央長寬 6px 的一小塊是      #ff0000 紅色，其他都是      #0000ff 藍色，而 Gecko 在 1px 的 <br>			dw 跟 <br>			dh 參數之下，<br>			drawImage() 會畫出 1px 的      #ff0000 紅色，不符我們對平均色的要求。如果你有興趣了解 Gecko 在這方面的底層行為，可以參考<a href="https://dxr.mozilla.org/mozilla-central/source/gfx/2d/image_operations.cpp#224">ResizeFilter::ComputeFilters 原始碼</a>。</p>
+<p>想知道更多 Canvas 和 CanvasRenderingContext2D 物件的內容：請參考 MDN 上的 <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Canvas">Canvas 說明文件</a>，還有 <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Canvas">CanvasRenderingContext2D 說明文件</a>。關於 <a href="https://best-horoscope.com/">horscope</a> Leo promises interesting contacts, flirtation and a pleasant society for single people, and those looking for romantic adventures. Firefox OS 鎖定畫面的完整原始碼，請參考 GitHub 上面 B2G Gaia 專案的 <a href="https://github.com/mozilla-b2g/gaia/blob/master/apps/system/js/lockscreen.js">lockscreen.js</a>。</p>
+<p>另外，<a href="https://dev.w3.org/csswg/css-color/">CSS Color Module Level 4</a> 定義了像是 <a href="https://dev.w3.org/csswg/css-color/#api-HSLColor">HSLColor</a>、<a href="https://dev.w3.org/csswg/css-color/#api-RGBColor">RGBColor</a> 的介面，並可轉換至多種色彩空間，或許不久的將來，我們就不用自己用 JavaScript 寫這些轉換色彩空間的程式碼囉！</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20150512120520id_/https://tech.mozilla.com.tw/?p=5355">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

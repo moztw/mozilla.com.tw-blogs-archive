@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>超簡單！三步驟 build 好 Firefox OS！ | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-09/">2013 年 9 月</a><b>&raquo;</b><a href="../../posts/2786/">超簡單！三步驟 build 好 Firefox OS！</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-09-23" class="published"><span class="posted-month">9月</span><span class="posted-date">23</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">超簡單！三步驟 build 好 Firefox OS！</h1>
+            </header>
+            <div class="entry-content"><p>Firefox OS 的誕生早就不是新聞，但是你也許不知道 Firefox OS 早就貼心提供了平易近人的 build code 環境，以免各位在一開始徬徨無助的時候，就被奇怪的 build failed 給嚇跑了。</p>
+<p>沒錯只要跟著下面的三個步驟，就可以 build 好 Firefox OS 的 image 喔！</p>
+<p>不過，在開始之前要根據不同的作業系統做些<a href="https://developer.mozilla.org/en-US/docs/Mozilla/Firefox_OS/Firefox_OS_build_prerequisites?redirectlocale=en-US">準備</a>。</p>
+<p>$ git clone git://github.com/mozilla-b2g/B2G.git .<br>$ ./config.sh (device name)<br>$ ./build.sh</p>
+<p>					123</p>
+<p>						$ git clone git://github.com/mozilla-b2g/B2G.git .$ ./config.sh (device name)$ ./build.sh</p>
+<p>第一步驟的 git clone 是要將我們指定的 git repository 抓到我們的 local machine ，別擔心，這部分花不了多少時間。主要是一些 shell script 可以幫助接下來的步驟簡單的完成，以及一些 debug 相關的 tool。</p>
+<p>但是，到第二步驟的時候馬上就冒出了問號，要怎麼知道括號裡面的 device name 要填什麼呢？你的問題我們也都想到了，所以在決定之前，只要打 ./config.sh 就可以知道現在 support 的 device 有哪些囉</p>
+<p>Valid devices to configure are:</p>
+<ul><li>galaxy-s2</li><li>galaxy-nexus</li><li>nexus-4</li><li>nexus-s</li><li>nexus-s-4g</li><li>otoro</li><li>unagi</li><li>inari</li><li>keon</li><li>peak</li><li>leo</li><li>hamachi</li><li>helix</li><li>wasabi</li><li>tara</li><li>pandaboard</li><li>emulator</li><li>emulator-jb</li><li>emulator-x86</li><li>emulator-x86-jb</li></ul>
+<p>					123456789101112131415161718192021</p>
+<p>						Valid devices to configure are:- galaxy-s2- galaxy-nexus- nexus-4- nexus-s- nexus-s-4g- otoro- unagi- inari- keon- peak- leo- hamachi- helix- wasabi- tara- pandaboard- emulator- emulator-jb- emulator-x86- emulator-x86-jb</p>
+<p>這個表列出來現在我們支援的所有 device ，當然這個表會持續的增加，一段時間之後想要 update 的話，使用下面的 command 就可以更新現有的 B2G repository</p>
+<p>$ git fetch origin<br>$ git checkout origin/master</p>
+<p>					12</p>
+<p>						$ git fetch origin$ git checkout origin/master</p>
+<p>這邊我們拿一隻膾炙人口的 nexus-4 當做例子，並且透過指定 branch 的方式確保我們使用的是 master branch，所謂的 master 就是跟著全世界的腳步走在第一線的 code，所有的 history 或是新的 feature 都可以從這邊一探究竟。</p>
+<p>$ BRANCH=master ./config.sh nexus-4</p>
+<p>					1</p>
+<p>						$ BRANCH=master ./config.sh nexus-4</p>
+<p>這步驟其實需要一點時間，既然有點時間，剛好可以把 config.sh 打開來看看到底什麼事情要做那麼久。</p>
+<p>./repo init -u git://github.com/mozilla-b2g/b2g-manifest -b master -m nexus-4.xml<br>./repo sync</p>
+<p>					12</p>
+<p>						./repo init -u git://github.com/mozilla-b2g/b2g-manifest -b master -m nexus-4.xml./repo sync</p>
+<p>結果其實是在抓 code ！難怪需要一點時間，既然這樣就來看看到底 B2G 的 code 究竟是從哪來的呢？首先看到的是 remote 端到底有哪些 source, 這邊很清楚的定義了一個 aosp 以及兩個 mozilla 的 repository。<a href="https://git-repo.googlecode.com/git-history/v1.6.8.2/docs/manifest-format.txt">這裡</a>提供了關於 manifest 的詳細說明。</p>
+<p> &lt;remote fetch=&quot;https://android.googlesource.com/&quot; name=&quot;aosp&quot;/&gt;<br> &lt;remote fetch=&quot;git://github.com/mozilla-b2g/&quot; name=&quot;b2g&quot;/&gt;<br> &lt;remote fetch=&quot;git://github.com/mozilla/&quot; name=&quot;mozilla&quot;/&gt;</p>
+<p>					123</p>
+<p>						 &lt;remote fetch=&quot;https://android.googlesource.com/&quot; name=&quot;aosp&quot;/&gt; &lt;remote fetch=&quot;git://github.com/mozilla-b2g/&quot; name=&quot;b2g&quot;/&gt; &lt;remote fetch=&quot;git://github.com/mozilla/&quot; name=&quot;mozilla&quot;/&gt;</p>
+<p>接下來就看到了其實 manifest 裏面分成了三大部份，下面就節錄部份內容解釋</p>
+<ol><li>B2G 的 code，都是放在 github 上的，其中當然包含了遠近馳名的 Gecko 以及 Gaia。最酷的部份就是一段時間就會有好多 commit 跑出來，隨時有任何想法或是意見，都可以 feedback 給 Mozilla ！</li></ol>
+<p> &lt;!-- B2G specific things. --&gt;<br> &lt;project name=&quot;platform_build&quot; path=&quot;build&quot; remote=&quot;b2g&quot; revision=&quot;b2g-4.3_r2.1&quot;&gt;<br>    &lt;copyfile dest=&quot;Makefile&quot; src=&quot;core/root.mk&quot;/&gt;<br> &lt;/project&gt;<br> &lt;project name=&quot;mozilla-central&quot; path=&quot;gecko&quot; remote=&quot;mozilla&quot; revision=&quot;master&quot;/&gt;<br> &lt;project name=&quot;gaia&quot; path=&quot;gaia&quot; remote=&quot;b2g&quot; revision=&quot;master&quot;/&gt;<br> &lt;project name=&quot;gonk-misc&quot; path=&quot;gonk-misc&quot; remote=&quot;b2g&quot; revision=&quot;master&quot;/&gt;</p>
+<p>					1234567</p>
+<p>						 &lt;!-- B2G specific things. --&gt; &lt;project name=&quot;platform_build&quot; path=&quot;build&quot; remote=&quot;b2g&quot; revision=&quot;b2g-4.3_r2.1&quot;&gt;    &lt;copyfile dest=&quot;Makefile&quot; src=&quot;core/root.mk&quot;/&gt; &lt;/project&gt; &lt;project name=&quot;mozilla-central&quot; path=&quot;gecko&quot; remote=&quot;mozilla&quot; revision=&quot;master&quot;/&gt; &lt;project name=&quot;gaia&quot; path=&quot;gaia&quot; remote=&quot;b2g&quot; revision=&quot;master&quot;/&gt; &lt;project name=&quot;gonk-misc&quot; path=&quot;gonk-misc&quot; remote=&quot;b2g&quot; revision=&quot;master&quot;/&gt;</p>
+<ol><li>這部份都是從一些既有的 open source 像是 linux ， aosp ， arm 抓下來的。</li></ol>
+<p> &lt;!-- Stock Android things --&gt;<br> &lt;project groups=&quot;linux,arm&quot; name=&quot;platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7&quot; path=&quot;prebuilts/gcc/linux-x86/arm/arm-eabi-4.7&quot;/&gt;<br> &lt;project groups=&quot;linux,arm&quot; name=&quot;platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.7&quot; path=&quot;prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.7&quot;/&gt;<br> &lt;project name=&quot;platform/abi/cpp&quot; path=&quot;abi/cpp&quot;/&gt;<br> &lt;project name=&quot;platform/bionic&quot; path=&quot;bionic&quot;/&gt;</p>
+<p>					12345</p>
+<p>						 &lt;!-- Stock Android things --&gt; &lt;project groups=&quot;linux,arm&quot; name=&quot;platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7&quot; path=&quot;prebuilts/gcc/linux-x86/arm/arm-eabi-4.7&quot;/&gt; &lt;project groups=&quot;linux,arm&quot; name=&quot;platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.7&quot; path=&quot;prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.7&quot;/&gt; &lt;project name=&quot;platform/abi/cpp&quot; path=&quot;abi/cpp&quot;/&gt; &lt;project name=&quot;platform/bionic&quot; path=&quot;bionic&quot;/&gt;</p>
+<ol><li>最後的 Nexus 4 部份就是針對 device 本身的 component 以及設計上的差異，所需要的那些相對應的支援。所以這邊往往都會透露了許多的硬體規格喔！</li></ol>
+<p> &lt;!-- Nexus 4 specific things --&gt;<br> &lt;project name=&quot;device-mako&quot; path=&quot;device/lge/mako&quot; remote=&quot;b2g&quot; revision=&quot;b2g-4.3_r2.1&quot;/&gt;<br> &lt;project name=&quot;platform/hardware/broadcom/wlan&quot; path=&quot;hardware/broadcom/wlan&quot;/&gt;<br> &lt;project name=&quot;platform/hardware/qcom/audio&quot; path=&quot;hardware/qcom/audio&quot;/&gt;<br> &lt;project name=&quot;platform/hardware/qcom/msm8960&quot; path=&quot;hardware/qcom/msm8960&quot;/&gt;</p>
+<p>					12345</p>
+<p>						 &lt;!-- Nexus 4 specific things --&gt; &lt;project name=&quot;device-mako&quot; path=&quot;device/lge/mako&quot; remote=&quot;b2g&quot; revision=&quot;b2g-4.3_r2.1&quot;/&gt; &lt;project name=&quot;platform/hardware/broadcom/wlan&quot; path=&quot;hardware/broadcom/wlan&quot;/&gt; &lt;project name=&quot;platform/hardware/qcom/audio&quot; path=&quot;hardware/qcom/audio&quot;/&gt; &lt;project name=&quot;platform/hardware/qcom/msm8960&quot; path=&quot;hardware/qcom/msm8960&quot;/&gt;</p>
+<p>其實看完 manifest.xml 也知道了 Firefox OS 並沒有打算根據某些特定的 BSP 去做什麼架構上的改變，反而是要跟底層做出切割，也就是說不管底層怎麼換，Firefox OS 都是要可以跑的！</p>
+<p>第三步驟就是直接 ./build.sh 了，這邊基本上不會有什麼問題，畢竟全部的人都是從這些 open source 的地方去取得 source code 的，就放心的等待吧。</p>
+<p>image 檔 build 出來之後就可以準備變身 FireFox OS 囉！</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/08/IMAG0131.jpeg"><img src="../../assets/2786/wp-content/uploads/2013/08/IMAG0131.jpeg" alt="IMAG0131" loading="lazy"></a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20160328071925id_/https://tech.mozilla.com.tw/?p=2786">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

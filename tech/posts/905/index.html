@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>FireFox OS (B2G) 菜鳥看 code | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2012-10/">2012 年 10 月</a><b>&raquo;</b><a href="../../posts/905/">FireFox OS (B2G) 菜鳥看 code</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2012-10-16" class="published"><span class="posted-month">10月</span><span class="posted-date">16</span><span class="posted-year">2012</span></time></p>
+              <h1 class="entry-title">FireFox OS (B2G) 菜鳥看 code</h1>
+            </header>
+            <div class="entry-content"><p>過去的工作一直都是跟 broadband network 相關，整天看的都是網路封包 (network package)，檢查封包從 network device 收進來的 formate 對不對? 封包被改得對不對? Network package 走的路徑對不對? Forwarding 的效率夠不夠好? 封包有沒有掉了(掉包了!!!) ? 掉到哪裡去了? 很少有機會去看比較上層接近 user interface (userspace) 相關的東西，有的話大概也是跟網路管理有關的部分。</p>
+<p>轉過來做 Firefox OS，似乎是轉很大，跟之前的領域完全很不一樣，就好像是剛畢業的菜鳥到處找資料，想瞭解什麼是 Firefox OS，架構是長什麼樣子? 還好 Mozilla 有很多前輩寫了很多資料可以參考，很快的，我知道 Firefox OS 是由 Gaia, Gecko 以及Gonk 所組成，也知道</p>
+<p>Gaia: User interface of Firefox OS</p>
+<p>Gecko: The “application runtime” of Firefox OS</p>
+<p>Gecko: The lower-level “operating system” of Firefox OS</p>
+<p>但是我沒有找到文章介紹如何將 Gaia、Gecko 跟 Gonk 串起來，也就是我想知道整個程式執行 (code flow) 怎樣從 Gaia → Gecko → Gonk，甚至到 Kernel space?</p>
+<p>看來看去，Vibration (叫手機震動)，是一個還不錯的例子。</p>
+<p>它是很簡單,只是單方向由 Gaia 應用程式 (例如:鬧鈴、簡訊) 呼叫一個 DOM API 去叫手機震動，不需要其他回呼 (call back) 或是等待事件 (event)。</p>
+<p>我們就以鬧鈴程式裡的計時器為例，當倒數計時 timeout, 它會呼叫 DOM API，“navigator.vibrate()”， [200,200,200,200,200] 參數是震動的方式。</p>
+<p>gaia/apps/clock/js/timer.js</p>
+<p>end: function ti_end() {</p>
+<p>  //TODO: ring too</p>
+<p>  if (‘vibrate’ in navigator) {</p>
+<p>    navigator.vibrate([200, 200, 200, 200, 200]);</p>
+<p>  }</p>
+<p>  this.cancel();</p>
+<p>  this.chronoView.parentNode.classList.add(‘ended’);</p>
+<p>},</p>
+<p>DOM API “navigator.vibrate” 是被定義在 IDL(Interface Description Language) file, “nsIDOMNavigator.idl”</p>
+<p>gecko/dom/interfaces/base/nsIDOMNavigator.idl</p>
+<p>interface nsIDOMNavigator : nsISupports</p>
+<p>{</p>
+<p>   …</p>
+<p>   [implicit_jscontext]</p>
+<p>   void vibrate(in jsval aPattern);</p>
+<p>   …</p>
+<p>}</p>
+<p>在程式編譯時，會根據 “nsIDOMNavigator.idl” 產生 header file</p>
+<p>“objdir-gecko/dom/interfaces/base/_xpidlgen/nsIDOMNavigator.h”，裡面會定義</p>
+<p>NS_IMETHODIMP nsDOMNavigator::Vibrate(const JS::Value &amp; aPattern, JSContext* cx)</p>
+<p>注意! 這個地方都有 API 命名的轉換，把第一個小寫字母換成大寫，vibrate → Vibrate。</p>
+<p>接著會呼叫</p>
+<p>gecko/dom/base/Navigator.cpp</p>
+<p>NS_IMETHODIMP</p>
+<p>Navigator::Vibrate(const jsval&amp; aPattern, JSContext* cx)</p>
+<p>{</p>
+<p>   …</p>
+<p>   hal::Vibrate(pattern, domWindow);</p>
+<p>   return NS_OK;</p>
+<p>}</p>
+<p>hal:Vibrate() 會呼叫到 Gecko的 hal 層</p>
+<p>gecko/hal/Hal.cpp</p>
+<p>void</p>
+<p>Vibrate(const nsTArray&lt;uint32_t&gt;&amp; pattern, const WindowIdentifier &amp;id)</p>
+<p>{</p>
+<p>  …</p>
+<p>  hal_impl::Vibrate(pattern, WindowIdentifier());</p>
+<p>  …</p>
+<p>}</p>
+<p>然後接著呼叫 hal 層的 implementation。</p>
+<p>gecko/hal/gonk/GonkHal.cpp</p>
+<p>void</p>
+<p>Vibrate(const nsTArray&lt;uint32_t&gt; &amp;pattern, const hal::WindowIdentifier &amp;)</p>
+<p>{</p>
+<p>  MOZ_ASSERT(NS_IsMainThread());</p>
+<p>  if (VibratorRunnable::ShuttingDown()) {</p>
+<p>    return;</p>
+<p>  }</p>
+<p>  EnsureVibratorThreadInitialized();</p>
+<p>  sVibratorRunnable-&gt;Vibrate(pattern);</p>
+<p>}</p>
+<p>創建 vibrator 執行緒</p>
+<p>void</p>
+<p>EnsureVibratorThreadInitialized()</p>
+<p>{</p>
+<p>  if (sVibratorRunnable) {</p>
+<p>    return;</p>
+<p>  }</p>
+<p>  sVibratorRunnable = new VibratorRunnable();</p>
+<p>  nsCOMPtr&lt;nsIThread&gt; thread;</p>
+<p>  NS_NewThread(getter_AddRefs(thread), sVibratorRunnable);</p>
+<p>}</p>
+<p>丟進 vibrator 執行緒</p>
+<p>void</p>
+<p>VibratorRunnable::Vibrate(const nsTArray&lt;uint32_t&gt; &amp;pattern)</p>
+<p>{</p>
+<p>  MonitorAutoLock lock(mMonitor);</p>
+<p>  mPattern = pattern;</p>
+<p>  mIndex = 0;</p>
+<p>  mMonitor.Notify();</p>
+<p>}</p>
+<p>在執行緒裡執行 vibrator_on()，讓馬達震動</p>
+<p>NS_IMETHODIMP</p>
+<p>VibratorRunnable::Run()</p>
+<p>{</p>
+<p>  …</p>
+<p>  vibrator_on(duration);</p>
+<p>  …</p>
+<p>  return NS_OK;</p>
+<p>}</p>
+<p>這時候 Gecko 部分已經完成，程式要到 Android HAL 層</p>
+<p>hardware/libhardware_legacy/vibrator/vibrator.cpp</p>
+<p>int vibrator_on(int timeout_ms)</p>
+<p>{</p>
+<p>  /<em> constant on, up to maximum allowed time </em>/</p>
+<p>  return sendit(timeout_ms);</p>
+<p>}</p>
+<p>這裡的 sendit()，會將馬達開啓的時間長度告訴 Kernel driver.</p>
+<p>static int sendit(int timeout_ms)</p>
+<p>{</p>
+<p>  int nwr, ret, fd;</p>
+<p>  char value[20];</p>
+<p>  …</p>
+<p>  fd = open(THE_DEVICE, O_RDWR);</p>
+<p>  if(fd &lt; 0)</p>
+<p>    return errno;</p>
+<p>  nwr = sprintf(value, “%d\n&quot;, timeout_ms);</p>
+<p>  ret = write(fd, value, nwr);</p>
+<p>  close(fd);</p>
+<p>  return (ret == nwr) ? 0 : -1;</p>
+<p>}</p>
+<p>到這裡為止，手機震動的流程已經完成。</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200919190534id_/https://tech.mozilla.com.tw/?p=905">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

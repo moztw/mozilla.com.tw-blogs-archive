@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>從 UI 元件上測試你的 App | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-09/">2014 年 9 月</a><b>&raquo;</b><a href="../../posts/4918/">從 UI 元件上測試你的 App</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-09-10" class="published"><span class="posted-month">9月</span><span class="posted-date">10</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">從 UI 元件上測試你的 App</h1>
+            </header>
+            <div class="entry-content"><p><a href="https://developer.mozilla.org/zh-TW/Firefox_OS/Platform/Automated_testing/gaia-ui-tests">謀智台客之前的文章</a>提到了有關 Gaia-ui-test ，在 Mozilla 工作團隊的努力下，這套工具已經越來越健全，足以寫出貼近使用者體驗的測試了。 對於開發者來說，更重要的是如何使用它來幫助自己開發的程式。下面以 Contact App 的例子，如何透過 Gaia-ui-test 的架構來測試 App 。所有的範例都可以從 <a href="https://github.com/mozilla-b2g/gaia/tree/master/tests/python/gaia-ui-tests/gaiatest">Github</a> 上查看原始碼。</p>
+<h2>安裝 client</h2>
+<p>Gaia ui Test 使用之前必須確認手機有安裝 Marionette Server ，建置時選用開發者模式即有內建。由於整個專案以及相依的套件都存到 pypi 上面，一個指令就可以完成安裝。目前<a href="https://pypi.python.org/pypi?%3Aaction=search&amp;term=gaia-ui-test&amp;submit=search">Server 上的版本</a> ，可以依照手機上的 Firefox OS 版本來安裝。最新版本可透過</p>
+<p>easy_install gaia-ui-test</p>
+<p>					1</p>
+<p>						easy_install gaia-ui-test</p>
+<h2>使用 B2G Desktop build</h2>
+<p><a href="https://developer.mozilla.org/zh-TW/Firefox_OS/Using_the_B2G_desktop_client">這篇</a>是 MDN 上有關 B2G Desktop 的中文介紹。用 B2G Desktop 來執行 gaia-ui-test 相當簡單：</p>
+<p>gaiatest --binary={Firefox os 執行檔} {想執行的 test case/manifest}</p>
+<p>					1</p>
+<p>						gaiatest --binary={Firefox os 執行檔} {想執行的 test case/manifest}</p>
+<p>測項的正確性與程式本身重要性不分軒輊，在實際到手機上進行測試之前，必須反覆確保在 Desktop 版本執行成功。</p>
+<h2>跑在 Firefox Phone 之上</h2>
+<p>執行在手機的差別只在於必須把手機上的 port 導到本機端，再用本機端的 test runner 傳送指令並控制行為。可透過下面指令：</p>
+<p>adb forward tcp:2828 tcp:2828</p>
+<p>					1</p>
+<p>						adb forward tcp:2828 tcp:2828</p>
+<p>port 2828 可以選用不同的號碼。執行只要下</p>
+<p>gaiatest --address=localhost:2828 --testvars={測試設置項目} {想執行的 test case/manifest}</p>
+<p>					1</p>
+<p>						gaiatest --address=localhost:2828 --testvars={測試設置項目} {想執行的 test case/manifest}</p>
+<h2>測試 Contact App</h2>
+<p>下面以 Contact App 做例子介紹測項的撰寫。 Contact App 在 2.0 版本重新設計視覺的部分，但由於主要的 html element 變動不大，原本的測項可以沿用。測項之中有些是 python ，也可以用 javascript ，使用方法大同小異。 先來看看 test_add_new_contact.py 裡的：</p>
+<p>from gaiatest import GaiaTestCase</p>
+<p>from gaiatest.mocks.mock_contact import MockContact<br>from gaiatest.apps.contacts.app import Contacts</p>
+<p>class TestContacts(GaiaTestCase):</p>
+<p>def test_add_new_contact(self):<br>&quot;&quot;&quot;https://moztrap.mozilla.org/manage/case/1309/&quot;&quot;&quot;</p>
+<p>    self.contact = MockContact()</p>
+<p>    contacts_app = Contacts(self.marionette)<br>    contacts_app.launch()</p>
+<p>    new_contact_form = contacts_app.tap_new_contact()</p>
+<p>    # Enter data into fields<br>    new_contact_form.type_given_name(self.contact[&#39;givenName&#39;])<br>    new_contact_form.type_family_name(self.contact[&#39;familyName&#39;])</p>
+<p>    new_contact_form.type_phone(self.contact[&#39;tel&#39;][&#39;value&#39;])<br>    new_contact_form.type_email(self.contact[&#39;email&#39;][&#39;value&#39;])<br>    new_contact_form.type_street(self.contact[&#39;adr&#39;][&#39;streetAddress&#39;])<br>    new_contact_form.type_zip_code(self.contact[&#39;adr&#39;][&#39;postalCode&#39;])<br>    new_contact_form.type_city(self.contact[&#39;adr&#39;][&#39;locality&#39;])<br>    new_contact_form.type_country(self.contact[&#39;adr&#39;][&#39;countryName&#39;])<br>    new_contact_form.type_comment(self.contact[&#39;note&#39;])</p>
+<p>    new_contact_form.tap_done()<br>    self.wait_for_condition(lambda m: len(contacts_app.contacts) == 1)</p>
+<p>    self.assertEqual(contacts_app.contacts[0].name, self.contact[&#39;givenName&#39;])</p>
+<p>					123456789101112131415161718192021222324252627282930313233</p>
+<p>						from gaiatest import GaiaTestCase from gaiatest.mocks.mock_contact import MockContactfrom gaiatest.apps.contacts.app import Contacts class TestContacts(GaiaTestCase): def test_add_new_contact(self):&quot;&quot;&quot;https://moztrap.mozilla.org/manage/case/1309/&quot;&quot;&quot;     self.contact = MockContact()     contacts_app = Contacts(self.marionette)    contacts_app.launch()     new_contact_form = contacts_app.tap_new_contact()     # Enter data into fields    new_contact_form.type_given_name(self.contact[&#39;givenName&#39;])    new_contact_form.type_family_name(self.contact[&#39;familyName&#39;])     new_contact_form.type_phone(self.contact[&#39;tel&#39;][&#39;value&#39;])    new_contact_form.type_email(self.contact[&#39;email&#39;][&#39;value&#39;])    new_contact_form.type_street(self.contact[&#39;adr&#39;][&#39;streetAddress&#39;])    new_contact_form.type_zip_code(self.contact[&#39;adr&#39;][&#39;postalCode&#39;])    new_contact_form.type_city(self.contact[&#39;adr&#39;][&#39;locality&#39;])    new_contact_form.type_country(self.contact[&#39;adr&#39;][&#39;countryName&#39;])    new_contact_form.type_comment(self.contact[&#39;note&#39;])     new_contact_form.tap_done()    self.wait_for_condition(lambda m: len(contacts_app.contacts) == 1)     self.assertEqual(contacts_app.contacts[0].name, self.contact[&#39;givenName&#39;])</p>
+<p>測試檔案需要有一個主要 class 繼承自 GaiaTestCase ，所有 member function 帶 test_ 字首皆會被當作一個測項。MockContact 裡面存放測試資料，至於如何使用 Contact App 就透過 import 的 Contact ，操作它的 member function 來達成。13行以下，先創建 Contact ，透過 launch() 來啟動 contact ， tap_new_contact() 讓程式按下建立新聯絡人按鈕。接下來在每一個聯絡人欄位裡填入資料，然後按下 done 完成。 測試步驟結束之後，先用 wait_for_condition 確定聯絡人已經可以看得見，再透過 assertEqual 比對 givenName 跟預設的內容是否相同。根據測試的複雜度可能需要多個檢查，任何一個檢查失敗都會讓測試終止並且被標記為失敗。 那關於 App 的操作，難道沒有使用說明書嗎？當然有，先參考： https://github.com/mozilla-b2g/gaia/blob/master/tests/python/gaia-ui-tests/gaiatest/apps/contacts/app.py</p>
+<p>_new_contact_button_locator = (By.ID, &#39;add-contact-button&#39;)<br>_settings_button_locator = (By.ID, &#39;settings-button&#39;)<br>_favorites_list_locator = (By.ID, &#39;contacts-list-favorites&#39;)<br>_select_all_wrapper_locator = (By.ID, &#39;select-all-wrapper&#39;)<br>_select_all_button_locator = (By.CSS_SELECTOR, &#39;button[data-l10n-id=&quot;selectAll&quot;]&#39;)<br>_export_button_locator = (By.ID, &#39;select-action&#39;)<br>_status_message_locator = (By.ID, &#39;statusMsg&#39;)</p>
+<p>					1234567</p>
+<p>						_new_contact_button_locator = (By.ID, &#39;add-contact-button&#39;)_settings_button_locator = (By.ID, &#39;settings-button&#39;)_favorites_list_locator = (By.ID, &#39;contacts-list-favorites&#39;)_select_all_wrapper_locator = (By.ID, &#39;select-all-wrapper&#39;)_select_all_button_locator = (By.CSS_SELECTOR, &#39;button[data-l10n-id=&quot;selectAll&quot;]&#39;)_export_button_locator = (By.ID, &#39;select-action&#39;)_status_message_locator = (By.ID, &#39;statusMsg&#39;)</p>
+<p>這裡定義了操作元件的『位置』。 Marionette client 定義了幾種可以搜尋位置的方式，By.ID ， By.CLASS_NAME ，或者是 By.CSS_SELECTOR ，可以參考 <a href="https://dxr.mozilla.org/mozilla-central/source/testing/marionette/client/marionette/by.py">這裡</a>。</p>
+<p>def tap_new_contact(self):<br>    self.marionette.find_element(*self._new_contact_button_locator).tap()<br>    from gaiatest.apps.contacts.regions.contact_form import NewContact<br>    new_contact = NewContact(self.marionette)<br>    new_contact.wait_for_new_contact_form_to_load()<br>    return new_contact</p>
+<p>					123456</p>
+<p>						def tap_new_contact(self):    self.marionette.find_element(*self._new_contact_button_locator).tap()    from gaiatest.apps.contacts.regions.contact_form import NewContact    new_contact = NewContact(self.marionette)    new_contact.wait_for_new_contact_form_to_load()    return new_contact</p>
+<p>這個函式定義如何找到新增聯絡人按鍵並且使用。 附上實際執行的影片。 x</p>
+<h2>總結</h2>
+<ul><li>在 Firefox OS 上做測試最好的選擇是透過 Gaia-ui-test，有整合且有效率的方式使用鍵盤與一些系統功能。 * 當測試一個新的 App 時，例如文中提到的 Contact App ，可以先構築一個 Test App Module 以定義各種功能，再從使用者觀點來進行測項的撰寫。類似的整合性測試可以幫助開發者反覆確認使用者行為以及功能改變所帶來的衝擊。</li></ul>
+<h2>想法?</h2>
+<p>測試的困難或者意見歡迎丟到 <a href="mailto:pyang@mozilla.com">pyang@mozilla.com</a> ，或者在 Mozilla irc 上面找到 pyang</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20181101000827id_/https://tech.mozilla.com.tw/?p=4918">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

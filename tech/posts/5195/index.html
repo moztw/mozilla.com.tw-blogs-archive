@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>有 Mercurial Queue 的感覺真好！從 nothing 到 checkin-needed | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-12/">2014 年 12 月</a><b>&raquo;</b><a href="../../posts/5195/">有 Mercurial Queue 的感覺真好！從 nothing 到 checkin-needed</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-12-29" class="published"><span class="posted-month">12月</span><span class="posted-date">29</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">有 Mercurial Queue 的感覺真好！從 nothing 到 checkin-needed</h1>
+            </header>
+            <div class="entry-content"><p>Mercurial(hg) 是一款 mozilla 內部使用的版本控制系統，而 Mercurial Queue(MQ) 則是一個使用 Mercurial 時常用的套件，讓 up-stream 和 down-stream 的管理相處的和樂融融。雖然已經有非常多文件可供參閱[1][2][3][4]，但是一個真實案例範例勝過萬卷規格。我們來利用朱尼爾小明的一天來看看 Mercurial Queue 是怎麼輔助開發的（以下故事純屬虛構，僅為示範 Mercurial Queue 而編造，如有雷同，純屬巧合）[5]：</p>
+<h2>使用 MQ 的 第一個 patch</h2>
+<p>又到了令人振奮的清晨，今天找到了一個有趣的 bug3939889[6]，這個 bug 是要把網頁裡的文字翻譯成唐詩，對於有文學素養的朱尼爾小明是再有吸引力不過了，沒有第二句話就先去 bugzilla 認養下來，然後在 local repository 弄一個新的 queue[7] ：</p>
+<p>$ hg qq(ueue) -c bug3939889-tang-poem-translator</p>
+<p>					1</p>
+<p>						$ hg qq(ueue) -c bug3939889-tang-poem-translator</p>
+<p>可以用這個指令來看一下剛剛的指令是否生效、以及現在手邊的 queue 有哪些：</p>
+<p>$ hg qq<br>bug3939889-tang-poem-translator (active)<br>patches</p>
+<p>					123</p>
+<p>						$ hg qqbug3939889-tang-poem-translator (active)patches</p>
+<p>很好，可以開始寫 patch 了！要怎麼把網頁的內容翻譯成唐詩呢？首先要把需要翻譯的文字找出來，於是我們新增一個patch：</p>
+<p>$ hg qnew context-parser -m &quot;bug3939889 - Part1: context parser&quot;</p>
+<p>					1</p>
+<p>						$ hg qnew context-parser -m &quot;bug3939889 - Part1: context parser&quot;</p>
+<p>來看一下目前 patch queue 裡面的狀況：</p>
+<p>$ hg qser(ies) -v -s<br>0 A context-parser: bug3939889 - Part1: context parser</p>
+<p>					12</p>
+<p>						$ hg qser(ies) -v -s0 A context-parser: bug3939889 - Part1: context parser</p>
+<p>非常好，新增成功了[8]，開頭的 0 代表第 0 個 patch，A 代表這個 patch 是 applied 的狀態，在 patch 後面的說明是在 &lt;code&gt;qnew&lt;/code&gt; 時所設定的[9]。目前這個 context-parser 還是一個空的patch，存放在 .hg 資料夾下：</p>
+<p>$ cat .hg/patches-bug3939889-tang-poem-translator/context-parser </p>
+<h1>HG changeset patch</h1>
+<h1>Parent 0000000000000000000000000000000000000000</h1>
+<h1>User 朱尼爾 &lt;junior@example.com&gt;</h1>
+<p>bug3939889 - Part1: context parser</p>
+<p>					12345</p>
+<p>						$ cat .hg/patches-bug3939889-tang-poem-translator/context-parser # HG changeset patch# Parent 0000000000000000000000000000000000000000# User 朱尼爾 &lt;junior@example.com&gt;bug3939889 - Part1: context parser</p>
+<p>經過了一早的努力，總算把這部分完成了。目前的改動都還只是在 working directory 下， patch 還是空的，可以這樣來檢視這個事實[10]：</p>
+<p>$ hg diff<br>diff --git a/ContextParser.h b/ContextParser.h<br>new file mode 100644<br>--- /dev/null<br> b/ContextParser.h<br>@@ -0,0 1,999 @@<br> #ifndef mozilla_ContextParser_h<br> #define mozilla_ContextParser_h</p>
+<p> /**</p>
+<ul><li>ContextParser is used to parse context in order to facilitate translation.</li><li>...</li></ul>
+<p>$ hg qshow</p>
+<h1>HG changeset patch</h1>
+<h1>Parent 0000000000000000000000000000000000000000</h1>
+<h1>User 朱尼爾 &lt;junior@example.com&gt;</h1>
+<p>bug3939889 - Part1: context parser</p>
+<p>					123456789101112131415161718</p>
+<p>						$ hg diffdiff --git a/ContextParser.h b/ContextParser.hnew file mode 100644--- /dev/null b/ContextParser.h@@ -0,0 1,999 @@ #ifndef mozilla_ContextParser_h #define mozilla_ContextParser_h  /*<em> </em> ContextParser is used to parse context in order to facilitate translation. * ... $ hg qshow# HG changeset patch# Parent 0000000000000000000000000000000000000000# User 朱尼爾 &lt;junior@example.com&gt;bug3939889 - Part1: context parser</p>
+<p>hg qshow 可以用來看最新 patch 的內容，現在還是空的。我們只要利用 hg qref(resh) 這個指令，就可以把 working directory 下的修改儲存到 patch 中。</p>
+<p>$ hg qref<br>$ hg diff<br>[ nothing ]<br>$ hg qshow</p>
+<h1>HG changeset patch</h1>
+<h1>Parent 0000000000000000000000000000000000000000</h1>
+<h1>User 朱尼爾 &lt;junior@example.com&gt;</h1>
+<p>bug3939889 - Part1: context parser</p>
+<p>diff --git a/ContextParser.h b/ContextParser.h<br>new file mode 100644<br>--- /dev/null<br> b/ContextParser.h<br>@@ -0,0 1,999 @@<br> #ifndef mozilla_ContextParser_h<br> #define mozilla_ContextParser_h</p>
+<p> /**</p>
+<ul><li>ContextParser is used to parse context in order to facilitate translation.</li><li>...</li></ul>
+<p>					1234567891011121314151617181920</p>
+<p>						$ hg qref$ hg diff[ nothing ]$ hg qshow# HG changeset patch# Parent 0000000000000000000000000000000000000000# User 朱尼爾 &lt;junior@example.com&gt;bug3939889 - Part1: context parser diff --git a/ContextParser.h b/ContextParser.hnew file mode 100644--- /dev/null b/ContextParser.h@@ -0,0 1,999 @@ #ifndef mozilla_ContextParser_h #define mozilla_ContextParser_h  /*<em> </em> ContextParser is used to parse context in order to facilitate translation. * ...</p>
+<p>在這裡我們可以觀察一下 hg qref 的效果：我們發現 hg diff 是空的，根據 hg qshow 的結果我們知道修改已經透過 hg qref 指令移至 patch 裡了。</p>
+<p>一般我們會一邊寫，寫到一個段落確定沒問題就用 hg qref 把修改存到 patch 裡。萬一修改的結果並不是想要的，就可以用 hg revert FILE_PATH 將某個檔案未儲存在 patch 裡的修改還原，或是使用hg revert --all 把未儲存在 patch 裡的所有修改全部還原。如果想要再看看沒有這個 patch 跑起來的狀況，也可以隨時用 hg qpop 把 patch 拉掉，測完以後再 hg qpush 回來，是不是個老嫗能解又方便來著？</p>
+<h2>利用 queue 的操作，輕鬆玩轉 patch</h2>
+<p>qpush 和 qpop 是 MQ 中單一個 queue 內的操作，他們的作用就跟名字一樣： qpush 是 apply 下一個 unapplied 的 patch ，而  qpop  是 pop 當前的 patch ，使其變成 unapplied。利用這兩個操作，我們可以很容易的切換到不同的階段來觀察。例如：</p>
+<p>$ hg qser // 目前 queue 中有三個 patch，都已經是 applied 的狀態<br>0 A part1: <br>1 A part2: <br>2 A part3: <br>$ hg qpop // 把當前的 patch(part3) 造成的更動先暫時拿掉<br>popping part3<br>now at: part2<br>$ hg qser<br>0 A part1: <br>1 A part2: <br>2 U part3: <br>$ hg qpop <br>popping part2<br>now at: part1<br>$ hg qser<br>0 A part1: <br>1 U part2: <br>2 U part3: <br>$ hg qpush // apply 下一個 patch<br>applying part2<br>now at: part2<br>$ hg qser<br>0 A part1: <br>1 A part2: <br>2 U part3:</p>
+<p>					12345678910111213141516171819202122232425</p>
+<p>						$ hg qser // 目前 queue 中有三個 patch，都已經是 applied 的狀態0 A part1: 1 A part2: 2 A part3: $ hg qpop // 把當前的 patch(part3) 造成的更動先暫時拿掉popping part3now at: part2$ hg qser0 A part1: 1 A part2: 2 U part3: $ hg qpop popping part2now at: part1$ hg qser0 A part1: 1 U part2: 2 U part3: $ hg qpush // apply 下一個 patchapplying part2now at: part2$ hg qser0 A part1: 1 A part2: 2 U part3:</p>
+<p>讓我們回到小明的一天，當小明寫完 Part1 的 patch 之後，通常會做以下幾件事：</p>
+<ol><li>將 patch 丟到 try server 跑自動測試</li></ol>
+<p>一般我會為了 try 再新增一個空的 patch，再 push 到 try server ：</p>
+<p>$ hg qnew try -m TRY_SYNTAX<br>$ hg push -f -rtip TRY_SERVER_ADDRESS</p>
+<p>					12</p>
+<p>						$ hg qnew try -m TRY_SYNTAX$ hg push -f -rtip TRY_SERVER_ADDRESS</p>
+<ol><li>將 patch 上傳至 bugzilla 找 reviewer 審核</li></ol>
+<p>也就是把 .hg/patches-bug3939889-tang-poem-translator/context-parser  上傳至 bugzilla 並設定適合的 flag ，詳情請參閱[11]。</p>
+<ol><li>繼續寫下一個 patch</li></ol>
+<p>畢竟 reviewer 幾乎都很忙，有時候一等就是一個月，所以趕快前進吧！</p>
+<p>現在我們把需要翻譯的文字找出來了，接下來要把文字翻譯成唐詩貼回去，所以我們再新增一個 patch ：</p>
+<p>$ hg qnew plaintext-to-poem -m &quot;Part2: Plain test to poem translation&quot;</p>
+<p>					1</p>
+<p>						$ hg qnew plaintext-to-poem -m &quot;Part2: Plain test to poem translation&quot;</p>
+<p>再確認一下現在 queue 裡 patch 的狀況：</p>
+<p>$ hg qser<br>0 A context-parser: bug3939889 - Part1: context parser<br>1 A try: TRY_SYNTAX<br>2 A plaintext-to-poem - Part2: Plain test to poem translation</p>
+<p>					1234</p>
+<p>						$ hg qser0 A context-parser: bug3939889 - Part1: context parser1 A try: TRY_SYNTAX2 A plaintext-to-poem - Part2: Plain test to poem translation</p>
+<p>糟了，有一個 try patch 夾在中間，理想上這個 patch 應該疊在 Part2 patch 上的。有很多種方法可以做到這件事，這裡選用一個簡單的方法：</p>
+<p>$ hg qpop context-parser <br>popping plaintext-to-poem<br>popping try<br>now &lt;a href=&quot;http://www.theinnocents.org/&quot;&gt;オンライン カジノ&lt;/a&gt;  at: context-parser<br>$ hg qser<br>0 A context-parser: bug3939889 - Part1: context parser<br>1 U try: TRY_SYNTAX<br>2 U plaintext-to-poem: Part2: Plain test to poem translation<br>$ hg qpush --move plaintext-to-poem <br>applying plaintext-to-poem<br>now at: plaintext-to-poem<br>$ hg qser<br>0 A context-parser: bug3939889 - Part1: context parser<br>1 A plaintext-to-poem: Part2: Plain test to poem translation<br>2 U try: TRY_SYNTAX</p>
+<p>					123456789101112131415</p>
+<p>						$ hg qpop context-parser popping plaintext-to-poempopping trynow &lt;a href=&quot;http://www.theinnocents.org/&quot;&gt;オンライン カジノ&lt;/a&gt;  at: context-parser$ hg qser0 A context-parser: bug3939889 - Part1: context parser1 U try: TRY_SYNTAX2 U plaintext-to-poem: Part2: Plain test to poem translation$ hg qpush --move plaintext-to-poem applying plaintext-to-poemnow at: plaintext-to-poem$ hg qser0 A context-parser: bug3939889 - Part1: context parser1 A plaintext-to-poem: Part2: Plain test to poem translation2 U try: TRY_SYNTAX</p>
+<p>hg qpush --move 可以將一個還沒 apply 過的 patch 移到 qtip 的下一個並 apply，示意圖如下：</p>
+<p><img src="https://docs.google.com/drawings/d/11QV-f9vpOS6Wqul26SGQiOxGrW-TcCc57wwTh2JVUFk/pub?w=738&amp;h=274" alt="hg qpush - -move 示意圖" loading="lazy"><br>hg qpush –move 示意圖</p>
+<p>到了中午，這個 patch 只完成了一半。吃飯的時候，突然發現 Part1 被 review- 了，怎麼會這樣呢？原來是 Part1 中測試的 code quality 沒有達到 mozillian 的水準，希望能夠再改進一點。好在有 mq ，這時我只要  hg qpop ，就可以回到之前的狀況修改 Part1 的 patch。改完以後重新送 review ，然後再  hg qpush  就可以繼續 Part2 的工作了。不過如果這時候的 hg qpush 出現 conflict ，就必須要手動 merge 。</p>
+<p>到了下午茶的時光，總算初步把這個 patch 完成了，用$ hg diff -r qparent:qtip 檢視一下整個 bug 的更動，就可以上 bugzilla 請求 review 了。</p>
+<h2>在 queue 與 queue 之間穿梭，管理 bug 好簡單</h2>
+<p>在等待的同時，又看到一個有趣的 bug 28825252，有了 mq 想要多 maintain 一個 bug 並不困難，只要再增加一個 queue 就可以了：</p>
+<p>$ hg qpop -a // 建立新的 queue 必須先讓當前的 queue 變成 empty，所以先 pop all<br>popping try<br>popping plaintext-to-poem<br>popping context-parser<br>patch queue now empty<br>$ hg qq -c bug28825252<br>$ hg qq // 列出所有的 queue<br>bug28825252 (active)<br>bug3939889-tang-poem-translator<br>patches</p>
+<p>					12345678910</p>
+<p>						$ hg qpop -a // 建立新的 queue 必須先讓當前的 queue 變成 empty，所以先 pop allpopping trypopping plaintext-to-poempopping context-parserpatch queue now empty$ hg qq -c bug28825252$ hg qq // 列出所有的 queuebug28825252 (active)bug3939889-tang-poem-translatorpatches</p>
+<p>一個 bug 由一個 queue 來 maintain ，是不是很簡單明暸又清楚呢？</p>
+<p>到了傍晚，reviewer 說只要再 rebase 到最新的 code 就可以 review 了，有了 mq 這點也很容易。只要切回本來的 queue，利用 rebase 套件就可以輕鬆達成了：</p>
+<p>$ hg qq bug3939889-tang-poem-translator // 切換到本來的 queue<br>$ hg qpush -a<br>$ hg pull --rebase</p>
+<p>					123</p>
+<p>						$ hg qq bug3939889-tang-poem-translator // 切換到本來的 queue$ hg qpush -a$ hg pull --rebase</p>
+<p>最後只要利用  hg qref -e  把 reviewer 的名字掛上後上傳，就可以到 bugzilla 標上 checkin-needed 了，是不是很容易呢？</p>
+<p>相信我們看小明的一天以後，一定對 Mercurial Queue 有一定的了解了。關於 Mercurial Queue ，還有很多實用的技巧，我們下集待續。</p>
+<p>[1] Mercurial | MDN, <a href="https://developer.mozilla.org/en-US/docs/Mercurial">https://developer.mozilla.org/en-US/docs/Mercurial</a></p>
+<p>[2] Using Mercurial, <a href="https://developer.mozilla.org/en/docs/Mercurial_FAQ">https://developer.mozilla.org/en/docs/Mercurial_FAQ</a></p>
+<p>[3] Mercurial Queues, <a href="https://developer.mozilla.org/en-US/docs/Mercurial_Queues">https://developer.mozilla.org/en-US/docs/Mercurial_Queues</a></p>
+<p>[4] Mercurial: The Definitive Guide, <a href="https://hgbook.red-bean.com/">http://hgbook.red-bean.com/</a></p>
+<p>[5] 預設 Mecurial 及 Mecurial Queue 的環境已經設定好了，設定的部分請參照[3]。另外「一天」僅供參考，一個 bug 可能很快也可能很慢，端看 reviewer bug的難度及個人的熟練度。</p>
+<p>[6] 這個 bug number 是虛構的，截至2014年12月為止 <a href="https://bugzilla.mozilla.org/">mozilla bugzilla</a> 內 bug 的數量約為111萬個。</p>
+<p>[7] 其實我一直不太明白，學理上應該是一個一個的 stack ，但是卻叫 Mercurial Queue 。</p>
+<p>[8] 如果不想每次都打參數 -v -s，可以修改 ~/.hgrc：</p>
+<p>[default]<br>qseries = -v -s</p>
+<p>					12</p>
+<p>						[default]qseries = -v -s</p>
+<p>[9] 如果想修正也可以使用 hg qref -m “new message&quot;</p>
+<p>[10] 如果 qshow 沒有作用的時候，請參照 <a href="https://bitbucket.org/sfink/mqext">https://bitbucket.org/sfink/mqext</a></p>
+<p>[11] <a href="../../posts/4116/">我也想成為 mozillian！教你如何貢獻到 mozilla code base</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox/">Firefox</a></span><span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200919181348id_/https://tech.mozilla.com.tw/?p=5195">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

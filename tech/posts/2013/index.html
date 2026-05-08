@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>SD Card 自動掛載/分享機制 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-09/">2013 年 9 月</a><b>&raquo;</b><a href="../../posts/2013/">SD Card 自動掛載/分享機制</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-09-16" class="published"><span class="posted-month">9月</span><span class="posted-date">16</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">SD Card 自動掛載/分享機制</h1>
+            </header>
+            <div class="entry-content"><p>在一些低階的手機中，由於內部多使用僅 512 MB 的 Nand Flash 當作儲存空間，因此無法切割出一塊專門供使用者存放檔案的空間，這時就需要仰賴外部儲存的支援，也就是外接 SD Card。一但有了這項支援，OS 就必需提供一個機制用來偵測並自動掛載插入的外部儲存裝置。另一方面，為了方便使用者將其置入手機的 SD Card 能與像 PC 這樣的外部裝置做互相的分享，OS 也需提供一個方式使得使用者能透過 PC 將 SD Card 裡的檔案取出或將 PC 上的檔案存入，目前 Firefox OS 只支援 mass_storage 的方式而還沒有支援 MTP (Media Transfer Protocol) 的協定。現在就讓我們來看看 Firefox OS 是如何做到的吧。</p>
+<p>在我們執行任何自動掛載或分享的動作之前，我們必需先確認一些條件，第一項就是 SD Card 何時被使用者插入手機中，根據該條件，我們啟動自動掛載的機制；第二項就是 USB Cable 何時用於連接手機與 PC 之間，其為觸發分享的源頭，而這一切都來自於 UEvent 事件的監聽，從架構圖上可以看出，Linux Kernel 透過 Netlink Socket 進行廣播，向 Userspace 發出 USB 或者 SD Card 狀態變換的通知，進而由 Userspace 相關負責的元件開始做相對應的動作。其中 vold (Volume Daemon) 便是用來監聽 SD Card 是否被插入或被取出，另一方面 AutoMounter 用於監聽 USB Cable 是否有被連接於手機與 PC 之間。然而 vold 更負責接收指令並實際向 Linux Kernel 下命令的角色，例如 Mount/Share/Format 等。另外 vold.fstab 檔案則被用來設定哪一個 Block Device 需要被掛載在哪一個路徑。</p>
+<p>接下來我們來到 Gecko 的部分，這裡我們利用一個例子來做搭配以幫助讀者了解；假設某個 Device 中存在了二個可利用的儲存裝置並各命名為 sdcard 與 ext_sdcard (該資訊存於 vold.fstab)，那麼在開機過程中，VolumeManager 會向 vold 查詢目前所有可用的儲存裝置有哪些，根據我們的例子其將會有二個可使用，因此 VolumeManager 便產生二個 Volume 以用來對應 sdcard 與 sdcard1 並初始其狀態為 STATE_INIT；接下來我們假設 VolumeManager 已從 vold 得知到 sdcard 裝置已處於可用狀態，藉由更新相對應的 Volume 到 STATE_IDLE，AutoMouner <a href="https://www.svenskkasinon.com/">casino online</a>  便能經由收到 State Change Event 的方式，得知此一改變並發起對該 Volume 下達掛載的指令，該掛載指令一路經由 AutoMounter -&gt; Volume -&gt; VolumeManager 最後由 vold 執行該指令，一但成功後將回傳該 Volume 的狀態已轉換至 STATE_MOUNTED (vold -&gt; VolumeManager -&gt; Volume -&gt; AutoMounter)。</p>
+<p>Gecko 的第二部分，是關於如何啟動分享儲存裝置至 PC 上的流程並延用上一段的範例，首先使用者必需從設定應用程式中選擇將分享的功能啟動，而 AutoMounterSetting 便是用來監控此一設定並回報給 AutoMounter ，接下來使用者將 USB 線連接於 PC 與 Device 之間，從第二段中提及 AutoMounter 會負責監聽 USB 線的狀態，一旦其發現已連接上，那麼三個啟動分享的條件就都已成立 ( 1. 設定應用程式 2. USB 連接 3. 儲存裝置已於 STATE_MOUNTED )，而分享的指令便會由 AutoMounter 發起並一路經由與掛載指令相同的路徑來到 vold 並且被執行，並一樣的將 Volume 的狀態轉換為 STATE_SHARED 並一樣的一路回傳。</p>
+<p>最後由於使用者是透過 DeviceStorage 的 Web API 來存取檔案，因此我們透過 VolumeServiceIOThread (以上介紹的元件通通運行於 I/O thread 上以避免影響 main thread 的運作) 來將 Volume 的狀況回報給 nsVolumeService，並由其維護一份 Volume 的 ”狀態” 在 main thread 中，這也就是 nsVolume 的作用。因此 nsDeviceStorage/nsVolume/Volume 的對應為１對１的關係，至於 DeviceStorage 如何選擇相對應的 nsVolume 便不在本文的探討範圍內了，由於 nsVolume 裡會存在著其掛載的路徑，因此 DeviceStorage 便可以將使用者要求的動作執行並限制在該路徑下了。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/04/automounter3.jpg"><img src="../../assets/2013/wp-content/uploads/2013/04/automounter3.jpg" alt="Architecture Overview" loading="lazy"></a>Architecture Overview</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20160604200448id_/https://tech.mozilla.com.tw/?p=2013">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

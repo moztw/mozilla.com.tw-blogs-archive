@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>解決 wifi 無法開啟的問題 – 軟體啟動流程發生錯亂 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2012-10/">2012 年 10 月</a><b>&raquo;</b><a href="../../posts/555/">解決 wifi 無法開啟的問題 – 軟體啟動流程發生錯亂</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2012-10-08" class="published"><span class="posted-month">10月</span><span class="posted-date">8</span><span class="posted-year">2012</span></time></p>
+              <h1 class="entry-title">解決 wifi 無法開啟的問題 – 軟體啟動流程發生錯亂</h1>
+            </header>
+            <div class="entry-content"><p>由於科技不斷發展，無線技術的應用已日趨普及，其中 wifi 當然是無線產品不可缺少的一個應用。本文主要描述在 wifi 開發過程中曾經遇到的問題以及分析，希望可以藉由此篇文章來幫助 wifi 開發者分析問題。</p>
+<ul><li>wifi 啟動流程</li></ul>
+<p>系統根據以下流程開啟 wifi</p>
+<ul><li>載入 wifi kernel module。在 wifi kernel module 中，主要是透過 ioctl 的方式與 user space 下運行的 wpa_supplicant 進行溝通。另外在硬體的實現上，由於 CPU 需要有另一個介面與 wifi chip 進行溝通，如 wifi firmware 的載入、command request 以及資料的傳送/接收。目前較為常用的界面為 4bit SDIO (Secure Digital I/O)。</li></ul>
+<ul><li>啟動 wpa_supplicant。運行於 user space 下的一個 service，可以在 init.rc 下啟動並初始化這個 service。當然在啟動以及關閉 wifi 時也會一起啟動以及關閉。</li></ul>
+<ul><li>建立 wpa_supplicant 以及 wifi kernel module 的 interface 作為實現 wifi 的各種操作如找尋適當 AP (Access Point)、secure method (WPA、WPA2 或 WEP) 或建立/解除與 AP 的連線。</li></ul>
+<ul><li>問題描述</li></ul>
+<p>在 user 透過 UI 去啟動 wifi 時，wifi 找不到任何 AP 且畫面一直停留在 scanning…的狀態。相信各位 wifi 開發者在 porting wifi driver 時應該經常會遇到這樣的問題。或許有人會說是 AP 訊號太弱或是 security method 不對，這些當然都有可能。但除了這些之外，本文想引出另一個思考的方向 — 軟體啟動流程也有可能出了問題。</p>
+<ul><li>問題分析</li></ul>
+<p>重新檢視上述啟動流程，可以發現 wifi kernel module 是在 kernel space 進行載入而 wpa_supplicant 是在 user space 下啟動的。如果要正確地控制其啟動流程，較常見的方法是程式中透過 cat /proc/modules。如果可以在 /proc/modules 中讀取到  module name，代表 wifi kernel module 已經載入完成。但顯然在筆者的開發經驗上，這樣的方法上並不能適用於所有的平台。在這樣的情況下，如果在 user space 中因為對 wifi kernel module 確實的載入完成時間有任何的誤判而提前啟動 wpa_supplicant，將會使得 wpa_supplicant 找不到 wifi device 而會有如以下的 error logs 出現</p>
+<p>I/wpa_supplicant(  677): rfkill: Cannot open RFKILL control device</p>
+<p>E/wpa_supplicant(  677): Could not read interface wlan0 flags: No such device</p>
+<p>E/wpa_supplicant(  677): WEXT: Could not set interface ‘wlan0’ UP</p>
+<p>E/wpa_supplicant(  677): wlan0: Failed to initialize driver interface</p>
+<ul><li>問題分析方法</li></ul>
+<ul><li>可以在 adb shell 中透過手動方式運行啟動流程。這可以幫助分析以及釐清問題。假如可以利用手動方式啟動，則可以確認在軟體中可能是因為 kernel module 載入時間過長而發生問題。</li></ul>
+<p>a). 可利用以下 command load/unload/list module</p>
+<p>$ insmod xxx.ko (Insert module)</p>
+<p>$ rmmod xxx.ko (Remove module)</p>
+<p>$ lsmod (list module)</p>
+<p>b). 可利用以下 command start/stop wpa_supplicant</p>
+<p>$ start wpa_supplicant</p>
+<p>$ stop wpa_supplicant</p>
+<ul><li>解決方法</li></ul>
+<ul><li>在 kernel space 裡增加 flag 來檢查 kernel driver 是否已經載入完成。並且透過 set property 的方式記錄在 prop file 中, 這種方式可以確保 user space 啟動 wpa_supplicant 的時間。</li></ul>
+<ul><li>如果你無法從 kernel space 去完成上述動作,那可能只能乖乖地加一些 Timeout 或是 delay 來解決這個問題。</li></ul></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200803153955id_/https://tech.mozilla.com.tw/?p=555">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

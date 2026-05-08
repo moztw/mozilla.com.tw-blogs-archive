@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>C++11 與 Gecko | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-04/">2014 年 4 月</a><b>&raquo;</b><a href="../../posts/4204/">C++11 與 Gecko</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-04-14" class="published"><span class="posted-month">4月</span><span class="posted-date">14</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">C++11 與 Gecko</h1>
+            </header>
+            <div class="entry-content"><p>大家都知道 Firefox OS 最大的賣點就在於其開放的平台以及以網頁為基礎的應用程式。相信常關注我們謀智台客的讀者們，也都知道在應用層下的核心引擎 Gecko 是用 C++ 撰寫而成的。Gecko 自開發以來經歷的好幾個年頭，C++ 也不斷地進步當中。<br><img src="https://blog.operationreality.org/wp-content/uploads/2011/08/c-plus-plus-0x-11.jpg" alt="C++0x" loading="lazy"><br>在 C++0x 被提出的若干年後，終於在 2011 年 8 月 12 號發布 C++11 取代了 C++03 成為 C++ 最新的標準。永遠跟著標準走的 mozilla，也逐漸地在 Gecko 裡使用 C++11 的功能，現在就來讓我們看看 Gecko 裡面有哪些使用到 C++11 的地方:</p>
+<h2>nullptr</h2>
+<p>簡單來說，nullptr 就是用來取代 NULL 的。NULL 在 C/C++ 用的好好的，為何 C++11 要特地引進一個新的關鍵字來取代呢？在 C++11 前，C++之父 Stroustrup 推薦我們 <a href="https://www.stroustrup.com/bs_faq2.html#null">使用 0 來取代 NULL。</a>而在 C++ 聖經 “The C++ Programming Language” 也提到由於 C++ 有著較 C 強的型別檢查，用 0 來代表 null pointer 會帶來較少的問題。但無論是用 ((void*)0) 或是 0，都不是一個完美的方式來表達 null pointer 這個概念，譬如以下程式</p>
+<p>void f(int x) {}  // (1)<br>void f(int* x) {} // (2)</p>
+<p>f(0);    // (1) is called<br>f(NULL); // error: call of overloaded ‘f(NULL)’ is ambiguous</p>
+<p>					12345</p>
+<p>						void f(int x) {}  // (1)void f(int* x) {} // (2) f(0);    // (1) is calledf(NULL); // error: call of overloaded ‘f(NULL)’ is ambiguous</p>
+<p>無論用 0 或 NULL 都無法讓預期的 (2) 被喚起。正因如此，C++11 才引進了 nullptr 來專門描述 null pointer。實作上來說，nullptr 是型別 nullptr_t 的一個 instance (如同 true/false 是 bool type 的 instance)，nullptr_t 可被隱式地轉換成任何型別的 pointer (包含 pointer-to-member 型別)，所以所有原先用到 NULL 的地方，可以無痛轉換成 nullptr。所以在上例我們遇到的窘境，用 nullptr 就可以輕鬆解決：</p>
+<p>f(nullptr); // (2) is called</p>
+<p>					1</p>
+<p>						f(nullptr); // (2) is called</p>
+<p>##</p>
+<h2>auto</h2>
+<p>當你使用 STL container，例如 queue、map，需要做遍尋 (iterate) 時，最痛苦的就是要寫一長串程式碼來描述 iterator 的型別:</p>
+<p>std::map&lt;int, int&gt; m;<br>for (std::map&lt;int, int&gt;::iterator i = m.begin(); i != m.end(); ++i) {<br>  // ...<br>}</p>
+<p>					1234</p>
+<p>						std::map&lt;int, int&gt; m;for (std::map&lt;int, int&gt;::iterator i = m.begin(); i != m.end(); ++i) {  // ...}</p>
+<p>但有了 auto 之後，你可以輕鬆地這樣寫: [1]</p>
+<p>for (auto i = m.begin(); i != m.end(); ++i) {<br>  // ...<br>};</p>
+<p>					123</p>
+<p>						for (auto i = m.begin(); i != m.end(); ++i) {  // ...};</p>
+<p>C++11 引進了 auto 關鍵字 [2] 來作自動的型別推斷，請注意它只是”推斷”，該變數本身還是有一個型別，auto 的功用並非將 C++ 推向弱型別的語言。auto 在使用上雖然仍有些限制 (譬如無法乾淨俐落地<a href="https://stackoverflow.com/questions/15233188/how-do-i-get-a-const-iterator-using-auto">用 auto 得到 const_iterator</a>)</p>
+<p>但在大部分情況下我們還是能從中得到許多好處，甚至連 return type 都可以用 auto 來表示。</p>
+<h2>static_assert</h2>
+<p>在防禦式程式設計 (Defensive Programming) 中，我們常常需要對各種輸入輸出參數做檢查，而為了減少 runtime overhead，一般會用 assert 對 debug 版本做檢查。有些檢查可以提前在 compile time 完成，譬如某個寫死的表格的大小應該等於某個特定值。聰明的工程師們利用 macro 寫出各種 compile time 的assert function，但 macro 始終是危險的玩意兒，所以 C++11 從語言層面加入了 compile time assertion: static_assert。舉例來說，在 dom/indexedDB/OpenDatabaseHelper.cpp 你可以看到這樣的 static_assert 使用：</p>
+<p>// The schema version we store in the SQLite database is a (signed) 32-bit<br>// integer. The major version is left-shifted 4 bits so the max value is<br>// 0xFFFFFFF. The minor version occupies the lower 4 bits and its max is 0xF.<br>static_assert(kMajorSchemaVersion &lt;= 0xFFFFFFF,<br>              &quot;Major version needs to fit in 28 bits.&quot;);<br>static_assert(kMinorSchemaVersion &lt;= 0xF,<br>              &quot;Minor version needs to fit in 4 bits.&quot;);</p>
+<p>					1234567</p>
+<p>						// The schema version we store in the SQLite database is a (signed) 32-bit// integer. The major version is left-shifted 4 bits so the max value is// 0xFFFFFFF. The minor version occupies the lower 4 bits and its max is 0xF.static_assert(kMajorSchemaVersion &lt;= 0xFFFFFFF,              &quot;Major version needs to fit in 28 bits.&quot;);static_assert(kMinorSchemaVersion &lt;= 0xF,              &quot;Minor version needs to fit in 4 bits.&quot;);</p>
+<h2>rvalue reference</h2>
+<p>rvalue reference 可能是 C++11 的新標準中最讓人難以理解的一項，它通常會伴隨著 move semantics 這概念而出現。為了幫助理解，我們從 move semantics 出發。考慮以下 function：</p>
+<p>std::vector&lt;int&gt; createVectorWithOnes(int num) {<br>  return std::vector&lt;int&gt;(num, 1);<br>}</p>
+<p>					123</p>
+<p>						std::vector&lt;int&gt; createVectorWithOnes(int num) {  return std::vector&lt;int&gt;(num, 1);}</p>
+<p>不考慮任何的 RVO (Return Value Optimization)，以下的一行 function call</p>
+<p>std::vector&lt;int&gt; v = createVectorWithOnes(10000);</p>
+<p>					1</p>
+<p>						std::vector&lt;int&gt; v = createVectorWithOnes(10000);</p>
+<p>在 C++03 總共會做一次 constructor，兩次 copy constructor。</p>
+<p>但這兩次複製真的有必要的嗎? 在 std::vector 內部的實作，必定是有個指標指向一塊記憶體。對於普通的複製行為，我們無法只複製指標 (shallow copy) 而必需要整塊複製被指向的記憶體 (deep copy)。然而以上的動作，與其說是”複製”，不如說是”移動”。你可以想像在過程當中被呼叫的兩次 copy constructor 的參數都是暫存物件，一旦離開了 constructor，就再沒人能碰觸的到它並會被立即釋放。面對這種特別的”移動”的語意，我們大可以放膽地”偷”暫存物件的內容，也就是只複製指標 (以及一些 meta data)。所以在 C++11 的 <a href="https://www.cplusplus.com/reference/vector/vector/vector/">std::vector constructors</a> 中我們可以看到所謂 move constructor：</p>
+<p>vector(vector&amp;&amp; x)</p>
+<p>					1</p>
+<p>						vector(vector&amp;&amp; x)</p>
+<p>連續的兩個 &amp;&amp; 代表 x 是一個 rvalue reference。我們可以簡單地理解 rvalue 為暫存物件，它不具名且稍縱即逝。Compiler 會在適當的時機喚起這個版本的 constructor，在裡面你就可以盡情地偷竊並榨乾 x 裡的內容而不必感到罪惡!</p>
+<p>另一個解讀 move semantics 的方法，就是所有權的轉移 (ownership transfer)，這也是 Gecko 裡用到 rvalue reference 的地方之一：</p>
+<p>nsAutoPtr( nsAutoPtr&amp;&amp; aSmartPtr )<br>  : mRawPtr( aSmartPtr.forget() )<br>// Construct by transferring ownership from another smart pointer.<br>{<br>}</p>
+<p>					12345</p>
+<p>						nsAutoPtr( nsAutoPtr&amp;&amp; aSmartPtr )  : mRawPtr( aSmartPtr.forget() )// Construct by transferring ownership from another smart pointer.{}</p>
+<p>Auto pointer 通常蘊含著某個物件指標的”唯一所有權”，正因為是”唯一所有權”，所以只有”轉移”而沒有”複製”這回事。類似的唯一所有權概念也發生在 thread object 身上。在 C++03 時代，我們沒有 rvalue reference，對於 auto pointer 只能提供 copy constructor 並且禱告使用者不要在所有權轉移後，繼續使用原先已故的 auto pointer。有了 rvalue reference，我們就可以只提供 move constructor，防止使用者無意間轉移了所有權仍持續使用無效的auto pointer。</p>
+<h2>final / override</h2>
+<p>既然 C++ 是物件導向的程式語言，繼承以及多型必定是最常被使用到的特性之一。然而過具彈性的 C++ 語法，常常讓使用者能做出原設計者預期外的行為。像是繼承某些先天就不是設計成被用來繼承的class，如 std::string 和 std::vector。在 C++03 你無法防止 class 被繼承，C++11 加進了關鍵字 final，來提示 compiler 以及 programmer 這個 class 不允許被繼承。final 除了用來防止 class 被繼承外，也能用來提示某個 virtual function 不應該被覆寫 (override)。這裡其實有些矛盾存在: 如果你不希望一個 function 被 override, 為何還要宣告它為 virtual function? C++ 之父同樣地提出了<a href="https://stroustrup.com/C++11FAQ.html#final">這個問題</a></p>
+<p>至於另一個關鍵字 override，則是用來提示 compiler 這個 function 應該要 override 某個 parent class 的版本。這點在龐大的繼承體系下尤其重要，可以用來避免因為少打或打錯一兩個字而沒有提供到 overridden 的行為。舉例來說 accessible/src/html/HTMLFormControlAccessible.h</p>
+<p>class HTMLRangeAccessible : public LeafAccessible<br>{<br>  ...<br>  virtual double MaxValue() const MOZ_OVERRIDE;<br>  ...<br>};</p>
+<p>					123456</p>
+<p>						class HTMLRangeAccessible : public LeafAccessible{  ...  virtual double MaxValue() const MOZ_OVERRIDE;  ...};</p>
+<p>這裡可以加上 MOZ_OVERRIDE (也就是 override 的 macro ) 用來提示 compiler 該 virtual function 將會 override LeafAccessible::MaxValue。反之如果你不小心手滑打成</p>
+<p>class HTMLRangeAccessible : public LeafAccessible<br>{<br>  ...<br>  virtual double MaxValue() MOZ_OVERRIDE; // |const| is missing!<br>  ...<br>};</p>
+<p>					123456</p>
+<p>						class HTMLRangeAccessible : public LeafAccessible{  ...  virtual double MaxValue() MOZ_OVERRIDE; // |const| is missing!  ...};</p>
+<p>你就會得到一個 compile error 而知道自己不小心打錯囉！</p>
+<p>而在 Gecko 裡，為了不同編譯器間相容性的問題，我們使用 MOZ_FINAL 以及 MOZ_OVERRIDE 這兩個 macro 來取代 final/override 的使用。</p>
+<h2>default / delete</h2>
+<p>當你在建構一個 C++ 物件時，如果你不主動實作以下四個function: copy constructor、default constructor、destructor 以及 copy assignment operator，它們會被 compiler 自動產生。有時候我們不希望 compiler 那麼雞婆，譬如我們希望某個 class 無法被複製，最常見的方法就是將 copy constructor 和 copy assignment operator 宣告為 private 且不提供實作。這是個好方法，唯一的缺點是在 link time 才會得到 error。 C++11 加進了 default 和 delete 關鍵字對 compiler-generated function 有了更細部的控制。以上述的例子來看，只要將 copy constructor 和 copy assignment operator 後加上 “delete”，compiler 就不會自動產生這兩個 function 的實作，一旦被明確或是隱式地使用，你也可在 compile time 就得到錯誤訊息及早治療。與 delete 相對的是 default，用來告訴 compiler 我就是希望你幫我產生一個預設版本。 delete 不僅可用在上述四個可能會被自動產生的 function，還可用來修飾任意 function 防止其被呼叫。甚麼情況你會宣告 function 卻不希望被呼叫呢？假設你定義了以下 function：</p>
+<p>void f(int) { /<em> ... </em>/ }</p>
+<p>					1</p>
+<p>						void f(int) { /<em> ... </em>/ }</p>
+<p>以下的用法都可以經過編譯</p>
+<p>f(0);   // (1) OK. No conversion<br>f(&#39;c&#39;); // (2) OK. |char| implicitly converted to |int|<br>f(0.5); // (3) OK. |float| implicitly converted to |int|</p>
+<p>					123</p>
+<p>						f(0);   // (1) OK. No conversionf(&#39;c&#39;); // (2) OK. |char| implicitly converted to |int|f(0.5); // (3) OK. |float| implicitly converted to |int|</p>
+<p>可能某些原因，你不希望隱式的型別轉換發生，在 C++03 你只能故技重施宣告一個多載 (overloading) 的版本而不定義它. 而在 C++11 你可以這樣作：</p>
+<p>void f(char) = delete;<br>void f(float) = delete;</p>
+<p>					12</p>
+<p>						void f(char) = delete;void f(float) = delete;</p>
+<p>來讓 compiler 在 compile time 就幫你檢查是否有人違法呼叫這個 function。</p>
+<h2>Right angle bracket</h2>
+<p>C++11 前的 compiler parsing rule 上有個著名的 bug, 就是 &gt;&gt; 永遠會被解讀為 right shift operator。所以以下語法</p>
+<p>std::vector&lt;std::vector&lt;int&gt;&gt;</p>
+<p>					1</p>
+<p>						std::vector&lt;std::vector&lt;int&gt;&gt;</p>
+<p>的最後兩個 &gt;&gt; 會被優先解讀為 right shift operator 而導致 compile error. C++11 修正了這個 bug，所以我們再也不用寫出std::vector&lt;std::vector&lt;int&gt; &gt; 這種奇怪的code啦！</p>
+<p>以上僅列舉部份 C++11 在 Gecko 裡的使用, 完整的 C++11 清單可參考 <a href="https://en.wikipedia.org/wiki/C++11">wiki</a> 或是免費的 <a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">draft。</a></p>
+<p>[1] C++11 有所謂的 range-based for loop，所以這裡的 for loop 可以更進一步簡化成</p>
+<p>for (auto i : m) {<br>  // ...<br>}</p>
+<p>					123</p>
+<p>						for (auto i : m) {  // ...}</p>
+<p>不過根據<a href="https://developer.mozilla.org/en-US/docs/Using_CXX_in_Mozilla_code">這篇文章</a>，gecko 裡不允許使用 range-based for loop。</p>
+<p>[2] C++98 就存在關鍵字 auto 作為 storage class specifier，簡單的說就是 local variable，由於 C++ 預設就是 auto，所以幾乎是沒有機會用到。</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20150326035508id_/https://tech.mozilla.com.tw/?p=4204">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

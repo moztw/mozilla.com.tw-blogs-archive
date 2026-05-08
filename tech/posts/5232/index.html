@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>Web app 如何操作硬體功能（Firefox OS 的內部溝通 － 藍牙篇） | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-10/">2014 年 10 月</a><b>&raquo;</b><a href="../../posts/5232/">Web app 如何操作硬體功能（Firefox OS 的內部溝通 － 藍牙篇）</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-10-20" class="published"><span class="posted-month">10月</span><span class="posted-date">20</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">Web app 如何操作硬體功能（Firefox OS 的內部溝通 － 藍牙篇）</h1>
+            </header>
+            <div class="entry-content"><p>我們在 Firefox OS 手機的設定選單中，可以選擇開啟藍牙或是 GPS 這種手機硬體相關的功能。只要輕鬆點擊網頁語法寫出的按鈕，就可以操作裝置硬體，這在 web app 中是怎麼做到的呢？ Web app 開發者通常可以查詢相關的 web API 網頁，看是否有適合的 API 可以幫忙執行想要的工作。有些 API 是 <a href="https://www.w3.org/">W3C</a> 標準，有些則是不同瀏覽器提供不同的界面，還需一段時間慢慢發展為標準。</p>
+<p>當你點擊了某個控制硬體的按鍵，它可能會呼叫相應的 web API 讓瀏覽器內核幫你處理。</p>
+<p>例如 Bluetooth API, Geolocation API, Vibration API 等等，都提供了 web 界面的 API 來讓 web 開發者使用 Javascript 來執行相應的硬體能力。大家可以到 <a href="https://developer.mozilla.org/docs/Web/Reference/API">MDN-Web API</a> 或是 <a href="https://wiki.mozilla.org/WebAPI">MozillaWiki-WebAPI</a>查詢 Firefox OS 所提供的 web API 與其用法。</p>
+<h3>Firefox OS 的硬體操作</h3>
+<p>相信不少讀者都聽過 Firefox OS 可以分成三個 layer。</p>
+<p>上中下三層分別是 Gaia, Gecko 與 Gonk。簡單來說，它們負責以下不同的任務。</p>
+<p>Gaia – HTML5 層和使用者介面系統。</p>
+<p>Gecko – 排版引擎和應用執行服務層。</p>
+<p>Gonk – Linux 核心和硬體抽象層。</p>
+<p>想了解更多的朋友可以參考 MDN 的這篇 <a href="https://developer.mozilla.org/Firefox_OS/Platform/Architecture">「Firefox OS 架構」</a>。</p>
+<p>Web app 都是在 Gaia 層執行的，當 web API 被呼叫時，都會交給瀏覽器內核 Gecko 來處理。由於 Gecko 本身無法直接控制裝置硬體，所以若是該 web API 需要控制硬體，還須透過 Gonk 層幫忙。例如，一個 app 想要搜尋附近的藍牙裝置，呼叫了 Bluetooth API <a href="https://developer.mozilla.org/en-US/docs/Web/API/BluetoothAdapter.startDiscovery">BluetoothAdapter.startDiscovery()</a> ，概念上會以這樣的方式進行。</p>
+<p>			[Gaia] ---(請幫我處理)---&gt; [Gecko]</p>
+<p>			[Gecko] ---(請幫我處理)---&gt; [Gonk]</p>
+<p>然後任務就完成了～ 本質上就是這麼一回事。</p>
+<p>先來畫出我們目前的理解。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/B2G_BT1.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/B2G_BT1.png" alt="B2G_BT1" loading="lazy"></a></p>
+<p>等等，如果這種 web API 只是叫下一個人幫我處理，那我怎麼知道它做好了呢？</p>
+<h3>非同步的 web API</h3>
+<p>像是 startDiscovery() 這樣的 API 呼叫完後，其實只表示它向 Gecko 提出了要求。在 Javascript 中不需要等到這個要求執行完成，就會開始跑到下一行程式碼。像這樣的 API 可以說它是一種 asynchronous call，在 Firefox OS 通常會回傳 <a href="https://developer.mozilla.org/en-US/docs/Web/API/DOMRequest">DOMRequest</a> 或是 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> ，用以提供一個機制告知呼叫者執行完成與否。並不是所有的 web API 都是 asynchronous call，通常是無法保證能快速完成的 API 會設計成 asynchronous 的形式。由於許多需要裝置硬體參與的 API 都有這樣的特性，故本篇文章以這種 API 做為例子。</p>
+<p>在我們的想像中，API 呼叫後大概會發生這樣的事情。</p>
+<p>			[Gaia] ---(請幫我處理)---&gt; [Gecko]</p>
+<p>			[Gecko] ---(請幫我處理)---&gt; [Gonk]</p>
+<p>			[Gecko] &lt;---(我完成了)--- [Gonk]</p>
+<p>			[Gaia] &lt;---(我完成了)--- [Gecko]</p>
+<p>以 <a href="https://developer.mozilla.org/en-US/docs/Web/API/BluetoothAdapter.startDiscovery">BluetoothAdapter.startDiscovery()</a> 為例，該函式會回傳一個 DOMRequest 物件。web 開發者可以利用 <br>			onsuccess 和 <br>			onerror，在 request 完成時用對應的 callback handler 來處理後續的工作。</p>
+<p>var request = BluetoothAdapter.startDiscovery();<br>request.onsuccess = function() { /<em> 完成了～～ </em>/ };<br>request.onerror = function() { /<em> 失敗了～～ </em>/ };</p>
+<p>					123</p>
+<p>						var request = BluetoothAdapter.startDiscovery();request.onsuccess = function() { /<em> 完成了～～ </em>/ };request.onerror = function() { /<em> 失敗了～～ </em>/ };</p>
+<p>比較新設計的 web API ，也常利用 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> 來處理 asynchronous request。</p>
+<p>未來 Firefox OS 的 Bluetooth asynchronous API，亦打算用 Promise 物件來取代 DOMRequest 物件。目前 Firefox OS 的 web API 以 DOMRequest 為主，故本文都以 DOMRequest 為例。想了解 Promise 相關用法的朋友可以參考這篇謀智台客文<a href="../../posts/3154/">「使用 Promise 模式，寫出簡單易懂的 marionette test case」</a>。</p>
+<p>現在我們認識到，多數的 web API 概念上是這樣被執行的。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/B2G_BT2.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/B2G_BT2.png" alt="B2G_BT2" loading="lazy"></a></p>
+<p>在這個系統架構的流程中，上層會向下層請求協助。大家可以注意到這過程會需要一些溝通，這是怎麼作到的呢？</p>
+<h3>Firefox OS 的內部溝通</h3>
+<p>之前我都用 “Gaia 向 Gecko 請求&quot; 這樣的說法，實際上這個動作是由 Javascript 和 C 間的 binding 關係驅動的。當 Gaia 中 Javascript 版的 startDiscovery() 被呼叫時，Gecko 中對應的 C 版 startDiscovery() 也會跟著被呼叫。 它們之間的 binding 關係是由 Web IDL 檔所定義的，之後兩個 layer API 的 binding 實作方式會由 Gecko 自動搞定。Web IDL binding 是目前 Firefox OS 中被推薦使用的 binding 方式，但不是唯一方式。想了解更多的朋友可以參考謀智台客文 <a href="../../posts/1172/">「New DOM bindings」</a>和<a href="https://tech.mozilla.com.tw/posts/5013/webidl-extended-attribute-%E5%A4%A7%E8%A7%A3%E5%AF%86">「WebIDL Extended Attribute 大解密」</a>。</p>
+<p>Gecko 和 Gonk 間也會透過某種溝通方式來傳遞 request。相較於 DOM binding，Gecko 和 Gonk 間的溝通方式比較多元，不同的 component 間可能有不同的機制。常見的做法是 Gecko 透過某組 HAL (hardware abstraction layer) interface 的 method 和 callback function，跟 Gonk 內該 component 使用的 open source 的函式庫溝通。以藍牙為例，Firefox OS 支援 BlueZ 和 BlueDroid 兩種 Bluetooth stack，Gecko 和 BlueZ 透過 <a href="https://www.freedesktop.org/wiki/Software/dbus/">DBus</a> 來溝通，而 BlueDroid 則是提供 HAL interface 讓 Gecko 可以直接使用。而 Gonk 和硬體之間的溝通，更是需要不同的 domain knowledge，都會有專門的函式庫、硬體層堆疊或是 OEM driver 來負責，像是 libusb, telephony stack, Bluetooth stack 等等，故 Firefox OS 的開發者不需要直接處理這部份。以本文的例子來看，Bluetooth stack <a href="https://www.theinnocents.org/">オンライン ブラックジャック</a>  是使用 <a href="https://developer.bluetooth.org/TechnologyOverview/Pages/HCI.aspx">HCI (Host Controller Interface)</a> 這種 command interface 透過 physical bus 和 Bluetooth controller 溝通。</p>
+<p>大家可以想像，Gecko 層要求完成某個任務，但是 Gonk 層可以有不同的實作方式。</p>
+<p>有的裝置硬體可能只有單一的函式庫，有的可能有不同的函式庫可以選擇。以藍牙為例， BluetoothService 的實作可以是 BlueZ 或是 BlueDroid。</p>
+<p>有時溝通的方向未必是由上層 app 傳向下層硬體，例如自己的藍牙裝置被別人的藍牙裝置要求配對時，就需要由硬體向上通知 app，甚至去喚醒尚未開啟的 app。由於這種需求是隨時可能被動的被觸發，所以藍牙模組在 Gecko 中使用常駐的 BluetoothService 來處理。BluetoothService 在 Gecko 中代表了和藍牙硬體的溝通窗口，主動與被動的操作都會透過這個 singleton class 來完成。大家可以想像，Gaia 層要求完成某個任務時，在 Gonk 層可以有不同的實作方式。Web app 開發者呼叫了 Bluetooth API 後，Gecko 會判斷運行的裝置是使用的是 BlueZ 還是 BlueDroid，來實作相應的 BluetoothService，並透過多型 (Polymorphism) 的方式供 web API 使用。( 這樣的方式用於 Gonk 函式庫們的 interface 不同的情況下。如果 Gonk 實作不同，但 HAL interface 都是一致的，則 Gecko 無須判斷是哪種實作方式。)</p>
+<p>讓我們用 <a href="https://developer.mozilla.org/en-US/docs/Web/API/BluetoothAdapter">BluetoothAdapter</a> API 為例，畫一下這個流程。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/B2G_BT3.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/B2G_BT3.png" alt="B2G_BT3" loading="lazy"></a></p>
+<p>( 黃色區塊內的檔案是參照 <a href="https://dxr.mozilla.org/mozilla-central/source/dom/webidl/BluetoothAdapter.webidl">BluetoothAdapter.webidl</a> 而自動產生的程式碼。)</p>
+<p>呼，終於搞懂了 Web API 是怎麼操控裝置硬體了。</p>
+<h3>好像…哪裡怪怪的？</h3>
+<p>咦，可是追了一下程式碼後，發現有時候執行的流程和想像中的不太一樣。</p>
+<p>這是因為只有 b2g process 可以使用 BluetoothService，也就是<a href="../../posts/1950/">「淺談 Firefox OS 的多程序架構與程序間通訊」</a>所提到的 chrome process。由於一般的 app 都是跑在自己獨立的 content process 上，沒有權限直接執行上述的動作，所以還需要請 chrome process 幫忙處理。</p>
+<p>這個過程我們可以這樣理解。</p>
+<p>			[Gaia content] ---(請幫我處理)---&gt; [Gecko content]</p>
+<p>			[Gecko content] ---(請幫我處理)---&gt; [Gecko chrome]</p>
+<p>			[Gecko chrome] ---(請幫我處理)---&gt; [Gonk]</p>
+<p>			[Gecko chrome] &lt;---(我完成了)--- [Gonk]</p>
+<p>			[Gecko content] &lt;---(我完成了)--- [Gecko chrome]</p>
+<p>			[Gaia content] &lt;---(我完成了)--- [Gecko content]</p>
+<p>這裡 <br>			[Gecko content] 與 <br>			[Gecko chrome] 所用到的溝通方式，稱為 IPC (inter-process communications)，有 IPC 需求的 web API 需要寫 IPDL (IPC protocol definition language) 檔來定義 IPC 的 protocol ，如果要定義可讓不同 IPC protocols 共用的資料結構，要再寫 IPDLH (IPDL header)檔定義結構，相關的細節可以參考參考謀智台客文<a href="../../posts/2296/">「快來幫忙找，IPDL 在哪裡？」</a> 和 <a href="https://developer.mozilla.org/en-US/docs/IPDL/Tutorial">MDN – IPDL Tutorial</a> 。</p>
+<p>讓我們加入 IPC 的觀念，重新畫一張圖。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/B2G_BT4.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/B2G_BT4.png" alt="B2G_BT4" loading="lazy"></a></p>
+<p>( 黃色區塊內的檔案是參照 <em>.webidl 或 </em>.ipdl 而自動產生的程式碼。)</p>
+<p>這張圖的名詞縮寫請參考：</p>
+<p>			 BSc : BluetoothService, Child Process Implementation</p>
+<p>			 BC  : Bluetooth Child</p>
+<p>			 BRC : Bluetooth Request Child</p>
+<p>			 BRP : Bluetooth Request Parent</p>
+<p>			 BP  : Bluetooth Parent</p>
+<p>			 BSp : BluetoothService, BlueZ or BlueDroid Implementation</p>
+<p>如果呼叫 BluetoothAdapter API 的 app 是跑在 content process (child process) 上，則它透過多型 (Polymorphism) 取得的 BluetoothService 實作會是 <br>			BluetoothServiceChildProcess 這個類別的物件。而這個物件會透過 BluetoothChild 來向 chrome process (parent process) 請求執行，更明白的說，它透過 IPDL 定義的 Bluetooth Request Protocol 通知 chrome process 上的 BluetoothParent 來執行本來的 web API。此時因為已經跑在 chrome process 上了，因此取得 BluetoothService 實體會是 BlueZ 或 BlueDroid 實作的物件，進而和裝置硬體溝通。</p>
+<p>雖然這裡是以 Bluetooth API 作為例子，但其他 web API 在 Firefox OS 的運作方式也類似。由於本篇文章著重在 web API 在 Firefox OS 系統架構上不同 layer 之間的溝通，而不是藍牙模組開發，故所舉的例子中省略了部份實作細節與類別名稱。在對整個流程有初步了解後，可以參考本文最後一張示意圖的四條垂直的虛線，針對自己有興趣的模組去看實作細節。Web 世界一個小小的硬體控制按鍵中，可以說是一個點擊一世界，很多有趣的內容值得大家去了解。</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20170616170048id_/https://tech.mozilla.com.tw/?p=5232">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>如何在使用者點擊 Notification 通知後，傳遞參數給 App？ | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-08/">2013 年 8 月</a><b>&raquo;</b><a href="../../posts/2536/">如何在使用者點擊 Notification 通知後，傳遞參數給 App？</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-08-13" class="published"><span class="posted-month">8月</span><span class="posted-date">13</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">如何在使用者點擊 Notification 通知後，傳遞參數給 App？</h1>
+            </header>
+            <div class="entry-content"><p><img src="../../assets/2536/wp-content/uploads/2013/07/2013-07-01-15-01-57-200x300.png" alt="notification bar" loading="lazy"></p>
+<p>當使用者從 Firefox OS 手機收到一封新簡訊，在點下 Notification Bar 的簡訊通知後，預載的 SMS App 就會被啟動，但你知道在此過程中，預載的 SMS App 是如何切換到正確的簡訊串列來顯示簡訊內容的呢？</p>
+<p>首先，使用 navigator.mozNotification.createNotification 可以在 Notification Bar 中加入一個 notification 通知。下面是建立一個 notification 通知的範例程式碼：</p>
+<p>var title = &quot; 886933123456&quot;;<br>var body = &quot;Hello!&quot;;<br>var icon = &quot;app://sms.gaiamobile.org/icon.png&quot;;<br>var notification = navigator.mozNotification.createNotification(title, body, icon);</p>
+<p>					1234</p>
+<p>						var title = &quot; 886933123456&quot;;var body = &quot;Hello!&quot;;var icon = &quot;app://sms.gaiamobile.org/icon.png&quot;;var notification = navigator.mozNotification.createNotification(title, body, icon);</p>
+<p>接下來，就是需要傳遞電話號碼參數給 SMS App，讓它知道要開啟哪個電話號碼的簡訊串。很可惜的，在使用 createNotification 函式建立 notification 時並沒有提供傳遞參數的機制。</p>
+<p>讓我們來用 hacking 的方式來達成這個任務吧。我們可以在使用 createNotification 函式時，利用函式中的 iconURL 參數來傳遞電話號碼給 SMS App。iconURL 是一個圖示的 URL，它的值可能會是這樣：app://sms.gaiamobile.org/icon.png</p>
+<p>而下面是 createNotification 函式的 Spec：</p>
+<p>notification createNotification(<br> in DOMString title, <br> in DOMString description, <br> in DOMString iconURL Optional <br>);</p>
+<p>					12345</p>
+<p>						notification createNotification( in DOMString title,  in DOMString description,  in DOMString iconURL Optional );</p>
+<p>接下來，在 iconURL 最後面先加入一個 ?，再把電話號碼放在 iconURL 參數的後面，像是這樣：</p>
+<p>app://sms.gaiamobile.org/icon.png？ 886933123456</p>
+<p>這樣在 SMS App 在接收到 notification 的 <a href="https://www.theinnocents.org/">オンライン ブラックジャック</a>  system message 後，就可以在 navigator.mozSetMessageHandler 註冊的 callback 函式拿到電話號碼。下面是 SMS APP 接收電話號碼的範例程式碼：</p>
+<p>navigator.mozSetMessageHandler(&quot;notification&quot;, function notificationClick(message) {<br> if (!message.clicked) {<br> return;<br> }</p>
+<p> navigator.mozApps.getSelf().onsuccess = function(evt) {<br> var app = evt.target.result;<br> app.launch();</p>
+<p> // Getting back the number form the icon URL<br> var notificationType = message.imageURL.split(&quot;?&quot;)[1];<br> // Case regular &quot;sms-received&quot;<br> if (notificationType == &quot;sms-received&quot;) {<br> var number = message.imageURL.split(&quot;?&quot;)[2];<br> showThreadFromSystemMessage(number);<br> return;<br> }<br> var number = message.title;<br> // Class 0 message<br> var messageBody = number &quot;\n&quot; message.body;<br> alert(messageBody);<br> };<br>});</p>
+<p>					1234567891011121314151617181920212223</p>
+<p>						navigator.mozSetMessageHandler(&quot;notification&quot;, function notificationClick(message) { if (!message.clicked) { return; }  navigator.mozApps.getSelf().onsuccess = function(evt) { var app = evt.target.result; app.launch();  // Getting back the number form the icon URL var notificationType = message.imageURL.split(&quot;?&quot;)[1]; // Case regular &quot;sms-received&quot; if (notificationType == &quot;sms-received&quot;) { var number = message.imageURL.split(&quot;?&quot;)[2]; showThreadFromSystemMessage(number); return; } var number = message.title; // Class 0 message var messageBody = number &quot;\n&quot; message.body; alert(messageBody); };});</p>
+<p>奇妙的事發生了，這樣就可以了，耶！</p>
+<p>以上是一個 hacking 的做法，始終不是一個長久之計啊。我們來參考一下 <a href="https://www.w3.org/TR/notifications/#api">W3C Web Notifications</a> 的標準吧。大家可以看到有一個 tag 的參數，在 SMS App 的例子中，我們可以用它來傳遞電話號碼給 SMS App，像是這樣：</p>
+<p>new Notification(<br> &quot; 886933123456&quot;,<br> { <br> iconUrl: &quot;app://sms.gaiamobile.org/icon.png&quot;,<br> body: &quot;Hello!&quot;,<br> tag: &quot;tel= 886933123456&quot;<br> }<br>);</p>
+<p>					12345678</p>
+<p>						new Notification( &quot; 886933123456&quot;, {  iconUrl: &quot;app://sms.gaiamobile.org/icon.png&quot;, body: &quot;Hello!&quot;, tag: &quot;tel= 886933123456&quot; });</p>
+<p>接下來，Firefox OS 當然會支援 Web Notifications 的標準（<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=782211">code 已經準備好了</a>，就等 land 進去啦），之後我們就不用再這麼 hack 了。好，謝謝大家。:)</p>
+<p>參考資料：</p>
+<ul><li><a href="https://www.w3.org/TR/notifications/">http://www.w3.org/TR/notifications/</a></li></ul>
+<ul><li><a href="https://developer.mozilla.org/en-US/docs/DOM/navigator.mozNotification">https://developer.mozilla.org/en-US/docs/DOM/navigator.mozNotification</a></li></ul>
+<ul><li><a href="https://github.com/mozilla-b2g/gaia/blob/master/apps/sms/js/activity_handler.js#L175">https://github.com/mozilla-b2g/gaia/blob/master/apps/sms/js/activity_handler.js#L175</a></li></ul></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20191014160143id_/https://tech.mozilla.com.tw/?p=2536">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

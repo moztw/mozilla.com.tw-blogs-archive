@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>打造專屬於你的 Git 工作流程 — Alias、Commands、Hooks | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-09/">2014 年 9 月</a><b>&raquo;</b><a href="../../posts/5306/">打造專屬於你的 Git 工作流程 — Alias、Commands、Hooks</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-09-29" class="published"><span class="posted-month">9月</span><span class="posted-date">29</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">打造專屬於你的 Git 工作流程 — Alias、Commands、Hooks</h1>
+            </header>
+            <div class="entry-content"><p><img src="https://openhatch.org/blog/wp-content/uploads/2013/11/Krita-building_for-cats_010-git-update_by-deevad.jpg" alt="" loading="lazy"><br>(Ref: http://blog.openhatch.org/tag/newsletter/)</p>
+<p>Larry Wall（Perl 之父）曾說過，程式設計師有<a href="https://threevirtues.com/">三大美德</a>： 「懶惰」、「不耐煩」、以及「傲慢」。所以如果你想要成為偉大的程式設計師，你一定要懂得「偷懶」！在每天的軟體開發中，版本控制系統（Version control systems ）是必備的工具（如：Git、Mercurial），想想，若是我們可以省下跟那些工具打交道的時間，就可以擁有更多時間來寫 code，就更有可能改變世界。因此，本文將以 Git 為例，教你如何讓 Git 操作起來更簡潔，讓你可以更懶。</p>
+<h2>觀念</h2>
+<p>通常改善工作流程，可以有幾個技巧：減少重複、加速、自動化。</p>
+<h3>減少重複</h3>
+<p>首先，你必須檢視自己使用 Git 的流程，試著執行</p>
+<p>history | grep git</p>
+<p>					1</p>
+<p>						history | grep git</p>
+<p>看看你都下了哪些 Git 指令，其中是否有重複的工作，是不是經常執行一系列的指令來達到某個目的，如果是的話，那你就可以考慮創建一個巨集指令，一次完成所有工作，就像寫程式一樣，發現有重複的 code，你可以使用 Extract Method 的重構技巧，將他們抽出成一個單獨的方法，下次就可以直接呼叫。</p>
+<h3>加速</h3>
+<p>同樣做一件事，但想辦法讓他更快，用最少的敲擊鍵盤數來完成同樣的指令，例如某些指令你常常打，那麼就可以創建一些 alias 讓指令變短，就像 <a href="https://en.wikipedia.org/wiki/Huffman_coding">huffman coding</a> 一樣，使用頻率越高的指令應該要越短。</p>
+<h3>自動化</h3>
+<p>有些事不一定要手動去做，Git 可以設定 hook，當某些事件發生時，自動去做一些事，除了省事也更可靠，你不用擔心自己忘記執行。</p>
+<h2>具體的作法</h2>
+<p>接下來，我會介紹一些具體方法及實例來說明。</p>
+<h3>0. RTFM (Read The F***ing Manual)</h3>
+<p>每一個 Git command 都有一堆參數可以設定，讀一下 help 看看這個 command 本身可以作到哪些事情，搞不好會發現以往的作法其實是繞路，有更直接的作法只是你不知道而已。同樣的，做任何事情都一樣，看看有沒有現成的東西可以使用，重複打造輪子並不是笨蛋，至少你會學會如何打造輪子，但這浪費了時間，那些原本可以拿去做更偉大事情的時間。</p>
+<p>如果你會用到 github 的話，可以裝一下 <a href="https://github.com/github/hub">hub</a>，他延伸了原本的 Git command，讓 github 的操作更簡單。</p>
+<h3>1. Alias（加速）</h3>
+<p>這招最簡單，如果你常常打一些指令，考慮弄個 alias 吧。</p>
+<p>$ git config --global alias.co checkout<br>$ git config --global alias.br branch<br>$ git config --global alias.ci commit<br>$ git config --global alias.st status</p>
+<p>					1234</p>
+<p>						$ git config --global alias.co checkout$ git config --global alias.br branch$ git config --global alias.ci commit$ git config --global alias.st status</p>
+<p>這相當於直接在 .gitconfig 裡加入：</p>
+<p>[alias]<br>  co = checkout<br>  br = branch<br>  ci = commit<br>  st = status</p>
+<p>					12345</p>
+<p>						[alias]  co = checkout  br = branch  ci = commit  st = status</p>
+<p>設定之後，你就可以用 git co 來取代 git checkout，有沒有，一下就省了很多個鍵。再來你可以把參數一起放進去，像是：</p>
+<p>[alias]<br>  lo = log --oneline</p>
+<p>					12</p>
+<p>						[alias]  lo = log --oneline</p>
+<p>我個人覺得 git log 很佔空間，就會用 git lo 讓他顯示一行版本的 log。</p>
+<p>再來更進階的，你可以把 command alias 成某個 shell function，如此一來除了更 powerful，還可以利用 positional parameters，例如以下，我就可以用 git files &lt;SHA&gt; 得到某個 commit 中修改了哪些檔案。</p>
+<p>[alias]<br>  files = &quot;!f() { git diff --name-status $1^ $1; }; f&quot;</p>
+<p>					12</p>
+<p>						[alias]  files = &quot;!f() { git diff --name-status $1^ $1; }; f&quot;</p>
+<p>如果你是 alias 的愛好者，而你使用的 shell 也支援 alias （ex：bash），我看過更懶的人在他們的 shell 中設了像這樣的東西：</p>
+<p>alias gs=&#39;git status&#39;<br>alias ga=&#39;git add&#39;<br>alias gb=&#39;git branch&#39;<br>alias gc=&#39;git commit&#39;<br>alias gd=&#39;git diff&#39;<br>alias go=&#39;git checkout&#39;</p>
+<p>					123456</p>
+<p>						alias gs=&#39;git status&#39;alias ga=&#39;git add&#39;alias gb=&#39;git branch&#39;alias gc=&#39;git commit&#39;alias gd=&#39;git diff&#39;alias go=&#39;git checkout&#39;</p>
+<p>以及打錯字的修正…</p>
+<p>alias got=&#39;git&#39;<br>alias get=&#39;git&#39;</p>
+<p>					12</p>
+<p>						alias got=&#39;git&#39;alias get=&#39;git&#39;</p>
+<h3>2. Custom Commands（減少重複）</h3>
+<p>在 Git 中你可以創造自己的 command，之後就可以透過以下方式執行：</p>
+<p>$ git my-command</p>
+<p>					1</p>
+<p>						$ git my-command</p>
+<p>新增一個自訂 command 十分地簡單，只需要：</p>
+<ul><li>建立一個新檔案，並取名為 git-my-command ，也就是你想要的指令名稱加上 git- 字首，注意沒有副檔名。</li></ul>
+<ul><li>你可以用任何語言寫，Bash、Python、Ruby、…都可以，然後把檔案設為可執行。</li></ul>
+<ul><li>確認檔案的位置有在 $PATH 中。</li></ul>
+<p>如此，你幾乎可以寫一個 Git command，做任何你想要的事情。接下來，我們來做一個很小的東西。</p>
+<h4>需求</h4>
+<p>當我們開發新功能時，根據 Git 的特性，大部分的人會開一個新 branch 出來，然後開始一系列的編輯與 commit，假設這時我們想整個瀏覽一下在 local 端我們增加了哪些 commit，可以下 git log，但是 git log 的結果會是一長串的 commit，很多是本來就在 upstream 上的，是不是可以跳過那些，只顯示我們在這 branch 上新增的 commit 呢？</p>
+<p>PS：首先你的 branch 必須要設好 upstream，可以用 git branch -u &lt;upstream&gt; 設定，不過這不是重點，細節部份請自己查一下。</p>
+<h4>解法</h4>
+<p>我們打算建立一個 custom command：git mylog [&lt;branch&gt;] 來達到這個目的，大致作法如下：</p>
+<ul><li>取出  的 upstream。</li></ul>
+<ul><li>計算  與 upstream 的 common ancestor。</li></ul>
+<ul><li>列出  上在 common ancestor 之後到 HEAD 的所有 commit。</li></ul>
+<p>動工，以 bash 實作如下：</p>
+<p>#!/bin/bash</p>
+<p>if [ &quot;$1&quot; == &quot;&quot; ]; then<br>  branch=HEAD<br>else<br>  branch=$1<br>fi</p>
+<p>upstream=<code>git rev-parse --symbolic-full-name ${branch}@{u}</code><br>ancestor=<code>git merge-base ${upstream} ${branch}</code><br>git log --oneline ${ancestor}..${branch}<br>echo &quot;..The following are the commits on upstream..&quot;</p>
+<p>					123456789101112</p>
+<p>						#!/bin/bash if [ &quot;$1&quot; == &quot;&quot; ]; then  branch=HEADelse  branch=$1fi       upstream=<code>git rev-parse --symbolic-full-name ${branch}@{u}</code>ancestor=<code>git merge-base ${upstream} ${branch}</code>git log --oneline ${ancestor}..${branch}echo &quot;..The following are the commits on upstream..&quot;</p>
+<p>以上只是一個簡單的例子，可以參考看看大家都做了哪些 custom commands：</p>
+<ul><li><a href="https://github.com/visionmedia/git-extras">git-extras</a></li></ul>
+<ul><li><a href="https://github.com/nvie/gitflow">gitflow</a></li></ul>
+<ul><li><a href="https://github.com/mozilla/moz-git-tools">moz-git-tools</a></li></ul>
+<h3>3. Hooks（自動化）</h3>
+<p>Git 和其他版本控制系統一樣，可以在某些重要事件發生時，自動觸發自訂腳本。他分為用戶端和伺服器端，這邊我們會說明如何使用用戶端 hooks 來自動化工作流程。</p>
+<p>在每個 Git repository 中都有一個 .git/hooks 目錄，裡面的內容大概像這樣：</p>
+<p>applypatch-msg.sample  pre-applypatch.sample      pre-push.sample<br>commit-msg.sample      pre-commit.sample          pre-rebase.sample<br>post-update.sample     prepare-commit-msg.sample  update.sample</p>
+<p>					123</p>
+<p>						applypatch-msg.sample  pre-applypatch.sample      pre-push.samplecommit-msg.sample      pre-commit.sample          pre-rebase.samplepost-update.sample     prepare-commit-msg.sample  update.sample</p>
+<p>這是 Git 提供給我們的 sample script，讓我們參考用的，script 的檔名就是對應的事件，這邊有一份<a href="https://githooks.com/">完整可以使用的事件 list</a>。</p>
+<p>如果我們想要安裝一個 hook，在每次 commit 前讓他自動執行某個腳本，就在這個目錄中，新增一個名為 pre-commit 的 script file（注意沒有副檔名，檔案要設為可執行），這樣在 commit 前就會自動執行這個腳本。</p>
+<p>pre-commit 大概是最多人使用的 hook，他可以讓我們在 commit 前對我們的修正做些檢查，例如用 linting tool （ex：jshint）掃過，以便確保程式的品質。可以參考看看大家都怎麼使用 hooks：</p>
+<ul><li><a href="https://githooks.com/">Git Hooks</a>：Projects</li></ul>
+<ul><li><a href="https://github.com/jish/pre-commit">pre-commit</a></li></ul>
+<p>再來做一個小玩具吧。</p>
+<h4>需求</h4>
+<p>在 gecko 中，<a href="https://github.com/mozilla/gecko-dev/blob/a9c70dde1fcb322932c142a9ca490897b12813d8/dom/telephony/nsITelephonyService.idl#L206">每個 interface（寫在 .idl 中）都會有一個編號 uuid</a>，這可以當作該 interface 的版本號或是 signature，當 uuid 一樣時，我們就認為 interface 是沒有改變的，這提供一個機制確保 interface 與其 user 是 binary compatible 的，因此當我們修改 interface 的內容時，修改對應的 uuid 就很重要，但是有時候我們會忘記，所以是不是能有一個自動的檢查，在每次 commit 時都幫我們看看，如果 interface 有改，uuid 是不是也有跟著改。</p>
+<h4>解法</h4>
+<p>考量到 idl 的 parsing 是很複雜的，所以在這個例子中，我們在只做粗略的檢查：如果 idl file 有修改，那麼這個檔案裡的 uuid 必須也有修改。實際上每個 .idl 中可能有多個 interface，我們要確定有改動的 interface 其對應的 uuid 是有改的，甚至其他受影響的也要。不過我們先弄個簡單版，幫助我們抓出粗心忘記改的錯誤，步驟如下：</p>
+<ul><li>檢查此次 commit 的所有檔名，看其中是否有 .idl 。</li></ul>
+<ul><li>若有，取得此檔案的 HEAD version （此次 commit 前版本）與 staged version（此次 commit 後版本）。</li></ul>
+<ul><li>取出此兩版中的所有 uuid 形成兩個 sets。</li></ul>
+<ul><li>比較這兩個 set 是否一致，若一致，就表示 uuid 沒改，這是錯誤的，return non-zero 中斷 commit。</li></ul>
+<p>這次用 python 來寫，大致如下：</p>
+<p>#!/usr/bin/env python</p>
+<p>import re<br>import subprocess<br>import sys</p>
+<p>def system(*args, <strong>kwargs):<br>    kwargs.setdefault(&#39;stdout&#39;, subprocess.PIPE)<br>    proc = subprocess.Popen(args, </strong>kwargs)<br>    out, err = proc.communicate()<br>    return out</p>
+<p>def getModifiedFiles():<br>    result = system(&#39;git&#39;, &#39;diff&#39;, &#39;--cached&#39;, &#39;--diff-filter=M&#39;, &#39;--name-status&#39;)<br>    # M       file1<br>    # M       file2<br>    # ....</p>
+<p>    files = map(lambda x: x.split()[1], result.splitlines())<br>    return files</p>
+<p>def getModifiedIDL():<br>    return filter(lambda x: x.endswith(&#39;.idl&#39;), getModifiedFiles())</p>
+<p>def getFileContent(version, path):<br>    return system(&#39;git&#39;, &#39;cat-file&#39;, &#39;-p&#39;, version + &quot;:&quot; + path)</p>
+<p>def getUUIDSet(content):<br>    # 38a51e14-1e1e-40e8-860a-92f03c501842<br>    pattern = re.compile(&#39;uuid\((\w{8}-\w{4}-\w{4}-\w{4}-\w{12})\)&#39;)<br>    return pattern.findall(content)</p>
+<p>def main():<br>    for idl in getModifiedIDL():<br>        oldUUIDs = getUUIDSet(getFileContent(&quot;HEAD&quot;, idl))<br>        newUUIDs = getUUIDSet(getFileContent(&quot;&quot;, idl))<br>        if set(oldUUIDs) == set(newUUIDs):<br>            print &quot;uuid in %s is not changed&quot; % idl<br>            sys.exit(1)</p>
+<p>if __name__ == &#39;__main__&#39;:<br>    main()</p>
+<p>					123456789101112131415161718192021222324252627282930313233343536373839404142</p>
+<p>						#!/usr/bin/env python import reimport subprocessimport sys def system(*args, <strong>kwargs):    kwargs.setdefault(&#39;stdout&#39;, subprocess.PIPE)    proc = subprocess.Popen(args, </strong>kwargs)    out, err = proc.communicate()    return out def getModifiedFiles():    result = system(&#39;git&#39;, &#39;diff&#39;, &#39;--cached&#39;, &#39;--diff-filter=M&#39;, &#39;--name-status&#39;)    # M       file1    # M       file2    # ....     files = map(lambda x: x.split()[1], result.splitlines())    return files def getModifiedIDL():    return filter(lambda x: x.endswith(&#39;.idl&#39;), getModifiedFiles()) def getFileContent(version, path):    return system(&#39;git&#39;, &#39;cat-file&#39;, &#39;-p&#39;, version + &quot;:&quot; + path) def getUUIDSet(content):    # 38a51e14-1e1e-40e8-860a-92f03c501842    pattern = re.compile(&#39;uuid\((\w{8}-\w{4}-\w{4}-\w{4}-\w{12})\)&#39;)    return pattern.findall(content) def main():    for idl in getModifiedIDL():        oldUUIDs = getUUIDSet(getFileContent(&quot;HEAD&quot;, idl))        newUUIDs = getUUIDSet(getFileContent(&quot;&quot;, idl))        if set(oldUUIDs) == set(newUUIDs):            print &quot;uuid in %s is not changed&quot; % idl            sys.exit(1) if __name__ == &#39;__main__&#39;:    main()</p>
+<h2>結論</h2>
+<p>程式設計師最酷的地方就是，他可以透過寫程式，來提昇自己下次寫程式的速度，很多我們平常習以為常的地方，都有著改善加速的機會。在本文中，我們透過 Git alias、以及撰寫 Git custom commands、Git hooks，讓軟體開發的流程更順暢、更有生產力。</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/open-source/">Open Source</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20191118135924id_/https://tech.mozilla.com.tw/?p=5306">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

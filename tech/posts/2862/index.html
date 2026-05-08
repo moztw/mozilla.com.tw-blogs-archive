@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>一個打十個 – 讓 Gaia 網頁應用（webapp）支援多重設備（二：螢幕大小） | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-10/">2013 年 10 月</a><b>&raquo;</b><a href="../../posts/2862/">一個打十個 – 讓 Gaia 網頁應用（webapp）支援多重設備（二：螢幕大小）</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-10-30" class="published"><span class="posted-month">10月</span><span class="posted-date">30</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">一個打十個 – 讓 Gaia 網頁應用（webapp）支援多重設備（二：螢幕大小）</h1>
+            </header>
+            <div class="entry-content"><p><a href="https://opensignal.com/reports/fragmentation.php"><img src="../../assets/2862/001-c1295f6e1aa6.png" alt="" loading="lazy"></a>各種常見的螢幕大小</p>
+<p>我們發現到：要讓網頁應用支援多種設備，開發者需要根據設備的「像素密度」（Pixel Density）與「螢幕大小」（Screen Size），處理相對應的「排版」與「圖片」問題。接續前一篇，本篇將闡述處理「螢幕大小」（Screen Size）的方式。</p>
+<p>（現在Gaia關於多重設備支援的工作正開始著手進行，以下建議都還有修改的可能性，歡迎大家提出自己的建議。想要直接參與 Firefox OS 前端開發的朋友，可以先看我整理的 <a href="https://www.slideshare.net/gasolin/steps-to-contribute-to-firefox-os-2">Steps to Contribute Gaia</a>簡報）</p>
+<h2>「螢幕大小」（Screen Size）</h2>
+<p>螢幕大小指的是整部機器「放大了」，在螢幕上的「像素」變多了，能同時顯示或操作更多的內容。從手機、平板、筆電、電視，我們可以看到各種不同大小、解析度的螢幕，並且都有各自慣用的使用界面和操作方式。</p>
+<p>「像素密度」要解決的，是在相同的使用界面下，各種排版與圖片的問題。而「螢幕大小」則需要解決如何因應不同螢幕大小來提供不同使用者界面，與在不盡相同的使用界面下，各種排版與圖片的問題。因為我們很有可能需要因應不同螢幕大小的操作習慣，而有不同的設計。</p>
+<p>要解決這些「螢幕大小」的問題，最主要的工具就是 CSS media query。</p>
+<h2>因應不同螢幕大小來提供不同使用者界面 – 使用 MediaQuery</h2>
+<p>Mozilla Developer 網站上有很清楚地關於 <a href="https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Media_queries">CSS Media Queries</a>的使用與介紹。簡單地說 Media Query 的功用是讓開發者可以透過過濾網頁的寬、高等條件，來讓網頁套用不同的排版方式。也可以根據不同Media Query的結果，來套用不同大小的圖片。例如：</p>
+<p>&lt;style&gt;<br>@media (max-width: 600px) {<br>  .facet_sidebar {<br>    display: none;<br>  }<br>}<br>&lt;/style&gt;</p>
+<p>					12345678</p>
+<p>						&lt;style&gt;@media (max-width: 600px) {  .facet_sidebar {    display: none;  }}&lt;/style&gt; </p>
+<p>@media 是 Media Query 語法的標籤，「max-width」屬性設定表示要執行以下排版的條件，是螢幕的最大寬度必須小於「600px」。</p>
+<h2>「螢幕大小」x 「排版」</h2>
+<p>看起來美好，但實行起來還有很多細節需要注意。因為 Gaia 專案上同時間有近百位開發者在協作，每個人對於不同設備的認知莫衷一是：到底什麼樣的長、寬屬於手機？什麼樣的屬於平板？現在的大手機（Phone Tablet）又屬於什麼版型哩？</p>
+<p>於是我們要研究的排版問題就變成：</p>
+<ul><li>應該用什麼版型作為預設值？</li></ul>
+<ul><li>如何選擇適當的分隔點/斷點（break point），來簡單區分不同大小的機種？</li></ul>
+<p>這兩個問題其實都可以向外找到解答。我們參考了多家 UI framework 如 <a href="https://getbootstrap.com/">Bootstrap</a>、<a href="https://foundation.zurb.com/">Fundation</a>、<a href="https://tuktuk.tapquo.com/">tuktuk</a> 等的做法，發現移動設備優先（Mobile First）已經是各家 UI Framework 的趨勢。而 Firefox OS 原本已有的就是手機的版型，想要擴展支援其他設備的版型，正好作為參考。</p>
+<p>再來的問題是如何區分不同大小的機種。進一步查看各家作為區分機種大小的斷點（break point）參數，發現每家用的參數與命名也都不盡相同。我認為更重要的是開發前選擇其中一種規則，並讓大家用相同的斷點參數，保持整個系統的一致性。最後我們選擇追隨 <a href="https://github.com/twbs/bootstrap/blob/3.0.0-wip/less/variables.less">Bootstrap 3</a>  的規則，來區分不同螢幕大小的機種。</p>
+<p>因為現在的機種分界越來越模糊，單純使用「phone」「tablet」「desktop」這些名詞，反而可能造成誤解。可以把螢幕的大小當作T恤的Size來區分，搭配斷點來看，螢幕大小可以區分如下：</p>
+<ul><li>Tiny ( 1200)</li></ul>
+<p>在現階段，我們將使用「768px」來分辨出相對手機螢幕的「大」設備（平板大小的螢幕）。</p>
+<p>如此這般，我們的基本指南就出來了：</p>
+<ol><li>在原本的手機排版外，針對不同螢幕大小，使用 Media Query 搭配斷點（768px）來加入不同機種的排版。</li></ol>
+<ol><li>附加的 Media Query 排版只修改原排版中需改動的部分，不需全部複製。</li></ol>
+<p>/<em> general </em>/</p>
+<p>.apps ol &gt; li {</p>
+<p>position: relative;</p>
+<p>width: 25%; /<em> 4 app in a line</em>/</p>
+<p>display: inline-block;</p>
+<p>float: left;</p>
+<p>text-align: center;</p>
+<p>}</p>
+<p>/<em> large device </em>/</p>
+<p>@media (min-width: 768px) and () {</p>
+<p>.apps ol &gt; li {</p>
+<p>   width: 20%; /<em> five a line </em>/</p>
+<p>}</p>
+<p>}</p>
+<p>另外，如果排版改動很大，在匯入CSS時也可以另外建立一個原檔案加上「_large」後綴的檔案。</p>
+<p>&lt;!– normal style –&gt;</p>
+<p>&lt;link rel=”stylesheet” href=”dock.css” /&gt;</p>
+<p>&lt;!– large specific style –&gt;</p>
+<p>&lt;link rel=”stylesheet” media=”(min-width: 768px)” href=”dock_large.css” /&gt;</p>
+<p>同時，在Gaia專案中，我們也會提供一個共用的 shared/js/screen_layout.js 工具，可以在程式中呼叫 ScreenLayout.getScreenLayout() 來確認網頁應用當時的螢幕大小，在一般手機上會回傳「tiny」字串，在不同尺寸的平板上會回傳「medium」或「large」字串。</p>
+<h2>「螢幕大小」x 「圖片」</h2>
+<p>因為不同螢幕大小機種的排版不同，所使用的圖片也可能完全不同。我們可以同樣使用 Media Query 來為不同機種提供圖片：</p>
+<p>background-image: url(images/img.png”);</p>
+<p>}</p>
+<p>@media (min-width: 768px) {</p>
+<p>background-image: url(images/img_large.png);</p>
+<p>}</p>
+<h2>螢幕比例 Aspect</h2>
+<p>Media Query 還可以順便解決因螢幕長寬比例（如 4:3 和 16:9）不同，所造成一些圖片不滿版的問題</p>
+<p>@media (device-aspect-ratio: 16/9) {</p>
+<p>}</p>
+<p>@media (device-aspect-ratio: 4/3) {</p>
+<p>}</p>
+<p>@media (min-width: 768px) and (device-aspect-ratio: 16/9) {</p>
+<p>}</p>
+<p>@media (min-width: 768px) and (device-aspect-ratio: 4/3) {</p>
+<p>}</p>
+<h2>總結</h2>
+<p>要支援不同螢幕大小的設備：</p>
+<ul><li>善用MediaQuery</li></ul>
+<ul><li>提供對應的圖片與圖示</li></ul></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/css/">CSS</a></span><span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20140728111041id_/https://tech.mozilla.com.tw/?p=2862">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>起床囉！我的手機寶貝！– Alarm API 的使用與介紹 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-05/">2013 年 5 月</a><b>&raquo;</b><a href="../../posts/2223/">起床囉！我的手機寶貝！– Alarm API 的使用與介紹</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-05-29" class="published"><span class="posted-month">5月</span><span class="posted-date">29</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">起床囉！我的手機寶貝！– Alarm API 的使用與介紹</h1>
+            </header>
+            <div class="entry-content"><h4>功能簡介</h4>
+<p>Alarm API 最初是為了 FireFox OS (FFOS) 所特別開發的一種 Web API，可以在預定時間自動喚醒系統去執行特定作業；這種功能可以套用在許多實際的應用上，最容易聯想到的功能就是 Alarm Clock 的應用，有了這個 API 我們就可以要求 FFOS 在某個時間點，讓裝置自動產生振動或是鬧鈴來通知使用者，藉此實現一個 Alarm Clock Application (App) 的功能。但 Alarm API 並不只如字面上地專為 Alarm Clock App 所設計，舉例來說，E-Mail App 也可以藉由 Alarm API 讓系統每隔一段時間就主動去 server 上下載最新郵件；Calendar App 可以讓系統在預約的日期提醒使用者參加會議；Auto-Update App 可以定期驅動系統去檢查、下載並安裝軟體更新。</p>
+<p>對於很多 App 開發者來說，你們一定會很好奇，Alarm API 到底與一般 Javascript 裡的 setTimeout(...) 函式有何不同？setTimeout(...) 不也可以讓我們在某個時間點去執行某段 callback function 嗎？最大的不同點就在於，setTimeout(...) 必須在系統「醒著」的時候才有效用，這對很多行動作業系統來說，其實是一項天生的限制，因為智慧型手機為了更有效地做到省電的功能，會讓系統在沒人使用的時候，進入所謂的「睡眠模式」(Sleep Mode)，此時 CPU 會處於完全停止運作的狀態，而無法執行 setTimeout(...) 裡的 callback function，造成 setTimeout(...) 暫時失效，除非直到使用者下次將系統手動喚醒，callback function 才會再度被執行，但此時早已過了預定時間。為了解決這個問題，Alarm API 因此孕育而生，它可以藉由 Kernel 底層的機制（註一）將系統直接喚醒，繼續執行使用者預先所設定的 callback function，做到真正的「準時」。或許我們應該將 Alarm API 重新命名成一個更通用的名字叫 Wake-Up API，因為他不只是帶有一個 alarm 所必需的「準時」概念，還有將系統從「睡眠模式」移轉到「待機模式」(Standby Mode) 的功能。</p>
+<h4>如何使用</h4>
+<p>Alarm API 的介面定義如下：</p>
+<p>partial interface Navigator<br>{<br>    readonly attribute AlarmsManager mozAlarms;<br>};</p>
+<p>interface AlarmsManager<br>{<br>    DOMRequest add(in jsval date,<br>                   in DOMString respectTimezone,<br>                   [optional] in jsval data);<br>    DOMRequest getAll();<br>    void remove(in unsigned long id);<br>};</p>
+<p>					12345678910111213</p>
+<p>						partial interface Navigator{    readonly attribute AlarmsManager mozAlarms;}; interface AlarmsManager{    DOMRequest add(in jsval date,                   in DOMString respectTimezone,                   [optional] in jsval data);    DOMRequest getAll();    void remove(in unsigned long id);};</p>
+<p>要使用 Alarm API 註冊一個 alarm 其實很簡單，下面以程式碼片段的方式介紹 add(...) 函式的基本用法，我們可以利用第一個參數加入一個在「2012 年 5 月 15 日下午 4 點 20 分」喚醒系統的 alarm，並且利用第三個參數帶入一個 JSON object 去描述關於此 alarm 的附屬資訊（如範例中的 { mydata: &quot;bar&quot; }），這個 JSON object 將在 alarm 執行 callback function 時以參數的形式一同返回。此外，我們必須利用第二個參數設定此 alarm 關於 timezone 的屬性，我們可以指定 &quot;ignoreTimezone&quot; 或是 &quot;honorTimezone&quot;；使用 &quot;ignoreTimezone&quot; 表示此 alarm 將在「當地時區」的下午 4 點 20 分喚醒系統，也就是說，alarm 會隨者當下系統時區的不同，調整其 alarm 醒來的「相對時間」，例如：紐約時間的下午 4 點 20 分和巴黎時間的下午 4 點 20 分是兩個不一樣的絕對時間；使用 &quot;honorTimezone&quot; 表示此 alarm 將在使用者設定此 alarm 時「所處時區」的下午 4 點 20 分喚醒系統，這將會是一個固定的「絕對時間」，例如：使用者在紐約設定了一個下午 4 點 20 分的 alarm，如果使用者之後帶著他的手機到巴黎，此 alarm 將會在巴黎時間的上午 10 點 20 分醒來（註二）。</p>
+<p>var alarmId;<br>var req = navigator.mozAlarms.add(<br>    new Date(&quot;May 15, 2012 16:20:00&quot;),<br>    &quot;ignoreTimezone&quot;, { mydata: &quot;bar&quot; });<br>req.onsuccess = function (e) {<br>    alarmId1 = e.target.result;<br>};<br>req.onerror = function (e) {<br>    alert(e.target.error.name);<br>};</p>
+<p>					12345678910</p>
+<p>						var alarmId;var req = navigator.mozAlarms.add(    new Date(&quot;May 15, 2012 16:20:00&quot;),    &quot;ignoreTimezone&quot;, { mydata: &quot;bar&quot; });req.onsuccess = function (e) {    alarmId1 = e.target.result;};req.onerror = function (e) {    alert(e.target.error.name);};</p>
+<p>另外，我們可以使用 getAll() 函式來取得我們曾經為此 App 所設定過的 alarms 資訊：</p>
+<p>var req = navigator.mozAlarms.getAll();<br>req.onsuccess = function (e) {<br>    alert(JSON.stringify(e.target.result));<br>};<br>req.onerror = function (e) {<br>    alert(e.target.error.name);<br>};</p>
+<p>					1234567</p>
+<p>						var req = navigator.mozAlarms.getAll();req.onsuccess = function (e) {    alert(JSON.stringify(e.target.result));};req.onerror = function (e) {    alert(e.target.error.name);};</p>
+<p>我們也可以利用 remove(...) 配合 add(...) 所回傳的 ID 來取消我們曾經設定過的 alarm：</p>
+<p>navigator.mozAlarms.remove(alarmId);</p>
+<p>					1</p>
+<p>						navigator.mozAlarms.remove(alarmId);</p>
+<p>最後，我們將介紹如何註冊一個 alarm 喚醒系統時所需執行的 callback function。要做到這點，我們必須使用另外一個 Web API 的機制，稱作 System Message API，我們可以利用 mozSetMessageHandler(...) 函式的第一個參數去註冊一個名為 &quot;alarm&quot; 的 system message type，之後，每當同一個 App 的 alarm 醒來時，系統就會執行第二個參數所綁定的 callback function（註三），此時，App 開發者可以參考當初使用 add(...) 在第三個參數所帶入的 JSON object 資訊，來決定其 callback function 對此 alarm 所需執行的相對應行為。</p>
+<p>navigator.mozSetMessageHandler(<br>    &quot;alarm&quot;,<br>    function (msg) {<br>        alert(JSON.stringify(msg));<br>    }<br>);</p>
+<p>					123456</p>
+<p>						navigator.mozSetMessageHandler(    &quot;alarm&quot;,    function (msg) {        alert(JSON.stringify(msg));    });</p>
+<h4>期待您的回饋</h4>
+<p>在初步階段，Alarm API 只能在裝載有 FFOS 的行動裝置上使用，我們正在努力將 Alarm API 支援各種 OS 平台，包括 Windows、Linux、Android 以及 Cocoa。更多關於 Alarm API 的使用細節請參考註四中的連結，在此也歡迎您提出任何寶貴的建議與相關問題。在未來，Mozilla 也會持續將 Alarm API 的設計與使用心得回饋給 World Wide Web Consortium (W3C)，致力使它成為一個公開且正式的 W3C Web API（註五）。</p>
+<h4>註釋與參考</h4>
+<p>註一：Android 的 Linux Kernel 有提供 Wake Lock 機制，可以確保 CPU 保持在運轉狀態。</p>
+<p>註二：巴黎所處的 timezone 比紐約所處的 timezone 快 6 個小時。</p>
+<p>註三：System Message API 不在此文的討論範圍內，更多使用細節請參考註四連結中的範例。</p>
+<p>註四：Alarm API – <a href="https://wiki.mozilla.org/WebAPI/AlarmAPI">https://wiki.mozilla.org/WebAPI/AlarmAPI</a></p>
+<p>註五：Web Alarms API Specification – <a href="https://www.w3.org/TR/web-alarms/">http://www.w3.org/TR/web-alarms/</a></p>
+<p><a href="https://www.joshuapramis.com/2012/01/26/response-7-tips-to-wake-up-and-get-out-of-bed-fast/">圖片引用</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20150401230916id_/https://tech.mozilla.com.tw/?p=2223">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

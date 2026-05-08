@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Taiwan 部落格封存">
+  <title>把 Firefox OS Web Apps 送進 ZTE Open 手機 | Mozilla Taiwan 部落格封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-09/">2013 年 9 月</a><b>&raquo;</b><a href="../../posts/3732/">把 Firefox OS Web Apps 送進 ZTE Open 手機</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-09-05" class="published"><span class="posted-month">9月</span><span class="posted-date">5</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">把 Firefox OS Web Apps 送進 ZTE Open 手機</h1>
+            </header>
+            <div class="entry-content"><p>中興通訊 (ZTE) 針對開發者與初期使用者，發表了 Firefox OS 行動電話 ─ <a href="https://fxosphone.mozilla.com.tw/zteopen/">ZTE Open</a>。本篇文章將說明應如何設定桌面環境並連接手機，再透過 Firefox OS 模擬器 (Firefox OS Simulator) 將 Apps 送進 ZTE Open。</p>
+<h3>設定 ZTE Open</h3>
+<p>在將 Apps 送進 ZTE Open，或對 ZTE Open 內的 Apps 進行除錯之前，都必須先啟動手機上的遠端除錯 (Remote debugging) 功能。請進入手機的「Settings」App 再點選 Device information -&gt; More Information -&gt; Developer -&gt; Remote debugging 即可。</p>
+<p><img src="../../assets/3732/wp-content/uploads/simulatordebug.png" alt="simulatordebug" loading="lazy"></p>
+<h3>Windows 系統</h3>
+<p>若要在 Windows 系統中銜接模擬器與 ZTE Open，則需要特定的 USB 驅動程式。ZTE Open 手機已內建了執行檔，可安裝正確的驅動程式。另可透過<a href="https://devicedownload.zte.com.cn/cn/UpLoadFiles/product/270/soft/2013082714510868.zip">中興通訊的鏈結</a>下載此執行檔。</p>
+<p>先將 Zip 壓縮檔下載至自己熟悉的路徑之後並解壓縮，接著以隨附的 USB 纜線銜接手機與電腦，最後執行資料夾中的「ZTE_Handset_USB_Driver.exe」可執行檔。</p>
+<p><img src="../../assets/3732/wp-content/uploads/execname.png" alt="execname" loading="lazy"></p>
+<p>依照設定精靈的步驟安裝驅動程式即可。</p>
+<p><img src="../../assets/3732/wp-content/uploads/ztesetup.png" alt="ztesetup" loading="lazy"></p>
+<p>驅動程式安裝完畢，就能將 Apps 送進手機了。你亦可透過 Windows 的「裝置管理員」確認是否安裝妥善。列於「Android Phone」之下的「ZTE Kernel Debug Interface」就是 ZTE 手機。</p>
+<p><img src="../../assets/3732/wp-content/uploads/devicemgr.png" alt="devicemgr" loading="lazy"></p>
+<p>啟動 Firefox OS 模擬器，可看到 Dashboard 顯示「Push」按鈕與「Device connected」的訊息。</p>
+<p><img src="../../assets/3732/wp-content/uploads/browser-1024x520.png" alt="browser" loading="lazy"></p>
+<p>現在即可將自己的 Firefox OS Apps 添增至模擬器中，並以「Push」按鈕將 Apps 送進手機之中。</p>
+<h3>Linux 系統</h3>
+<p>若你是在 Linux 平台上開發 Apps，則必須新增 udev 規則才能銜接 ZTE Open 手機。請參閱 Android 開發文件《<a href="https://developer.android.com/tools/device.html">Setting up a Device for Development</a>》並完成其中的 3.a 與 3.b 步驟。ZTE Open 會將「19d2」作為 idVendor 屬性。該項規則如下所示：</p>
+<p>SUBSYSTEM==”usb”, ATTR{idVendor}==”19d2”, MODE=”0666”, GROUP=”plugdev”</p>
+<p>					1</p>
+<p>						SUBSYSTEM==”usb”, ATTR{idVendor}==”19d2”, MODE=”0666”, GROUP=”plugdev”</p>
+<p>完成上述變更之後，請重新啟動系統或 udev 服務：</p>
+<p>sudo service udev restart</p>
+<p>					1</p>
+<p>						sudo service udev restart</p>
+<p>如果模擬器的 Dashboard 並未出現「Push」按鈕，則請參閱此篇<a href="https://github.com/mozilla/r2d2b2g/issues/515">問題回報</a>。</p>
+<h3>Mac 系統</h3>
+<p>如果你是在 Mac 上執行模擬器，則不需額外設定即可啟動「Push」按鈕。</p>
+<h3>參考資料</h3>
+<p>若要透過模擬器將 Apps 送進裝置或除錯，可先參閱<a href="https://developer.mozilla.org/zh-TW/docs/Tools/Firefox_OS_Simulator">《 Firefox OS 模擬器》</a>內的相關資訊。</p>
+<p>原文鏈結：<a href="https://hacks.mozilla.org/2013/08/pushing-a-firefox-os-web-app-to-zte-open-phone/">https://hacks.mozilla.org/2013/08/pushing-a-firefox-os-web-app-to-zte-open-phone/</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os/">Firefox OS</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-for-android/">Firefox for Android</a></li><li><a href="../../categories/firefox-for-ios/">Firefox for iOS</a></li><li><a href="../../categories/firefox-os/">Firefox OS</a></li><li><a href="../../categories/identity/">Identity</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/privacy/">Privacy</a></li><li><a href="../../categories/security/">Security</a></li><li><a href="../../categories/web-app/">Web App</a></li><li><a href="../../categories/新聞訊息/">新聞訊息</a></li><li><a href="../../categories/未分類/">未分類</a></li><li><a href="../../categories/校園大使/">校園大使</a></li><li><a href="../../categories/活動/">活動</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-10/">2016 年 10 月 (10)</option><option value="../../months/2016-09/">2016 年 9 月 (10)</option><option value="../../months/2016-08/">2016 年 8 月 (11)</option><option value="../../months/2016-07/">2016 年 7 月 (6)</option><option value="../../months/2016-06/">2016 年 6 月 (1)</option><option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-04/">2016 年 4 月 (7)</option><option value="../../months/2016-03/">2016 年 3 月 (16)</option><option value="../../months/2016-02/">2016 年 2 月 (11)</option><option value="../../months/2016-01/">2016 年 1 月 (4)</option><option value="../../months/2015-12/">2015 年 12 月 (10)</option><option value="../../months/2015-11/">2015 年 11 月 (8)</option><option value="../../months/2015-09/">2015 年 9 月 (3)</option><option value="../../months/2015-08/">2015 年 8 月 (13)</option><option value="../../months/2015-07/">2015 年 7 月 (10)</option><option value="../../months/2015-06/">2015 年 6 月 (3)</option><option value="../../months/2015-05/">2015 年 5 月 (12)</option><option value="../../months/2015-04/">2015 年 4 月 (14)</option><option value="../../months/2015-03/">2015 年 3 月 (16)</option><option value="../../months/2015-02/">2015 年 2 月 (11)</option><option value="../../months/2015-01/">2015 年 1 月 (11)</option><option value="../../months/2014-12/">2014 年 12 月 (11)</option><option value="../../months/2014-11/">2014 年 11 月 (17)</option><option value="../../months/2014-10/">2014 年 10 月 (15)</option><option value="../../months/2014-09/">2014 年 9 月 (13)</option><option value="../../months/2014-08/">2014 年 8 月 (14)</option><option value="../../months/2014-07/">2014 年 7 月 (12)</option><option value="../../months/2014-06/">2014 年 6 月 (15)</option><option value="../../months/2014-05/">2014 年 5 月 (17)</option><option value="../../months/2014-04/">2014 年 4 月 (18)</option><option value="../../months/2014-03/">2014 年 3 月 (21)</option><option value="../../months/2014-02/">2014 年 2 月 (23)</option><option value="../../months/2014-01/">2014 年 1 月 (11)</option><option value="../../months/2013-12/">2013 年 12 月 (21)</option><option value="../../months/2013-11/">2013 年 11 月 (22)</option><option value="../../months/2013-10/">2013 年 10 月 (21)</option><option value="../../months/2013-09/">2013 年 9 月 (15)</option><option value="../../months/2013-08/">2013 年 8 月 (21)</option><option value="../../months/2013-07/">2013 年 7 月 (21)</option><option value="../../months/2013-06/">2013 年 6 月 (15)</option><option value="../../months/2013-05/">2013 年 5 月 (11)</option><option value="../../months/2013-04/">2013 年 4 月 (23)</option><option value="../../months/2013-03/">2013 年 3 月 (10)</option><option value="../../months/2013-02/">2013 年 2 月 (15)</option><option value="../../months/2013-01/">2013 年 1 月 (12)</option><option value="../../months/2012-12/">2012 年 12 月 (11)</option><option value="../../months/2012-11/">2012 年 11 月 (18)</option><option value="../../months/2012-10/">2012 年 10 月 (23)</option><option value="../../months/2012-09/">2012 年 9 月 (12)</option><option value="../../months/2012-08/">2012 年 8 月 (8)</option><option value="../../months/2012-07/">2012 年 7 月 (14)</option><option value="../../months/2012-06/">2012 年 6 月 (6)</option><option value="../../months/2012-05/">2012 年 5 月 (12)</option><option value="../../months/2012-04/">2012 年 4 月 (13)</option><option value="../../months/2012-03/">2012 年 3 月 (9)</option><option value="../../months/2012-02/">2012 年 2 月 (6)</option><option value="../../months/2012-01/">2012 年 1 月 (3)</option><option value="../../months/2011-12/">2011 年 12 月 (6)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Taiwan 部落格封存，由 <a href="https://web.archive.org/web/20201231235959id_/https://blog.mozilla.com.tw/?p=3732">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

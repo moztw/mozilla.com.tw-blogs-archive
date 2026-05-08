@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>Firefox OS 的 MP4 container 簡介 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-01/">2014 年 1 月</a><b>&raquo;</b><a href="../../posts/4016/">Firefox OS 的 MP4 container 簡介</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-01-27" class="published"><span class="posted-month">1月</span><span class="posted-date">27</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">Firefox OS 的 MP4 container 簡介</h1>
+            </header>
+            <div class="entry-content"><h2>前言:</h2>
+<p>MP4 是目前最常見的影音格式之一，在這篇文章中，我們主要在介紹 container 的格式，以及 MP4 在 Firefox OS 中的現況跟常見問題。</p>
+<p>MP4 的 container 格式主要是定義在 ISO/IEC 14496-12 [1] 中，從最早期的 Apple Quicktime format，一路延伸到後來的 MP4、3GPP, 以及 3GPP2 等等 [2]。</p>
+<p>而 MP4 container 裡面最小的組成單位，稱之為 Box，每種 Box 都封裝不同的 information；以下是一般常見的 MP4 container 簡略：</p>
+<p>  |- FileTypeBox<br>  |- MovieBox<br>  |      |---- TrackBox (Audio)<br>  |      |          |---- TrackHeaderBox<br>  |      |          |---- MediaBox<br>  |      |                   |---- SampleTableBox<br>  |      |                   |---- SampleDescriptionBox<br>  |      |                   |---- TimeToSampleBox<br>  |      |<br>  |      |---- TrackBox (Video)<br>  |                 |---- TrackHeaderBox<br>  |                 |---- MediaBox<br>  |                          |---- SampleTableBox<br>  |                          |---- SampleDescriptionBox<br>  |                          |---- TimeToSampleBox<br>  |<br>  |- MediaDataBox<br>           Audio elementary stream<br>           Video elementary stream</p>
+<p>					12345678910111213141516171819</p>
+<p>						  |- FileTypeBox  |- MovieBox  |      |---- TrackBox (Audio)  |      |          |---- TrackHeaderBox  |      |          |---- MediaBox  |      |                   |---- SampleTableBox  |      |                   |---- SampleDescriptionBox  |      |                   |---- TimeToSampleBox  |      |  |      |---- TrackBox (Video)  |                 |---- TrackHeaderBox  |                 |---- MediaBox  |                          |---- SampleTableBox  |                          |---- SampleDescriptionBox  |                          |---- TimeToSampleBox  |  |- MediaDataBox           Audio elementary stream           Video elementary stream</p>
+<p>FileTypeBox 是描述這個 MP4 所宣稱支援的 brand，例如「MP42」 指的就是這個 MP4 所使用的 Box 都是在 ISO14496-14 規範中。</p>
+<p>一般播放影音用的 MP4 通常會有 Audio Track 以及 Video Track 兩種, 而 TrackBox 則是描述這個 Track 的資訊。例如 TrackHeaderBox (Video) 中，會有下面的資料：</p>
+<p>  CreationTime=&quot;3473061925&quot;       - Video錄製的時間<br>  ModificationTime=&quot;3473061925&quot;   - Video修改的時間<br>  TrackID=&quot;1&quot;                     - Video的TrackID<br>  Duration=&quot;1667&quot;                 - Video的長度<br>  Width=&quot;320.00&quot;                  - Video 寬度<br>  Height=&quot;240.00&quot;                 - Video 高度</p>
+<p>					123456</p>
+<p>						  CreationTime=&quot;3473061925&quot;       - Video錄製的時間  ModificationTime=&quot;3473061925&quot;   - Video修改的時間  TrackID=&quot;1&quot;                     - Video的TrackID  Duration=&quot;1667&quot;                 - Video的長度  Width=&quot;320.00&quot;                  - Video 寬度  Height=&quot;240.00&quot;                 - Video 高度</p>
+<p>而 MP4 播放器就可以根據這些資訊來決定播放時的大小以及 timeline 長短。</p>
+<p>MediaBox 最主要是包含了 SampleTableBox, SampleTableBox 可以說是所有的 Box 中最重要的一個，包含了 codec 的詳細資訊以及整個影片或聲音在這個 MP4 中的結構。</p>
+<p>SampleTableBox 主要是包含了兩大 Boxes：</p>
+<ol><li>SampleDescriptionBox</li></ol>
+<p>針對不同的 Codec 會有不同資料，例如 H264 的話會有一個 AVCSampleEntryBox 來描述這個MP4所使用的 H264 特性， profile…等等。 而 AAC 的話，會有一個 MPEGAudioSampleDescriptionBox 來描述所使用的 AAC 資料例如 SampleRate、Bitrate…等等。</p>
+<ol><li>TimeToSampleBox</li></ol>
+<p>這個 Box 主要是用來 random seeking 時所使用，裡面包含的每個 sample 所對應的播出時間；播放器可以根據時間來換算出特定時間需要跳到MP4 中的 sample 位置。以下是從 nexus-4 所錄製出來的 Video TimeToSampleBox 一部分：</p>
+<p>&lt;TimeToSampleEntry SampleDelta=&quot;3843&quot; SampleCount=&quot;1&quot;/&gt;<br>&lt;TimeToSampleEntry SampleDelta=&quot;3749&quot; SampleCount=&quot;1&quot;/&gt;<br>&lt;TimeToSampleEntry SampleDelta=&quot;3763&quot; SampleCount=&quot;1&quot;/&gt;<br>&lt;TimeToSampleEntry SampleDelta=&quot;3764&quot; SampleCount=&quot;1&quot;/&gt;<br>&lt;TimeToSampleEntry SampleDelta=&quot;3763&quot; SampleCount=&quot;2&quot;/&gt;</p>
+<p>					12345</p>
+<p>						&lt;TimeToSampleEntry SampleDelta=&quot;3843&quot; SampleCount=&quot;1&quot;/&gt;&lt;TimeToSampleEntry SampleDelta=&quot;3749&quot; SampleCount=&quot;1&quot;/&gt;&lt;TimeToSampleEntry SampleDelta=&quot;3763&quot; SampleCount=&quot;1&quot;/&gt;&lt;TimeToSampleEntry SampleDelta=&quot;3764&quot; SampleCount=&quot;1&quot;/&gt;&lt;TimeToSampleEntry SampleDelta=&quot;3763&quot; SampleCount=&quot;2&quot;/&gt;</p>
+<p>最後的 MediaDataBox，則是非常單純的把 Audio 或是 Video 直接寫入在這個 Box 中，不帶任何資訊。播放器應該解碼出哪個位置的 sample，完全依靠 MovieBox 中的資訊來決定；因此，相對於 MPEG1/2 中 所有 sample 都帶有 timestamp 的特性，MP4 的這種特性也有人稱為 nonframing [3]。</p>
+<p>在這邊可以舉一個例子，在 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=932204">Bug 932204</a>中 [4]，會出現 A/V 不同步的問題。由於 Video/Audio 所在的的 MediaDataBox 不帶任何 timestamp 相關資料，因此我們就大膽假設可能出現問題的點是在 TimeToSampleBox 中。藉著 MP4Box [5]，我們 dump 出在 TimeToSampleBox 的結構如下：</p>
+<p>&lt;TimeToSampleEntry SampleDelta=&quot;&lt;span style=&quot;color: #ff0000;&quot;&gt;124221737&lt;/span&gt;&quot; SampleCount=&quot;1&quot;/&gt;<br>&lt;TimeToSampleEntry SampleDelta=&quot;4&quot; SampleCount=&quot;1&quot;/&gt;<br>&lt;TimeToSampleEntry SampleDelta=&quot;3&quot; SampleCount=&quot;3&quot;/&gt;<br>&lt;TimeToSampleEntry SampleDelta=&quot;4&quot; SampleCount=&quot;1&quot;/&gt;<br>&lt;TimeToSampleEntry SampleDelta=&quot;3&quot; SampleCount=&quot;3&quot;/&gt;</p>
+<p>					12345</p>
+<p>						&lt;TimeToSampleEntry SampleDelta=&quot;&lt;span style=&quot;color: #ff0000;&quot;&gt;124221737&lt;/span&gt;&quot; SampleCount=&quot;1&quot;/&gt;&lt;TimeToSampleEntry SampleDelta=&quot;4&quot; SampleCount=&quot;1&quot;/&gt;&lt;TimeToSampleEntry SampleDelta=&quot;3&quot; SampleCount=&quot;3&quot;/&gt;&lt;TimeToSampleEntry SampleDelta=&quot;4&quot; SampleCount=&quot;1&quot;/&gt;&lt;TimeToSampleEntry SampleDelta=&quot;3&quot; SampleCount=&quot;3&quot;/&gt;</p>
+<p> 第一個 TimeToSampleEntry 的欄位大到十分不合邏輯，由此推斷出可能是原始變數未歸零的結果。</p>
+<h2>Firefox OS 內的 MP4 container 格式</h2>
+<p>在 FireFox OS 中，由於 MediaRecorder API [6] 的特性，在實際錄影時，無法預先知道整個 Video 或是 Audio 的播放長度。因此在 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=891704">Bug 891704</a> 中，我們實作了另一種格式的 MP4，稱為 fragmented MP4。</p>
+<p>以下是 fragmented MP4 的組成 Box 簡介：</p>
+<p>    |- FileTypeBox<br>    |- MovieBox<br>    |     |---- TrackBox (Audio)<br>    |     |          |---- TrackHeaderBox<br>    |     |          |---- MediaBox<br>    |     |                   |---- SampleTableBox<br>    |     |                   |---- SampleDescriptionBox<br>    |     |                   |---- TimeToSampleBox<br>    |     |---- TrackBox (Video)<br>    |                |---- TrackHeaderBox<br>    |                |---- MediaBox<br>    |                         |---- SampleTableBox<br>    |                         |---- SampleDescriptionBox<br>    |                         |---- TimeToSampleBox<br>    |<br>    |- MovieFragmentBox (Fragment 0)<br>    |     |---- MovieFragmentHeaderBox<br>    |     |---- TrackFragmentBox (Audio)<br>    |     |---- TrackFragmentBox (Video)<br>    |- MediaDataBox<br>    |     Audio elementary stream<br>    |     Video elementary stream<br>    |<br>    |- MovieFragmentBox (Fragment 1)<br>    |     |---- MovieFragmentHeaderBox<br>    |     |---- TrackFragmentBox (Audio)<br>    |     |---- TrackFragmentBox (Video)<br>    |- MediaDataBox<br>    |     Audio elementary stream<br>    |     Video elementary stream<br>    |<br>    |- MovieFragmentBox (Fragment 2)<br>    |     |---- MovieFragmentHeaderBox<br>    |     |---- TrackFragmentBox (Audio)<br>    |     |---- TrackFragmentBox (Video)<br>    |- MediaDataBox<br>          Audio elementary stream<br>          Video elementary stream</p>
+<p>...</p>
+<p>					12345678910111213141516171819202122232425262728293031323334353637383940</p>
+<p>						    |- FileTypeBox    |- MovieBox    |     |---- TrackBox (Audio)    |     |          |---- TrackHeaderBox    |     |          |---- MediaBox    |     |                   |---- SampleTableBox    |     |                   |---- SampleDescriptionBox    |     |                   |---- TimeToSampleBox    |     |---- TrackBox (Video)    |                |---- TrackHeaderBox    |                |---- MediaBox    |                         |---- SampleTableBox    |                         |---- SampleDescriptionBox    |                         |---- TimeToSampleBox    |    |- MovieFragmentBox (Fragment 0)    |     |---- MovieFragmentHeaderBox    |     |---- TrackFragmentBox (Audio)    |     |---- TrackFragmentBox (Video)    |- MediaDataBox    |     Audio elementary stream    |     Video elementary stream    |    |- MovieFragmentBox (Fragment 1)    |     |---- MovieFragmentHeaderBox    |     |---- TrackFragmentBox (Audio)    |     |---- TrackFragmentBox (Video)    |- MediaDataBox    |     Audio elementary stream    |     Video elementary stream    |    |- MovieFragmentBox (Fragment 2)    |     |---- MovieFragmentHeaderBox    |     |---- TrackFragmentBox (Audio)    |     |---- TrackFragmentBox (Video)    |- MediaDataBox          Audio elementary stream          Video elementary stream ...</p>
+<p>在 MovieBox 的組成上，除了 TimeToSampleBox 的內容是空的之外，基本上和之前介紹的是一樣的 (因為這時還沒完成錄影，無法預先知道長度)。</p>
+<p>再來最大的不同就是組成 fragment 的 MovieFragmentBox 了；基本上 fragment 的原理很簡單，就是將本來完整的一個大 table，打散成各個小 table 散佈在檔案中；換句話說，如果目前 fragment 的時間長度是兩秒，那就累積兩秒鐘的資料，並將這兩秒的時間資訊以及影音資料寫入一個 fragment 中；由此類推，每兩秒鐘寫一個 fragment 直到錄影結束。</p>
+<p>以下詳細介紹 fragment 的組成 Box。</p>
+<p>MovieFragmentBox，主要是包含 MovieFragmentHeaderBox 以及 TrackFragmentBox。</p>
+<p>MovieFragmentHeaderBox 則是記錄目前 fragment 的數目。</p>
+<p>TrackFragmentBox 則是扮演之前 SampleTableBox 的腳色，不過在 spec。中規範了好幾種形態，這邊介紹其中一種：frame duration 與 Size 的對映，以下是 Video 的範例：</p>
+<p>  &lt;TrackRunEntry Duration=&quot;3000&quot; Size=&quot;37056&quot;/&gt;<br>  &lt;TrackRunEntry Duration=&quot;3002&quot; Size=&quot;8144&quot;/&gt;<br>  &lt;TrackRunEntry Duration=&quot;2999&quot; Size=&quot;25135&quot;/&gt;<br>  &lt;TrackRunEntry Duration=&quot;3000&quot; Size=&quot;42994&quot;/&gt;<br>  &lt;TrackRunEntry Duration=&quot;3002&quot; Size=&quot;48458&quot;/&gt;</p>
+<p>					12345</p>
+<p>						  &lt;TrackRunEntry Duration=&quot;3000&quot; Size=&quot;37056&quot;/&gt;  &lt;TrackRunEntry Duration=&quot;3002&quot; Size=&quot;8144&quot;/&gt;  &lt;TrackRunEntry Duration=&quot;2999&quot; Size=&quot;25135&quot;/&gt;  &lt;TrackRunEntry Duration=&quot;3000&quot; Size=&quot;42994&quot;/&gt;  &lt;TrackRunEntry Duration=&quot;3002&quot; Size=&quot;48458&quot;/&gt;</p>
+<p>在這邊，每個 video frame 的播放長度約 2999 ~ 3002，而後面的 Size 就是指這張 video frame 的實際大小。由這些資料，就可以算出各個 video frame 播放的時間與解碼時所需找出的檔案位置。</p>
+<p>而在 FireFox OS 中，Bug 891704 已經 landed。而相關的 Audio/Video encoder 也在 Bug 879668 中，陸陸續續的即將 landed，在不久的將來，就可以使用 MediaRecorder API 來作 H264/AAC 的錄影了。</p>
+<h2>常用工具:</h2>
+<ol><li>MP4Box，之前已經有提過，是一套功能強大的工具，除了能解析 MP4 之外，還可以在 fragment 與 nonfragment 之間作轉換，或是將某個 track 個別抽取出來。</li></ol>
+<ol><li>MP4V2 [7]，跟 MP4Box 很相像，可以解析出一個 MP4 的結構，或是抽取出特定的 Track 資料。</li></ol>
+<p>[1] <a href="https://www.iso.org/iso/home/store/catalogue_ics/catalogue_detail_ics.htm?csnumber=61988">http://www.iso.org/iso/home/store/catalogue_ics/catalogue_detail_ics.htm?csnumber=61988</a></p>
+<p>[2] <a href="https://en.wikipedia.org/wiki/ISO_base_media_file_format">http://en.wikipedia.org/wiki/ISO_base_media_file_format</a></p>
+<p>[3] <a href="https://books.google.com.tw/books?id=ftRvA08WcM4C&amp;pg=PA254&amp;lpg=PA254&amp;dq=MP4+nonframing&amp;source=bl&amp;ots=lXcgAVJnJz&amp;sig=Ente5auFzX0NDO0ZESq0vI7hrE0&amp;hl=zh-TW&amp;sa=X&amp;ei=mD_dUtO1NcnlkgXdnoGoBA&amp;ved=0CDEQ6AEwAA#v=onepage&amp;q=MP4%20nonframing&amp;f=false">http://books.google.com.tw/books?id=ftRvA08WcM4C&amp;pg=PA254&amp;lpg=PA254&amp;dq=MP4+nonframing&amp;source=bl&amp;ots=lXcgAVJnJz&amp;sig=Ente5auFzX0NDO0ZESq0vI7hrE0&amp;hl=zh-TW&amp;sa=X&amp;ei=mD_dUtO1NcnlkgXdnoGoBA&amp;ved=0CDEQ6AEwAA#v=onepage&amp;q=MP4%20nonframing&amp;f=false</a></p>
+<p>[4] <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=932204#c21">https://bugzilla.mozilla.org/show_bug.cgi?id=932204#c21</a></p>
+<p>[5] <a href="https://es.wikipedia.org/wiki/MP4Box">http://es.wikipedia.org/wiki/MP4Box</a></p>
+<p>[6] <a href="https://dvcs.w3.org/hg/dap/raw-file/tip/media-stream-capture/MediaRecorder.html">https://dvcs.w3.org/hg/dap/raw-file/tip/media-stream-capture/MediaRecorder.html</a></p>
+<p>[7] <a href="https://code.google.com/p/mp4v2/">http://code.google.com/p/mp4v2/</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200803152139id_/https://tech.mozilla.com.tw/?p=4016">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

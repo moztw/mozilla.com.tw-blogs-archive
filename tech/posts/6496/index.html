@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>解析 XPCOM 物件的 Reference Count | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2015-06/">2015 年 6 月</a><b>&raquo;</b><a href="../../posts/6496/">解析 XPCOM 物件的 Reference Count</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2015-06-22" class="published"><span class="posted-month">6月</span><span class="posted-date">22</span><span class="posted-year">2015</span></time></p>
+              <h1 class="entry-title">解析 XPCOM 物件的 Reference Count</h1>
+            </header>
+            <div class="entry-content"><p>在 Gecko 的實作裡，我們大量使用 smart pointer 作為指標傳遞間的媒介，而為了能完善的操作 reference count ，我們必須保證 reference count 的增減是 thread safe 的。若無法妥善處理 reference count 的增減而產生 race condition ，會造成至少以下兩個問題：</p>
+<ul><li>兩條以上的 thread 同時執行了 delete pointer 的動作，造成了 double free ，程式 crash</li></ul>
+<ul><li>兩條以上的 thread 同時執行 Release 的動作，但卻同時判斷 reference count 為非0，導致該有的 delete 並沒有如預期的去執行，造成 memory leak</li></ul>
+<p>以下會一步步針對 Gecko 中 XPCOM 物件的 reference count 如何確保 thread safe 來作解析。以常見的Smart Pointer實作上，大致分為兩種：</p>
+<ul><li>reference count 是 smart pointer 本身的 class 負責控管，在 constructor/destructor 作 reference count 的增減</li></ul>
+<ul><li>reference count 是綁在每個 object 上，而 smart pointer 本身 class 只是在建構解構時，請物件對自 己的reference count作增減</li></ul>
+<p>兩者各有利弊, 像常見的 std::shared_ptr 就是第一種設計方式，而 Mozilla 的實作則是將 reference count 長在每一個 XPCOM 的物件上。</p>
+<p>而要成為 Gecko 中 smart pointer 能夠操作的物件，要滿足以下幾點：</p>
+<ul><li>不能有公開的解構子 destructor 。如果一個物件是受到 smart pointer 控管生命週期，我們不允許在 class scope 外可以 explicit 利用 operator delete 操作物件。除了跟使用smart pointer 做reference counted 的本意牴觸外，也會有額外的濳在問題發生，例如 smart pointer 操作了已經 deleted 的物件</li></ul>
+<ul><li>需要實作 AddRef(void) 和 Release(void) 這兩組界面</li></ul>
+<h2>解析 Gecko 的實作</h2>
+<p>在 Gecko 中 , <a href="https://dxr.mozilla.org/mozilla-central/source/xpcom/glue/nsISupportsImpl.h#396">nsISupportsImpl.h</a> 有提供許多 MACRO 好讓開發者能夠直接在 XPCOM class 內產生滿足上面的條件的程式碼，以下已兩個常見的 MACRO 作為例子</p>
+<p>#define NS_DECL_ISUPPORTS                                                     \<br>public:                                                                       \<br>  NS_IMETHOD QueryInterface(REFNSIID aIID,                                    \<br>                            void** aInstancePtr) override;                    \<br>  NS_IMETHOD_(MozExternalRefCountType) AddRef(void) override;                 \<br>  NS_IMETHOD_(MozExternalRefCountType) Release(void) override;                \<br>protected:                                                                    \<br>  nsAutoRefCnt mRefCnt;                                                       \<br>  nsAutoOwningThread _mOwningThread;                                          \</p>
+<p>					123456789</p>
+<p>						#define NS_DECL_ISUPPORTS                                                     \public:                                                                       \  NS_IMETHOD QueryInterface(REFNSIID aIID,                                    \                            void** aInstancePtr) override;                    \  NS_IMETHOD_(MozExternalRefCountType) AddRef(void) override;                 \  NS_IMETHOD_(MozExternalRefCountType) Release(void) override;                \protected:                                                                    \  nsAutoRefCnt mRefCnt;                                                       \  nsAutoOwningThread _mOwningThread;                                          \</p>
+<p>#define NS_DECL_THREADSAFE_ISUPPORTS                                          \<br>public:                                                                       \<br>  NS_IMETHOD QueryInterface(REFNSIID aIID,                                    \<br>                            void** aInstancePtr) override;                    \<br>  NS_IMETHOD_(MozExternalRefCountType) AddRef(void) override;                 \<br>  NS_IMETHOD_(MozExternalRefCountType) Release(void) override;                \<br>protected:                                                                    \<br>  ::mozilla::ThreadSafeAutoRefCnt mRefCnt;                                    \<br>  nsAutoOwningThread _mOwningThread;                                          \</p>
+<p>					123456789</p>
+<p>						#define NS_DECL_THREADSAFE_ISUPPORTS                                          \public:                                                                       \  NS_IMETHOD QueryInterface(REFNSIID aIID,                                    \                            void** aInstancePtr) override;                    \  NS_IMETHOD_(MozExternalRefCountType) AddRef(void) override;                 \  NS_IMETHOD_(MozExternalRefCountType) Release(void) override;                \protected:                                                                    \  ::mozilla::ThreadSafeAutoRefCnt mRefCnt;                                    \  nsAutoOwningThread _mOwningThread;                                          \</p>
+<p>這兩個 MACRO 唯一的差異只有在 mRefCnt 的型態不一樣，這是因為 XPCOM 物件在設計的時候必須考慮到執行環境是在 single-thread 還是 multi-thread 。若是你自認只有單一 thread 會去操作這物件，就要優先考量使用非 THREADSAFE 版本的實作方式。</p>
+<p>來分析這兩種 reference count 的差異，</p>
+<p>class nsAutoRefCnt<br>{<br>public:<br>  nsAutoRefCnt() : mValue(0) {}<br>  explicit nsAutoRefCnt(nsrefcnt aValue) : mValue(aValue) {}</p>
+<p>  // only support prefix increment/decrement<br>  nsrefcnt operator++() { return ++mValue; }<br>  nsrefcnt operator--() { return --mValue; }</p>
+<p>  nsrefcnt operator=(nsrefcnt aValue) { return (mValue = aValue); }<br>  operator nsrefcnt() const { return mValue; }<br>  nsrefcnt get() const { return mValue; }</p>
+<p>  static const bool isThreadSafe = false;<br>private:<br>  nsrefcnt operator++(int) = delete;<br>  nsrefcnt operator--(int) = delete;<br>  nsrefcnt mValue;<br>};</p>
+<p>					1234567891011121314151617181920</p>
+<p>						class nsAutoRefCnt{public:  nsAutoRefCnt() : mValue(0) {}  explicit nsAutoRefCnt(nsrefcnt aValue) : mValue(aValue) {}   // only support prefix increment/decrement  nsrefcnt operator++() { return ++mValue; }  nsrefcnt operator--() { return --mValue; }   nsrefcnt operator=(nsrefcnt aValue) { return (mValue = aValue); }  operator nsrefcnt() const { return mValue; }  nsrefcnt get() const { return mValue; }   static const bool isThreadSafe = false;private:  nsrefcnt operator++(int) = delete;  nsrefcnt operator--(int) = delete;  nsrefcnt mValue;};</p>
+<p>class ThreadSafeAutoRefCnt<br>{<br>public:<br>  ThreadSafeAutoRefCnt() : mValue(0) {}<br>  explicit ThreadSafeAutoRefCnt(nsrefcnt aValue) : mValue(aValue) {}</p>
+<p>  // only support prefix increment/decrement<br>  MOZ_ALWAYS_INLINE nsrefcnt operator++() { return ++mValue; }<br>  MOZ_ALWAYS_INLINE nsrefcnt operator--() { return --mValue; }</p>
+<p>  MOZ_ALWAYS_INLINE nsrefcnt operator=(nsrefcnt aValue)<br>  {<br>    return (mValue = aValue);<br>  }<br>  MOZ_ALWAYS_INLINE operator nsrefcnt() const { return mValue; }<br>  MOZ_ALWAYS_INLINE nsrefcnt get() const { return mValue; }</p>
+<p>  static const bool isThreadSafe = true;<br>private:<br>  nsrefcnt operator++(int) = delete;<br>  nsrefcnt operator--(int) = delete;<br>  // In theory, RelaseAcquire consistency (but no weaker) is sufficient for<br>  // the counter. Making it weaker could speed up builds on ARM (but not x86),<br>  // but could break pre-existing code that assumes sequential consistency.<br>  Atomic&lt;nsrefcnt&gt; mValue;<br>};</p>
+<p>					1234567891011121314151617181920212223242526</p>
+<p>						class ThreadSafeAutoRefCnt{public:  ThreadSafeAutoRefCnt() : mValue(0) {}  explicit ThreadSafeAutoRefCnt(nsrefcnt aValue) : mValue(aValue) {}   // only support prefix increment/decrement  MOZ_ALWAYS_INLINE nsrefcnt operator++() { return ++mValue; }  MOZ_ALWAYS_INLINE nsrefcnt operator--() { return --mValue; }   MOZ_ALWAYS_INLINE nsrefcnt operator=(nsrefcnt aValue)  {    return (mValue = aValue);  }  MOZ_ALWAYS_INLINE operator nsrefcnt() const { return mValue; }  MOZ_ALWAYS_INLINE nsrefcnt get() const { return mValue; }   static const bool isThreadSafe = true;private:  nsrefcnt operator++(int) = delete;  nsrefcnt operator--(int) = delete;  // In theory, RelaseAcquire consistency (but no weaker) is sufficient for  // the counter. Making it weaker could speed up builds on ARM (but not x86),  // but could break pre-existing code that assumes sequential consistency.  Atomic&lt;nsrefcnt&gt; mValue;};</p>
+<p>基本上這兩者的實作幾乎一模一樣，同樣都提供了 prefix 版本的 operator++ 和 – – 來針對內部的 mValue 作加減，也都提供了 cast operator 來讓外部可以判別 mValue 是否等於0，差別就只有在 mValue 的型別，以及 isThreadSafe 這 flag 在 ThreadSafeAutoRefCnt 裡會設定為 true 。nsAutoRefCnt::mValue 的型別其實就只是個透過 typedef 出來的 primitive type ,因為最初的假設就是 single thread 會使用這物件，並不會有 race condition 發生的可能性，所以只是非常單純的對數值做加減，不須特別對 reference count 作特別保護，以減少不必要的 overhead 。然而 ThreadSafeAutoRefCnt::mValue 則是使用 mfbt 所wrap過的 <a href="https://dxr.mozilla.org/mozilla-central/source/mfbt/Atomics.h">Atomic class</a> ，來確保操作 mValue 是一個 atomic operation 。而 mfbt 的實作則是封裝了 c++11 所提供的 <a href="https://en.cppreference.com/w/cpp/atomic/atomic">std::atomic</a> 。</p>
+<p>剛剛在 NS_DECL_ISUPPORTS 和 NS_DECL_THREADSAFE_ISUPPORTS 的 MACRO 中，我們會在 Debug Build 或是 Nightly Build 中偷偷宣告一個物件 <br>			nsAutoOwningThread _mOwningThread; 他的實作相當簡單，只是透過 PR_GetCurrentThread 這 function 透過系統API得到 current thread 的 handle 紀錄在 mThread，之後會介紹他的用途。</p>
+<p>class nsAutoOwningThread<br>{<br>public:<br>  nsAutoOwningThread() { mThread = PR_GetCurrentThread(); }<br>  void* GetThread() const { return mThread; }</p>
+<p>private:<br>  void* mThread;<br>};</p>
+<p>					123456789</p>
+<p>						class nsAutoOwningThread{public:  nsAutoOwningThread() { mThread = PR_GetCurrentThread(); }  void<em> GetThread() const { return mThread; } private:  void</em> mThread;};</p>
+<p>接下來我們來看一下 AddRef 和 Release 兩者的實作，不管是否 thread safe ，實作方式都一樣透過<br>			NS_IMPL_ADDREF(_class) 和 <br>			NS_IMPL_RELEASE(_class) 來達成，</p>
+<p>#define NS_IMPL_ADDREF(_class)                                                \<br>NS_IMETHODIMP_(MozExternalRefCountType) _class::AddRef(void)                  \<br>{                                                                             \<br>  MOZ_ASSERT_TYPE_OK_FOR_REFCOUNTING(_class)                                  \<br>  MOZ_ASSERT(int32_t(mRefCnt) &gt;= 0, &quot;illegal refcnt&quot;);                        \<br>  if (!mRefCnt.isThreadSafe)                                                  \<br>    NS_ASSERT_OWNINGTHREAD(_class);                                           \<br>  nsrefcnt count = ++mRefCnt;                                                 \<br>  NS_LOG_ADDREF(this, count, #_class, sizeof(*this));                         \<br>  return count;                                                               \<br>}</p>
+<p>					1234567891011</p>
+<p>						#define NS_IMPL_ADDREF(_class)                                                \NS_IMETHODIMP_(MozExternalRefCountType) _class::AddRef(void)                  \{                                                                             \  MOZ_ASSERT_TYPE_OK_FOR_REFCOUNTING(_class)                                  \  MOZ_ASSERT(int32_t(mRefCnt) &gt;= 0, &quot;illegal refcnt&quot;);                        \  if (!mRefCnt.isThreadSafe)                                                  \    NS_ASSERT_OWNINGTHREAD(_class);                                           \  nsrefcnt count = ++mRefCnt;                                                 \  NS_LOG_ADDREF(this, count, #_class, sizeof(*this));                         \  return count;                                                               \}</p>
+<p>首先先看第一個 MACRO <br>			MOZ_ASSERT_TYPE_OK_FOR_REFCOUNTING</p>
+<p>#define MOZ_ASSERT_TYPE_OK_FOR_REFCOUNTING(X) \<br>  static_assert(!MOZ_IS_DESTRUCTIBLE(X) || \<br>                mozilla::HasDangerousPublicDestructor::value, \<br>                &quot;略&quot;); \<br>  static_assert(!mozilla::HasDangerousPublicDestructor::value || \<br>                MOZ_IS_DESTRUCTIBLE(X), \<br>                &quot;略&quot;);</p>
+<p>					1234567</p>
+<p>						#define MOZ_ASSERT_TYPE_OK_FOR_REFCOUNTING(X) \  static_assert(!MOZ_IS_DESTRUCTIBLE(X) || \                mozilla::HasDangerousPublicDestructor::value, \                &quot;略&quot;); \  static_assert(!mozilla::HasDangerousPublicDestructor::value || \                MOZ_IS_DESTRUCTIBLE(X), \                &quot;略&quot;);</p>
+<p>這邊就是一開始提到的 XPCOM 物件不能有公開的解構子，利用 static_assert 在 compile time 做檢查，若<br>			HasDangerousPublicDestructor::value 沒特別作手腳則預設是 false ，若真的有 public destructor 的需求，<a href="https://dxr.mozilla.org/mozilla-central/source/xpfe/appshell/nsContentTreeOwner.cpp#73">請針對 HasDangerousPublicDestructor 作特化</a> ，但這種需求再 Gecko code 裡面非常的少。要怎麼判斷一個 class 是否含有 public 解構子呢？ Gecko 這邊有針對 compiler 版本作檢查，如果有支援，則直接使用 <a href="https://www.cplusplus.com/reference/type_traits/is_destructible/">std::is_destructible</a> 標準函式庫來作判斷，若不支援， Gecko 也有自己實作的版本</p>
+<p>namespace mozilla {<br>    struct IsDestructibleFallbackImpl<br>    {<br>      template&lt;typename T&gt; static T&amp;&amp; Declval();</p>
+<p>      template&lt;typename T, typename = decltype(Declval&lt;T&gt;().~T())&gt;<br>      static TrueType Test(int);</p>
+<p>      template&lt;typename&gt;<br>      static FalseType Test(...);</p>
+<p>      template&lt;typename T&gt;<br>      struct Selector<br>      {<br>        typedef decltype(Test&lt;T&gt;(0)) type;<br>      };<br>    };</p>
+<p>    template&lt;typename T&gt;<br>    struct IsDestructibleFallback<br>      : IsDestructibleFallbackImpl::Selector&lt;T&gt;::type<br>    {<br>    };<br>  }<br>#define MOZ_IS_DESTRUCTIBLE(X) (mozilla::IsDestructibleFallback&lt;X&gt;::value)</p>
+<p>					12345678910111213141516171819202122232425</p>
+<p>						namespace mozilla {    struct IsDestructibleFallbackImpl    {      template&lt;typename T&gt; static T&amp;&amp; Declval();       template&lt;typename T, typename = decltype(Declval&lt;T&gt;().~T())&gt;      static TrueType Test(int);       template&lt;typename&gt;      static FalseType Test(...);       template&lt;typename T&gt;      struct Selector      {        typedef decltype(Test&lt;T&gt;(0)) type;      };    };     template&lt;typename T&gt;    struct IsDestructibleFallback      : IsDestructibleFallbackImpl::Selector&lt;T&gt;::type    {    };  }#define MOZ_IS_DESTRUCTIBLE(X) (mozilla::IsDestructibleFallback&lt;X&gt;::value)</p>
+<p>這部份最關鍵的地方是用神妙的 template deduction 透過這行</p>
+<p>			template&lt;typename T, typename = decltype(Declval&lt;T&gt;().~T())&gt; 顯式呼叫解構子，在 compile time 推導出是否含有 public 解構子，達成確保 XPCOM 物件中沒有 expose public destructor 的條件限制。</p>
+<p>回到剛剛 AddRef 的實作，</p>
+<p>if (!mRefCnt.isThreadSafe) \<br>NS_ASSERT_OWNINGTHREAD(_class);</p>
+<p>					12</p>
+<p>						if (!mRefCnt.isThreadSafe) \NS_ASSERT_OWNINGTHREAD(_class);</p>
+<p>假如 isThreadSafe 是 false 也就是說我們預期我們的 XPCOM 物件是執行在 single thread 上，會針對這個前提作一個 asssert 來確保這個假設是成立而沒有漏考慮的情況<br>			NS_ASSERT_OWNINGTHREAD(_class) 展開後會是</p>
+<p>if (MOZ_UNLIKELY(_class-&gt;_mOwningThread.GetThread() != PR_GetCurrentThread())) {  \<br>  MOZ_CRASH(msg);                                           \<br>}</p>
+<p>					123</p>
+<p>						if (MOZ_UNLIKELY(_class-&gt;_mOwningThread.GetThread() != PR_GetCurrentThread())) {  \  MOZ_CRASH(msg);                                           \}</p>
+<p>很明顯可以看出這邊判斷了一個我們一開始生成 XPCOM 物件所偷偷紀錄的 thread handle 是否跟目前所在的 thread handle 相同？如果不一樣則觸發 crash ，讓開發者好在 Debug build 或是 Nightly build 的時候能夠明確知道有與設計上衝突的情況發生，讓開發者能夠及早發現及早修正。反之,若是THREADSAFE版本的 XPCOM Object 則不需要執行這個判斷。接下來就是直接執行<br>			nsrefcnt count = ++mRefCnt; 再將reference count return。</p>
+<p>看完了 AddRef 後，Release 的實作也都大同小異</p>
+<p>#define NS_IMPL_RELEASE_WITH_DESTROY(_class, _destroy)                        \<br>NS_IMETHODIMP_(MozExternalRefCountType) _class::Release(void)                 \<br>{                                                                             \<br>  MOZ_ASSERT(int32_t(mRefCnt) &gt; 0, &quot;dup release&quot;);                            \<br>  if (!mRefCnt.isThreadSafe)                                                  \<br>    NS_ASSERT_OWNINGTHREAD(_class);                                           \<br>  nsrefcnt count = --mRefCnt;                                                 \<br>  NS_LOG_RELEASE(this, count, #_class);                                       \<br>  if (count == 0) {                                                           \<br>    if (!mRefCnt.isThreadSafe)                                                \<br>      NS_ASSERT_OWNINGTHREAD(_class);                                         \<br>    mRefCnt = 1; /<em> stabilize </em>/                                              \<br>    _destroy;                                                                 \<br>    return 0;                                                                 \<br>  }                                                                           \<br>  return count;                                                               \<br>}</p>
+<p>					1234567891011121314151617</p>
+<p>						#define NS_IMPL_RELEASE_WITH_DESTROY(_class, _destroy)                        \NS_IMETHODIMP_(MozExternalRefCountType) _class::Release(void)                 \{                                                                             \  MOZ_ASSERT(int32_t(mRefCnt) &gt; 0, &quot;dup release&quot;);                            \  if (!mRefCnt.isThreadSafe)                                                  \    NS_ASSERT_OWNINGTHREAD(_class);                                           \  nsrefcnt count = --mRefCnt;                                                 \  NS_LOG_RELEASE(this, count, #_class);                                       \  if (count == 0) {                                                           \    if (!mRefCnt.isThreadSafe)                                                \      NS_ASSERT_OWNINGTHREAD(_class);                                         \    mRefCnt = 1; /<em> stabilize </em>/                                              \    _destroy;                                                                 \    return 0;                                                                 \  }                                                                           \  return count;                                                               \}</p>
+<p>當 reference count 歸零時，會去執行帶入的 _destroy，若沒特別指定就是帶入 <br>			delete (this) ，完美的處理記憶體的回收。</p>
+<h2>結語</h2>
+<p>當你在設計自己的 XPCOM Component 時，必須先考慮到這個 Component 是否會在多條 thread 間傳遞,如果有這種可能，就必須用 NS_DECL_THREADSAFE_ISUPPORTS ，否則就應該直接使用 NS_DECL_ISUPPORTS 。</p>
+<p>如果原先預期是在 single thread 而不小心在不同 thread 使用了也不用擔心，在傳遞 smart pointer 時都會經過 AddRef 和 Release,上面提到的 assert 都會在 debug stage 就讓你知道，讓你可以趕緊分析問題並且修正。</p>
+<p>這邊必須提醒的是,上述保護的只有 reference count 並沒有做任何 member function 內的thread synchronization 保護，還是必須要針對 function 內部如果有 critical section 的情形，透過Gecko提供的 mutex， monitor …等 synchronized 物件來確保 thread safe 。</p>
+<p>在 Gecko 中，<a href="https://dxr.mozilla.org/mozilla-central/source/dom/media/MediaDecoderStateMachine.h?from=mediadecoderstatemachine.h#118">也有非XPCOM的物件</a>，因為也想使用 smart pointer 來操控，也會透過 MACRO 來實作 AddRef 和 Release ，實際的實作內容也都大同小異在這邊就不多作解釋了。</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox/">Firefox</a></span><span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200919191631id_/https://tech.mozilla.com.tw/?p=6496">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

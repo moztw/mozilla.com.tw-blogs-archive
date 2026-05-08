@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>想學 Python/Django? 就從 Mozilla 網站專案開始吧！ | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-07/">2013 年 7 月</a><b>&raquo;</b><a href="../../posts/2390/">想學 Python/Django? 就從 Mozilla 網站專案開始吧！</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-07-08" class="published"><span class="posted-month">7月</span><span class="posted-date">8</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">想學 Python/Django? 就從 Mozilla 網站專案開始吧！</h1>
+            </header>
+            <div class="entry-content"><p><img src="../../assets/2390/002-a2a5034e61f1.jpg" alt="培樂多黏土早餐" loading="lazy"></p>
+<p>（圖片來源：<a href="https://www.flickr.com/photos/bcjams/909381308/">radiobread</a>）</p>
+<p>六月的時候 Askeing 大大介紹了 <a href="../../posts/2155/">Python 開發好幫手 – virtualenv</a>，如果你剛好是 Python/Django 的新手，能照著 Askeing 的解說順利地完成 virtualenv 安裝使用，那麼這篇文章可以給你一個自己學習建立 Django 專案的起點。</p>
+<h2>為什麼要學 Python？</h2>
+<p>如果你還不知道 Python/Django 是什麼，為何要用它？這裡簡略的告訴你幾個原因：</p>
+<ul><li>### 強調美感的語言哲學 翻開 <a href="https://www.python.org/dev/peps/pep-0020/">PEP 20 – The Zen of Python</a> 就能一覽 Python 語言的最高指導原則，很明顯地可以發現 Python 是一個非常注重可讀性的語言。這樣的特性讓 Python 獨樹一格成為一種易學易用且容易維護的程式語言。</li></ul>
+<ul><li>### 豐富的套件支援以及廣泛的應用範圍 除了 Web 以外， Python 也被廣泛的應用在桌面應用、系統管理、資料分析處理等領域 。從 <a href="https://pypi.python.org/pypi">Python 官網的套件索引 (PyPI)</a> 中可以找到各式符合需求的函式庫或工具，在 <a href="https://www.djangopackages.com/">DjangoPackages 網站</a>上也可以看到完整的 Django 套件分類和評比。且這些套件都可透過套件管理工具方便快速地安裝。</li></ul>
+<ul><li>### 活躍的社群支援 Python 在 <a href="https://github.com/languages">Github 上排名</a>第五，且從 <a href="https://www.ohloh.net/languages/compare?commit=Update&amp;l0=c&amp;l1=java&amp;l2=javascript&amp;l3=php&amp;l4=python&amp;l5=ruby&amp;l6=-1&amp;measure=contributors&amp;percent=true">Ohloh 的統計</a>來看，Python 的每月貢獻者數已經逼近 C 和 Java。</li></ul>
+<h2>我想學！可是要怎麼開始呢？</h2>
+<p>假設你已經瞭解 Python 之美，你可以研究看看 Mozilla 的<a href="https://wiki.mozilla.org/Webdev/GetInvolved">網站專案</a>。幾乎大部分你所熟知的 Mozilla 網站，如<a href="https://mozilla.org/en-US/">美國官網</a>、<a href="https://marketplace.firefox.com/">Firefox Marketplace</a>、<a href="https://support.mozilla.org/zh-TW/home">Mozilla 技術支援 (SUMO)</a>、<a href="https://developer.mozilla.org/zh-TW/">Mozilla 開發者網路 (MDN)</a>等等，都是由 Python/Django 技術開發，而且都是<a href="https://github.com/mozilla">開放原始碼</a>喔！</p>
+<p>如果你已經等不及想要從頭開始建立一個網站專案，Mozilla 提供了一個速成網站應用範本 (取名自玩具黏土培樂多)。Playdoh 基本是建立在 Django 上，引用加入了多種網站應用所需的元素，面向包含了網站安全性、擴充性、多國語言支援、測試架構等等。詳細的內容可以參考文件中的和。</p>
+<h3>建立你的 Playdoh 網站專案吧！</h3>
+<p>只要照著以下的的步驟即可建立你的第一個 Playdoh 專案。</p>
+<p>在開始下列步驟前請先確認你的電腦裡已經安裝了 <a href="https://python.org/">Python</a> 2.6 或 2.7 、 <a href="https://www.mysql.com/">MySQL</a> 、 <a href="https://git-scm.com/">git</a> 、以及上次 Askeing 介紹的 <a href="https://pypi.python.org/pypi/virtualenv">virtualenv</a> ，且是在類Unix的環境下運作。</p>
+<p>Playdoh 有趣的地方就在 <a href="https://github.com/mozilla/funfactory">funfactory 模組</a>，當你透過 <a href="https://pypi.python.org/pypi/funfactory">PyPi</a> 或<a href="https://github.com/mozilla/funfactory">原始碼</a>安裝完成後，你就可以運用 funfactory 的命令列指令來建立一個 Playdoh 專案。</p>
+<p>你可以用套件管理工具 <a href="https://www.pip-installer.org/">pip</a> 來安裝 funfactory ：</p>
+<p>pip install funfactory</p>
+<p>					1</p>
+<p>						pip install funfactory</p>
+<p>現在你已經有 Playdoh 的安裝指令了，你可以用 funfactory -h 指令查閱詳細說明，或者直接下指令來自動安裝建立一個 Playdoh 專案：</p>
+<p>funfactory --python=python2.6 --pkg=你的專案名稱</p>
+<p>					1</p>
+<p>						funfactory --python=python2.6 --pkg=你的專案名稱</p>
+<p>上述的指令自動安裝建立專案的過程如下：</p>
+<ul><li>下載複製 Playdoh 專案原始碼</li></ul>
+<ul><li>在 你的專案名稱 目錄下建立你的專案檔案結構</li></ul>
+<ul><li>建立一個名稱和 你的專案名稱 相同的 virtualenv</li></ul>
+<ul><li>安裝／編譯所有相關套件模組</li></ul>
+<ul><li>建立設定檔 你的專案名稱/settings/local.py 並填入預設設定資料</li></ul>
+<h3>環境設定</h3>
+<p>funfactory 安裝程式預設使用的資料庫名稱為 playdoh_app 。你必須手動建立此資料庫：</p>
+<p>mysql -u root -e &quot;create database playdoh_app;&quot;</p>
+<p>					1</p>
+<p>						mysql -u root -e &quot;create database playdoh_app;&quot;</p>
+<p>如果你需要調整任何的資料庫連線資訊，請編輯你的專案名稱/settings/local.py，並執行以下指令以建立資料表和初始資料：</p>
+<p>./manage.py syncdb</p>
+<p>					1</p>
+<p>						./manage.py syncdb</p>
+<p>啟動開發用服務器：</p>
+<p>./manage.py runserver 0.0.0.0:8000</p>
+<p>					1</p>
+<p>						./manage.py runserver 0.0.0.0:8000</p>
+<p>現在你可以透過本機網址連線到專案的網頁了： <a href="https://localhost:8000/">http://localhost:8000/</a> – 喔耶！</p>
+<p>最新及最完整的安裝文件以及使用說明請參考<a href="https://playdoh.readthedocs.org/en/latest/">原文</a> 。</p>
+<h2>寫 Python 會不會很孤獨？</h2>
+<p>閉門造車總是會有盲點，如果你還不知道自己要做什麼，或者不想要一個人孤單地寫 Code ，建議你可以先從貢獻 <a href="https://wiki.mozilla.org/Webdev/GetInvolved">Mozilla 網站專案</a>開始，練練身手，看看大型網站中都用了什麼樣的技術架構和<a href="https://mozweb.readthedocs.org/en/latest/">開發規範</a>，也看看有經驗的人是如何開發的，從中汲取寶貴經驗。</p>
+<p>或者你也可以多多參加社群活動：</p>
+<ul><li><a href="https://python.org.tw/">Python 台灣使用者群組 (Pot)</a></li></ul>
+<ul><li><a href="https://tw.pycon.org/">PyCon Taiwan</a></li></ul>
+<p>就讓 Mozilla 和我們一起，踏上 Python 開發之路吧！</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/mozilla/">Mozilla</a></span><span><a href="../../categories/open-source/">Open Source</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20191118141913id_/https://tech.mozilla.com.tw/?p=2390">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

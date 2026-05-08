@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>使用不同的檔案系統，Firefox OS 主程式沒跑起來！ | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-05/">2014 年 5 月</a><b>&raquo;</b><a href="../../posts/4188/">使用不同的檔案系統，Firefox OS 主程式沒跑起來！</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-05-28" class="published"><span class="posted-month">5月</span><span class="posted-date">28</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">使用不同的檔案系統，Firefox OS 主程式沒跑起來！</h1>
+            </header>
+            <div class="entry-content"><p>前陣子收到一隻手機，需要把 Firefox OS porting 上去。剛好之前有看過這幾篇文章 <a href="../../posts/396/">B2G Porting</a>, <a href="../../posts/2786/">三步驟 build 好 Firefox OS</a>及<a href="../../posts/3433/">透過 AOSP build system 來 build Firefox OS</a>，不然還真不知道從那裡開始。先費了一翻功夫把 manifest 弄出來，再經過一陣苦戰之後 system.img 總算也編出來了。既然 system.img 都出來了，當然要鼓起勇氣把它 flash 到手機裡看看。其實早就有心理準備，怎麼可能一次就成功呢？只是還不知道會碰到什麼樣的問題。果然 flash 進手機後，開機畫面一片黑，發生了什麼事了呢？</p>
+<p>先用 adb shell 進去看看，結果發現 Firefox OS 主程式根本就沒有在執行。試著用手動去執行看看也失敗，錯誤信息是 Permission Denied。有使用 linux 經驗的朋友，這時應該都會做這件事情，檢查看看相關執檔的屬性。結果發現執行檔的屬性都是 0644。</p>
+<p>$ adb shell ls -l /system/b2g/<br>-rw-r--r-- root     root       116116 2014-03-13 03:09 b2g<br>-rw-r--r-- root     root         5296 2014-03-12 02:22 plugin-container<br>-rw-r--r-- root     root        82380 2014-03-12 02:22 updater</p>
+<p>					1234</p>
+<p>						$ adb shell ls -l /system/b2g/-rw-r--r-- root     root       116116 2014-03-13 03:09 b2g-rw-r--r-- root     root         5296 2014-03-12 02:22 plugin-container-rw-r--r-- root     root        82380 2014-03-12 02:22 updater</p>
+<p>暫時先不管為什麼會變成 0644，把 /system 重新 mount 成 rw，把執行檔全部改成 0755，再手動執行一次，真的有畫面跑出來了。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/04/2010-01-27-19-10-54.png"><img src="../../assets/4188/wp-content/uploads/2014/04/2010-01-27-19-10-54.png" alt="based_on_mozilla_tech" loading="lazy"></a></p>
+<p>雖然重新開機後也可以跑起來了，但每次 flash system.img 後，檔案屬性就會跑掉，那還真不方便。這時我突然想到曾經看到過一個 <a href="https://github.com/mozilla-b2g/gonk-misc/blob/master/init.rc.patch">patch</a>, 但在每次開機時 init.rc 都需要去修改檔案屬性好像也不是一個好方法。</p>
+<p>--- a/rootdir/init.rc<br>+++ b/rootdir/init.rc<br>@@ -98,6 +98,9 @@ on fs<br>     # Mount /system rw first to give the filesystem a chance to save a checkpoint<br>     mount yaffs2 mtd@system /system<br>+    chmod 0755 /system/b2g/b2g<br>+    chmod 0755 /system/b2g/plugin-container<br>+    chmod 0755 /system/b2g/updater<br>     mount yaffs2 mtd@system /system ro remount</p>
+<p>					123456789</p>
+<p>						--- a/rootdir/init.rc+++ b/rootdir/init.rc@@ -98,6 +98,9 @@ on fs     # Mount /system rw first to give the filesystem a chance to save a checkpoint     mount yaffs2 mtd@system /system+    chmod 0755 /system/b2g/b2g+    chmod 0755 /system/b2g/plugin-container+    chmod 0755 /system/b2g/updater     mount yaffs2 mtd@system /system ro remount</p>
+<p>那就來弄清楚問題出在那裡吧！首先來檢查看看編出來的檔案，發現編出來的執行檔屬性都是正確的。</p>
+<p>$ ls -l system/b2g/<br>-rwxr-xr-x root     root       116116 2014-03-13 03:09 b2g<br>-rwxr-xr-x root     root         5296 2014-03-12 02:22 plugin-container<br>-rwxr-xr-x root     root        82380 2014-03-12 02:22 updater</p>
+<p>					1234</p>
+<p>						$ ls -l system/b2g/-rwxr-xr-x root     root       116116 2014-03-13 03:09 b2g-rwxr-xr-x root     root         5296 2014-03-12 02:22 plugin-container-rwxr-xr-x root     root        82380 2014-03-12 02:22 updater</p>
+<p>那為什包成 system.img 燒進手機後屬性就變了呢？</p>
+<p>在編 system.img 時，相關 build tools 在把一個資料夾包到一個 .img 檔時，可以對檔案的屬性進行調整。我有把 Firefox OS 相關執行檔的屬性對照都有新增到 android_files[]。</p>
+<p>在 android_filesystem_config.h 有一個 function fs_config 會使用到 android_files[]。任何 tools 只要來 include 這個 header file 就可以使用這個 function 來調整相關檔案的屬性。</p>
+<p>/<em> system/core/include/private/android_filesystem_config.h </em>/</p>
+<p>static const struct fs_path_config android_files[] = {<br>    { 00755, AID_ROOT,      AID_ROOT,      0, &quot;system/b2g/b2g&quot; },<br>    { 00755, AID_ROOT,      AID_ROOT,      0, &quot;system/b2g/updater&quot; },<br>    { 00755, AID_ROOT,      AID_ROOT,      0, &quot;system/b2g/plugin-container&quot; },<br>...<br>}</p>
+<p>...</p>
+<p>static inline void fs_config(const char <em>path, int dir,<br>                             unsigned </em>uid, unsigned <em>gid, unsigned </em>mode, uint64_t <em>capabilities)<br>{<br>    const struct fs_path_config </em>pc;<br>    int plen;</p>
+<p>    if (path[0] == &#39;/&#39;) {<br>        path++;<br>    }   </p>
+<p>    pc = dir ? android_dirs : android_files;<br>    plen = strlen(path);<br>    for(; pc-&gt;prefix; pc++){<br>        int len = strlen(pc-&gt;prefix);<br>        if (dir) {<br>            if(plen &lt; len) continue;<br>            if(!strncmp(pc-&gt;prefix, path, len)) break;<br>            continue;<br>        }   <br>        /<em> If name ends in </em> then allow partial matches. <em>/<br>        if (pc-&gt;prefix[len -1] == &#39;</em>&#39;) {<br>            if(!strncmp(pc-&gt;prefix, path, len - 1)) break;<br>        } else if (plen == len){<br>            if(!strncmp(pc-&gt;prefix, path, len)) break;<br>        }<br>    }<br>    <em>uid = pc-&gt;uid;<br>    </em>gid = pc-&gt;gid;<br>    <em>mode = (</em>mode &amp; (~07777)) | pc-&gt;mode;<br>    *capabilities = pc-&gt;capabilities;<br>}</p>
+<p>					123456789101112131415161718192021222324252627282930313233343536373839404142</p>
+<p>						/<em> system/core/include/private/android_filesystem_config.h </em>/ static const struct fs_path_config android_files[] = {    { 00755, AID_ROOT,      AID_ROOT,      0, &quot;system/b2g/b2g&quot; },    { 00755, AID_ROOT,      AID_ROOT,      0, &quot;system/b2g/updater&quot; },    { 00755, AID_ROOT,      AID_ROOT,      0, &quot;system/b2g/plugin-container&quot; },...} ... static inline void fs_config(const char <em>path, int dir,                             unsigned </em>uid, unsigned <em>gid, unsigned </em>mode, uint64_t <em>capabilities){    const struct fs_path_config </em>pc;    int plen;     if (path[0] == &#39;/&#39;) {        path++;    }        pc = dir ? android_dirs : android_files;    plen = strlen(path);    for(; pc-&gt;prefix; pc++){        int len = strlen(pc-&gt;prefix);        if (dir) {            if(plen &lt; len) continue;            if(!strncmp(pc-&gt;prefix, path, len)) break;            continue;        }           /<em> If name ends in </em> then allow partial matches. <em>/        if (pc-&gt;prefix[len -1] == &#39;</em>&#39;) {            if(!strncmp(pc-&gt;prefix, path, len - 1)) break;        } else if (plen == len){            if(!strncmp(pc-&gt;prefix, path, len)) break;        }    }    <em>uid = pc-&gt;uid;    </em>gid = pc-&gt;gid;    <em>mode = (</em>mode &amp; (~07777)) | pc-&gt;mode;    *capabilities = pc-&gt;capabilities;}</p>
+<p>有那些 tools 會呼叫到 fs_config 呢？</p>
+<p>使用 ext4fs 檔案系統時會用的 make_ext4fs 有來 include android_filesystem_config.h，也有呼叫到 fs_config。</p>
+<p>/<em> system/extras/ext4_utils/make_ext4fs.c </em>/</p>
+<p>    fs_config_func = fs_config;<br>...<br>    if (fs_config_func != NULL) {<br>      int dir = S_ISDIR(stat.st_mode);<br>      fs_config_func(dentries[i].path, dir, &amp;uid, &amp;gid, &amp;mode, &amp;capabilities);<br>      dentries[i].mode = mode;<br>      dentries[i].uid = uid;<br>      dentries[i].gid = gid;<br>      dentries[i].capabilities = capabilities;<br>    }</p>
+<p>					123456789101112</p>
+<p>						/<em> system/extras/ext4_utils/make_ext4fs.c </em>/     fs_config_func = fs_config;...    if (fs_config_func != NULL) {      int dir = S_ISDIR(stat.st_mode);      fs_config_func(dentries[i].path, dir, &amp;uid, &amp;gid, &amp;mode, &amp;capabilities);      dentries[i].mode = mode;      dentries[i].uid = uid;      dentries[i].gid = gid;      dentries[i].capabilities = capabilities;    }</p>
+<p>在 yaffs2 檔案系統會使用到的 mkyaffs2image，也有 include android_filesystem_config.h 及呼叫 fs_config。</p>
+<p>/<em> yaffs2/utils/mkyaffs2image.c </em>/</p>
+<p>static void fix_stat(const char <em>path, struct stat </em>s)<br>{<br>    uint64_t capabilities;<br>    path += source_path_len;<br>    fs_config(path, S_ISDIR(s-&gt;st_mode), &amp;s-&gt;st_uid, &amp;s-&gt;st_gid, &amp;s-&gt;st_mode, &amp;capabilities);<br>}</p>
+<p>					12345678</p>
+<p>						/<em> yaffs2/utils/mkyaffs2image.c </em>/ static void fix_stat(const char <em>path, struct stat </em>s){    uint64_t capabilities;    path += source_path_len;    fs_config(path, S_ISDIR(s-&gt;st_mode), &amp;s-&gt;st_uid, &amp;s-&gt;st_gid, &amp;s-&gt;st_mode, &amp;capabilities);}</p>
+<p>這也太巧合了吧，我 porting 的這隻手機使用的是 ubifs，都沒有使用前面提到的這兩個 tools。相較於 yaffs2，ubifs 支持壓縮, wear-leveling across whole MTD device及還有一些其他優點，通常在使用 nand flash 的手機上就有可能使會用 ubifs。當然 ubifs 也不是完全沒有缺點，如果想要了解 nand flash 上不同檔案系統的特性可以參考這份<a href="https://www.linux-mtd.infradead.org/doc/ubi.ppt">介紹</a> 及 <a href="https://elinux.org/images/9/9a/CELFJamboree29-FlashFS-Toshiba.pdf">測試報告</a>。</p>
+<p>回到正題，這隻手機上的 ubifs 真的出了什麼問題嗎？檢查後發現 ubifs 使用的 mkfs.ubifs 沒有 include android_filesystem_config.h 當然也不會呼叫到 fs_config！</p>
+<p>看來問題就出在這裡，就來試試看吧。先到 ubifs_utils/mkfs.ubifs/mkfs.ubifs.c 裡新增 fix_stat，然後在 add_directory 及 write_data 這兩個 function 裡來使用 fix_stat。重編 mkfs.ubifs 後，再把 system.img 編出來，flash 到手機一試，結果一切正常，看來這才是正解。</p>
+<p>/<em> system/extras/ubifs_utils/mkfs.jffs2.c </em>/</p>
+<p>static void fix_stat(const char <em>path, struct stat </em>s)<br>{<br>  uint64_t capabilities;<br>  path += source_path_len;<br>  fs_config(path, S_ISDIR(s-&gt;st_mode), &amp;s-&gt;st_uid, &amp;s-&gt;st_gid, &amp;s-&gt;st_mode,&amp;capabilities);<br>}</p>
+<p>static int write_data(void)<br>{<br>...<br>  if (fixstats)<br>    fix_stat(root, &amp;root_st);<br>...<br>}<br>static int add_directory(const char <em>dir_name, ino_t dir_inum, struct stat </em>st,<br>       int non_existing)<br>{<br>...<br>  if (fixstats)<br>    fix_stat(root, &amp;root_st);<br>...<br>}</p>
+<p>					123456789101112131415161718192021222324</p>
+<p>						/<em> system/extras/ubifs_utils/mkfs.jffs2.c </em>/ static void fix_stat(const char <em>path, struct stat </em>s){  uint64_t capabilities;  path += source_path_len;  fs_config(path, S_ISDIR(s-&gt;st_mode), &amp;s-&gt;st_uid, &amp;s-&gt;st_gid, &amp;s-&gt;st_mode,&amp;capabilities);} static int write_data(void){...  if (fixstats)    fix_stat(root, &amp;root_st);...}static int add_directory(const char <em>dir_name, ino_t dir_inum, struct stat </em>st,       int non_existing){...  if (fixstats)    fix_stat(root, &amp;root_st);...}</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20150326142554id_/https://tech.mozilla.com.tw/?p=4188">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

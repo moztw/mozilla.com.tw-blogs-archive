@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>Web activity 讓網頁應用程式能溝通的新技術 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2012-09/">2012 年 9 月</a><b>&raquo;</b><a href="../../posts/839/">Web activity 讓網頁應用程式能溝通的新技術</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2012-09-24" class="published"><span class="posted-month">9月</span><span class="posted-date">24</span><span class="posted-year">2012</span></time></p>
+              <h1 class="entry-title">Web activity 讓網頁應用程式能溝通的新技術</h1>
+            </header>
+            <div class="entry-content"><p>Web activity 是由 Mozilla 設計並開發，用來使 web app 之間共享資源的框架。在 Firefox OS 中已經存在 Platform/UI 上的實作，並且有一些內建的主要 Web app 已經利用 Web activity 來達成跨應用程式溝通的目的。（如：Gallery 使用它來讓其他程式從它挑選圖片，也用同一技術來實現圖片分享到不同應用）</p>
+<h3>請求者 (Requester)</h3>
+<p>假設今天 E-mail 應用程式需要從圖片集中挑選圖片來寄送，那麼它必須新增一個 Activity 物件如下：</p>
+<p>var a = new MozActivity({<br>  name: &#39;pick&#39;,<br>  data: {<br>    type: &#39;image/png&#39;<br>  }<br>});</p>
+<p>					123456</p>
+<p>						var a = new MozActivity({  name: &#39;pick&#39;,  data: {    type: &#39;image/png&#39;  }});</p>
+<p>type 欄位是用來當 filter 用的</p>
+<p>在 data 中的其他欄位可以傳你想要的資料給接收方。</p>
+<p>當收到資料後，處理回呼函數的方式：</p>
+<p>a.onsuccess = function on_success() {<br>  var image = a.result;<br>};<br>a.onerror = function on_error() {<br>  console.warn(&#39;error when picking!&#39;);<br>};</p>
+<p>					123456</p>
+<p>						a.onsuccess = function on_success() {  var image = a.result;};a.onerror = function on_error() {  console.warn(&#39;error when picking!&#39;);};</p>
+<h3>接收者 (Receiver)</h3>
+<p>接受某個 Activity 的 App 必須在 Manifest.webapp 中宣告：</p>
+<p>&quot;activities&quot;: {<br>  &quot;pick&quot;: {<br>    &quot;filters&quot;: {<br>      type: [&quot;image/png&quot;, &quot;image/gif&quot;],<br>    },<br>    &quot;disposition&quot;: &quot;window&quot;<br>  }<br>}</p>
+<p>					12345678</p>
+<p>						&quot;activities&quot;: {  &quot;pick&quot;: {    &quot;filters&quot;: {      type: [&quot;image/png&quot;, &quot;image/gif&quot;],    },    &quot;disposition&quot;: &quot;window&quot;  }}</p>
+<p>並且在自己的 javascript 檔中寫好當 Activity 產生時的處理函式</p>
+<p>navigator.setMozMessageHandler(&#39;activity&#39;, function(a) {<br>  var image = getImageToReturn();<br>  if (!image) {<br>    a.postError(&quot;NoImage&quot;);<br>    return;<br>  }<br>  a.postResult({ type: &quot;image/png&quot;, url: image });<br>});</p>
+<p>					12345678</p>
+<p>						navigator.setMozMessageHandler(&#39;activity&#39;, function(a) {  var image = getImageToReturn();  if (!image) {    a.postError(&quot;NoImage&quot;);    return;  }  a.postResult({ type: &quot;image/png&quot;, url: image });});</p>
+<h3>data/type的用法</h3>
+<p>如聯絡人程式可以接受同一個叫做 pick 的 Activity，但是電子郵件程式需要的是’email’這類資料，而電話程式需要的是’號碼’這類資料，對於這兩類資料需要呈現的 UI 與最後傳回去的資料當然會是不一樣的。</p>
+<p>解決方法就是利用不同的 data type 來區分同種 activity 的不同需求：</p>
+<p>// Email app<br>var a = new MozActivity({<br>  name: &#39;pick&#39;,<br>  data: {<br>    type: &#39;web-content/email&#39;<br>  }<br>});</p>
+<p>					1234567</p>
+<p>						// Email appvar a = new MozActivity({  name: &#39;pick&#39;,  data: {    type: &#39;web-content/email&#39;  }});</p>
+<p>// Dialer app<br>var a = new MozActivity({<br>  name: &#39;pick&#39;,<br>  data: {<br>    type: &#39;web-content/numbers&#39;<br>  }<br>});</p>
+<p>					1234567</p>
+<p>						// Dialer appvar a = new MozActivity({  name: &#39;pick&#39;,  data: {    type: &#39;web-content/numbers&#39;  }});</p>
+<p>在聯絡人程式中</p>
+<p>navigator.setMozMessageHandler(&#39;activity&#39;, function(a) {<br>  switch(a.source.data.type) {<br>  case &#39;webcontacts/numbers&#39;:<br>    // ...<br>    break;<br>  case &#39;webcontacts/email&#39;:<br>    // ...<br>    break;<br>  }<br>});</p>
+<p>					12345678910</p>
+<p>						navigator.setMozMessageHandler(&#39;activity&#39;, function(a) {  switch(a.source.data.type) {  case &#39;webcontacts/numbers&#39;:    // ...    break;  case &#39;webcontacts/email&#39;:    // ...    break;  }});</p>
+<p>如此一來就可以分開處理 UI 變化及後續回傳資料的部分。</p>
+<h3>多於一個可以處理的 Reciever?</h3>
+<p>比如挑選 Homescreen 的 Wallpaper 有兩個以上的應用程式可以挑的時候，</p>
+<p>Firefox OS 的系統 UI 便會自動列出可用的應用程式清單，如圖：</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2012/09/screenshotpc1.png"><img src="../../assets/839/wp-content/uploads/2012/09/screenshotpc1.png" alt="" loading="lazy"></a></p>
+<p>GAIA 時其實是收到一個從 GECKO 發出的事件 (mozChromeEvent），包含 activity 來源資料以及可以處理該 activity 的應用程式列表。當使用者點選某個選項後，GAIA 會再發另一個事件 (mozContentEvent）到 Gecko 告訴他要用哪一支程式來處理，Gecko 則會再透過另一個 mozChromeEvent 來叫 GAIA 的 Window manager 來開啟該應用程式。這是目前 GAIA 跟GECKO 溝通運作的方式。</p>
+<h3>實際在應用程式之間傳圖片的方式？</h3>
+<p>因為 Web activity 目前只能傳送純文字資料，所以實際上是先用 HTML5 的 Canvas 載入圖片後，將整個 Canvas 轉成dataURL，如此一來就變成一個很長的文字可以傳送了，sample code 如下：</p>
+<p>function getBase64Image(img) {<br>  var canvas = document.createElement(&quot;canvas&quot;);                                                                             <br>  canvas.width = img.width;<br>  canvas.height = img.height; <br>  var ctx = canvas.getContext(&quot;2d&quot;);<br>  ctx.drawImage(img, 0, 0); <br>  var dataURL = canvas.toDataURL(&quot;image/png&quot;, 0.2);<br>  return dataURL;<br>}</p>
+<p>					123456789</p>
+<p>						function getBase64Image(img) {  var canvas = document.createElement(&quot;canvas&quot;);                                                                               canvas.width = img.width;  canvas.height = img.height;   var ctx = canvas.getContext(&quot;2d&quot;);  ctx.drawImage(img, 0, 0);   var dataURL = canvas.toDataURL(&quot;image/png&quot;, 0.2);  return dataURL;}</p>
+<p>接收方如果是要拿來當背景圖的話只要直接把 url(dataURL) 塞進 backgroundImage 屬性就可以了。</p>
+<h3>disposition 屬性的差異</h3>
+<p>定義 activity 時的 disposition 欄位目前有 window 跟 inline 兩種選項。<a href="https://www.kylinpoker.com/mahjong.htm">麻将牌</a> 主要不同點在於呼叫接收方時，window 是會真正切換到該應用程式，而且預設並不會回傳資料給請求方。如點 email/http link 時會啟動 email 程式或瀏覽器的行為。inline 用在需要從接收方選某些資料來使用時，此時接收方只是暫時出現在前景程式上方，選完資料就會關閉。</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200803145700id_/https://tech.mozilla.com.tw/?p=839">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

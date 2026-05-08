@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>Where am I?－Part III－用 Geolocation API 以及 Offline Storage 實現導航與離線儲存 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2015-03/">2015 年 3 月</a><b>&raquo;</b><a href="../../posts/5797/">Where am I?－Part III－用 Geolocation API 以及 Offline Storage 實現導航與離線儲存</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2015-03-02" class="published"><span class="posted-month">3月</span><span class="posted-date">2</span><span class="posted-year">2015</span></time></p>
+              <h1 class="entry-title">Where am I?－Part III－用 Geolocation API 以及 Offline Storage 實現導航與離線儲存</h1>
+            </header>
+            <div class="entry-content"><h2><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/app.png"><img src="../../assets/5797/wp-content/uploads/2014/12/app.png" alt="app screenshot" loading="lazy"></a></h2>
+<p>之前在 Eric [[1]](https://tech.mozilla.com.tw/#ref-1) 與 Owen 的文章 [[2]](https://tech.mozilla.com.tw/#ref-2) 已經介紹了如何使用 Geolocation API [[3]](https://tech.mozilla.com.tw/#ref-3) 開發地圖應用，在這篇文章中我們要進一步介紹如何用 Geolocation API 實現導航。另外考慮到定位服務需要一定的時間才能完成，為了避免使用者每次開啟 App 時候都要花時間重新尋找所在位置，因此我們要利用離線儲存的函式庫 —  localForage [[4]](https://tech.mozilla.com.tw/#ref-4) 來紀錄使用者最後出現的地點，如此一來即使定位緩慢的時候依然能快速把地圖移到最近的位置。</p>
+<h2>導航 — watchPosition()</h2>
+<p>聲明：我們在此只會實作一個能夠隨著使用者走動更新現在位置的App, 並沒有要實作規劃路徑或是行車提醒。</p>
+<p>之前在 Owen的文章 [[1]](https://tech.mozilla.com.tw/#ref-1) 中介紹了如何使用 geolocation.getCurrentPosition() 取得手機所在的位置。但是getCurrentPosition()只會回傳一次位置，而且為了減少等待時間，getCurrentPosition() 會傾向於比較快速但是比較不準確的 WiFi 或 IP 定位。假設我們希望每當位置資訊更新（可能是手機移動，或是更精確的 GPS 定位完成）的時候都能更新現在位置符號，那就必須要使用 watchPosition() 函式 [[5]](https://tech.mozilla.com.tw/#ref-5)。</p>
+<p>watchPosition()的參數包括一個成功時呼叫的回調函式 (callback function)，一個失敗時呼叫的回調函數，以及一些相關的設定值。使用起來如下：</p>
+<p>function on_success(position) { //成功時會呼叫這個函式<br>  do_something(position.coords.latitude, position.coords.longitude);　//經緯度<br>}</p>
+<p>function on_error(err) { //失敗時會呼叫這個函式<br>  alert(err);<br>}</p>
+<p>var options = {　//相關設定，本文不深入介紹<br>  enableHighAccuracy: true, <br>  maximumAge        : 30000, <br>  timeout           : 27000<br>};</p>
+<p>//開始監控位置<br>var watchID = navigator.geolocation.watchPosition(on_success, on_error, options);</p>
+<p>					12345678910111213141516</p>
+<p>						function on_success(position) { //成功時會呼叫這個函式  do_something(position.coords.latitude, position.coords.longitude);　//經緯度} function on_error(err) { //失敗時會呼叫這個函式  alert(err);} var options = {　//相關設定，本文不深入介紹  enableHighAccuracy: true,   maximumAge        : 30000,   timeout           : 27000}; //開始監控位置var watchID = navigator.geolocation.watchPosition(on_success, on_error, options);</p>
+<p>每當系統底層抓到最新的位置時（不論是從WiFi或是GPS），on_success()就會被呼叫，此時就可以利用傳入的經緯度來畫出現在位置的標誌。細部的設定我們不深入介紹，讀者可以參考MDN上的介紹 [[5]](https://tech.mozilla.com.tw/#ref-5)。</p>
+<p>watchPosition() 只要被啟動以後，就會不斷的呼叫 on_success() 直到天荒地老。要停止一個進行中的 watchPosition() 就必須在啟動時記住它回傳的 watchID。只要把 watchID 傳給geolocation 中的 clearWatch() 就可以停止它繼續動作。（若是熟悉 JavaScript 的讀者會發現這很類似 setInterval() 的用法）</p>
+<p>//開始監控<br>var watchID = navigator.geolocation.watchPosition(on_success, on_error, options);<br>//停止監控<br>navigator.geolocation.clearWatch(watchID);</p>
+<p>					1234</p>
+<p>						//開始監控var watchID = navigator.geolocation.watchPosition(on_success, on_error, options);//停止監控navigator.geolocation.clearWatch(watchID);</p>
+<p>有了watchPosition()的幫助，我們就可以輕鬆的在使用者走動的時候，把最新的位置畫到地圖上，達成導航的功能。</p>
+<p>想實際體驗 Geolocation API 的讀者可以 fork/clone 這份 GitHub Repository [[8]](https://tech.mozilla.com.tw/#ref-8) 來實驗。</p>
+<h2>記得我在哪嗎? — Offline Storage</h2>
+<p>不論 Geolocation API 使用什麼樣的技術，總是需要幾秒鐘甚至幾分鐘的時間才能定位成功，因此 App 啟動時就必須要等待許久才能讓地圖移動到正確位置。但是我們可以合理的推測使用者開啟 App 時，並不會離上次關閉 App 前的最後位置差太遠。若是App能夠記得上次 App 關閉前的最後位置，就能在下次啟動時直接顯示最後位置附近的地圖，將會大大改善使用者的體驗。</p>
+<p>Web 平台上提供本地儲存的技術有很多種 (IndexedDB, WebSQL, localStorage, etc.)，在各種瀏覽器上支援的程度也不一。我們推薦使用 Mozilla 開發的 localForage 函式庫 [[4]](https://tech.mozilla.com.tw/#ref-4)，localForage 讓您可以不必擔心平台的差異，利用一套統一的 API，localForage 就會自動根據平台來使用不同的技術。</p>
+<p>localForage 的安裝非常容易，只要從GitHub [[4]](https://tech.mozilla.com.tw/#ref-4) 下載最新的 localforage.js (也可以使用 npm 或 bower )，然後在 App 的 html 檔案中加入</p>
+<p>&lt;script src=&quot;localforage.js&quot;&gt;&lt;/script&gt;</p>
+<p>					1</p>
+<p>						&lt;script src=&quot;localforage.js&quot;&gt;&lt;/script&gt;</p>
+<p>有了localForage，我們就可以在每次獲得新位置資訊的時候把它存起來：</p>
+<p>on_success(position) { //定位成功時會呼叫這個函式<br>  //syntax: localforage.setItem(&#39;key&#39;, &#39;value&#39;, successCallback);<br>  localforage.setItem(&#39;position&#39;, position, function(err, value){});<br>  do_something(position.coords.latitude, position.coords.longitude);　//經緯度<br>}</p>
+<p>					12345</p>
+<p>						on_success(position) { //定位成功時會呼叫這個函式  //syntax: localforage.setItem(&#39;key&#39;, &#39;value&#39;, successCallback);  localforage.setItem(&#39;position&#39;, position, function(err, value){});  do_something(position.coords.latitude, position.coords.longitude);　//經緯度}</p>
+<p>localForage 是使用 key-value 的格式來儲存資料，我們可以把 Geolocation API 回傳的 position 變數當作 value 儲存，並且給它一個字串 &#39;position&#39; 作為 key，之後要存取的時候就可以用 key 來搜尋。</p>
+<p>值得注意的一點是 localForage 的 API 都是非同步的 (Asynchronous)，當 localforage.setItem()執行以後並不會阻塞 (blocking) 等到儲存完畢，而是會直接繼續往下執行do_something()，等到儲存真的完成時才會呼叫 successCallback。</p>
+<p>當程式啟動時，我們可以優先從localForage取出上次儲存的位置，而不用慢慢的等 Geolocation API 回傳。存取的方法如下</p>
+<p>function successCallback(position) {<br>   update_current_position(position);<br>}</p>
+<p>localforage.getItem(&#39;position&#39;, successCallback);</p>
+<p>					12345</p>
+<p>						function successCallback(position) {   update_current_position(position);} localforage.getItem(&#39;position&#39;, successCallback);</p>
+<p>注意到 getItem() 也是非同步的，當 position 成功的從本機的儲存中被取出的時候，successCallback 就會被呼叫。</p>
+<p>localForage 當然還支援更新、刪除等資料庫常用的功能，不過我們只需要這兩個函式就足以建構我們的 App 了，對於 localForage 的其他功能可以參考 [[6]](https://tech.mozilla.com.tw/#ref-6)</p>
+<p>想要動手試試看的讀者可以參考這個 GitHub Repository [[9]](https://tech.mozilla.com.tw/#ref-9)，它示範如何用 localForage 離線暫存 Ubike 的可借車數資訊。</p>
+<p>以上我們介紹了如何使用 Geolocation API 的  watchPosition() 來持續不斷的得到位置資訊，以及如何使用 localForage 來輕鬆的幫 App 加上離線儲存的功能。有了這兩個利器，我們已經可以建構出功能相當完整的地圖 App 了。您也有更多的創意嗎？歡迎留言與大家分享吧！</p>
+<h2>Reference</h2>
+<p>[1] Where am I？－Part I－使用 Google Maps 地圖快速簡單查看你的位置 <a href="../../posts/5762/">http://tech.mozilla.com.tw/?p=5762</a></p>
+<p>[2] Where am I? – Part II 在 Google Maps 標記地圖資訊 <a href="../../posts/5762/">http://tech.mozilla.com.tw/?p=5765</a></p>
+<p>[3] Geolocation API <a href="https://developer.mozilla.org/zh-TW/docs/Using_geolocation">https://developer.mozilla.org/zh-TW/docs/Using_geolocation</a></p>
+<p>[4] localForage (GitHub) <a href="https://github.com/mozilla/localForage">https://github.com/mozilla/localForage</a></p>
+<p>[5] watchPosition() <a href="https://developer.mozilla.org/en-US/docs/Web/API/Geolocation.watchPosition">https://developer.mozilla.org/en-US/docs/Web/API/Geolocation.watchPosition</a></p>
+<p>[6] localForage API Documentation <a href="https://mozilla.github.io/localForage/">http://mozilla.github.io/localForage/</a></p>
+<p>[7] localForage Intro on Mozilla Hack <a href="https://hacks.mozilla.org/2014/02/localforage-offline-storage-improved/">https://hacks.mozilla.org/2014/02/localforage-offline-storage-improved/</a></p>
+<p>[8]Geolocation API Demo (GitHub) <a href="https://github.com/shinglyu/geolocation_demo">https://github.com/shinglyu/geolocation_demo</a></p>
+<p>[9] Offline App Demo (GitHub) <a href="https://github.com/shinglyu/offline_app_demo">https://github.com/shinglyu/offline_app_demo</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span><span><a href="../../categories/open-source/">Open Source</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20201019204421id_/https://tech.mozilla.com.tw/?p=5797">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

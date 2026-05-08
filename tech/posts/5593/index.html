@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>Firefox OS 之請你跟我這樣說 ~ [SpeechSynthesis] | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-12/">2014 年 12 月</a><b>&raquo;</b><a href="../../posts/5593/">Firefox OS 之請你跟我這樣說 ~ [SpeechSynthesis]</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-12-23" class="published"><span class="posted-month">12月</span><span class="posted-date">23</span><span class="posted-year">2014</span></time></p>
+              <h1 class="entry-title">Firefox OS 之請你跟我這樣說 ~ [SpeechSynthesis]</h1>
+            </header>
+            <div class="entry-content"><p>相信大家多多少少玩過 iOS 手機上的 Siri 或是 Android 手機上的 Google Now！ 等語音辨識功能。  也或許有經驗因為長時間低頭滑手機太累而利用系統中的朗讀功能來&quot;聽&quot;文章。  而這兩種功能 1. Automated Speech Recognition. （ASR） 2. Text to Speech （TTS）/ Speech Synthesis ～目前究竟隱藏在 Firefox OS 的什麼地方， 以及如何達成功能的呢？ 就讓我們繼續看下去 ～</p>
+<p>簡單來說，ASR 就是利用 Microphone 或其他 Capture device 將輸入的聲音，透過語音語意辨識引擎轉換成文字或預先設定好的指令集，再往更上層的介面傳遞。 而 TTS 則將一段被選取的文字當作輸入，透過語音合成引擎包裝成 Audio Segment 再交由媒體系統去播放。</p>
+<p>好的！</p>
+<p>目前 ASR 與 TTS 的程式碼放置在 <a href="https://dxr.mozilla.org/mozilla-central/source/dom/media/webspeech/">mozilla-central/dom/media/webspeech/</a>，然而由於缺乏開放且強大的語音語意辨識引擎，目前 ASR 在 Firefox OS 中只實作了 Speech API [1] 接口部分以及一個主要流程控制的狀態機 [2]，所以我們在這暫且不對 ASR 做深入介紹。  讓我們把聚光燈投向另一個主角 TTS ！！</p>
+<h2>Speech Synthesis 相關介面</h2>
+<p>先來看一眼 Speech Synthesis 的 Interface [3] 吧 ！</p>
+<p>首先你可以透過 SpeechSyntheis 所提供的幾個 method 做操作</p>
+<p>interface SpeechSynthesis {<br>      readonly attribute boolean pending;<br>      readonly attribute boolean speaking;<br>      readonly attribute boolean paused;<br>      void speak(SpeechSynthesisUtterance utterance);<br>      void cancel();<br>      void pause();<br>      void resume();<br>      SpeechSynthesisVoiceList getVoices();<br>};</p>
+<p>					12345678910</p>
+<p>						interface SpeechSynthesis {      readonly attribute boolean pending;      readonly attribute boolean speaking;      readonly attribute boolean paused;      void speak(SpeechSynthesisUtterance utterance);      void cancel();      void pause();      void resume();      SpeechSynthesisVoiceList getVoices();};</p>
+<p>你發現 speak() / cancel() / pause() / resume() 似乎跟播放狀態有著密切關係，但⋯⋯我們這個是 Text to speech 的功能啊！最重要的 Text 在哪兒呢 ？ 眼尖的讀者應該有注意到另一個 interface</p>
+<p>interface SpeechSynthesisUtterance : EventTarget {<br>      attribute DOMString text;<br>      attribute DOMString lang;<br>      attribute DOMString voiceURI;<br>      attribute float volume;<br>      attribute float rate;<br>      attribute float pitch;<br>      attribute EventHandler onstart;<br>      attribute EventHandler onend;<br>      attribute EventHandler onerror;<br>      attribute EventHandler onpause;<br>      attribute EventHandler onresume;<br>      attribute EventHandler onmark;<br>      attribute EventHandler onboundary;<br>    };</p>
+<p>					123456789101112131415</p>
+<p>						interface SpeechSynthesisUtterance : EventTarget {      attribute DOMString text;      attribute DOMString lang;      attribute DOMString voiceURI;      attribute float volume;      attribute float rate;      attribute float pitch;      attribute EventHandler onstart;      attribute EventHandler onend;      attribute EventHandler onerror;      attribute EventHandler onpause;      attribute EventHandler onresume;      attribute EventHandler onmark;      attribute EventHandler onboundary;    };</p>
+<p>沒錯！ 我們可以透過將所想要朗讀的文字塞入這個 interface 中的 DOMString text，並且指定對應的 language、voiceURI 等 attributes， 這樣便把所有想要語音合成的資訊都準備妥當了！</p>
+<p>咦！？ 慢著，我怎麼知道目前 Firefox OS 支援哪些語系以及語調（男聲/女聲）？</p>
+<p>喔喔，我們似乎漏看了這段程式碼以及以下兩個 Interfaces</p>
+<p>SpeechSynthesisVoiceList getVoices();</p>
+<p>					1</p>
+<p>						SpeechSynthesisVoiceList getVoices();</p>
+<p>interface SpeechSynthesisVoice {<br>      readonly attribute DOMString voiceURI;<br>      readonly attribute DOMString name;<br>      readonly attribute DOMString lang;<br>      readonly attribute boolean localService;<br>      readonly attribute boolean default;<br>};<br>interface SpeechSynthesisVoiceList {<br>      readonly attribute unsigned long length;<br>      getter SpeechSynthesisVoice item(in unsigned long index);<br>}</p>
+<p>					1234567891011</p>
+<p>						interface SpeechSynthesisVoice {      readonly attribute DOMString voiceURI;      readonly attribute DOMString name;      readonly attribute DOMString lang;      readonly attribute boolean localService;      readonly attribute boolean default;};interface SpeechSynthesisVoiceList {      readonly attribute unsigned long length;      getter SpeechSynthesisVoice item(in unsigned long index);}</p>
+<p>原來 Speech API [4] 裏早就定義好相關的介面與結構，所以 Firefox OS 在實作 SpeechSynthesis 時也設計了一個對應的 <a href="https://dxr.mozilla.org/mozilla-central/source/dom/media/webspeech/synth/nsISynthVoiceRegistry.idl">XPCOM – nsISynthVoiceRegistry.idl</a> 元件讓系統註冊語音合成引擎，於是 Firefox OS 在起動時便能將搭載的語音合成引擎 Pico [4] 註冊起來，接著上層 UI 便能透過 API 取得目前 Pico 引擎內支援的語系，以及聲調來當作朗讀的參數傳入引擎！</p>
+<h2>Speech Synthesis 流程架構</h2>
+<p>接著來介紹簡單的流程架構圖吧～（以下為在 Firefox OS 中多程序架構流程）</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture.png"><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-1024x571.png"><img src="../../assets/5593/wp-content/uploads/2014/10/TTS_Architecture-150x150.png" alt="TTS_Architecture" loading="lazy"></a></a></p>
+<p>1) 使用者在網頁上選取了一段文字，在 javascript 中 建立一個 SpeechSynthesisUtterance Object 並從 SpeechSynthesis interface 的 Speak() 傳入。   而被傳入的 SpeechSynthesisUtterance 會先被加入一個 Queue 中，之後一個一個被處理。</p>
+<p>2) 被處理的 SpeechSynthesisUtterance 透過 nsSynthVoiceRegistry 的 SpeakUtterance() 將自己傳入 nsSynthVoiceRegistry 中。</p>
+<p>3) 這階段分為兩種可能的方式，第一種是在 Firefox OS 下的情況，每一個 Utterance object 建立一個對應的 IPC request child-parent channel，讓要準備合成的文字透過 channel 被傳送到 chrome process。（對 IPC 不熟 ？ 快來<a href="../../posts/2296/">參考這篇</a>。）  第二種則是在尚未開啟 <a href="https://wiki.mozilla.org/Electrolysis">Firefox e10s</a> 功能前的單執行程序應用情境，Utterance object 並不需要建立 IPC channel 便能直接將自己傳入 nsSynthVoiceRegistry 內。</p>
+<p>4) 在 chrome process 裏的 nsSynthVoiceRegistry 透過自己的 Speak() 將資訊準備成 Voice data 隨後交給 nsPicoService。</p>
+<p>5) nsPicoService 會產生 PicoCallbackRunnable task 來 asynchronously 執行與更底層 Pico Module （實際上真正將 Text 轉換成 Synthesized buffer block 的地方） 的互動。</p>
+<p>6) 隨後再將合成好的資料利用 PicoSynthDataRunnable 所持有在 step 3 建立的 nsSpeechTask 的 Setup() 與 SendAudioNative() 與 MediaStreamGraph 建立 Notifier-Listener 關係，且將 Synthesized data 包裝成 Audio segment 交給 MediaStreamGraph 進行播放功能。</p>
+<p>7) Audio segment 被傳入 MediaStreamGraph 的 Track 裏進行消化，而 MediaStreamGraph 會依據進行的程度作通知，例如：NotifyFinished 、NotifyBlockingChanged⋯⋯etc，而這些通知隨後便會透過 ipc 傳送狀態回 content process。</p>
+<p>8) 當 audio 的 playback status 透過 ipc 傳回 content process 後，SpeechTaskChild 會利用持有的 utterance object 的 DispatchSpeechSynthsisEvent() 將狀態發送出去。</p>
+<p>9) 傳送 state event 給上層的 DOM listener。</p>
+<p>這就是簡單的 Speech Synthesis 流程架構。  至於遺珠之憾 ASR 呢，我們下回再做更深入的介紹～</p>
+<h2>參考資料</h2>
+<p>[1] <a href="https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html#speechreco-section">https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html#speechreco-section</a></p>
+<p>[2] <a href="https://dxr.mozilla.org/mozilla-central/source/dom/media/webspeech/recognition/SpeechRecognition.cpp#179">http://dxr.mozilla.org/mozilla-central/source/dom/media/webspeech/recognition/SpeechRecognition.cpp#179</a></p>
+<p>[3] <a href="https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html#tts-section">https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html#tts-section</a></p>
+<p>[4] <a href="https://dxr.mozilla.org/mozilla-central/source/dom/media/webspeech/synth/pico">http://dxr.mozilla.org/mozilla-central/source/dom/media/webspeech/synth/pico</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox/">Firefox</a></span><span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200919183830id_/https://tech.mozilla.com.tw/?p=5593">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

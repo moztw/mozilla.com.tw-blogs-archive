@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>說說 nsCOMPtr 這東西 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2012-10/">2012 年 10 月</a><b>&raquo;</b><a href="../../posts/828/">說說 nsCOMPtr 這東西</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2012-10-01" class="published"><span class="posted-month">10月</span><span class="posted-date">1</span><span class="posted-year">2012</span></time></p>
+              <h1 class="entry-title">說說 nsCOMPtr 這東西</h1>
+            </header>
+            <div class="entry-content"><p>有看過 Gecko 的 C++ Source code 的人，一定見過這個東西：nsCOMPtr，有很多物件的指標都會被儲存到這類物件裡面，也猜得到他和指標有關係，但這東西到底意義何在？其實他就是 Gecko 裡面眾多 smart pointer 的一種。</p>
+<p>C 和 C++ 語言中，令人頭痛的問題之一，就是沒有辦法自動回收 Heap 內的記憶體（也就是說，C++ 預設是沒有 Garbage collector 的）。只要是 new 出來的東西，就一定要 delete（或是 malloc 出來，就一定要 free）。雖然說一般狀況下，只要清楚的指定物件的所有權，寫明要誰來負責刪除記憶體區塊，再仔細的去抓 leak，這個問題會漸漸穩定。但近代的龐大專案，例如 Gecko 裡面，這樣做就會有他的難度，因為一個物件常常被許多其他物件、函數同時使用到，指標也會在不同的函數中傳遞，很難確保說誰必須負責在使用完這個物件後把他刪除，如果錯殺了這個物件，那下場常常是整個程式 crash，所以設計一個垃圾回收機制是必須的。</p>
+<p>一個最簡單的作法，那就是我們在每個物件裡面保留一個欄位。這個欄位負責紀錄他被多少人參考到，每次有哪段程式需要用到這個物件，就把這個欄位的數目加一，當這段程式用完這個物件，就把這個欄位的數目減一，減一以後，如果發現這個欄位降到了零，那就表示，已經沒有人在用這個物件了，那他就可以安穩的被刪除。在 Gecko 的 code 裡面，物件會實作加一和減一的的函數：AddRef 和 Release 這兩個函數。雖然只是兩個函數，但巧妙各有不同。實作的方面，有一些是可以讓物件同時被兩個不同 Thread 的程式擁有，有一些則不行，諸如此類。nsISupportsImpl.h 內部就有許多 NS_IMPL_*_ADDREF 的巨集可供使用。</p>
+<p>一般來說，使用一個 nsCOMPtr 就跟一個普通指標沒什麼兩樣：都有 -&gt; Operator，可以呼叫指標所指物件的方法和存取屬性。可以用等號來進行指派，而且會自動呼叫前一個被 Assign 的物件的 Release() 方法。也就是說，沒意外的話，他可以自己釋放記憶體，我們不需要用 delete 去刪除物件，但也因為如此，在某些狀況下使用 nsCOMPtr 要特別注意：</p>
+<ul><li>傳入「指標的指標」時。也就是函數從取出指標值的時候，要使用 getter_AddRefs 函數。當 nsCOMPtr 被透過 getter_AddRefs() cast 成 T** 時，原本的 nsCOMPtr 內容會先被 Release。</li></ul>
+<ul><li>透過 getter_AddRefs() 也是有副作用的，比方說，使用 linked-list 時，常常會出現類似的寫法： p-&gt;GetNext(&amp;p); 1 p -&gt; GetNext ( &amp; p ) ; 如果用 nsCOMPtr 的寫法，則會成為 p-&gt;GetNext(getter_AddRefs(p)); 1 p -&gt; GetNext ( getter_AddRefs ( p ) ) ; 在這種狀況下，getter_AddRefs(p) 會先執行，等到 cast 成 T*<em> 的時候，p 早已經釋放了，於是我們就等於呼叫一個 NULL 的方法，這種事情的後果…真是不堪設想（還好 nsCOMPtr 會對這種情況 Assert，不致於直接 Crash）。所以，這種時候要分解動作。 while ( p ) { nsIDOMNode</em> next; p-&gt;GetNext(&amp;next); p = dont_AddRef(next); } 1 2 3 4 5 6 while ( p ) { nsIDOMNode* next ; p -&gt; GetNext ( &amp; next ) ; p = dont_AddRef ( next ) ; } 這樣 next 在經過 p-&gt;GetNext(&amp;next); 之後，會指向一個已經有被執行過 “AddRef&quot; 的物件，再用 dont_AddRef 去指派他，這樣就不會增加一次參考。</li></ul>
+<ul><li>環狀參照：是個 Reference-counted 非常常見而且有時候很棘手的問題，狀況就是當 A 物件透過 nsCOMPtr 持有一個 B 物件的指標，而 B 物件又透過 nsCOMPtr 持有一個 A 物件的指標。因為 nsCOMPtr 是強指標，只要透過 nsCOMPtr 持有的物件都不會被銷毀，這種環狀參照的情形，會讓 A 和 B 兩個物件都不會被刪除。 解決的方法就是使用弱指標，弱指標有點像是普通的指標，這種指標只會指向某個物件，但不會防止某個物件被刪除。但使用 Weak Reference 的好處就是，假如所指向的物件被刪除了，我們會知道這件事情。 假如一個物件有繼承 nsSupportsWeakReference，就表示他支援 Weak Reference，我們就可以用這種方法取得他的 Weak Reference。 nsWeakPtr weakPtr = do_GetWeakReference(aFooPtr); 1 nsWeakPtr weakPtr = do_GetWeakReference ( aFooPtr ) ; 接著我們就可以心安理得的把 weakPtr 儲存下來，不用擔心我們參照的物件，會因為 weakPtr 而無法刪除。當我們要使用這個物件的時候，只要使用 do_QueryReferent() 可以把他暫時變成 nsCOMPtr nsCOMPtr tempFooPtr = do_QueryReferent(weakPtr); 1 nsCOMPtr tempFooPtr = do_QueryReferent ( weakPtr ) ; 我們就可以暫時使用強指標指向這個物件，但當 tempFooPtr 的生命週期結束以後，aFooPtr 的指標又會只剩下 weakPtr 在參照。如果 do_QureyReferent 的物件實際上已經被刪除了，那我們取得的 tempFooPtr 就會是 nsnull。所以在使用前記得先檢查一下囉！</li></ul>
+<h3>Reference</h3>
+<ul><li>https://developer.mozilla.org/en-US/docs/Using_nsCOMPtr/Reference_Manual</li></ul>
+<ul><li>https://developer.mozilla.org/en-US/docs/Weak_reference</li></ul></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox/">Firefox</a></span><span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20200919193116id_/https://tech.mozilla.com.tw/?p=828">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

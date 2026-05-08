@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>WebAPP 之影像處理 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2015-05/">2015 年 5 月</a><b>&raquo;</b><a href="../../posts/6186/">WebAPP 之影像處理</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2015-05-11" class="published"><span class="posted-month">5月</span><span class="posted-date">11</span><span class="posted-year">2015</span></time></p>
+              <h1 class="entry-title">WebAPP 之影像處理</h1>
+            </header>
+            <div class="entry-content"><p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/03/invert.png"><img src="../../assets/6186/wp-content/uploads/2015/03/invert-1024x488.png" alt="invert" loading="lazy"></a></p>
+<p>在各大平台上的 App 商店裡，影像處理相關的應用程式總是在熱門排行榜上佔有一席之地，Web Platform 當然也不落人後的提供建構影像處理 APP 的相關功能。在這篇文章裡，我們將介紹如何利用 HTML5 的 <br>			getUserMedia() API 來建構一個影像處理應用程式的架構，接著我們會介紹在 Web Platform 上有哪些工具可以用來實作影像處理的功能。</p>
+<h2>基礎架構：擷取網路攝影機影像並取出影像資料</h2>
+<p>下面的這個範例程式是用來介紹一個在 Web Platform 上的影像處理應用的事的基本架構。在讀者按下 Play 鍵以後，瀏覽器會要求你授權使用網路相機，接著會出現兩個影像畫面。左邊的影像是夠過相機擷取到的原始影像，右邊的畫面是處理完的結果。但因為現在沒有對影像做任何處理，所以左邊的畫面和右邊的畫面會一模一樣。</p>
+<p>小提醒：以下的範例程式都需要有網路相機才可以執行！</p>
+<p>相信熟悉謀智台客的讀者們對 <br>			getUserMedia() 這個 API 一定不陌生，不熟悉的讀者也可以參考台客們所寫的文章[[1]](https://tech.mozilla.com.tw/#ref-1)[[2]](https://tech.mozilla.com.tw/#ref-2)。間單來說，HTML5 的 <br>			getUserMedia() API 可以用來擷取電腦上的攝影機或是麥克風的硬體資源，而且 <br>			getUserMedia() API 是一個非同步的（asynchronous）的 API，其結果會透過 callback function 來傳回一個 <br>			MediaStream 物件。<br>			getUserMedia() 這個 API 的使用方法如下：</p>
+<p>navigator.getUserMedia(<br>	{video: true, audio: false} , // 要求相機資源，不要麥克風資源<br>	onSuccess, // 成功得到相機資源後呼叫該函數<br>	onFail // 若失敗，呼叫該函數<br>);</p>
+<p>					12345</p>
+<p>						navigator.getUserMedia(	{video: true, audio: false} , // 要求相機資源，不要麥克風資源	onSuccess, // 成功得到相機資源後呼叫該函數	onFail // 若失敗，呼叫該函數);</p>
+<p>在 [[2]](https://tech.mozilla.com.tw/#ref-2) 裡，Randy 為我們介紹如何將得到的影像資料透過錄影 API 來錄成一的檔案。而在這個範例裡，我們將得到的影像資料（也就是 <br>			MediaStream 物件）導入一個 <br>			video 元素來秀在畫面上。在以下這段程式碼裡，我們在 <br>			getUserMedia() 成功擷取相機資源後的 callback function 裡面將 <br>			MediaStream 物件導入一個 <br>			video 元素裡：</p>
+<p>function onSuccess(stream) {<br>    localMediaStream = stream;<br>    video.src = window.URL.createObjectURL(localMediaStream);<br>    video.onloadeddata = initCanvases();               <br>    video.play();<br>}</p>
+<p>					123456</p>
+<p>						function onSuccess(stream) {    localMediaStream = stream;    video.src = window.URL.createObjectURL(localMediaStream);    video.onloadeddata = initCanvases();                   video.play();}</p>
+<p>現在我們可以把攝影機得到的影像畫在一個 <br>			video 元素裡了，那我們要怎麼進一步的得到影像的資料呢？以現在 HTML5 的架構來說，我們無法直接從 <br>			video 元素得到影像資料，我們需要把 <br>			video 元素再倒入一個 <br>			canvas 元素中，然後透過該<br>			canvas 元素取得一個 <br>			ImageData 物件。從這裡開始就是每個影像處理應用程式的重點了，每個應用程式就可以發揮創意來修改得到的影像資料，有關操作 <br>			ImageData 物件裡的資料的方法我們將會在文章的後半段介紹，現在先讓我們略過。當影像修改完畢後，我們可以再將 <br>			ImageData 物件再畫到另外一個 <br>			canvas 元素裡，並且秀在銀幕上。最後我們會透過 <br>			requestAnimationFrame() API 來要求下一個影像畫面。接下來的這段範例程式碼為我們示範以上的流程：</p>
+<p>function processOneFrame() {<br>    // 將 video 元素的影像畫到一個 canvas 元素裡<br>    ctxOperate.drawImage(video, 0, 0, video.width, video. height); </p>
+<p>    // 從 canvas 元素裡拿出一個 ImageData 物件<br>    var imageData = ctxOperate.getImageData(0, 0, video.width, video.height);</p>
+<p>    // 處理得到的 ImageData 物件<br>    // 這裏先跳過。<br>    ......</p>
+<p>    // 將處理好的 ImageData 物件畫到另外一個 canvas 元素裡並且秀在畫面上<br>    ctxResult.putImageData(imageData, 0, 0);</p>
+<p>    // 要求下一個影像畫面<br>    if (isContinuous) {<br>        requestAnimationFrame(processOneFrame);<br>    } else {<br>        return;<br>    }<br>}</p>
+<p>					123456789101112131415161718192021</p>
+<p>						function processOneFrame() {    // 將 video 元素的影像畫到一個 canvas 元素裡    ctxOperate.drawImage(video, 0, 0, video.width, video. height);         // 從 canvas 元素裡拿出一個 ImageData 物件    var imageData = ctxOperate.getImageData(0, 0, video.width, video.height);        // 處理得到的 ImageData 物件    // 這裏先跳過。    ......        // 將處理好的 ImageData 物件畫到另外一個 canvas 元素裡並且秀在畫面上    ctxResult.putImageData(imageData, 0, 0);        // 要求下一個影像畫面    if (isContinuous) {        requestAnimationFrame(processOneFrame);    } else {        return;    }}</p>
+<h2>套用特效到影像資料上</h2>
+<p>現在我們知道一個在 Web Platform 上的影像處理應用程式的基本架構長什麼樣子了，接下來我們來介紹如何實作影像處理的功能。其實在 Web Platform 上你可以有很多種選擇來實作影像處理的功能，以下列出三種方法：</p>
+<ul><li>透過 CSS 的 filters 來叫瀏覽器幫你套用特效</li></ul>
+<ul><li>將影像原始資料取出再透過 JavaScript 來修改影像資料</li></ul>
+<ul><li>將影像原始資料送進 GPU 裡再透過 WebGL 來修改影像資料</li></ul>
+<p>這些方法都有其優缺點，讓我們先來比較一番。首先，透過 CSS filters 是最簡單的方法，但也是最被侷限的方法。理由很簡單，因為 CSS 所提供的 fiter 的種類有限，雖然可以將所提供的 filters 組合起來使用，但能變化出來的花樣還是有所限制。再來，透過 JavaScript 是最通用的方法，但有可能是效能最差的方法。一旦我們可以取得影像的原始資料，想必聰明的讀者們一定可以透過撰寫 JavaScript 來任意的操作影像資料並且得到想要的結果。但是身為一個直譯語言，JavaScript 還是有其在效能上的局限，因此若是所想要的功能需要大量的計算的話，透過 JavaScript 可能會算很久。最後，透過在 GPU 上對影像的每個像素點做平行運算可以大幅度的增加效能，但並不是每種想要實作的功能都適合做平行運算。假設我們想要實作的功能是對影像中的每個像素點套用相同的運算，且套用在每個像素點的運算是互相獨立的（也就是說套用在某像素點的運算不會需要其他像素點的運算結果）的話，那該功能可能就很適合透過 WebGL 在 GPU 上實作。但若是我們想要實作的功能會因為像素點所在的位置或是時間有所不同，或是對不同像素點的計算有相依性的話，那該功能就不適合透過 WebGL 來實作在 GPU 上，相反的，該功能較適合透過 JavaScript 來實作。</p>
+<p>簡單的分析三種方法的特性後，接著就來實作出一個特效。在這裡我們先介紹透過 CSS 以及透過 JavaScript 的兩種方法，在未來的文章裡，我們再專門介紹透過 WebGL 來操作影像資料的方法。而我們挑選來實作的功能是 CSS 裏有提供的一個 filter，叫做 <br>			invert()（反轉）。這個特效的概念很簡單，就是要讓得到的影像用相反的顏色來表現。實作上也很簡單，首先我們將影像用 RGB 顏色空間表現，也就是說影像上的每個像素點會分別用一個紅色（R）值，一個綠色（G）值以及一個藍色（B）值來表示，每個色彩值會落在 0 到 255 之間。而所謂的反轉一個像素點的顏色，就是用 255 去分別減掉紅綠藍的數值。就這麼簡單！</p>
+<h3>使用 CSS 來套用特效</h3>
+<p>如之前所說的，<br>			invert() 是一個 CSS 提供的特效，所以要使用 CSS 來實作該特效很簡單。首先我們先宣告一個 CSS 類別，並且在該類別裡呼叫 <br>			invert() 函數（及各個瀏覽器上可能的變形）：</p>
+<p>.invert {<br>  -webkit-filter: invert(1);<br>  -moz-filter: invert(1);<br>  -o-filter: invert(1);<br>  -ms-filter: invert(1);<br>  filter: invert(1);<br>}</p>
+<p>					1234567</p>
+<p>						.invert {  -webkit-filter: invert(1);  -moz-filter: invert(1);  -o-filter: invert(1);  -ms-filter: invert(1);  filter: invert(1);}</p>
+<p>接著我們再將該類別套用在我們用來秀出結果的 <br>			canvas() 元素上就完成了：</p>
+<p>canvasResult.classList.add(&#39;invert&#39;); // 套用 CSS 特效</p>
+<p>					1</p>
+<p>						canvasResult.classList.add(&#39;invert&#39;); // 套用 CSS 特效</p>
+<h3>透過 JavaScript 來實做特效</h3>
+<p>要透過 JavaScript 來實作反轉特效也很簡單，還記得我們之前介紹的 <br>			ImageData 物件嗎？一個 <br>			ImageData 裡面有三個性質，分別是影像寬（ <br>			ImageData::width ），影像高（ <br>			ImageData::height ）及影像資料（ <br>			ImageData::data ）。其中的  <br>			ImageData::data  是一個一維的長陣列，每個像素的資料以一組 RGBA 的顏色來表示，每個顏色用一個 unsigned char 來儲存（所以其值落在 0 到 255 之間）。讓我們直接用範例裡的程式碼來解釋如何操作 <br>			ImageData 裡的資料：</p>
+<p>function processOneFrame() {<br>    ctxOperate.drawImage(video, 0, 0, video.width, video. height);<br>    var imageData = ctxOperate.getImageData(0, 0, video.width, video.height);</p>
+<p>    // 實作“反轉”特效<br>    var numPixels = video.width <em> video.height; // 算出總共有幾個像素點<br>    for (var i = 0; i &lt; numPixels; ++i) {<br>        var r = imageData.data[4</em>i+0];    // 讀取 R<br>        var g = imageData.data[4<em>i+1];    // 讀取 G<br>        var b = imageData.data[4</em>i+2];    // 讀取 B<br>        r = 255 - r;    // 反轉 R<br>        g = 255 - g;    // 反轉 G<br>        b = 255 - b;    // 反轉 B<br>        imageData.data[4<em>i+0] = r;    // 寫入新的 R<br>        imageData.data[4</em>i+1] = g;    // 寫入新的 G<br>        imageData.data[4*i+2] = b;    // 寫入新的 B</p>
+<p>        // var a = imageData.data[4*i+3];    // 讀取 A<br>    }</p>
+<p>    ctxResult.putImageData(imageData, 0, 0);</p>
+<p>    if (isContinuous) {<br>        requestAnimationFrame(processOneFrame);<br>    } else {<br>        return;<br>    }<br>}</p>
+<p>					12345678910111213141516171819202122232425262728</p>
+<p>						function processOneFrame() {    ctxOperate.drawImage(video, 0, 0, video.width, video. height);    var imageData = ctxOperate.getImageData(0, 0, video.width, video.height);        // 實作“反轉”特效    var numPixels = video.width <em> video.height; // 算出總共有幾個像素點    for (var i = 0; i &lt; numPixels; ++i) {        var r = imageData.data[4</em>i+0];    // 讀取 R        var g = imageData.data[4<em>i+1];    // 讀取 G        var b = imageData.data[4</em>i+2];    // 讀取 B        r = 255 - r;    // 反轉 R        g = 255 - g;    // 反轉 G        b = 255 - b;    // 反轉 B        imageData.data[4<em>i+0] = r;    // 寫入新的 R        imageData.data[4</em>i+1] = g;    // 寫入新的 G        imageData.data[4<em>i+2] = b;    // 寫入新的 B         // var a = imageData.data[4</em>i+3];    // 讀取 A    }        ctxResult.putImageData(imageData, 0, 0);        if (isContinuous) {        requestAnimationFrame(processOneFrame);    } else {        return;    }}</p>
+<p>藉由以上的三個範例，希望大家可以初步的了解到如何在 Web Platform 上實作一個簡單的影像處理應用程式。謀智台客也會努力的撰寫下一篇文章來介紹如何透過 WebGL 來操作 GPU 對影像資料做運算！</p>
+<h2>Reference</h2>
+<p>[1] <a href="../../posts/1638/">謀智台客｜過年不忘長知識！啥？瀏覽器也可以開視訊會議！</a></p>
+<p>[2] <a href="../../posts/5416/">謀智台客｜標準化的錄影API</a></p>
+<p>[3] <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/filter">MDN｜CSS filters</a></p>
+<p>[4] <a href="https://developer.mozilla.org/fr/docs/NavigatorUserMedia.getUserMedia">MDN｜getUserMedia() API</a></p>
+<p>[5] <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Taking_still_photos">MDN｜Taking still photos</a></p>
+<p>[6] <a href="https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Manipulating_video_using_canvas">MDN｜Manipulating video using canvas</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/css/">CSS</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20201019220509id_/https://tech.mozilla.com.tw/?p=6186">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

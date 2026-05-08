@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>淺談 Firefox OS 的多程序架構與程序間通訊 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-05/">2013 年 5 月</a><b>&raquo;</b><a href="../../posts/1950/">淺談 Firefox OS 的多程序架構與程序間通訊</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-05-06" class="published"><span class="posted-month">5月</span><span class="posted-date">6</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">淺談 Firefox OS 的多程序架構與程序間通訊</h1>
+            </header>
+            <div class="entry-content"><p>FireFox OS 作為一個基於 Web 技術的作業系統，提供了許多 Web API 讓 app 開發人員可以存取手機的硬體、系統與個人資訊，然而這也帶來新的安全性的挑戰。為了降低系統弱點被利用的損害與增進系統安全性，FireFox OS 將每一個 app 執行在獨立程序 (process) 之中，app 所擁有的權限非常有限，例如不能開啟系統檔案系統或硬體裝置，需要存取系統資訊或硬體時都經由 IPC (inter-process communications) 向核心程序 (chrome process [[1]](https://tech.mozilla.com.tw/#ref1)) 請求，核心程序只會允許具有權限的 app 所提出的請求，如此可以避免單一 app 遭遇攻擊而影響其他 app 的運作或存取敏感資訊。</p>
+<p>要看到 FireFox OS 系統中有哪些程序在執行，可以在手機 shell 中執行 b2g-ps 指令，系統就會列出 FireFox OS 的程序清單，如下圖：</p>
+<p>root@android:/ # b2g-ps<br>APPLICATION USER PID PPID VSIZE RSS WCHAN PC NAME<br>b2g root 780 576 198760 88148 ffffffff 4010b330 S /system/b2g/b2g<br>Homescreen app_860 860 780 91100 34932 ffffffff 40104330 S /system/b2g/plugin-container<br>Settings app_916 916 780 90048 33888 ffffffff 4010d330 S /system/b2g/plugin-container<br>Browser app_1018 1018 780 93212 35928 ffffffff 400c7330 S /system/b2g/plugin-container</p>
+<p>					123456</p>
+<p>						root@android:/ # b2g-psAPPLICATION USER PID PPID VSIZE RSS WCHAN PC NAMEb2g root 780 576 198760 88148 ffffffff 4010b330 S /system/b2g/b2gHomescreen app_860 860 780 91100 34932 ffffffff 40104330 S /system/b2g/plugin-containerSettings app_916 916 780 90048 33888 ffffffff 4010d330 S /system/b2g/plugin-containerBrowser app_1018 1018 780 93212 35928 ffffffff 400c7330 S /system/b2g/plugin-container</p>
+<p>圖中可以看到核心程序 b2g 與 Homescreen、Settings、Gallery 三個 app，b2g 程序是 app 程序們的父程序 (parent process) ，以 root 身分執行，而 app 程序們以較低的身分執行。而從 /proc 檔案系統中我們可以看到 app 程序和核心程序的 IPC 管道，app 和核心程序間以一組 unix domain socket 進行溝通，而訊息的收送則使用 IPDL (Inter-(process/thread)-communication Protocol Definition Language) 描述檔所產生的 C++ 程式碼負責。例如進行硬體存取的 IPDL 描述檔 PHal.ipdl 中 [[2]](https://tech.mozilla.com.tw/#ref2)：</p>
+<p>child:<br>    NotifySensorChange(SensorData aSensorData);</p>
+<p>parent:<br>    EnableSensorNotifications(SensorType aSensor);<br>    DisableSensorNotifications(SensorType aSensor);</p>
+<p>					123456</p>
+<p>						child:    NotifySensorChange(SensorData aSensorData); parent:    EnableSensorNotifications(SensorType aSensor);    DisableSensorNotifications(SensorType aSensor);</p>
+<p>表示 child 端 (app 程序) 可以對 parent 端 (核心程序) 發出 EnableSensorNotifications/DisableSensorNotifications 的需求去開關某個感應器的通知，而 parent 端可以對 child 發出 NotifySensorChange 的訊息告知感應器的數值變化。另外在 JavaScript 中則可以透過 message manager 在核心與 app 程序間傳輸 JSON 訊息 [[3]](https://tech.mozilla.com.tw/#ref3).</p>
+<p>多程序架構的程式在 debug 上相較於單程序的程式更具挑戰性，因為程式可能執行到特定的地方就進行 IPC 交由另一個程序去運作，要追蹤程式的運行需要同時追蹤多個程序。FireFox OS 上提供了一個環境變數方便我們去看核心和 app 程序之間傳送了哪些 IPC 訊息，要啟動 IPC 的 log ，首先要把 b2g 停掉</p>
+<p>adb shell<br>root@android:/ # stop b2g</p>
+<p>					12</p>
+<p>						adb shellroot@android:/ # stop b2g</p>
+<p>之後加上環境變數 MOZ_IPC_MESSAGE_LOG，再從 shell 中啟動 FireFox OS:</p>
+<p>root@android:/ # export MOZ_IPC_MESSAGE_LOG=1<br>root@android:/ # b2g.sh<br>(中間略)<br>[time:1365410665694116][916][PContentChild] Sending Msg_AsyncMessage([TODO])<br>[time:1365410665701592][916][PContentChild] Sending Msg_SyncMessage([TODO])<br>[time:1365410665702599][780][PContentParent] Received Msg_AsyncMessage([TODO])<br>[time:1365410665710229][780][PContentParent] Received Msg_SyncMessage([TODO])<br>[time:1365410665716943][780][PContentParent] Sending reply Reply_SyncMessage([TODO])<br>[time:1365410665718224][916][PContentChild] Received reply Reply_SyncMessage([TODO])<br>[time:1365410665739037][916][PIndexedDBDatabaseChild] Sending Msg_PIndexedDBTransactionConstructor([TODO])<br>[time:1365410665741174][780][PIndexedDBDatabaseParent] Received Msg_PIndexedDBTransactionConstructor([TODO])<br>(以下略)</p>
+<p>					123456789101112</p>
+<p>						root@android:/ # export MOZ_IPC_MESSAGE_LOG=1root@android:/ # b2g.sh(中間略)[time:1365410665694116][916][PContentChild] Sending Msg_AsyncMessage([TODO])[time:1365410665701592][916][PContentChild] Sending Msg_SyncMessage([TODO])[time:1365410665702599][780][PContentParent] Received Msg_AsyncMessage([TODO])[time:1365410665710229][780][PContentParent] Received Msg_SyncMessage([TODO])[time:1365410665716943][780][PContentParent] Sending reply Reply_SyncMessage([TODO])[time:1365410665718224][916][PContentChild] Received reply Reply_SyncMessage([TODO])[time:1365410665739037][916][PIndexedDBDatabaseChild] Sending Msg_PIndexedDBTransactionConstructor([TODO])[time:1365410665741174][780][PIndexedDBDatabaseParent] Received Msg_PIndexedDBTransactionConstructor([TODO])(以下略)</p>
+<p>如此就可以看到 Parent 跟 Child 分別傳送了什麼訊息，這樣遇到 IPC 方面的問題可以更容易去找到問題點。</p>
+<p>[1] 參照 <a href="https://developer.mozilla.org/en-US/docs/Chrome">Chrome 的意義</a>，注意 chrome 跟 Google Chrome 瀏覽器沒有關係，在這裡指的是具有 chrome privlege，在 Firefox OS 中就是 main process (b2g)。</p>
+<p>[2] <a href="https://mxr.mozilla.org/mozilla-b2g18/source/hal/sandbox/PHal.ipdl#180">http://mxr.mozilla.org/mozilla-b2g18/source/hal/sandbox/PHal.ipdl#180</a></p>
+<p>[3] <a href="https://developer.mozilla.org/en-US/docs/The_message_manager">https://developer.mozilla.org/en-US/docs/The_message_manager</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20140912094920id_/https://tech.mozilla.com.tw/?p=1950">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

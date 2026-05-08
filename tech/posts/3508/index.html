@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech 封存">
+  <title>Gaia 的 Debug 神器 | Mozilla Tech 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2013-12/">2013 年 12 月</a><b>&raquo;</b><a href="../../posts/3508/">Gaia 的 Debug 神器</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2013-12-09" class="published"><span class="posted-month">12月</span><span class="posted-date">9</span><span class="posted-year">2013</span></time></p>
+              <h1 class="entry-title">Gaia 的 Debug 神器</h1>
+            </header>
+            <div class="entry-content"><p>開發前端的程式，一個基本的前端 debug 工具會幫我們及時揭露大部份的 HTML，CSS 和 JS，並且及時改 HTML 與 CSS，為 JS 下斷點，目前各大瀏覽器包括 Firefox，Chrome 以及 IE 都有這方面的支援，我就不在此一一贅述。那今天有什麼好用的工具可以幫助我在 Firefox OS 上 debug 呢？這篇今天主要介紹的兩項 debug 神器 Firefox Nightly 和 App Manager。</p>
+<h3>Firefox Nightly</h3>
+<p>前置準備：電腦必須支援 git 和 make 的指令</p>
+<ul><li>請至<a href="https://nightly.mozilla.org/">http://nightly.mozilla.org/</a> 下載最新的版的Firefox Nightly。並安裝到您的電腦，並記住您 Nightly 執行檔的路徑 e.g., on mac, “/Applications/FirefoxNightly.app/Contents/MacOS/firefox”</li></ul>
+<ul><li>請把 gaia 的 git repository 下載至電腦內 git clone https://github.com/mozilla-b2g/gaia</li></ul>
+<ul><li>在下載的 gaia 目錄下，執行 DEBUG=1 make</li></ul>
+<ul><li>執行 /path/to/firefox -profile /path/to/gaia/progile-debug -no-remote</li></ul>
+<p>跟隨以上步驟，您便可以用 Nightly 開啟一個 Firefox OS，所有 Gaia 的程式碼便在 debug 面板裡向您展露無疑。</p>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56.png"><img src="../../assets/3508/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56-1024x640.png" alt="Nightly Debugger" loading="lazy"></a></p>
+<p>用 Nightly 來 debug 最大的好處是，我們直接透過重新整理頁面就可以立即看到修改過的樣貌與邏輯，不過有些 App 為了追尋最佳化，可能有另外進行壓縮合併，那樣的話還是必須再重新執行上述步驟 3，但在大部分情況是不需要的。除此之外，我們也可直接調整螢幕大小與 devicePixel，便可大概知道在不同裝置下是否有破版或功能的不正常。</p>
+<p>然而在 Nightly 上也有缺點，就是它的執行結果不必然等於實際在手機上的狀況，最顯著的例子便是瀏覽器是沒有 SIM 卡的，因此我們不能在上面傳簡訊或打電話以及所有跟 SIM 相關的功能都跟手機不一樣，因此我們需要另外個遠端 debug 的工具，就是App Manager！</p>
+<h3>App Manager</h3>
+<p>前置條件，您必須擁有 Firefox OS phone 1.2+，電腦必須支援 adb 指令</p>
+<ul><li>必須確保手機的 Firefox OS 版本是在 1.2 以上的，並在 Settings App 裡關掉 Screen Lock 並遠端除錯 (Remote Debugging) 功能打開。</li></ul>
+<ul><li><a href="https://ftp.mozilla.org/pub/mozilla.org/labs/fxos-simulator/">https://ftp.mozilla.org/pub/mozilla.org/labs/fxos-simulator/</a> 安裝Simulator 和 ADB Helper</li></ul>
+<ul><li>在 Nightly 裡打開App Manager，連接裝置，便可以開始除錯了！</li></ul>
+<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager.png"><img src="../../assets/3508/wp-content/uploads/2013/12/Appmanager-1024x471.png" alt="Appmanager" loading="lazy"></a></p>
+<p>遠端除錯最厲害的功能就是它簡直跟你用瀏覽器除錯完全一樣，差別只在於把螢幕從瀏覽器轉移到你的手機上，您依然可以看到他所有的html/css/js ，甚至可以即時修改它們和下斷點，並在手機上直接看到修改結果，除此之外，也可透過手指點選螢幕的方式找尋物件在 html 的位置。</p>
+<p>而它不方便的是必須花時間把修改過的程式碼重新安裝到手機裡，才可以看到結果，而且目前該工具仍在開發階段，仍然有些小問題有待解決，不過大體上而言，搭配 Nightly 來除錯應該解決大部份前端的問題。</p>
+<p>如果看倌們有任何問題，歡迎至參考資料中尋找更詳細的說明並留下您的問題在裡面噢！</p>
+<h4>參考資料：</h4>
+<p><a href="https://developer.mozilla.org/en-US/Firefox_OS/Using_the_App_Manager">https://developer.mozilla.org/en-US/Firefox_OS/Using_the_App_Manager</a></p>
+<p><a href="https://developer.mozilla.org/en-US/Firefox_OS/Using_Gaia_in_Firefox">https://developer.mozilla.org/en-US/Firefox_OS/Using_Gaia_in_Firefox</a></p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox/">Firefox</a></span><span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 Mozilla Tech 封存，由 <a href="https://web.archive.org/web/20160325045949id_/https://tech.mozilla.com.tw/?p=3508">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
