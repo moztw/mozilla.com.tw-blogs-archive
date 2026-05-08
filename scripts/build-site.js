@@ -3,19 +3,25 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const ARCHIVE_DIR = path.join(ROOT, 'archive');
+const args = parseArgs(process.argv.slice(2));
+const SITE_HOST = String(args.siteHost || args['site-host'] || 'blog.mozilla.com.tw').replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+const SITE_ORIGIN = `https://${SITE_HOST}`;
+const ARCHIVE_DIR = path.resolve(ROOT, args.archiveDir || args['archive-dir'] || 'archive');
 const MD_DIR = path.join(ARCHIVE_DIR, 'articles-md');
-const THEME_ASSETS_DIR = path.join(ARCHIVE_DIR, 'theme-assets');
-const BUILD_DIR = path.join(ROOT, 'blog');
+const THEME_ASSETS_DIR = path.resolve(ROOT, args.themeAssets || args['theme-assets'] || path.join('archive', 'theme-assets'));
+const BUILD_DIR = path.resolve(ROOT, args.buildDir || args['build-dir'] || 'blog');
 const POSTS_DIR = path.join(BUILD_DIR, 'posts');
 const ASSETS_DIR = path.join(BUILD_DIR, 'assets');
 
-const SITE_TITLE = 'Mozilla Taiwan 部落格';
-const SITE_SUBTITLE = '最新部落格文章，提供各式 Mozilla 產品與專案相關訊息';
+const SITE_TITLE = args.siteTitle || args['site-title'] || SITE_HOST;
+const SITE_SUBTITLE = args.siteSubtitle || args['site-subtitle'] || '';
+const ARCHIVE_LABEL = args.archiveLabel || args['archive-label'] || `${SITE_TITLE} 封存`;
+const SITE_DESCRIPTION = args.siteDescription || args['site-description'] || ARCHIVE_LABEL;
 const LICENSE_NAME = '創用 CC 姓名標示─相同方式分享 4.0 國際';
 const LICENSE_URL = 'https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant';
 const KNOWN_CATEGORIES = ['Firefox', 'Firefox for Android', 'Firefox for iOS', 'Firefox OS', 'Identity', 'Mozilla', 'Privacy', 'Security', 'Web App', '新聞訊息', '未分類', '校園大使', '活動'];
-const SITE_SNAPSHOT_URL = 'https://web.archive.org/web/*/https://blog.mozilla.com.tw/';
+const SHOW_ALL_CATEGORIES = hasFlag('all-categories');
+const SITE_SNAPSHOT_URL = args.snapshotUrl || args['snapshot-url'] || `https://web.archive.org/web/*/${SITE_ORIGIN}/`;
 let ALL_POSTS = [];
 
 async function main() {
@@ -23,7 +29,7 @@ async function main() {
   ALL_POSTS = posts;
   const postIds = new Set(posts.map((post) => String(post.id)));
 
-  await rm(BUILD_DIR, { recursive: true, force: true });
+  await rm(BUILD_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
   await mkdir(POSTS_DIR, { recursive: true });
   await cp(path.join(ARCHIVE_DIR, 'assets'), ASSETS_DIR, { recursive: true });
   await cp(THEME_ASSETS_DIR, path.join(ASSETS_DIR, 'theme'), { recursive: true });
@@ -238,7 +244,8 @@ function autoLinkLocalPostUrls(html, rootPrefix, postIds) {
       if (/^<a\b/i.test(part)) {
         return part;
       }
-      return part.replace(/\bhttps?:\/\/blog\.mozilla\.com\.tw\/(?:posts\/\d+(?:\/[^\s<]*)?|\?p=\d+)\b/g, (url) => {
+      const localPostUrlPattern = new RegExp(`\\bhttps?://${escapeRegExp(SITE_HOST)}/(?:posts/\\d+(?:/[^\\s<]*)?|\\?p=\\d+)\\b`, 'g');
+      return part.replace(localPostUrlPattern, (url) => {
         const href = rewriteUrl(unescapeHtml(url), rootPrefix, postIds);
         return href === url ? url : `<a href="${escapeAttr(href)}">${escapeHtml(url)}</a>`;
       });
@@ -252,7 +259,7 @@ function rewriteUrl(url, rootPrefix, postIds) {
     return `${rootPrefix}${clean.slice(3)}`;
   }
 
-  const postUrl = clean.match(/^https?:\/\/blog\.mozilla\.com\.tw\/(?:posts\/(\d+)(?:\/|$)|\?p=(\d+))/);
+  const postUrl = clean.match(new RegExp(`^https?://${escapeRegExp(SITE_HOST)}/(?:posts/(\\d+)(?:/|$)|\\?p=(\\d+))`));
   if (postUrl) {
     const id = postUrl[1] || postUrl[2];
     if (postIds.has(id)) {
@@ -268,7 +275,7 @@ function renderPost(post, contentHtml) {
   const categories = displayCategories(post).map((category) => `<span>${categoryLink(category, '../../')}</span>`).join('');
 
   return pageShell({
-    title: `${post.title} | Mozilla Taiwan 部落格封存`,
+    title: `${post.title} | ${ARCHIVE_LABEL}`,
     rootPrefix: '../../',
     bodyClass: 'single',
     breadcrumbs: postBreadcrumbs(post, '../../'),
@@ -335,7 +342,7 @@ async function writeArchivePages(posts) {
       posts: group.posts,
       rootPrefix: '../../',
       breadcrumbs: [
-        { label: '部落格封存', href: '../../index.html' },
+        { label: ARCHIVE_LABEL, href: '../../index.html' },
         { label: '分類', href: '../' },
         { label: group.name, href: './' },
       ],
@@ -360,7 +367,7 @@ async function writeArchivePages(posts) {
       posts: group.posts,
       rootPrefix: '../../',
       breadcrumbs: [
-        { label: '部落格封存', href: '../../index.html' },
+        { label: ARCHIVE_LABEL, href: '../../index.html' },
         { label: '月份', href: '../' },
         { label: monthLabel(group.name), href: './' },
       ],
@@ -426,7 +433,7 @@ function renderArchiveIndex({ title, rootPrefix, groups }) {
     rootPrefix,
     bodyClass: 'archive-index',
     breadcrumbs: [
-      { label: '部落格封存', href: `${rootPrefix}index.html` },
+      { label: ARCHIVE_LABEL, href: `${rootPrefix}index.html` },
       { label: title, href: './' },
     ],
     snapshotUrl: SITE_SNAPSHOT_URL,
@@ -496,7 +503,17 @@ function categoryLink(category, rootPrefix) {
 }
 
 function displayCategories(post) {
-  return post.categories.filter((category) => KNOWN_CATEGORIES.includes(category));
+  return SHOW_ALL_CATEGORIES
+    ? post.categories
+    : post.categories.filter((category) => KNOWN_CATEGORIES.includes(category));
+}
+
+function siteCategoryNames() {
+  if (!SHOW_ALL_CATEGORIES) {
+    return KNOWN_CATEGORIES;
+  }
+  return [...new Set(ALL_POSTS.flatMap((post) => displayCategories(post)))]
+    .sort((a, b) => a.localeCompare(b, 'zh-Hant'));
 }
 
 function slugify(value) {
@@ -526,7 +543,7 @@ function renderNotFound() {
     rootPrefix: '',
     bodyClass: 'error404',
     breadcrumbs: [
-      { label: '部落格封存', href: 'index.html' },
+      { label: ARCHIVE_LABEL, href: 'index.html' },
       { label: '找不到頁面', href: './' },
     ],
     snapshotUrl: SITE_SNAPSHOT_URL,
@@ -548,7 +565,7 @@ function pageShell({ title, rootPrefix, bodyClass, body, breadcrumbs = [], bread
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Mozilla Taiwan 部落格封存">
+  <meta name="description" content="${escapeAttr(SITE_DESCRIPTION)}">
   <title>${escapeHtml(title)}</title>
   <link rel="stylesheet" href="${rootPrefix}styles.css">
 </head>
@@ -580,13 +597,13 @@ function sidebar(rootPrefix, snapshotUrl) {
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        ${KNOWN_CATEGORIES.map((name) => `<li>${categoryLink(name, rootPrefix)}</li>`).join('')}
+        ${siteCategoryNames().map((name) => `<li>${categoryLink(name, rootPrefix)}</li>`).join('')}
       </ul>
     </section>
     ${monthArchiveWidget(rootPrefix)}
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 Mozilla Taiwan 部落格封存，由 <a href="${escapeAttr(snapshotUrl)}">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 ${escapeHtml(ARCHIVE_LABEL)}，由 <a href="${escapeAttr(snapshotUrl)}">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="${LICENSE_URL}">${LICENSE_NAME}</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>`;
@@ -723,6 +740,34 @@ function escapeAttr(value) {
 
 function relative(filePath) {
   return path.relative(ROOT, filePath);
+}
+
+function parseArgs(argv) {
+  const parsed = { _: [] };
+  for (let i = 0; i < argv.length; i += 1) {
+    const value = argv[i];
+    if (!value.startsWith('--')) {
+      parsed._.push(value);
+      continue;
+    }
+    const key = value.slice(2);
+    const next = argv[i + 1];
+    if (!next || next.startsWith('--')) {
+      parsed[key] = true;
+      continue;
+    }
+    parsed[key] = next;
+    i += 1;
+  }
+  return parsed;
+}
+
+function hasFlag(name) {
+  return args[name] === true;
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 main().catch((error) => {
