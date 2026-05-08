@@ -12,7 +12,6 @@ const sites = {
     sourcePathnames: [
       '/',
       '/main',
-      '/blog.mozilla.com.tw/main',
     ],
     categoryMap: {
       1: '未分類',
@@ -133,7 +132,7 @@ function redirectHtml(config) {
         return target('/months/');
       }
 
-      if (pathname === '/' || pathname === '/main' || pathname === '/blog.mozilla.com.tw/main') return target('/');
+      if (pathname === '/' || pathname === '/main') return target('/');
 
       if (params.has('paged') || params.has('s') || params.has('ajaxCalendar') || params.has('attachment_id')) {
         return target('/');

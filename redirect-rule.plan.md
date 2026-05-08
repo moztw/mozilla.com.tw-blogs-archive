@@ -79,7 +79,7 @@ GitHub Pages 以 pathname 決定要讀哪個 HTML；同一個 pathname 底下的
 
 | branch | source | target site prefix | source pathname count | generated pathname HTML count | notes |
 | --- | --- | --- | ---: | ---: | --- |
-| `gh-pages-taipei` | `json-blog.json` | `/blog/taipei/` | 17 | 3 | 其中 `/` 承接 992 個 query variants；另外產生 `/main/` 與 CDX malformed `/blog.mozilla.com.tw/main/`；TODO: `/events` 已抓取但後續再處理，不列入本輪轉址 |
+| `gh-pages-taipei` | `json-blog.json` | `/blog/taipei/` | 17 | 2 | 其中 `/` 承接 992 個 query variants；另外產生 `/main/`；CDX malformed `/blog.mozilla.com.tw/main/` 不處理；TODO: `/events` 已抓取但後續再處理，不列入本輪轉址 |
 | `gh-pages-tech` | `json-tech.json` | `/blog/tech/` | 16 | 1 | 其中 `/` 承接 279 個 query variants；TODO: `/author*` 後續再處理，不列入本輪轉址 |
 
 若把 `wp-content` 資源檔也納入，`blog.mozilla.com.tw` 會需要 2008 個 unique pathname，`tech.mozilla.com.tw` 會需要 649 個 unique pathname。這些資源檔不在本計畫實作範圍內。
@@ -278,8 +278,7 @@ Use a data file that a shared `index.html` / `404.html` redirect script can load
       },
       "sourcePathnames": [
         "/",
-        "/main",
-        "/blog.mozilla.com.tw/main"
+        "/main"
       ],
       "rules": [
         { "type": "query-post", "param": "p", "target": "/posts/:p/" },
