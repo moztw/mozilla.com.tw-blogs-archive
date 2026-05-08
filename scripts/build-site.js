@@ -12,6 +12,7 @@ const ARCHIVE_DIR = path.resolve(ROOT, args.archiveDir || args['archive-dir'] ||
 const JSON_DIR = path.join(ARCHIVE_DIR, 'articles-json');
 const MD_DIR = path.join(ARCHIVE_DIR, 'articles-md');
 const RAW_DIR = path.join(ARCHIVE_DIR, 'raw-html');
+const AUTHORS_JSON_DIR = path.join(ARCHIVE_DIR, 'authors', 'authors-json');
 const THEME_ASSETS_DIR = path.resolve(ROOT, args.themeAssets || args['theme-assets'] || DEFAULT_THEME_ASSETS_DIR);
 const SITE_HOST = `${BUILD_DIR_NAME}.mozilla.com.tw`;
 const SITE_ORIGIN = `https://${SITE_HOST}`;
@@ -29,12 +30,18 @@ const BODY_BACKGROUND_ATTACHMENT = BUILD_DIR_NAME === 'tech' ? 'fixed' : 'scroll
 const LICENSE_NAME = '創用 CC 姓名標示─相同方式分享 4.0 國際';
 const LICENSE_URL = 'https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant';
 const SITE_SNAPSHOT_URL = args.snapshotUrl || args['snapshot-url'] || `https://web.archive.org/web/*/${SITE_ORIGIN}/`;
+const TECH_AUTHORS_PAGE_ID = 4829;
 let ALL_POSTS = [];
+let ALL_POST_IDS = new Set();
+let ALL_AUTHOR_SLUGS = new Set();
 
 async function main() {
   const posts = await readPosts();
+  const authors = await readAuthors();
+  const authorsLandingPage = await readTechAuthorsLandingPage();
   ALL_POSTS = posts;
-  const postIds = new Set(posts.map((post) => String(post.id)));
+  ALL_POST_IDS = new Set(posts.map((post) => String(post.id)));
+  ALL_AUTHOR_SLUGS = new Set(authors.map((author) => author.slug));
 
   await rm(BUILD_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
   await mkdir(POSTS_DIR, { recursive: true });
@@ -44,17 +51,20 @@ async function main() {
   await writeFile(path.join(BUILD_DIR, '.nojekyll'), '');
 
   for (const post of posts) {
-    const html = markdownToHtml(post.body, `../../`, postIds);
+    const html = markdownToHtml(post.body, `../../`, ALL_POST_IDS);
     const outputDir = path.join(POSTS_DIR, String(post.frontmatter.post_id));
     await mkdir(outputDir, { recursive: true });
     await writeFile(path.join(outputDir, 'index.html'), renderPost(post, html));
   }
 
+  await writeAuthorPages(authors);
+  await writeTechAuthorsLandingPage(authorsLandingPage);
+  await writeTechAuthorCardAliases(authors, authorsLandingPage);
   await writeArchivePages(posts);
   await writeFile(path.join(BUILD_DIR, 'index.html'), renderIndex(posts));
   await writeFile(path.join(BUILD_DIR, '404.html'), renderNotFound());
 
-  console.log(`Built ${posts.length} pages into ${relative(BUILD_DIR)}`);
+  console.log(`Built ${posts.length} posts and ${authors.length} authors into ${relative(BUILD_DIR)}`);
 }
 
 async function readPosts() {
@@ -85,6 +95,34 @@ async function readPosts() {
   });
 }
 
+async function readAuthors() {
+  if (BUILD_DIR_NAME !== 'tech') {
+    return [];
+  }
+
+  const files = (await readdir(AUTHORS_JSON_DIR).catch(() => [])).filter((file) => file.endsWith('.json'));
+  const authors = [];
+
+  for (const file of files) {
+    const author = JSON.parse(await readFile(path.join(AUTHORS_JSON_DIR, file), 'utf8'));
+    author.authorId = authorIdFromAuthorHtml(author.content_html || '');
+    authors.push(author);
+  }
+
+  return authors.sort((a, b) => a.slug.localeCompare(b.slug, 'en'));
+}
+
+async function readTechAuthorsLandingPage() {
+  if (BUILD_DIR_NAME !== 'tech') {
+    return null;
+  }
+  try {
+    return JSON.parse(await readFile(path.join(JSON_DIR, `${TECH_AUTHORS_PAGE_ID}.json`), 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
 async function readAuthorMeta(postId, waybackTimestamp) {
   if (BUILD_DIR_NAME !== 'tech' || !postId) {
     return null;
@@ -111,6 +149,7 @@ async function readAuthorMeta(postId, waybackTimestamp) {
   return {
     authorId,
     href,
+    slug: authorSlugFromUrl(href),
     avatarUrl,
     avatarClass,
     width: Number(width) || 24,
@@ -310,6 +349,31 @@ function rewriteUrl(url, rootPrefix, postIds) {
   const clean = url.replace(/^<|>$/g, '');
   if (clean.startsWith('../assets/')) {
     return `${rootPrefix}${clean.slice(3)}`;
+  }
+
+  if (BUILD_DIR_NAME === 'tech') {
+    if (/^\/authors\/?$/i.test(clean) || /^https?:\/\/tech\.mozilla\.com\.tw\/authors\/?$/i.test(clean)) {
+      return `${rootPrefix}authors/`;
+    }
+
+    if (/^https?:\/\/tech\.mozilla\.com\.tw\/authors\/?$/i.test(clean)) {
+      return `${rootPrefix}authors/`;
+    }
+
+    const monthUrl = clean.match(/^https?:\/\/tech\.mozilla\.com\.tw\/posts\/date\/(\d{4})(?:\/(\d{2}))?/i);
+    if (monthUrl) {
+      const year = monthUrl[1];
+      const month = monthUrl[2];
+      return month ? `${rootPrefix}months/${year}-${month}/` : `${rootPrefix}months/`;
+    }
+  }
+
+  const authorUrl = clean.match(new RegExp(`^https?://${escapeRegExp(SITE_HOST)}/posts/author/([^/?#]+)`));
+  if (authorUrl) {
+    const slug = authorUrl[1];
+    if (ALL_AUTHOR_SLUGS.has(slug)) {
+      return `${rootPrefix}posts/author/${slug}/`;
+    }
   }
 
   const postUrl = clean.match(new RegExp(`^https?://${escapeRegExp(SITE_HOST)}/(?:posts/(\\d+)(?:/|$)|\\?p=(\\d+))`));
@@ -579,9 +643,11 @@ function renderAuthorMeta(post, rootPrefix) {
   if (BUILD_DIR_NAME !== 'tech' || !post.authorMeta?.name) {
     return '';
   }
-  const href = waybackUrl(post.authorMeta.href, post.authorMeta.waybackTimestamp || post.frontmatter.wayback_timestamp);
+  const href = post.authorMeta.slug && ALL_AUTHOR_SLUGS.has(post.authorMeta.slug)
+    ? `${rootPrefix}posts/author/${post.authorMeta.slug}/`
+    : waybackUrl(post.authorMeta.href, post.authorMeta.waybackTimestamp || post.frontmatter.wayback_timestamp);
   const avatarSrc = post.authorMeta.localAvatarPath
-    ? rewriteUrl(post.authorMeta.localAvatarPath, rootPrefix, new Set())
+    ? rewriteUrl(post.authorMeta.localAvatarPath, rootPrefix, ALL_POST_IDS)
     : post.authorMeta.avatarUrl;
   return `<div class="author-meta"${post.authorMeta.authorId ? ` data-author-id="${escapeAttr(post.authorMeta.authorId)}"` : ''}>
     <a href="${escapeAttr(href)}">
@@ -594,6 +660,249 @@ function renderAuthorMeta(post, rootPrefix) {
 
 function displayCategories(post) {
   return post.categories;
+}
+
+async function writeAuthorPages(authors) {
+  if (!authors.length) {
+    return;
+  }
+
+  for (const author of authors) {
+    const outputDir = path.join(BUILD_DIR, 'posts', 'author', author.slug);
+    await mkdir(outputDir, { recursive: true });
+    await writeFile(path.join(outputDir, 'index.html'), renderAuthorPage(author));
+  }
+}
+
+async function writeTechAuthorsLandingPage(page) {
+  if (!page) {
+    return;
+  }
+
+  const outputDir = path.join(BUILD_DIR, 'authors');
+  await mkdir(outputDir, { recursive: true });
+  await writeFile(path.join(outputDir, 'index.html'), renderTechAuthorsLandingPage(page));
+}
+
+async function writeTechAuthorCardAliases(authors, authorsLandingPage) {
+  if (BUILD_DIR_NAME !== 'tech') {
+    return;
+  }
+
+  const bySlug = new Map(authors.map((author) => [author.slug, author]));
+  const aliasMap = new Map(authors.filter((author) => author.authorId).map((author) => [String(author.authorId), author.slug]));
+  for (const entry of extractAuthorCardMappings(authorsLandingPage?.content_html || '')) {
+    if (!aliasMap.has(entry.authorId) && bySlug.has(entry.slug)) {
+      aliasMap.set(entry.authorId, entry.slug);
+    }
+  }
+
+  if (authorsLandingPage) {
+    const outputDir = path.join(BUILD_DIR, 'author-card');
+    await mkdir(outputDir, { recursive: true });
+    await writeFile(path.join(outputDir, 'index.html'), renderTechAuthorsLandingPage(authorsLandingPage));
+  }
+
+  for (const [authorId, slug] of aliasMap.entries()) {
+    const author = bySlug.get(slug);
+    if (!author) {
+      continue;
+    }
+    const outputDir = path.join(BUILD_DIR, 'author-card', String(authorId));
+    await mkdir(outputDir, { recursive: true });
+    await writeFile(path.join(outputDir, 'index.html'), renderAuthorPage(author));
+  }
+}
+
+function renderTechAuthorsLandingPage(page) {
+  const bodyHtml = rewriteLegacyTechHtml(page.content_html || '', '../', page.images || [], { inferUploadsPostId: String(page.post_id || TECH_AUTHORS_PAGE_ID) });
+  return pageShell({
+    title: `${page.title} | ${ARCHIVE_LABEL}`,
+    rootPrefix: '../',
+    bodyClass: 'single authors-index',
+    breadcrumbs: [
+      { label: page.title, href: './' },
+    ],
+    breadcrumbLeadingSeparator: true,
+    snapshotUrl: page.archive_url || SITE_SNAPSHOT_URL,
+    body: `
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          ${bodyHtml}
+        </div>
+      </main>
+      ${sidebar('../', page.archive_url || SITE_SNAPSHOT_URL)}
+    `,
+  });
+}
+
+function renderAuthorPage(author) {
+  const bodyHtml = rewriteLegacyTechHtml(author.content_html || '', '../../../', author.images || [], { authorSlug: author.slug });
+  return pageShell({
+    title: `${author.title} | ${ARCHIVE_LABEL}`,
+    rootPrefix: '../../../',
+    bodyClass: 'single author-page',
+    breadcrumbs: [
+      { label: '作者頁', href: '../../../index.html' },
+      { label: author.title, href: './' },
+    ],
+    breadcrumbLeadingSeparator: true,
+    snapshotUrl: author.archive_url || SITE_SNAPSHOT_URL,
+    body: `
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          ${bodyHtml}
+        </div>
+      </main>
+      ${sidebar('../../../', author.archive_url || SITE_SNAPSHOT_URL)}
+    `,
+  });
+}
+
+function rewriteLegacyTechHtml(html, rootPrefix, images, options = {}) {
+  const assetLookup = buildAssetLookup(images);
+  let output = extractLegacyPrimaryContent(html);
+
+  output = stripLegacySecondary(output);
+  output = unwrapLegacyMain(output);
+  output = rewriteAbsoluteUploadsUrls(output, rootPrefix, options.inferUploadsPostId, options.authorSlug);
+
+  output = output.replace(/\s(?:href|src)=["']([^"']+)["']/gi, (match, url) => {
+    const attrName = match.trim().startsWith('href=') ? 'href' : 'src';
+    const localAsset =
+      assetLookup.get(normalizeAssetUrl(url)) ||
+      assetLookup.get(normalizeAssetVariantUrl(url)) ||
+      inferAuthorUploadsMarkdownPath(url, options.authorSlug) ||
+      inferUploadsMarkdownPath(url, options.inferUploadsPostId);
+    const rewritten = localAsset
+      ? rewriteUrl(localAsset, rootPrefix, ALL_POST_IDS)
+      : rewriteUrl(url, rootPrefix, ALL_POST_IDS);
+    return ` ${attrName}="${escapeAttr(rewritten)}"`;
+  });
+
+  output = output.replace(/url\(([^)]+)\)/gi, (_match, rawUrl) => {
+    const clean = rawUrl.trim().replace(/^['"]|['"]$/g, '');
+    const localAsset =
+      assetLookup.get(normalizeAssetUrl(clean)) ||
+      assetLookup.get(normalizeAssetVariantUrl(clean)) ||
+      inferAuthorUploadsMarkdownPath(clean, options.authorSlug) ||
+      inferUploadsMarkdownPath(clean, options.inferUploadsPostId);
+    const rewritten = localAsset
+      ? rewriteUrl(localAsset, rootPrefix, ALL_POST_IDS)
+      : rewriteUrl(clean, rootPrefix, ALL_POST_IDS);
+    return `url(${escapeAttr(rewritten)})`;
+  });
+
+  output = output.replace(/<form\b[^>]*>[\s\S]*?<\/form>/gi, '');
+  return output;
+}
+
+function stripLegacySecondary(html) {
+  const value = String(html || '');
+  const marker = value.search(/<div\b[^>]*id=["']secondary["']/i);
+  const trimmed = marker >= 0 ? value.slice(0, marker) : value;
+  return trimmed.replace(/<aside\b[^>]*id=["']search-[^"']*["'][\s\S]*?<\/aside>/gi, '');
+}
+
+function unwrapLegacyMain(html) {
+  const trimmed = String(html || '').trim();
+  if (!trimmed.startsWith('<div id="main">') && !trimmed.startsWith("<div id='main'>")) {
+    return trimmed;
+  }
+
+  const openTagMatch = trimmed.match(/^<div\b[^>]*id=["']main["'][^>]*>/i);
+  if (!openTagMatch) {
+    return trimmed;
+  }
+
+  const body = trimmed.slice(openTagMatch[0].length).trim();
+  return body.endsWith('</div>') ? body.slice(0, -6).trim() : body;
+}
+
+function extractLegacyPrimaryContent(html) {
+  const value = String(html || '');
+  const authorsWall = value.match(/<div\b[^>]*id=["']authors-wall["'][^>]*>/i);
+  if (authorsWall) {
+    return sliceBalancedElement(value, authorsWall.index, 'div');
+  }
+
+  const primarySection = value.match(/<section\b[^>]*id=["']primary["'][^>]*>/i);
+  if (primarySection) {
+    return sliceBalancedElement(value, primarySection.index, 'section');
+  }
+
+  return value;
+}
+
+function sliceBalancedElement(html, startIndex, tagName) {
+  const tagPattern = new RegExp(`<\\/?${tagName}\\b[^>]*>`, 'gi');
+  tagPattern.lastIndex = startIndex;
+  let depth = 0;
+  let match;
+  while ((match = tagPattern.exec(html))) {
+    if (match[0].startsWith('</')) {
+      depth -= 1;
+      if (depth === 0) {
+        return html.slice(startIndex, tagPattern.lastIndex);
+      }
+    } else if (!match[0].endsWith('/>')) {
+      depth += 1;
+    }
+  }
+  return html.slice(startIndex);
+}
+
+function buildAssetLookup(images) {
+  const lookup = new Map();
+  for (const image of images) {
+    const localPath = image.markdown_path || '';
+    if (!localPath) {
+      continue;
+    }
+    const keys = [normalizeAssetUrl(image.url), normalizeAssetUrl(image.recovered_url), normalizeAssetVariantUrl(image.url)];
+    for (const key of keys.filter(Boolean)) {
+      if (!lookup.has(key)) {
+        lookup.set(key, localPath);
+      }
+    }
+  }
+  return lookup;
+}
+
+function inferUploadsMarkdownPath(url, postId) {
+  if (!postId) {
+    return '';
+  }
+  const clean = String(url || '');
+  const match = clean.match(/https?:\/\/[^/]+\/(wp-content\/uploads\/.+)$/i);
+  if (!match) {
+    return '';
+  }
+  return `../assets/${postId}/${match[1]}`;
+}
+
+function inferAuthorUploadsMarkdownPath(url, authorSlug) {
+  if (!authorSlug) {
+    return '';
+  }
+  const clean = String(url || '');
+  const match = clean.match(/https?:\/\/[^/]+\/(wp-content\/uploads\/.+)$/i);
+  if (!match) {
+    return '';
+  }
+  return `../assets/authors/${authorSlug}/${match[1]}`;
+}
+
+function rewriteAbsoluteUploadsUrls(html, rootPrefix, postId, authorSlug = '') {
+  if (!postId && !authorSlug) {
+    return html;
+  }
+  return String(html || '').replace(/https?:\/\/[^/]+\/(wp-content\/uploads\/[^"' )]+)/gi, (_match, relativePath) => {
+    if (authorSlug) {
+      return `${rootPrefix}assets/authors/${authorSlug}/${relativePath}`;
+    }
+    return `${rootPrefix}assets/${postId}/${relativePath}`;
+  });
 }
 
 function siteCategoryNames() {
@@ -614,6 +923,35 @@ function normalizeAssetUrl(value) {
   return String(value || '')
     .replace(/^https?:\/\//i, '')
     .replace(/^web\.archive\.org\/web\/\d+(?:[a-z_]+)?\//i, '');
+}
+
+function normalizeAssetVariantUrl(value) {
+  const normalized = normalizeAssetUrl(value);
+  if (/-bpfull\.[a-z0-9]+$/i.test(normalized)) {
+    return normalized.replace(/-bpfull(\.[a-z0-9]+)$/i, '-bpthumb$1');
+  }
+  if (/-bpthumb\.[a-z0-9]+$/i.test(normalized)) {
+    return normalized.replace(/-bpthumb(\.[a-z0-9]+)$/i, '-bpfull$1');
+  }
+  return '';
+}
+
+function authorSlugFromUrl(url) {
+  return String(url || '').match(/\/posts\/author\/([^/?#]+)/)?.[1] || '';
+}
+
+function authorIdFromAuthorHtml(html) {
+  const value = String(html || '');
+  return value.match(/class=["'][^"']*user-(\d+)-avatar[^"']*["']/)?.[1] || '';
+}
+
+function extractAuthorCardMappings(html) {
+  const mappings = [];
+  const value = String(html || '');
+  for (const match of value.matchAll(/href=["']https?:\/\/tech\.mozilla\.com\.tw\/posts\/author\/([^"']+)["'][^>]*>[\s\S]*?class=["'][^"']*user-(\d+)-avatar[^"']*["']/gi)) {
+    mappings.push({ slug: match[1], authorId: match[2] });
+  }
+  return mappings;
 }
 
 function stripHtml(value) {
