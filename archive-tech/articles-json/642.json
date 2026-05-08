@@ -1,0 +1,300 @@
+{
+  "post_id": 642,
+  "title": "沒想到 CSS 也做的到？！",
+  "date": "2012-08-20",
+  "year": 2012,
+  "month": 8,
+  "day": 20,
+  "categories": [
+    "CSS",
+    "Javascript"
+  ],
+  "tags": [],
+  "author": "香蕉人",
+  "page_type": "post",
+  "original_url": "https://tech.mozilla.com.tw/?p=642",
+  "archive_url": "https://web.archive.org/web/20200919181159id_/https://tech.mozilla.com.tw/?p=642",
+  "wayback_timestamp": "20200919181159",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>一個「生動」的網站絕對少不了 Javascript (JS) 的幫忙，很多有趣的特效交給 JS 或甚至丟給 Jquery 就對了！不過我們仔細看看 JS 裡到底做了什麼事讓我們的網站活起來呢，其實大部分的特效，JS 只是幫我們動態的去改變元素的 CSS 而已。那可以直接就在 CSS 中完成特效嗎？！完。全。沒。問。題。</p>\n<p>舉例來說，最常見的特效就是當滑鼠移過去的時候，可以換個底圖或改變字的顏色，我們來瞧瞧 CSS 怎麼辦到的吧：</p>\n<p>html：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f6649ef5c01f772537837\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n&lt;div class=\"sample\"&gt;\r\n    sample\r\n &lt;/div&gt;</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c01f772537837-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c01f772537837-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c01f772537837-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f6649ef5c01f772537837-1\"><span class=\"crayon-o\">&lt;</span><span class=\"crayon-e\">div </span><span class=\"crayon-t\">class</span><span class=\"crayon-o\">=</span><span class=\"crayon-s\">\"sample\"</span><span class=\"crayon-o\">&gt;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c01f772537837-2\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">sample</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c01f772537837-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">div</span><span class=\"crayon-o\">&gt;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p>css：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f6649ef5c02a043009132\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n.sample{\r\n    margin:10px;\r\n    background:url(b.png);\r\n    width:220px;\r\n    height:220px;\r\n    color:#f00;\r\n}\r\n.sample:hover{\r\n   background:url(a.png);\r\n   color:#000;\r\n   font-size:18px;\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c02a043009132-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c02a043009132-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c02a043009132-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c02a043009132-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c02a043009132-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c02a043009132-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c02a043009132-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c02a043009132-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c02a043009132-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c02a043009132-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c02a043009132-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c02a043009132-12\">12</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f6649ef5c02a043009132-1\"><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">sample</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c02a043009132-2\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">margin</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">10px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c02a043009132-3\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">background</span><span class=\"crayon-o\">:</span><span class=\"crayon-e\">url</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">b</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">png</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c02a043009132-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">width</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">220px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c02a043009132-5\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">height</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">220px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c02a043009132-6\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">color</span><span class=\"crayon-o\">:</span><span class=\"crayon-p\">#f00;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c02a043009132-7\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c02a043009132-8\"><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">sample</span><span class=\"crayon-o\">:</span><span class=\"crayon-e\">hover</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c02a043009132-9\"><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-v\">background</span><span class=\"crayon-o\">:</span><span class=\"crayon-e\">url</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">a</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">png</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c02a043009132-10\"><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-v\">color</span><span class=\"crayon-o\">:</span><span class=\"crayon-p\">#000;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c02a043009132-11\"><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-v\">font</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">size</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">18px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c02a043009132-12\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0003 seconds] -->\r\n<p>我們只要多定義該元素的 &#8220;:hover\" 這個虛擬類別 (pesudo class) 的 CSS 就可以了！！</p>\n<p>不相信嗎？！這裡有 <a title=\"live demo\" href=\"http://jsfiddle.net/mpizza/3tKh6/2/\" target=\"_blank\">live demo</a><br />\n<a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.33.27.png\"><img class=\"size-medium wp-image-670 aligncenter\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.33.27-300x148.png\" alt=\"\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.33.27-300x148.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.33.27.png 494w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a><br />\n除此之外，當滑鼠移到導覽列上，會出現下拉式選單，也可以單純用 CSS 就做出來哦！！</p>\n<p>先來看一下 <a title=\"nav-bar\" href=\"http://jsfiddle.net/mpizza/ZNZ4N/\" target=\"_blank\">live demo</a></p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.43.28.png\"><img class=\"wp-image-671 aligncenter\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.43.28.png\" alt=\"\" /></a></p>\n<p>在 demo 中我們可以發現到下拉式選單 (class level_2) 的 CSS 是透過 top:-1000px; 把他丟到外太空去</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f6649ef5c02e751560406\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n .navlist&gt;li .level_2{\r\n  position:absolute;\r\n  top:-1000px;\r\n  left:-1px;\r\n }</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c02e751560406-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c02e751560406-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c02e751560406-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c02e751560406-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c02e751560406-5\">5</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f6649ef5c02e751560406-1\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">navlist</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-i\">li</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">level_2</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c02e751560406-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">position</span><span class=\"crayon-o\">:</span><span class=\"crayon-v\">absolute</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c02e751560406-3\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">top</span><span class=\"crayon-o\">:</span><span class=\"crayon-o\">-</span><span class=\"crayon-cn\">1000px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c02e751560406-4\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">left</span><span class=\"crayon-o\">:</span><span class=\"crayon-o\">-</span><span class=\"crayon-cn\">1px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c02e751560406-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>當滑鼠移到的父元素 .navlist&gt;li 時，我們再設定他的 top:20px;  讓他回到地球上，登登~就完成了！！！</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f6649ef5c032792669808\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n .navlist&gt;li:hover .level_2{\r\n  top:20px;\r\n }</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c032792669808-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c032792669808-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c032792669808-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f6649ef5c032792669808-1\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">navlist</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-v\">li</span><span class=\"crayon-o\">:</span><span class=\"crayon-i\">hover</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">level_2</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c032792669808-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">top</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">20px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c032792669808-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p>上面兩個例子，可以發現「香蕉人」是用 :hover 去取代 JS 中 mouseover 發生後所做的事情，除此之外 :active 對應的 event 就是 mousedown。這時候一定會有人客會問，那要怎麼解決 click 這個 event 呢？！ 嗯&#8230;這時候只能問香蕉了！！好的～香蕉現在就來告訴人客，click event 並沒有辦法靠 CSS 單槍匹馬，<a href=\"http://www.kylinpoker.com/\">扑克牌制作</a> 這時候真的就需要 JS 協助了，只需要少少的幾行 JS 就可以了~</p>\n<p>一樣我們先來看 <a href=\"http://jsfiddle.net/mpizza/h2yGB/4/\" target=\"_blank\">live demo</a></p>\n<p class=\"aligncenter\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.49.013.png\"><img class=\"wp-image-681 aligncenter\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.49.013.png\" alt=\"\" width=\"110\" height=\"56\" /></a><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.48.561.png\"><img class=\"size-full wp-image-680 aligncenter\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.48.561.png\" alt=\"\" width=\"106\" height=\"57\" /></a></p>\n<p>在這個例子中，香蕉人想做一個簡單的開關，當 user 點下去的時候會由「關到開」或「開到關」，</p>\n<p>JS 的部分，只要 #handle 這個元素\"聽\"到 click 這個 event，就會去更改 #container 的 class</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f6649ef5c036427516562\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n $(function(){\r\n  var box=$('#container');\r\n  $('#handle').click(function(){\r\n      if(box.attr('class')==='on-status'){\r\n        box.removeClass('on-status');\r\n        box.addClass('off-status');\r\n       }else{\r\n        box.removeClass('off-status');\r\n        box.addClass('on-status');\r\n       }\r\n   });\r\n });</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c036427516562-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c036427516562-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c036427516562-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c036427516562-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c036427516562-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c036427516562-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c036427516562-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c036427516562-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c036427516562-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c036427516562-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c036427516562-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c036427516562-12\">12</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f6649ef5c036427516562-1\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">$</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c036427516562-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">box</span><span class=\"crayon-o\">=</span><span class=\"crayon-sy\">$</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'#container'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c036427516562-3\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">$</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'#handle'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">click</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c036427516562-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-st\">if</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">box</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">attr</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'class'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-o\">===</span><span class=\"crayon-s\">'on-status'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c036427516562-5\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">box</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">removeClass</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'on-status'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c036427516562-6\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">box</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">addClass</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'off-status'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c036427516562-7\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class=\"crayon-sy\">}</span><span class=\"crayon-st\">else</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c036427516562-8\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">box</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">removeClass</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'off-status'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c036427516562-9\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">box</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">addClass</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'on-status'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c036427516562-10\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c036427516562-11\"><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c036427516562-12\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0004 seconds] -->\r\n<p>接下來所有的變化全部交給 CSS 囉！！</p>\n<p>先設定 .content 以及 #handle 預設的 CSS</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f6649ef5c038005496126\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n div.content{\r\n  position:absolute;\r\n  top:7px;\r\n  left:10px;\r\n  width:15px;\r\n  height:15px;\r\n}\r\ndiv#handle{\r\n  top:0px;\r\n  left:0px;\r\n  border:1px solid #f00;\r\n  width:28px;\r\n  height:28px;\r\n  border-radius: 28px;\r\n  -webkit-border-radius:28px;\r\n  -moz-border-radius:28px;\r\n  background:#f00;\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c038005496126-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c038005496126-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c038005496126-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c038005496126-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c038005496126-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c038005496126-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c038005496126-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c038005496126-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c038005496126-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c038005496126-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c038005496126-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c038005496126-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c038005496126-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c038005496126-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c038005496126-15\">15</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c038005496126-16\">16</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c038005496126-17\">17</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c038005496126-18\">18</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f6649ef5c038005496126-1\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">div</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">content</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c038005496126-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">position</span><span class=\"crayon-o\">:</span><span class=\"crayon-v\">absolute</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c038005496126-3\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">top</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">7px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c038005496126-4\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">left</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">10px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c038005496126-5\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">width</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">15px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c038005496126-6\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">height</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">15px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c038005496126-7\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c038005496126-8\"><span class=\"crayon-e\">div</span><span class=\"crayon-p\">#handle{</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c038005496126-9\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">top</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">0px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c038005496126-10\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">left</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">0px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c038005496126-11\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">border</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">1px</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">solid</span><span class=\"crayon-h\"> </span><span class=\"crayon-p\">#f00;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c038005496126-12\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">width</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">28px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c038005496126-13\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">height</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">28px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c038005496126-14\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">border</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">radius</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">28px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c038005496126-15\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">webkit</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">border</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">radius</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">28px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c038005496126-16\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">moz</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">border</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">radius</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">28px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c038005496126-17\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">background</span><span class=\"crayon-o\">:</span><span class=\"crayon-p\">#f00;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c038005496126-18\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0005 seconds] -->\r\n<p>當#handle 聽到 click event 後，將 #container 的 class 改成 off-status</p>\n<p>在 off-status 的 CSS 定義:</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f6649ef5c03c979400268\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\ndiv.off-status div#off{\r\n left:40px;\r\n}\r\ndiv.off-status div#on{\r\n  display:none;\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c03c979400268-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c03c979400268-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c03c979400268-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c03c979400268-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c03c979400268-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c03c979400268-6\">6</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f6649ef5c03c979400268-1\"><span class=\"crayon-v\">div</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">off</span><span class=\"crayon-o\">-</span><span class=\"crayon-e\">status</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">div</span><span class=\"crayon-p\">#off{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c03c979400268-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">left</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">40px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c03c979400268-3\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c03c979400268-4\"><span class=\"crayon-v\">div</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">off</span><span class=\"crayon-o\">-</span><span class=\"crayon-e\">status</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">div</span><span class=\"crayon-p\">#on{</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c03c979400268-5\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">display</span><span class=\"crayon-o\">:</span><span class=\"crayon-v\">none</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c03c979400268-6\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>反之，在 on-status 的 css</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f6649ef5c03f140935206\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\ndiv.on-status div#off{\r\n display:none;\r\n}\r\n\r\ndiv.on-status div#handle{\r\n left:40px;\r\n background:#00f;\r\n border:1px solid #00f;\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c03f140935206-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c03f140935206-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c03f140935206-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c03f140935206-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c03f140935206-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c03f140935206-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c03f140935206-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6649ef5c03f140935206-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f6649ef5c03f140935206-9\">9</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f6649ef5c03f140935206-1\"><span class=\"crayon-v\">div</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">on</span><span class=\"crayon-o\">-</span><span class=\"crayon-e\">status</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">div</span><span class=\"crayon-p\">#off{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c03f140935206-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">display</span><span class=\"crayon-o\">:</span><span class=\"crayon-v\">none</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c03f140935206-3\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c03f140935206-4\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c03f140935206-5\"><span class=\"crayon-v\">div</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">on</span><span class=\"crayon-o\">-</span><span class=\"crayon-e\">status</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">div</span><span class=\"crayon-p\">#handle{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c03f140935206-6\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">left</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">40px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c03f140935206-7\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">background</span><span class=\"crayon-o\">:</span><span class=\"crayon-p\">#00f;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6649ef5c03f140935206-8\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">border</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">1px</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">solid</span><span class=\"crayon-h\"> </span><span class=\"crayon-p\">#00f;</span></div><div class=\"crayon-line\" id=\"crayon-5f6649ef5c03f140935206-9\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>是不是很酷呢！！！</p>\n<p>在 CSS3 定義更多的 animation *1 之後，各元素之間都可以靠 CSS 做出更 fancy 的效果，例如 Mozilla Taiwan <a href=\"http://mozilla.com.tw/community/\" target=\"_blank\">社群頁面</a> 中切換角色時的動畫也是透過同樣的原理做出來的。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.13.582.png\"><img class=\"size-medium wp-image-666 aligncenter\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.13.582-300x114.png\" alt=\"\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.13.582-300x114.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.13.582.png 886w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a></p>\n<p>說了這麼多，一定有人會問說 JS 用起來很舒服很開心啊，為什麼要改成 CSS 呢？其實也沒有什麼不好，但是當你的網頁碰到不同 layout 的時候，其中透過 JS 處理 CSS 的部分就會很難解了，那單純用 CSS 怎麼救呢? 哈哈～這時候就要靠 Media Queries *2了！</p>\n<p>揪~~竟~~ Media Queries 的出現帶給 CSS 什麼樣的助力呢? 讓我們再看看香蕉人下一篇的分析囉~</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1.png\"><img class=\"aligncenter  wp-image-810\" title=\"GaryNaNa\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1.png\" alt=\"\" width=\"235\" height=\"248\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1.png 313w, https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1-285x300.png 285w\" sizes=\"(max-width: 235px) 100vw, 235px\" /></a></p>\n<p>*1 <a href=\"https://developer.mozilla.org/en/CSS/CSS_animations\" target=\"_blank\">https://developer.mozilla.org/en/CSS/CSS_animations</a></p>\n<p>*2 <a href=\"http://www.w3.org/TR/css3-mediaqueries/\" target=\"_blank\">http://www.w3.org/TR/css3-mediaqueries/</a></p>\n<p>*3 圖片創作 by Sarah Deng</p>\n\t\t\t</div>",
+  "content_text": "一個「生動」的網站絕對少不了 Javascript (JS) 的幫忙，很多有趣的特效交給 JS 或甚至丟給 Jquery 就對了！不過我們仔細看看 JS 裡到底做了什麼事讓我們的網站活起來呢，其實大部分的特效，JS 只是幫我們動態的去改變元素的 CSS 而已。那可以直接就在 CSS 中完成特效嗎？！完。全。沒。問。題。 舉例來說，最常見的特效就是當滑鼠移過去的時候，可以換個底圖或改變字的顏色，我們來瞧瞧 CSS 怎麼辦到的吧： html： <div class=\"sample\"> sample </div> 1 2 3 < div class = \"sample\" > sample < / div > css： .sample{ margin:10px; background:url(b.png); width:220px; height:220px; color:#f00; } .sample:hover{ background:url(a.png); color:#000; font-size:18px; } 1 2 3 4 5 6 7 8 9 10 11 12 . sample { margin : 10px ; background : url ( b . png ) ; width : 220px ; height : 220px ; color : #f00; } . sample : hover { background : url ( a . png ) ; color : #000; font - size : 18px ; } 我們只要多定義該元素的 “:hover\" 這個虛擬類別 (pesudo class) 的 CSS 就可以了！！ 不相信嗎？！這裡有 live demo 除此之外，當滑鼠移到導覽列上，會出現下拉式選單，也可以單純用 CSS 就做出來哦！！ 先來看一下 live demo 在 demo 中我們可以發現到下拉式選單 (class level_2) 的 CSS 是透過 top:-1000px; 把他丟到外太空去 .navlist>li .level_2{ position:absolute; top:-1000px; left:-1px; } 1 2 3 4 5 . navlist > li . level_2 { position : absolute ; top : - 1000px ; left : - 1px ; } 當滑鼠移到的父元素 .navlist>li 時，我們再設定他的 top:20px; 讓他回到地球上，登登~就完成了！！！ .navlist>li:hover .level_2{ top:20px; } 1 2 3 . navlist > li : hover . level_2 { top : 20px ; } 上面兩個例子，可以發現「香蕉人」是用 :hover 去取代 JS 中 mouseover 發生後所做的事情，除此之外 :active 對應的 event 就是 mousedown。這時候一定會有人客會問，那要怎麼解決 click 這個 event 呢？！ 嗯…這時候只能問香蕉了！！好的～香蕉現在就來告訴人客，click event 並沒有辦法靠 CSS 單槍匹馬， 扑克牌制作 這時候真的就需要 JS 協助了，只需要少少的幾行 JS 就可以了~ 一樣我們先來看 live demo 在這個例子中，香蕉人想做一個簡單的開關，當 user 點下去的時候會由「關到開」或「開到關」， JS 的部分，只要 #handle 這個元素\"聽\"到 click 這個 event，就會去更改 #container 的 class $(function(){ var box=$('#container'); $('#handle').click(function(){ if(box.attr('class')==='on-status'){ box.removeClass('on-status'); box.addClass('off-status'); }else{ box.removeClass('off-status'); box.addClass('on-status'); } }); }); 1 2 3 4 5 6 7 8 9 10 11 12 $ ( function ( ) { var box = $ ( '#container' ) ; $ ( '#handle' ) . click ( function ( ) { if ( box . attr ( 'class' ) === 'on-status' ) { box . removeClass ( 'on-status' ) ; box . addClass ( 'off-status' ) ; } else { box . removeClass ( 'off-status' ) ; box . addClass ( 'on-status' ) ; } } ) ; } ) ; 接下來所有的變化全部交給 CSS 囉！！ 先設定 .content 以及 #handle 預設的 CSS div.content{ position:absolute; top:7px; left:10px; width:15px; height:15px; } div#handle{ top:0px; left:0px; border:1px solid #f00; width:28px; height:28px; border-radius: 28px; -webkit-border-radius:28px; -moz-border-radius:28px; background:#f00; } 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 div . content { position : absolute ; top : 7px ; left : 10px ; width : 15px ; height : 15px ; } div #handle{ top : 0px ; left : 0px ; border : 1px solid #f00; width : 28px ; height : 28px ; border - radius : 28px ; - webkit - border - radius : 28px ; - moz - border - radius : 28px ; background : #f00; } 當#handle 聽到 click event 後，將 #container 的 class 改成 off-status 在 off-status 的 CSS 定義: div.off-status div#off{ left:40px; } div.off-status div#on{ display:none; } 1 2 3 4 5 6 div . off - status div #off{ left : 40px ; } div . off - status div #on{ display : none ; } 反之，在 on-status 的 css div.on-status div#off{ display:none; } div.on-status div#handle{ left:40px; background:#00f; border:1px solid #00f; } 1 2 3 4 5 6 7 8 9 div . on - status div #off{ display : none ; } div . on - status div #handle{ left : 40px ; background : #00f; border : 1px solid #00f; } 是不是很酷呢！！！ 在 CSS3 定義更多的 animation *1 之後，各元素之間都可以靠 CSS 做出更 fancy 的效果，例如 Mozilla Taiwan 社群頁面 中切換角色時的動畫也是透過同樣的原理做出來的。 說了這麼多，一定有人會問說 JS 用起來很舒服很開心啊，為什麼要改成 CSS 呢？其實也沒有什麼不好，但是當你的網頁碰到不同 layout 的時候，其中透過 JS 處理 CSS 的部分就會很難解了，那單純用 CSS 怎麼救呢? 哈哈～這時候就要靠 Media Queries *2了！ 揪~~竟~~ Media Queries 的出現帶給 CSS 什麼樣的助力呢? 讓我們再看看香蕉人下一篇的分析囉~ *1 https://developer.mozilla.org/en/CSS/CSS_animations *2 http://www.w3.org/TR/css3-mediaqueries/ *3 圖片創作 by Sarah Deng",
+  "images": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.33.27-300x148.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/642/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.33.27-300x148.png",
+      "markdown_path": "../assets/642/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.33.27-300x148.png",
+      "wayback_timestamp": "20200919181159",
+      "asset_archive_url": "https://web.archive.org/web/20200919181159id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.33.27-300x148.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.33.27.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.33.27-300x148.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.33.27-300x148.png",
+      "archive_path": "assets/642/003-f66efc53ee1a.png",
+      "markdown_path": "../assets/642/003-f66efc53ee1a.png",
+      "wayback_timestamp": "20130530093241",
+      "asset_archive_url": "https://web.archive.org/web/20130530093241id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.33.27-300x148.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.43.28.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.49.013.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.48.561.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.13.582-300x114.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.13.582.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "archive_path": "assets/642/005-c292164cfa1c.png",
+      "markdown_path": "../assets/642/005-c292164cfa1c.png",
+      "wayback_timestamp": "20121016051251",
+      "asset_archive_url": "https://web.archive.org/web/20121016051251id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1-285x300.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "archive_path": "assets/642/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "markdown_path": "../assets/642/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "wayback_timestamp": "20121016051251",
+      "asset_archive_url": "https://web.archive.org/web/20121016051251id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "post_id": 642,
+      "page_type": "post",
+      "title": "沒想到 CSS 也做的到？！",
+      "page_timestamp": "20200919181159",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "archive_path": "assets/642/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "markdown_path": "../assets/642/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "wayback_timestamp": "20160529093602",
+      "asset_archive_url": "https://web.archive.org/web/20160529093602id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.33.27-300x148.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/642/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.33.27-300x148.png",
+      "markdown_path": "../assets/642/wp-content/uploads/2012/07/螢幕快照-2012-07-26-下午4.33.27-300x148.png",
+      "wayback_timestamp": "20200919181159",
+      "asset_archive_url": "https://web.archive.org/web/20200919181159id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.33.27-300x148.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.33.27.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.33.27-300x148.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.33.27-300x148.png",
+      "archive_path": "assets/642/003-f66efc53ee1a.png",
+      "markdown_path": "../assets/642/003-f66efc53ee1a.png",
+      "wayback_timestamp": "20130530093241",
+      "asset_archive_url": "https://web.archive.org/web/20130530093241id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.33.27-300x148.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.43.28.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.49.013.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.48.561.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.13.582-300x114.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.13.582.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "archive_path": "assets/642/005-c292164cfa1c.png",
+      "markdown_path": "../assets/642/005-c292164cfa1c.png",
+      "wayback_timestamp": "20121016051251",
+      "asset_archive_url": "https://web.archive.org/web/20121016051251id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1-285x300.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "archive_path": "assets/642/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "markdown_path": "../assets/642/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "wayback_timestamp": "20121016051251",
+      "asset_archive_url": "https://web.archive.org/web/20121016051251id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1-150x150.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "post_id": 642,
+      "page_type": "post",
+      "title": "沒想到 CSS 也做的到？！",
+      "page_timestamp": "20200919181159",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "archive_path": "assets/642/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "markdown_path": "../assets/642/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "wayback_timestamp": "20160529093602",
+      "asset_archive_url": "https://web.archive.org/web/20160529093602id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://jsfiddle.net/mpizza/3tKh6/2/",
+      "text": "live demo"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.33.27.png",
+      "text": ""
+    },
+    {
+      "url": "https://jsfiddle.net/mpizza/ZNZ4N/",
+      "text": "live demo"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.43.28.png",
+      "text": ""
+    },
+    {
+      "url": "https://www.kylinpoker.com/",
+      "text": "扑克牌制作"
+    },
+    {
+      "url": "https://jsfiddle.net/mpizza/h2yGB/4/",
+      "text": "live demo"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.49.013.png",
+      "text": ""
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.48.561.png",
+      "text": ""
+    },
+    {
+      "url": "https://mozilla.com.tw/community/",
+      "text": "社群頁面"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.13.582.png",
+      "text": ""
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/GaryNaNa1.png",
+      "text": ""
+    },
+    {
+      "url": "https://developer.mozilla.org/en/CSS/CSS_animations",
+      "text": "https://developer.mozilla.org/en/CSS/CSS_animations"
+    },
+    {
+      "url": "https://www.w3.org/TR/css3-mediaqueries/",
+      "text": "http://www.w3.org/TR/css3-mediaqueries/"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "partial_assets_failed",
+  "asset_errors": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.43.28.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.49.013.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.48.561.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.13.582-300x114.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-26-%E4%B8%8B%E5%8D%884.13.582.png",
+      "reason": "article_media_missing"
+    }
+  ]
+}

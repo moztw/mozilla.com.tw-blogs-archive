@@ -1,0 +1,240 @@
+{
+  "post_id": 2470,
+  "title": "還原 b2g crash 案發現場",
+  "date": "2013-08-19",
+  "year": 2013,
+  "month": 8,
+  "day": 19,
+  "categories": [
+    "Firefox OS(B2G)"
+  ],
+  "tags": [],
+  "author": "Shawn",
+  "page_type": "post",
+  "original_url": "https://tech.mozilla.com.tw/?p=2470",
+  "archive_url": "https://web.archive.org/web/20191118142104id_/https://tech.mozilla.com.tw/?p=2470",
+  "wayback_timestamp": "20191118142104",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p dir=\"ltr\">在 Firefox OS 系統中，若 b2g process 發生 crash 時，一般來說是透過 gdb debugger 來除錯，但現實生活中並不是每次系統 crash 都有機會知道複製步驟，能夠將問題重新複製。因此事後針對 gecko crash 分析對於 platform 工程師來說是相當重要的課題。Firefox OS 支援產生 crash dump，本文將介紹將 stack backtrace 功能開啟，以及解析 stack backtrace symbol 的方法作簡單介紹。</p>\n<p>breakpad 是由 library 以及強大的工具組合而成，整體概念分為 build system、user\"s system 以及 crash collector。</p>\n<p>本篇主要簡述 build system 以及 user\"s system 這兩個區塊。由於篇幅關係，User\"s System 至 Crash Collector 這段會在未來篇幅描述。若欲觀看 b2g crash 統計可至網頁:  <a title=\"mozilla crash-stats\" href=\"https://crash-stats.mozilla.com/home/products/B2G\">https://crash-stats.mozilla.com/home/products/B2G</a> 了解詳情。在 bugzilla bugreport 流程中，若遇到 crash 問題，通常會附上 minidump 資料，以便有效的讓開發者得到 crash 資訊，以便有效率的 debug。<a title=\"Bug 851664\" href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=851664\">Bug 851664</a> 便是一很好的範例。</p>\n<p dir=\"ltr\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad.png\"><img class=\"size-medium wp-image-2471 aligncenter\" alt=\"breakpad\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad-274x300.png\" width=\"274\" height=\"300\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad-274x300.png 274w, https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad.png 708w\" sizes=\"(max-width: 274px) 100vw, 274px\" /></a></p>\n<p dir=\"ltr\">圖片來源：<a href=\"http://code.google.com/p/google-breakpad/wiki/GettingStartedWithBreakpad\">GettingStartedWithBreakpad</a></p>\n<p dir=\"ltr\">Firefox OS 本質上是倚靠 google breakpad 來產生 stack backtrace 存成 minidump 檔案格式，breakpad 使用 minidump <a href=\"http://www.theinnocents.org/\">&#12458;&#12531;&#12521;&#12452;&#12531; &#12459;&#12472;&#12494;</a>  格式原因如下：</p>\n<p dir=\"ltr\">(a)  傳統 core file 檔案容量過於龐大難以透過網路有效率地回報問題</p>\n<p dir=\"ltr\">(b)  Windows 先天不支援 core file，而 minidump 格式是 Microsoft  定義，在難以說服 Windows 支援 coredump 情況下，選擇用 minidump 格式是比較簡單的作法</p>\n<p dir=\"ltr\">(c)  breakpad 只需要支援 minidump，簡化實作複雜度</p>\n<p dir=\"ltr\">細節如 Breakpad\"s symbol 格式請見 <a href=\"http://code.google.com/p/google-breakpad/wiki/SymbolFiles\">[5]</a></p>\n<p dir=\"ltr\"><strong>Build System</strong></p>\n<p dir=\"ltr\">以下簡述開啟 minidump  的方法：<br />\n實際上nighly/release build 會預設啟用 crashreporter，若是 dev build 則要手動啟用 crashreporter。</p>\n<p dir=\"ltr\">(1) 強制啟用 Crashreporter<br />\n簡單來說，可以從/system/bin/b2g.sh 加上環境變數啟動 crashreporter 機制<br />\n例如執行：</p>\n<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5dd2a8cfd9987367835859\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nMOZ_CRASHREPORTER=\"1\" /system/b2g/b2g.sh</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5dd2a8cfd9987367835859-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5dd2a8cfd9987367835859-1\"><span class=\"crayon-v\">MOZ_CRASHREPORTER</span><span class=\"crayon-o\">=</span><span class=\"crayon-s\">\"1\"</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">system</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">b2g</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">b2g</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">sh</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p></p>\n<p dir=\"ltr\">(2) 在 b2g 目錄下更新 build symbol：</p>\n<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5dd2a8cfd9996319792427\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n. setup.sh &amp;&amp; make buildsymbols</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5dd2a8cfd9996319792427-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5dd2a8cfd9996319792427-1\"><span class=\"crayon-sy\">.</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">setup</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">sh</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&amp;&amp;</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">make </span><span class=\"crayon-v\">buildsymbols</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p></p>\n<p dir=\"ltr\">symbol 會存放於 objdir-gecko/dist/crashreporter-symbols，並在該目錄下儲存 symbol files 路徑於  &lt;filename&gt;-&lt;platform&gt;-symbols.txt</p>\n<p dir=\"ltr\"><strong>User\"s System</strong></p>\n<p dir=\"ltr\">(3) 當 crash  發生</p>\n<p dir=\"ltr\">每當 b2g process 遇到 Segmentation Fault，dmp and extra 檔案會被存放於</p>\n<p dir=\"ltr\">/data/b2g/mozilla/&lt;path_to_profile_dir&gt;/minidumps。</p>\n<p dir=\"ltr\">其中 &lt;path_to_profile_dir&gt; 命名在此範例像是 “80htzzs8.default”</p>\n<p dir=\"ltr\">而/data/b2g/mozilla/Crash Reports 資料夾下的 LastCrashFilename  則會顯示最後一次 crash 的 stack dump。</p>\n<p dir=\"ltr\">註：後來的gecko版本將 minidump存放於 /data/b2g/mozilla/Crash Reports/pending</p>\n<p dir=\"ltr\">(4) 取出 minidump：</p>\n<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5dd2a8cfd999a592815540\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nadb pull /data/b2g/mozilla/80htzzs8.default/minidumps minidumps/</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5dd2a8cfd999a592815540-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5dd2a8cfd999a592815540-1\"><span class=\"crayon-e\">adb </span><span class=\"crayon-v\">pull</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">data</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">b2g</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">mozilla</span><span class=\"crayon-o\">/</span><span class=\"crayon-cn\">80htzzs8.default</span><span class=\"crayon-o\">/</span><span class=\"crayon-e\">minidumps </span><span class=\"crayon-v\">minidumps</span><span class=\"crayon-o\">/</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p></p>\n<p dir=\"ltr\">\n<p dir=\"ltr\">(5) 解析 minidump：</p>\n<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5dd2a8cfd999d280346068\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nminidump_stackwalk &lt;dmpfile&gt; objdir-gecko/dist/crashreporter-symbols/ &gt; dmp_result.txt</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5dd2a8cfd999d280346068-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5dd2a8cfd999d280346068-1\"><span class=\"crayon-v\">minidump_stackwalk</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-v\">dmpfile</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">objdir</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">gecko</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">dist</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">crashreporter</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">symbols</span><span class=\"crayon-o\">/</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">dmp_result</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">txt</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p></p>\n<p dir=\"ltr\">Note：minidump_stackwalk 可從此處下載或自行編譯 breakpad</p>\n<p dir=\"ltr\"><a href=\"http://hg.mozilla.org/build/tools/file/tip/breakpad/\">http://hg.mozilla.org/build/tools/file/tip/breakpad/</a></p>\n<p dir=\"ltr\">(6) 檢視 dmp_result.txt 便可得到完整的 stack backtrace</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512.png\"><img class=\"size-thumbnail wp-image-2477 aligncenter\" alt=\"crashreporter-512\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png\" width=\"150\" height=\"150\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png 150w, https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-300x300.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512.png 512w\" sizes=\"(max-width: 150px) 100vw, 150px\" /></a></p>\n<p dir=\"ltr\">References:</p>\n<p dir=\"ltr\">[1] <a href=\"http://code.google.com/p/google-breakpad/wiki/GettingStartedWithBreakpad\">http://code.google.com/p/google-breakpad/wiki/GettingStartedWithBreakpad</a></p>\n<p dir=\"ltr\">[2] <a href=\"https://developer.mozilla.org/en-US/docs/Environment_variables_affecting_crash_reporting\">https://developer.mozilla.org/en-US/docs/Environment_variables_affecting_crash_reporting</a></p>\n<p dir=\"ltr\">[3] <a href=\"http://code.google.com/p/google-breakpad/wiki/MozillaBrownBagTalk\">http://code.google.com/p/google-breakpad/wiki/MozillaBrownBagTalk</a></p>\n<p dir=\"ltr\">[4] <a href=\"http://code.google.com/p/google-breakpad/wiki/StackWalking\">http://code.google.com/p/google-breakpad/wiki/StackWalking</a></p>\n<p dir=\"ltr\">[5] <a href=\"http://code.google.com/p/google-breakpad/wiki/SymbolFiles\">http://code.google.com/p/google-breakpad/wiki/SymbolFiles</a></p>\n<p dir=\"ltr\">\n\t\t\t</div>",
+  "content_text": "在 Firefox OS 系統中，若 b2g process 發生 crash 時，一般來說是透過 gdb debugger 來除錯，但現實生活中並不是每次系統 crash 都有機會知道複製步驟，能夠將問題重新複製。因此事後針對 gecko crash 分析對於 platform 工程師來說是相當重要的課題。Firefox OS 支援產生 crash dump，本文將介紹將 stack backtrace 功能開啟，以及解析 stack backtrace symbol 的方法作簡單介紹。 breakpad 是由 library 以及強大的工具組合而成，整體概念分為 build system、user\"s system 以及 crash collector。 本篇主要簡述 build system 以及 user\"s system 這兩個區塊。由於篇幅關係，User\"s System 至 Crash Collector 這段會在未來篇幅描述。若欲觀看 b2g crash 統計可至網頁: https://crash-stats.mozilla.com/home/products/B2G 了解詳情。在 bugzilla bugreport 流程中，若遇到 crash 問題，通常會附上 minidump 資料，以便有效的讓開發者得到 crash 資訊，以便有效率的 debug。 Bug 851664 便是一很好的範例。 圖片來源： GettingStartedWithBreakpad Firefox OS 本質上是倚靠 google breakpad 來產生 stack backtrace 存成 minidump 檔案格式，breakpad 使用 minidump オンライン カジノ 格式原因如下： (a) 傳統 core file 檔案容量過於龐大難以透過網路有效率地回報問題 (b) Windows 先天不支援 core file，而 minidump 格式是 Microsoft 定義，在難以說服 Windows 支援 coredump 情況下，選擇用 minidump 格式是比較簡單的作法 (c) breakpad 只需要支援 minidump，簡化實作複雜度 細節如 Breakpad\"s symbol 格式請見 [5] Build System 以下簡述開啟 minidump 的方法： 實際上nighly/release build 會預設啟用 crashreporter，若是 dev build 則要手動啟用 crashreporter。 (1) 強制啟用 Crashreporter 簡單來說，可以從/system/bin/b2g.sh 加上環境變數啟動 crashreporter 機制 例如執行： MOZ_CRASHREPORTER=\"1\" /system/b2g/b2g.sh 1 MOZ_CRASHREPORTER = \"1\" / system / b2g / b2g . sh (2) 在 b2g 目錄下更新 build symbol： . setup.sh && make buildsymbols 1 . setup . sh && make buildsymbols symbol 會存放於 objdir-gecko/dist/crashreporter-symbols，並在該目錄下儲存 symbol files 路徑於 <filename>-<platform>-symbols.txt User\"s System (3) 當 crash 發生 每當 b2g process 遇到 Segmentation Fault，dmp and extra 檔案會被存放於 /data/b2g/mozilla/<path_to_profile_dir>/minidumps。 其中 <path_to_profile_dir> 命名在此範例像是 “80htzzs8.default” 而/data/b2g/mozilla/Crash Reports 資料夾下的 LastCrashFilename 則會顯示最後一次 crash 的 stack dump。 註：後來的gecko版本將 minidump存放於 /data/b2g/mozilla/Crash Reports/pending (4) 取出 minidump： adb pull /data/b2g/mozilla/80htzzs8.default/minidumps minidumps/ 1 adb pull / data / b2g / mozilla / 80htzzs8.default / minidumps minidumps / (5) 解析 minidump： minidump_stackwalk <dmpfile> objdir-gecko/dist/crashreporter-symbols/ > dmp_result.txt 1 minidump_stackwalk < dmpfile > objdir - gecko / dist / crashreporter - symbols / > dmp_result . txt Note：minidump_stackwalk 可從此處下載或自行編譯 breakpad http://hg.mozilla.org/build/tools/file/tip/breakpad/ (6) 檢視 dmp_result.txt 便可得到完整的 stack backtrace References: [1] http://code.google.com/p/google-breakpad/wiki/GettingStartedWithBreakpad [2] https://developer.mozilla.org/en-US/docs/Environment_variables_affecting_crash_reporting [3] http://code.google.com/p/google-breakpad/wiki/MozillaBrownBagTalk [4] http://code.google.com/p/google-breakpad/wiki/StackWalking [5] http://code.google.com/p/google-breakpad/wiki/SymbolFiles",
+  "images": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad-274x300.png",
+      "alt": "breakpad",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/2470/wp-content/uploads/2013/07/breakpad-274x300.png",
+      "markdown_path": "../assets/2470/wp-content/uploads/2013/07/breakpad-274x300.png",
+      "wayback_timestamp": "20191118142104",
+      "asset_archive_url": "https://web.archive.org/web/20191118142104id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad-274x300.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad.png",
+      "alt": "breakpad",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad-274x300.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad-274x300.png",
+      "archive_path": "assets/2470/004-3c470248a438.png",
+      "markdown_path": "../assets/2470/004-3c470248a438.png",
+      "wayback_timestamp": "20131101075433",
+      "asset_archive_url": "https://web.archive.org/web/20131101075433id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad-274x300.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "alt": "crashreporter-512",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/2470/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "markdown_path": "../assets/2470/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "wayback_timestamp": "20191118142104",
+      "asset_archive_url": "https://web.archive.org/web/20191118142104id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-300x300.png",
+      "alt": "crashreporter-512",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "archive_path": "assets/2470/005-b3c223eab719.png",
+      "markdown_path": "../assets/2470/005-b3c223eab719.png",
+      "wayback_timestamp": "20131023181053",
+      "asset_archive_url": "https://web.archive.org/web/20131023181053id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512.png",
+      "alt": "crashreporter-512",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "archive_path": "assets/2470/006-b3c223eab719.png",
+      "markdown_path": "../assets/2470/006-b3c223eab719.png",
+      "wayback_timestamp": "20131023181053",
+      "asset_archive_url": "https://web.archive.org/web/20131023181053id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "post_id": 2470,
+      "page_type": "post",
+      "title": "還原 b2g crash 案發現場",
+      "page_timestamp": "20191118142104",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/53/519a459f8498f2109015e5181ea5aa6c-bpthumb.jpg",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/53/519a459f8498f2109015e5181ea5aa6c-bpthumb.jpg",
+      "archive_path": "assets/2470/wp-content/uploads/avatars/53/519a459f8498f2109015e5181ea5aa6c-bpthumb.jpg",
+      "markdown_path": "../assets/2470/wp-content/uploads/avatars/53/519a459f8498f2109015e5181ea5aa6c-bpthumb.jpg",
+      "wayback_timestamp": "20160618142706",
+      "asset_archive_url": "https://web.archive.org/web/20160618142706id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/53/519a459f8498f2109015e5181ea5aa6c-bpthumb.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad-274x300.png",
+      "alt": "breakpad",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/2470/wp-content/uploads/2013/07/breakpad-274x300.png",
+      "markdown_path": "../assets/2470/wp-content/uploads/2013/07/breakpad-274x300.png",
+      "wayback_timestamp": "20191118142104",
+      "asset_archive_url": "https://web.archive.org/web/20191118142104id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad-274x300.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad.png",
+      "alt": "breakpad",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad-274x300.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad-274x300.png",
+      "archive_path": "assets/2470/004-3c470248a438.png",
+      "markdown_path": "../assets/2470/004-3c470248a438.png",
+      "wayback_timestamp": "20131101075433",
+      "asset_archive_url": "https://web.archive.org/web/20131101075433id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad-274x300.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "alt": "crashreporter-512",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/2470/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "markdown_path": "../assets/2470/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "wayback_timestamp": "20191118142104",
+      "asset_archive_url": "https://web.archive.org/web/20191118142104id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-300x300.png",
+      "alt": "crashreporter-512",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "archive_path": "assets/2470/005-b3c223eab719.png",
+      "markdown_path": "../assets/2470/005-b3c223eab719.png",
+      "wayback_timestamp": "20131023181053",
+      "asset_archive_url": "https://web.archive.org/web/20131023181053id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512.png",
+      "alt": "crashreporter-512",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "archive_path": "assets/2470/006-b3c223eab719.png",
+      "markdown_path": "../assets/2470/006-b3c223eab719.png",
+      "wayback_timestamp": "20131023181053",
+      "asset_archive_url": "https://web.archive.org/web/20131023181053id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512-150x150.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "post_id": 2470,
+      "page_type": "post",
+      "title": "還原 b2g crash 案發現場",
+      "page_timestamp": "20191118142104",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/53/519a459f8498f2109015e5181ea5aa6c-bpthumb.jpg",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/53/519a459f8498f2109015e5181ea5aa6c-bpthumb.jpg",
+      "archive_path": "assets/2470/wp-content/uploads/avatars/53/519a459f8498f2109015e5181ea5aa6c-bpthumb.jpg",
+      "markdown_path": "../assets/2470/wp-content/uploads/avatars/53/519a459f8498f2109015e5181ea5aa6c-bpthumb.jpg",
+      "wayback_timestamp": "20160618142706",
+      "asset_archive_url": "https://web.archive.org/web/20160618142706id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/53/519a459f8498f2109015e5181ea5aa6c-bpthumb.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://crash-stats.mozilla.com/home/products/B2G",
+      "text": "https://crash-stats.mozilla.com/home/products/B2G"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=851664",
+      "text": "Bug 851664"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/breakpad.png",
+      "text": ""
+    },
+    {
+      "url": "https://code.google.com/p/google-breakpad/wiki/GettingStartedWithBreakpad",
+      "text": "GettingStartedWithBreakpad"
+    },
+    {
+      "url": "https://www.theinnocents.org/",
+      "text": "オンライン カジノ"
+    },
+    {
+      "url": "https://code.google.com/p/google-breakpad/wiki/SymbolFiles",
+      "text": "[5]"
+    },
+    {
+      "url": "https://hg.mozilla.org/build/tools/file/tip/breakpad/",
+      "text": "http://hg.mozilla.org/build/tools/file/tip/breakpad/"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/crashreporter-512.png",
+      "text": ""
+    },
+    {
+      "url": "https://code.google.com/p/google-breakpad/wiki/GettingStartedWithBreakpad",
+      "text": "http://code.google.com/p/google-breakpad/wiki/GettingStartedWithBreakpad"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Environment_variables_affecting_crash_reporting",
+      "text": "https://developer.mozilla.org/en-US/docs/Environment_variables_affecting_crash_reporting"
+    },
+    {
+      "url": "https://code.google.com/p/google-breakpad/wiki/MozillaBrownBagTalk",
+      "text": "http://code.google.com/p/google-breakpad/wiki/MozillaBrownBagTalk"
+    },
+    {
+      "url": "https://code.google.com/p/google-breakpad/wiki/StackWalking",
+      "text": "http://code.google.com/p/google-breakpad/wiki/StackWalking"
+    },
+    {
+      "url": "https://code.google.com/p/google-breakpad/wiki/SymbolFiles",
+      "text": "http://code.google.com/p/google-breakpad/wiki/SymbolFiles"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": []
+}

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+Firefox OS 的 MP4 container 簡介 | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="https://tech.mozilla.com.tw/?p=4016"/><meta property="og:image" content="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/螢幕快照-2014-01-27-下午5.06.57.png" />
+
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css" /><!--<link rel="pingback" href="https://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="https://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://tech.mozilla.com.tw/","urlLoginRedirect":"https://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=b9b467560c","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel='dns-prefetch' href='//s.w.org'>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo;" href="https://tech.mozilla.com.tw/?feed=rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 迴響" href="https://tech.mozilla.com.tw/?feed=comments-rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; Firefox OS 的 MP4 container 簡介 迴響" href="https://tech.mozilla.com.tw/?feed=rss2&#038;p=4016" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='crayon-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-arduino-ide-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-github-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/github/github.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-ubuntu-mono-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/ubuntu-mono.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='advanced-responsive-video-embedder-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0' type='text/css' media='all' />
+<link rel='stylesheet' id='persona-style-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46' type='text/css' media='all' />
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<link rel='https://api.w.org/' href='https://tech.mozilla.com.tw/?rest_route=/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='研發人員的小工具：APP Manager 的簡易上手' href='https://tech.mozilla.com.tw/?p=3497' />
+<link rel='next' title='人人都可以是指揮家 &#8211; Mozart' href='https://tech.mozilla.com.tw/?p=3664' />
+<meta name="generator" content="WordPress 4.6" />
+<link rel="canonical" href="https://tech.mozilla.com.tw/?p=4016" />
+<link rel='shortlink' href='https://tech.mozilla.com.tw/?p=4016' />
+<link rel="alternate" type="application/json+oembed" href="https://tech.mozilla.com.tw/?rest_route=%2Foembed%2F1.0%2Fembed&#038;url=https%3A%2F%2Ftech.mozilla.com.tw%2F%3Fp%3D4016" />
+<link rel="stylesheet" href="https://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-4016 single-format-standard sand">
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='//mozilla.com.tw/' class='home'>Home</a>
+            <b>&raquo;</b>
+            <a href='//mozilla.com.tw/news/'>訊息中心</a>
+            <b>&raquo;</b>
+                          <a href='//tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>
+              <span>Firefox OS 的 MP4 container 簡介</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="https://tech.mozilla.com.tw/?p=4016" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="https://tech.mozilla.com.tw/?p=4016"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=https://tech.mozilla.com.tw/?p=4016&media=https://tech.mozilla.com.tw/wp-content/uploads/2014/01/螢幕快照-2014-01-27-下午5.06.57-150x150.png" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+	        <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">0</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://tech.mozilla.com.tw/?p=3497"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/Screen-Shot-2014-01-06-at-9.26.49-AM-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="圖五：截圖顯示" /><span class="meta-nav">研發人員的小工具：APP Manager 的簡易上手</span></div></a></div>		
+							<div class="nav-next"><a href="https://tech.mozilla.com.tw/?p=3664"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2013/12/螢幕快照-2013-12-14-下午3.58.39-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="Mozart" /><span class="meta-nav">人人都可以是指揮家 - Mozart</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-4016" class="post-4016 post type-post status-publish format-standard has-post-thumbnail hentry category-b2g">
+	 	<header class="entry-header">
+		<h1 class="entry-title">Firefox OS 的 MP4 container 簡介</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://tech.mozilla.com.tw/?m=201401" class="posted-month">1月</a>
+	        <span class="posted-date">27</span>
+	        <a title="See all posts from 2014" href="https://tech.mozilla.com.tw/?m=2014" class="posted-year">2014</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="69">
+		  	<a href="https://tech.mozilla.com.tw/?author=69">
+	          <img src="https://secure.gravatar.com/avatar/9409713661d4a892008edc15d5da0756?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=24" alt="" class="avatar user-69-avatar" width='24' height='24' /><!--
+	       --><div class="author-info">Alfredo</div><!--
+	       --><div class="author-title"></div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<h2 id="docs-internal-guid-6e71a489-b091-e05e-7c0f-b27ee9a3d5a1">前言:</h2>
+<p dir="ltr">MP4 是目前最常見的影音格式之一，在這篇文章中，我們主要在介紹 container 的格式，以及 MP4 在 Firefox OS 中的現況跟常見問題。</p>
+<p dir="ltr">MP4 的 container 格式主要是定義在 ISO/IEC 14496-12 [1] 中，從最早期的 Apple Quicktime format，一路延伸到後來的 MP4、3GPP, 以及 3GPP2 等等 [2]。</p>
+<p dir="ltr">而 MP4 container 裡面最小的組成單位，稱之為 Box，每種 Box 都封裝不同的 information；以下是一般常見的 MP4 container 簡略：</p>
+<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f282b835b4be995991166" class="crayon-syntax crayon-theme-github crayon-font-ubuntu-mono crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+  |- FileTypeBox
+  |- MovieBox
+  |      |---- TrackBox (Audio)
+  |      |          |---- TrackHeaderBox
+  |      |          |---- MediaBox
+  |      |                   |---- SampleTableBox
+  |      |                   |---- SampleDescriptionBox
+  |      |                   |---- TimeToSampleBox
+  |      |
+  |      |---- TrackBox (Video)
+  |                 |---- TrackHeaderBox
+  |                 |---- MediaBox
+  |                          |---- SampleTableBox
+  |                          |---- SampleDescriptionBox
+  |                          |---- TimeToSampleBox
+  |
+  |- MediaDataBox
+           Audio elementary stream
+           Video elementary stream</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f282b835b4be995991166-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4be995991166-2">2</div><div class="crayon-num" data-line="crayon-5f282b835b4be995991166-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4be995991166-4">4</div><div class="crayon-num" data-line="crayon-5f282b835b4be995991166-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4be995991166-6">6</div><div class="crayon-num" data-line="crayon-5f282b835b4be995991166-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4be995991166-8">8</div><div class="crayon-num" data-line="crayon-5f282b835b4be995991166-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4be995991166-10">10</div><div class="crayon-num" data-line="crayon-5f282b835b4be995991166-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4be995991166-12">12</div><div class="crayon-num" data-line="crayon-5f282b835b4be995991166-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4be995991166-14">14</div><div class="crayon-num" data-line="crayon-5f282b835b4be995991166-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4be995991166-16">16</div><div class="crayon-num" data-line="crayon-5f282b835b4be995991166-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4be995991166-18">18</div><div class="crayon-num" data-line="crayon-5f282b835b4be995991166-19">19</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f282b835b4be995991166-1"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-v">FileTypeBox</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4be995991166-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-v">MovieBox</span></div><div class="crayon-line" id="crayon-5f282b835b4be995991166-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-e">TrackBox</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">Audio</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4be995991166-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">TrackHeaderBox</span></div><div class="crayon-line" id="crayon-5f282b835b4be995991166-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">MediaBox</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4be995991166-6"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">SampleTableBox</span></div><div class="crayon-line" id="crayon-5f282b835b4be995991166-7"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">SampleDescriptionBox</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4be995991166-8"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">TimeToSampleBox</span></div><div class="crayon-line" id="crayon-5f282b835b4be995991166-9"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4be995991166-10"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-e">TrackBox</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">Video</span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-5f282b835b4be995991166-11"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">TrackHeaderBox</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4be995991166-12"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">MediaBox</span></div><div class="crayon-line" id="crayon-5f282b835b4be995991166-13"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">SampleTableBox</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4be995991166-14"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">SampleDescriptionBox</span></div><div class="crayon-line" id="crayon-5f282b835b4be995991166-15"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">TimeToSampleBox</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4be995991166-16"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span></div><div class="crayon-line" id="crayon-5f282b835b4be995991166-17"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-e">MediaDataBox</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4be995991166-18"><span class="crayon-e">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-e">Audio </span><span class="crayon-e">elementary </span><span class="crayon-e">stream</span></div><div class="crayon-line" id="crayon-5f282b835b4be995991166-19"><span class="crayon-e">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-e">Video </span><span class="crayon-e">elementary </span><span class="crayon-v">stream</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0014 seconds] -->
+<p>FileTypeBox 是描述這個 MP4 所宣稱支援的 brand，例如「MP42」 指的就是這個 MP4 所使用的 Box 都是在 ISO14496-14 規範中。</p>
+<p dir="ltr">一般播放影音用的 MP4 通常會有 Audio Track 以及 Video Track 兩種, 而 TrackBox 則是描述這個 Track 的資訊。例如 TrackHeaderBox (Video) 中，會有下面的資料：</p>
+<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f282b835b4ca616396511" class="crayon-syntax crayon-theme-github crayon-font-ubuntu-mono crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+  CreationTime="3473061925"       - Video錄製的時間
+  ModificationTime="3473061925"   - Video修改的時間
+  TrackID="1"                     - Video的TrackID
+  Duration="1667"                 - Video的長度
+  Width="320.00"                  - Video 寬度
+  Height="240.00"                 - Video 高度</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f282b835b4ca616396511-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4ca616396511-2">2</div><div class="crayon-num" data-line="crayon-5f282b835b4ca616396511-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4ca616396511-4">4</div><div class="crayon-num" data-line="crayon-5f282b835b4ca616396511-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4ca616396511-6">6</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f282b835b4ca616396511-1"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">CreationTime</span><span class="crayon-o">=</span><span class="crayon-s">"3473061925"</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-i">Video</span>錄製的時間</div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4ca616396511-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">ModificationTime</span><span class="crayon-o">=</span><span class="crayon-s">"3473061925"</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-i">Video</span>修改的時間</div><div class="crayon-line" id="crayon-5f282b835b4ca616396511-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">TrackID</span><span class="crayon-o">=</span><span class="crayon-s">"1"</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-i">Video</span>的<span class="crayon-e">TrackID</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4ca616396511-4"><span class="crayon-e">&nbsp;&nbsp;</span><span class="crayon-v">Duration</span><span class="crayon-o">=</span><span class="crayon-s">"1667"</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-i">Video</span>的長度</div><div class="crayon-line" id="crayon-5f282b835b4ca616396511-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">Width</span><span class="crayon-o">=</span><span class="crayon-s">"320.00"</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-i">Video</span><span class="crayon-h"> </span>寬度</div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4ca616396511-6"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">Height</span><span class="crayon-o">=</span><span class="crayon-s">"240.00"</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-i">Video</span><span class="crayon-h"> </span>高度</div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p></p>
+<p dir="ltr">而 MP4 播放器就可以根據這些資訊來決定播放時的大小以及 timeline 長短。</p>
+<p dir="ltr">MediaBox 最主要是包含了 SampleTableBox, SampleTableBox 可以說是所有的 Box 中最重要的一個，包含了 codec 的詳細資訊以及整個影片或聲音在這個 MP4 中的結構。</p>
+<p dir="ltr">SampleTableBox 主要是包含了兩大 Boxes：</p>
+<p dir="ltr" style="padding-left: 30px;">1. SampleDescriptionBox</p>
+<p dir="ltr" style="padding-left: 30px;">針對不同的 Codec 會有不同資料，例如 H264 的話會有一個 AVCSampleEntryBox 來描述這個MP4所使用的 H264 特性， profile&#8230;等等。 而 AAC 的話，會有一個 MPEGAudioSampleDescriptionBox 來描述所使用的 AAC 資料例如 SampleRate、Bitrate&#8230;等等。</p>
+<p dir="ltr" style="padding-left: 30px;">2. TimeToSampleBox</p>
+<p dir="ltr" style="padding-left: 30px;">這個 Box 主要是用來 random seeking 時所使用，裡面包含的每個 sample 所對應的播出時間；播放器可以根據時間來換算出特定時間需要跳到MP4 中的 sample 位置。以下是從 nexus-4 所錄製出來的 Video TimeToSampleBox 一部分：</p>
+<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f282b835b4ce949913730" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;TimeToSampleEntry SampleDelta="3843" SampleCount="1"/&gt;
+&lt;TimeToSampleEntry SampleDelta="3749" SampleCount="1"/&gt;
+&lt;TimeToSampleEntry SampleDelta="3763" SampleCount="1"/&gt;
+&lt;TimeToSampleEntry SampleDelta="3764" SampleCount="1"/&gt;
+&lt;TimeToSampleEntry SampleDelta="3763" SampleCount="2"/&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f282b835b4ce949913730-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4ce949913730-2">2</div><div class="crayon-num" data-line="crayon-5f282b835b4ce949913730-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4ce949913730-4">4</div><div class="crayon-num" data-line="crayon-5f282b835b4ce949913730-5">5</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f282b835b4ce949913730-1"><span class="crayon-o">&lt;</span><span class="crayon-e">TimeToSampleEntry </span><span class="crayon-v">SampleDelta</span><span class="crayon-o">=</span><span class="crayon-s">"3843"</span><span class="crayon-h"> </span><span class="crayon-v">SampleCount</span><span class="crayon-o">=</span><span class="crayon-s">"1"</span><span class="crayon-o">/</span><span class="crayon-o">&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4ce949913730-2"><span class="crayon-o">&lt;</span><span class="crayon-e">TimeToSampleEntry </span><span class="crayon-v">SampleDelta</span><span class="crayon-o">=</span><span class="crayon-s">"3749"</span><span class="crayon-h"> </span><span class="crayon-v">SampleCount</span><span class="crayon-o">=</span><span class="crayon-s">"1"</span><span class="crayon-o">/</span><span class="crayon-o">&gt;</span></div><div class="crayon-line" id="crayon-5f282b835b4ce949913730-3"><span class="crayon-o">&lt;</span><span class="crayon-e">TimeToSampleEntry </span><span class="crayon-v">SampleDelta</span><span class="crayon-o">=</span><span class="crayon-s">"3763"</span><span class="crayon-h"> </span><span class="crayon-v">SampleCount</span><span class="crayon-o">=</span><span class="crayon-s">"1"</span><span class="crayon-o">/</span><span class="crayon-o">&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4ce949913730-4"><span class="crayon-o">&lt;</span><span class="crayon-e">TimeToSampleEntry </span><span class="crayon-v">SampleDelta</span><span class="crayon-o">=</span><span class="crayon-s">"3764"</span><span class="crayon-h"> </span><span class="crayon-v">SampleCount</span><span class="crayon-o">=</span><span class="crayon-s">"1"</span><span class="crayon-o">/</span><span class="crayon-o">&gt;</span></div><div class="crayon-line" id="crayon-5f282b835b4ce949913730-5"><span class="crayon-o">&lt;</span><span class="crayon-e">TimeToSampleEntry </span><span class="crayon-v">SampleDelta</span><span class="crayon-o">=</span><span class="crayon-s">"3763"</span><span class="crayon-h"> </span><span class="crayon-v">SampleCount</span><span class="crayon-o">=</span><span class="crayon-s">"2"</span><span class="crayon-o">/</span><span class="crayon-o">&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p></p>
+<p dir="ltr">最後的 MediaDataBox，則是非常單純的把 Audio 或是 Video 直接寫入在這個 Box 中，不帶任何資訊。播放器應該解碼出哪個位置的 sample，完全依靠 MovieBox 中的資訊來決定；因此，相對於 MPEG1/2 中 所有 sample 都帶有 timestamp 的特性，MP4 的這種特性也有人稱為 nonframing [3]。</p>
+<p>在這邊可以舉一個例子，在 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=932204">Bug 932204</a>中 [4]，會出現 A/V 不同步的問題。由於 Video/Audio 所在的的 MediaDataBox 不帶任何 timestamp 相關資料，因此我們就大膽假設可能出現問題的點是在 TimeToSampleBox 中。藉著 MP4Box [5]，我們 dump 出在 TimeToSampleBox 的結構如下：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f282b835b4d1188611037" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;TimeToSampleEntry SampleDelta="&lt;span style="color: #ff0000;"&gt;124221737&lt;/span&gt;" SampleCount="1"/&gt;
+&lt;TimeToSampleEntry SampleDelta="4" SampleCount="1"/&gt;
+&lt;TimeToSampleEntry SampleDelta="3" SampleCount="3"/&gt;
+&lt;TimeToSampleEntry SampleDelta="4" SampleCount="1"/&gt;
+&lt;TimeToSampleEntry SampleDelta="3" SampleCount="3"/&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f282b835b4d1188611037-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d1188611037-2">2</div><div class="crayon-num" data-line="crayon-5f282b835b4d1188611037-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d1188611037-4">4</div><div class="crayon-num" data-line="crayon-5f282b835b4d1188611037-5">5</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f282b835b4d1188611037-1"><span class="crayon-o">&lt;</span><span class="crayon-e">TimeToSampleEntry </span><span class="crayon-v">SampleDelta</span><span class="crayon-o">=</span><span class="crayon-s">"&lt;span style="</span><span class="crayon-v">color</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-p">#ff0000;"&gt;124221737&lt;/span&gt;" SampleCount="1"/&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d1188611037-2"><span class="crayon-o">&lt;</span><span class="crayon-e">TimeToSampleEntry </span><span class="crayon-v">SampleDelta</span><span class="crayon-o">=</span><span class="crayon-s">"4"</span><span class="crayon-h"> </span><span class="crayon-v">SampleCount</span><span class="crayon-o">=</span><span class="crayon-s">"1"</span><span class="crayon-o">/</span><span class="crayon-o">&gt;</span></div><div class="crayon-line" id="crayon-5f282b835b4d1188611037-3"><span class="crayon-o">&lt;</span><span class="crayon-e">TimeToSampleEntry </span><span class="crayon-v">SampleDelta</span><span class="crayon-o">=</span><span class="crayon-s">"3"</span><span class="crayon-h"> </span><span class="crayon-v">SampleCount</span><span class="crayon-o">=</span><span class="crayon-s">"3"</span><span class="crayon-o">/</span><span class="crayon-o">&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d1188611037-4"><span class="crayon-o">&lt;</span><span class="crayon-e">TimeToSampleEntry </span><span class="crayon-v">SampleDelta</span><span class="crayon-o">=</span><span class="crayon-s">"4"</span><span class="crayon-h"> </span><span class="crayon-v">SampleCount</span><span class="crayon-o">=</span><span class="crayon-s">"1"</span><span class="crayon-o">/</span><span class="crayon-o">&gt;</span></div><div class="crayon-line" id="crayon-5f282b835b4d1188611037-5"><span class="crayon-o">&lt;</span><span class="crayon-e">TimeToSampleEntry </span><span class="crayon-v">SampleDelta</span><span class="crayon-o">=</span><span class="crayon-s">"3"</span><span class="crayon-h"> </span><span class="crayon-v">SampleCount</span><span class="crayon-o">=</span><span class="crayon-s">"3"</span><span class="crayon-o">/</span><span class="crayon-o">&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p></p>
+<p dir="ltr"> 第一個 TimeToSampleEntry 的欄位大到十分不合邏輯，由此推斷出可能是原始變數未歸零的結果。</p>
+<p dir="ltr">
+<h2>Firefox OS 內的 MP4 container 格式</h2>
+<p dir="ltr">在 FireFox OS 中，由於 MediaRecorder API [6] 的特性，在實際錄影時，無法預先知道整個 Video 或是 Audio 的播放長度。因此在 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=891704">Bug 891704</a> 中，我們實作了另一種格式的 MP4，稱為 fragmented MP4。</p>
+<p dir="ltr">以下是 fragmented MP4 的組成 Box 簡介：</p>
+<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f282b835b4d4373935641" class="crayon-syntax crayon-theme-github crayon-font-ubuntu-mono crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+    |- FileTypeBox
+    |- MovieBox
+    |     |---- TrackBox (Audio)
+    |     |          |---- TrackHeaderBox
+    |     |          |---- MediaBox
+    |     |                   |---- SampleTableBox
+    |     |                   |---- SampleDescriptionBox
+    |     |                   |---- TimeToSampleBox
+    |     |---- TrackBox (Video)
+    |                |---- TrackHeaderBox
+    |                |---- MediaBox
+    |                         |---- SampleTableBox
+    |                         |---- SampleDescriptionBox
+    |                         |---- TimeToSampleBox
+    |
+    |- MovieFragmentBox (Fragment 0)
+    |     |---- MovieFragmentHeaderBox
+    |     |---- TrackFragmentBox (Audio)
+    |     |---- TrackFragmentBox (Video)
+    |- MediaDataBox
+    |     Audio elementary stream
+    |     Video elementary stream
+    |
+    |- MovieFragmentBox (Fragment 1)
+    |     |---- MovieFragmentHeaderBox
+    |     |---- TrackFragmentBox (Audio)
+    |     |---- TrackFragmentBox (Video)
+    |- MediaDataBox
+    |     Audio elementary stream
+    |     Video elementary stream
+    |
+    |- MovieFragmentBox (Fragment 2)
+    |     |---- MovieFragmentHeaderBox
+    |     |---- TrackFragmentBox (Audio)
+    |     |---- TrackFragmentBox (Video)
+    |- MediaDataBox
+          Audio elementary stream
+          Video elementary stream
+
+...</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-2">2</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-4">4</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-6">6</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-8">8</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-10">10</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-12">12</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-14">14</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-16">16</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-18">18</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-20">20</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-22">22</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-24">24</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-25">25</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-26">26</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-27">27</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-28">28</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-29">29</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-30">30</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-31">31</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-32">32</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-33">33</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-34">34</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-35">35</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-36">36</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-37">37</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-38">38</div><div class="crayon-num" data-line="crayon-5f282b835b4d4373935641-39">39</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d4373935641-40">40</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f282b835b4d4373935641-1"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-v">FileTypeBox</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-v">MovieBox</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-e">TrackBox</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">Audio</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">TrackHeaderBox</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">MediaBox</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">SampleTableBox</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">SampleDescriptionBox</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">TimeToSampleBox</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-9"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-e">TrackBox</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">Video</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-10"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">TrackHeaderBox</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-11"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">MediaBox</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-12"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">SampleTableBox</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-13"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">SampleDescriptionBox</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-14"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">TimeToSampleBox</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-15"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-16"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-e">MovieFragmentBox</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-i">Fragment</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-17"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">MovieFragmentHeaderBox</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-18"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-e">TrackFragmentBox</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">Audio</span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-19"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-e">TrackFragmentBox</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">Video</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-20"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-v">MediaDataBox</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-21"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-e">Audio </span><span class="crayon-e">elementary </span><span class="crayon-v">stream</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-22"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-e">Video </span><span class="crayon-e">elementary </span><span class="crayon-v">stream</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-23"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-24"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-e">MovieFragmentBox</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-i">Fragment</span><span class="crayon-h"> </span><span class="crayon-cn">1</span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-25"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">MovieFragmentHeaderBox</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-26"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-e">TrackFragmentBox</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">Audio</span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-27"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-e">TrackFragmentBox</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">Video</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-28"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-v">MediaDataBox</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-29"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-e">Audio </span><span class="crayon-e">elementary </span><span class="crayon-v">stream</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-30"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-e">Video </span><span class="crayon-e">elementary </span><span class="crayon-v">stream</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-31"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-32"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-e">MovieFragmentBox</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-i">Fragment</span><span class="crayon-h"> </span><span class="crayon-cn">2</span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-33"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-v">MovieFragmentHeaderBox</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-34"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-e">TrackFragmentBox</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">Audio</span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-35"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">|</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-h"> </span><span class="crayon-e">TrackFragmentBox</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">Video</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-36"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">|</span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-e">MediaDataBox</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-37"><span class="crayon-e">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-e">Audio </span><span class="crayon-e">elementary </span><span class="crayon-e">stream</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-38"><span class="crayon-e">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-e">Video </span><span class="crayon-e">elementary </span><span class="crayon-i">stream</span></div><div class="crayon-line" id="crayon-5f282b835b4d4373935641-39">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d4373935641-40"><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0013 seconds] -->
+<p></p>
+<p dir="ltr">在 MovieBox 的組成上，除了 TimeToSampleBox 的內容是空的之外，基本上和之前介紹的是一樣的 (因為這時還沒完成錄影，無法預先知道長度)。</p>
+<p dir="ltr">再來最大的不同就是組成 fragment 的 MovieFragmentBox 了；基本上 fragment 的原理很簡單，就是將本來完整的一個大 table，打散成各個小 table 散佈在檔案中；換句話說，如果目前 fragment 的時間長度是兩秒，那就累積兩秒鐘的資料，並將這兩秒的時間資訊以及影音資料寫入一個 fragment 中；由此類推，每兩秒鐘寫一個 fragment 直到錄影結束。</p>
+<p dir="ltr">以下詳細介紹 fragment 的組成 Box。</p>
+<p dir="ltr">MovieFragmentBox，主要是包含 MovieFragmentHeaderBox 以及 TrackFragmentBox。</p>
+<p dir="ltr">MovieFragmentHeaderBox 則是記錄目前 fragment 的數目。</p>
+<p dir="ltr">TrackFragmentBox 則是扮演之前 SampleTableBox 的腳色，不過在 spec。中規範了好幾種形態，這邊介紹其中一種：frame duration 與 Size 的對映，以下是 Video 的範例：</p>
+<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f282b835b4d8989071026" class="crayon-syntax crayon-theme-github crayon-font-ubuntu-mono crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+  &lt;TrackRunEntry Duration="3000" Size="37056"/&gt;
+  &lt;TrackRunEntry Duration="3002" Size="8144"/&gt;
+  &lt;TrackRunEntry Duration="2999" Size="25135"/&gt;
+  &lt;TrackRunEntry Duration="3000" Size="42994"/&gt;
+  &lt;TrackRunEntry Duration="3002" Size="48458"/&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f282b835b4d8989071026-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d8989071026-2">2</div><div class="crayon-num" data-line="crayon-5f282b835b4d8989071026-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282b835b4d8989071026-4">4</div><div class="crayon-num" data-line="crayon-5f282b835b4d8989071026-5">5</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f282b835b4d8989071026-1"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">&lt;</span><span class="crayon-e">TrackRunEntry </span><span class="crayon-v">Duration</span><span class="crayon-o">=</span><span class="crayon-s">"3000"</span><span class="crayon-h"> </span><span class="crayon-v">Size</span><span class="crayon-o">=</span><span class="crayon-s">"37056"</span><span class="crayon-o">/</span><span class="crayon-o">&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d8989071026-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">&lt;</span><span class="crayon-e">TrackRunEntry </span><span class="crayon-v">Duration</span><span class="crayon-o">=</span><span class="crayon-s">"3002"</span><span class="crayon-h"> </span><span class="crayon-v">Size</span><span class="crayon-o">=</span><span class="crayon-s">"8144"</span><span class="crayon-o">/</span><span class="crayon-o">&gt;</span></div><div class="crayon-line" id="crayon-5f282b835b4d8989071026-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">&lt;</span><span class="crayon-e">TrackRunEntry </span><span class="crayon-v">Duration</span><span class="crayon-o">=</span><span class="crayon-s">"2999"</span><span class="crayon-h"> </span><span class="crayon-v">Size</span><span class="crayon-o">=</span><span class="crayon-s">"25135"</span><span class="crayon-o">/</span><span class="crayon-o">&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282b835b4d8989071026-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">&lt;</span><span class="crayon-e">TrackRunEntry </span><span class="crayon-v">Duration</span><span class="crayon-o">=</span><span class="crayon-s">"3000"</span><span class="crayon-h"> </span><span class="crayon-v">Size</span><span class="crayon-o">=</span><span class="crayon-s">"42994"</span><span class="crayon-o">/</span><span class="crayon-o">&gt;</span></div><div class="crayon-line" id="crayon-5f282b835b4d8989071026-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">&lt;</span><span class="crayon-e">TrackRunEntry </span><span class="crayon-v">Duration</span><span class="crayon-o">=</span><span class="crayon-s">"3002"</span><span class="crayon-h"> </span><span class="crayon-v">Size</span><span class="crayon-o">=</span><span class="crayon-s">"48458"</span><span class="crayon-o">/</span><span class="crayon-o">&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p></p>
+<p dir="ltr">在這邊，每個 video frame 的播放長度約 2999 ~ 3002，而後面的 Size 就是指這張 video frame 的實際大小。由這些資料，就可以算出各個 video frame 播放的時間與解碼時所需找出的檔案位置。</p>
+<p dir="ltr">而在 FireFox OS 中，Bug 891704 已經 landed。而相關的 Audio/Video encoder 也在 Bug 879668 中，陸陸續續的即將 landed，在不久的將來，就可以使用 MediaRecorder API 來作 H264/AAC 的錄影了。</p>
+<p dir="ltr">
+<h2>常用工具:</h2>
+<p dir="ltr" style="padding-left: 30px;">1. MP4Box，之前已經有提過，是一套功能強大的工具，除了能解析 MP4 之外，還可以在 fragment 與 nonfragment 之間作轉換，或是將某個 track 個別抽取出來。</p>
+<p dir="ltr" style="padding-left: 30px;">2. MP4V2 [7]，跟 MP4Box 很相像，可以解析出一個 MP4 的結構，或是抽取出特定的 Track 資料。</p>
+<p>&nbsp;</p>
+<p dir="ltr">[1] <a href="http://www.iso.org/iso/home/store/catalogue_ics/catalogue_detail_ics.htm?csnumber=61988">http://www.iso.org/iso/home/store/catalogue_ics/catalogue_detail_ics.htm?csnumber=61988</a></p>
+<p dir="ltr">[2] <a href="http://en.wikipedia.org/wiki/ISO_base_media_file_format">http://en.wikipedia.org/wiki/ISO_base_media_file_format</a></p>
+<p dir="ltr">[3] <a href="http://books.google.com.tw/books?id=ftRvA08WcM4C&amp;pg=PA254&amp;lpg=PA254&amp;dq=MP4+nonframing&amp;source=bl&amp;ots=lXcgAVJnJz&amp;sig=Ente5auFzX0NDO0ZESq0vI7hrE0&amp;hl=zh-TW&amp;sa=X&amp;ei=mD_dUtO1NcnlkgXdnoGoBA&amp;ved=0CDEQ6AEwAA#v=onepage&amp;q=MP4%20nonframing&amp;f=false">http://books.google.com.tw/books?id=ftRvA08WcM4C&amp;pg=PA254&amp;lpg=PA254&amp;dq=MP4+nonframing&amp;source=bl&amp;ots=lXcgAVJnJz&amp;sig=Ente5auFzX0NDO0ZESq0vI7hrE0&amp;hl=zh-TW&amp;sa=X&amp;ei=mD_dUtO1NcnlkgXdnoGoBA&amp;ved=0CDEQ6AEwAA#v=onepage&amp;q=MP4%20nonframing&amp;f=false</a></p>
+<p dir="ltr">[4] <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=932204#c21">https://bugzilla.mozilla.org/show_bug.cgi?id=932204#c21</a></p>
+<p dir="ltr">[5] <a href="http://es.wikipedia.org/wiki/MP4Box">http://es.wikipedia.org/wiki/MP4Box</a></p>
+<p dir="ltr">[6] <a href="https://dvcs.w3.org/hg/dap/raw-file/tip/media-stream-capture/MediaRecorder.html">https://dvcs.w3.org/hg/dap/raw-file/tip/media-stream-capture/MediaRecorder.html</a></p>
+<p dir="ltr">[7] <a href="http://code.google.com/p/mp4v2/">http://code.google.com/p/mp4v2/</a></p>
+<p dir="ltr">
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://tech.mozilla.com.tw/?cat=3" rel="category">Firefox OS(B2G)</a>      </div>
+    </footer> 
+    </article><!-- #post-4016 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" 
+	              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/?p=4016#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required='true' required='required' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required='true' required='required' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表" /> <input type='hidden' name='comment_post_ID' value='4016' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="7ad85bf5e7" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="79"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class='name-title'><a class="profile-link" href="https://tech.mozilla.com.tw/?author=69"><span class="gravatar left"><img src="https://secure.gravatar.com/avatar/9409713661d4a892008edc15d5da0756?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=48" alt="" class="avatar user-69-avatar" width='48' height='48' /></span><span class="name">Alfredo</span></a></span><p class='contact'></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="61" href="https://tech.mozilla.com.tw/?author=61"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg" alt="" class="avatar user-61-avatar" width='96' height='96' /></a><a data-author-id="14" href="https://tech.mozilla.com.tw/?author=14"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg" alt="" class="avatar user-14-avatar" width='96' height='96' /></a><a data-author-id="18" href="https://tech.mozilla.com.tw/?author=18"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg" alt="" class="avatar user-18-avatar" width='96' height='96' /></a><a data-author-id="133" href="https://tech.mozilla.com.tw/?author=133"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg" alt="" class="avatar user-133-avatar" width='96' height='96' /></a><a data-author-id="59" href="https://tech.mozilla.com.tw/?author=59"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg" alt="" class="avatar user-59-avatar" width='96' height='96' /></a><a data-author-id="52" href="https://tech.mozilla.com.tw/?author=52"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg" alt="" class="avatar user-52-avatar" width='96' height='96' /></a></div><a class="more" href="/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://tech.mozilla.com.tw/?cat=8" >CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://tech.mozilla.com.tw/?cat=4" >Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://tech.mozilla.com.tw/?cat=3" >Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://tech.mozilla.com.tw/?cat=30" >Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://tech.mozilla.com.tw/?cat=9" >Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://tech.mozilla.com.tw/?cat=42" >Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://tech.mozilla.com.tw/?cat=5" >Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://tech.mozilla.com.tw/?cat=7" >Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://tech.mozilla.com.tw/?cat=29" >UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">選擇月份</option>
+				<option value='https://tech.mozilla.com.tw/?m=201605'> 2016 年 五月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201602'> 2016 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201507'> 2015 年 七月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201506'> 2015 年 六月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201505'> 2015 年 五月 &nbsp;(2)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201504'> 2015 年 四月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201503'> 2015 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201502'> 2015 年 二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201501'> 2015 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201412'> 2014 年 十二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201411'> 2014 年 十一月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201410'> 2014 年 十月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201409'> 2014 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201408'> 2014 年 八月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201407'> 2014 年 七月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201405'> 2014 年 五月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201404'> 2014 年 四月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201403'> 2014 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201402'> 2014 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201401'> 2014 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201312'> 2013 年 十二月 &nbsp;(6)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201311'> 2013 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201310'> 2013 年 十月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201309'> 2013 年 九月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201308'> 2013 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201307'> 2013 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201306'> 2013 年 六月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201305'> 2013 年 五月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201304'> 2013 年 四月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201303'> 2013 年 三月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201302'> 2013 年 二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201301'> 2013 年 一月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201212'> 2012 年 十二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201211'> 2012 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201210'> 2012 年 十月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201209'> 2012 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201208'> 2012 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201207'> 2012 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201206'> 2012 年 六月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201205'> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

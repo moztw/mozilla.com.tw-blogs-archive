@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+在 Firefox 上建構 WebVR | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="https://tech.mozilla.com.tw/?p=6650"/><meta property="og:image" content="https://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-12.03.57-PM-1024x561.png" />
+
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css" /><!--<link rel="pingback" href="https://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="https://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://tech.mozilla.com.tw/","urlLoginRedirect":"https://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=bbf4b82746","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel='dns-prefetch' href='//s.w.org'>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo;" href="https://tech.mozilla.com.tw/?feed=rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 迴響" href="https://tech.mozilla.com.tw/?feed=comments-rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 在 Firefox 上建構 WebVR 迴響" href="https://tech.mozilla.com.tw/?feed=rss2&#038;p=6650" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='crayon-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-arduino-ide-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='advanced-responsive-video-embedder-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0' type='text/css' media='all' />
+<link rel='stylesheet' id='persona-style-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46' type='text/css' media='all' />
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<link rel='https://api.w.org/' href='https://tech.mozilla.com.tw/?rest_route=/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='淺談 W3C Sensor API的發展' href='https://tech.mozilla.com.tw/?p=6218' />
+<link rel='next' title='運用 Web 技術打造電視遙控器的操作環境' href='https://tech.mozilla.com.tw/?p=6792' />
+<meta name="generator" content="WordPress 4.6" />
+<link rel="canonical" href="https://tech.mozilla.com.tw/?p=6650" />
+<link rel='shortlink' href='https://tech.mozilla.com.tw/?p=6650' />
+<link rel="alternate" type="application/json+oembed" href="https://tech.mozilla.com.tw/?rest_route=%2Foembed%2F1.0%2Fembed&#038;url=https%3A%2F%2Ftech.mozilla.com.tw%2F%3Fp%3D6650" />
+<link rel="stylesheet" href="https://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-6650 single-format-standard sand">
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='//mozilla.com.tw/' class='home'>Home</a>
+            <b>&raquo;</b>
+            <a href='//mozilla.com.tw/news/'>訊息中心</a>
+            <b>&raquo;</b>
+                          <a href='//tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>
+              <span>在 Firefox 上建構 WebVR</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="https://tech.mozilla.com.tw/?p=6650" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="https://tech.mozilla.com.tw/?p=6650"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=https://tech.mozilla.com.tw/?p=6650&media=https://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-12.03.57-PM-150x150.png" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+	        <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">1</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://tech.mozilla.com.tw/?p=6218"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2015/07/axes-50x50.png" class="attachment-48x48 size-48x48 wp-post-image" alt="axes" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2015/07/axes-50x50.png 50w, https://tech.mozilla.com.tw/wp-content/uploads/2015/07/axes-150x150.png 150w" sizes="(max-width: 48px) 100vw, 48px" /><span class="meta-nav">淺談 W3C Sensor API的發展</span></div></a></div>		
+							<div class="nav-next"><a href="https://tech.mozilla.com.tw/?p=6792"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2016/05/2-50x50.png" class="attachment-48x48 size-48x48 wp-post-image" alt="2" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2016/05/2-50x50.png 50w, https://tech.mozilla.com.tw/wp-content/uploads/2016/05/2-150x150.png 150w" sizes="(max-width: 48px) 100vw, 48px" /><span class="meta-nav">運用 Web 技術打造電視遙控器的操作環境</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-6650" class="post-6650 post type-post status-publish format-standard has-post-thumbnail hentry category-firefox category-b2g category-javascript tag-vr tag-webvr">
+	 	<header class="entry-header">
+		<h1 class="entry-title">在 Firefox 上建構 WebVR</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://tech.mozilla.com.tw/?m=201602" class="posted-month">2月</a>
+	        <span class="posted-date">01</span>
+	        <a title="See all posts from 2014" href="https://tech.mozilla.com.tw/?m=2016" class="posted-year">2016</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="161">
+		  	<a href="https://tech.mozilla.com.tw/?author=161">
+	          <img src="https://secure.gravatar.com/avatar/b12d1063942e6acd16770307f90e3c28?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=24" alt="" class="avatar user-161-avatar" width='24' height='24' /><!--
+	       --><div class="author-info">Daosheng Mu</div><!--
+	       --><div class="author-title"></div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p style="text-align: left;">近年來在資訊業最火熱的話題無疑就是虛擬實境 (Virtual Reality，VR) 了。除了 <a href="https://www.oculus.com/en-us/" target="_blank">Oculus</a> 推出 Oculus Rift 之外，其他如 HTC、Google、Samsung 等科技大廠亦各別推出自己的解決方案。VR 目前在遊戲、 電影、多媒體內容都有其龐大的市場需求。Mozilla 的工程師與設計師正著手將 VR 帶到 Open Web 之上，讓每個人都能透過瀏覽器輕鬆享受 VR 世界。因此我們跟 Google 合作開發實驗性的 WebAPI ── <a title="WebVR API" href="https://developer.mozilla.org/en-US/docs/Web/API/WebVR_API" target="_blank">WebVR</a>。希望能讓這些應用透過瀏覽器的力量，使更多使用者能夠接觸到 VR。本文將會介紹 WebVR 是如何基於 HTML5 標準達到跨平台的能力，並將使用 Oculus DK2、Google Cardboard 來展示在 Firefox 桌面版、行動版 (Firefox for Android)，以及 Firefox OS 裝置上的結果。</p>
+<div id="attachment_6670" style="width: 600px" class="wp-caption aligncenter"><a href="http://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-12.03.57-PM.png"><img class="wp-image-6670" src="http://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-12.03.57-PM-1024x561.png" alt="Screen Shot 2015-10-05 at 12.03.57 PM" width="590" height="323" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-12.03.57-PM-1024x561.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-12.03.57-PM-300x164.png 300w" sizes="(max-width: 590px) 100vw, 590px" /></a><p class="wp-caption-text">圖 1. 使用 WebVR 的結果</p></div>
+<h2>WebVR API</h2>
+<p>目前 WebVR API 定義了 Oculus 以及 Cardboard 兩種裝置，在 Firefox 桌面版可執行 Oculus 與 Cardboard 兩種模式，而行動裝置就只有 Cardboard 模式。此外是以 Oculus Rift 為 API 設計時的主要參考對象。Oculus 頭戴裝置分為兩個部分：頭戴顯示器 (Head mounted display) 以及深度攝影機 (Position sensor camera)，因此針對這兩個部分定義出 1).  <a title="The HMDVRDevice interface of the WebVR API represents a head mounted display, providing access to information about each eye, and allowing us to modify the current field of view." href="https://developer.mozilla.org/en-US/docs/Web/API/HMDVRDevice" target="_blank"><code>HMDVRDevice</code></a>，來協助我們得到頭戴顯示器的顯示資訊，以及 2). <a title="The PositionSensorVRDevice interface of the WebVR API represents VR hardware's position sensor. You can access information such as the current position and orientation of the sensor in relation to the head mounted display through the PositionSensorVRDevice.getState() method." href="https://developer.mozilla.org/en-US/docs/Web/API/PositionSensorVRDevice" target="_blank"><code>PositionSensorVRDevice</code></a> 告知我們的頭戴顯示器在三維空間中的位置 (Position) 與轉動 (Orientation)。另由於 Cardboard 模式不具備深度攝影機，所以 <a title="The PositionSensorVRDevice interface of the WebVR API represents VR hardware's position sensor. You can access information such as the current position and orientation of the sensor in relation to the head mounted display through the PositionSensorVRDevice.getState() method." href="https://developer.mozilla.org/en-US/docs/Web/API/PositionSensorVRDevice" target="_blank"><code>PositionSensorVRDevice</code></a><code></code> 僅將告知轉動資訊。</p>
+<h2>GetVRDevices</h2>
+<p>我們可透過 navigator.getVRDevices 取得目前使用平台可支援的裝置資訊。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f664abca37f0415077976" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+navigator.getVRDevices().then(vrDeviceCallback);
+
+function vrDeviceCallback(devices) {
+  // Here, we would get all available devices.
+  for (var i = 0; i &lt; devices.length; ++i) {
+    if (devices[i] instanceof HMDVRDevice) {
+       vrHMD = devices[i];
+    }
+    // Pair HMDVRDevice and PositionSensor via hardwareUnitId
+    if (vrHMD &amp;&amp; devices[i] instanceof PositionSensorVRDevice
+&amp;&amp; devices[i].hardwareUnitId == vrHMD.hardwareUnitId) {
+      vrPosSensor = devices[i];
+      // We just want to get the first VR device.
+      break;
+    }
+  }
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f664abca37f0415077976-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca37f0415077976-2">2</div><div class="crayon-num" data-line="crayon-5f664abca37f0415077976-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca37f0415077976-4">4</div><div class="crayon-num" data-line="crayon-5f664abca37f0415077976-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca37f0415077976-6">6</div><div class="crayon-num" data-line="crayon-5f664abca37f0415077976-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca37f0415077976-8">8</div><div class="crayon-num" data-line="crayon-5f664abca37f0415077976-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca37f0415077976-10">10</div><div class="crayon-num" data-line="crayon-5f664abca37f0415077976-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca37f0415077976-12">12</div><div class="crayon-num" data-line="crayon-5f664abca37f0415077976-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca37f0415077976-14">14</div><div class="crayon-num" data-line="crayon-5f664abca37f0415077976-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca37f0415077976-16">16</div><div class="crayon-num" data-line="crayon-5f664abca37f0415077976-17">17</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f664abca37f0415077976-1"><span class="crayon-v">navigator</span><span class="crayon-sy">.</span><span class="crayon-e">getVRDevices</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-st">then</span><span class="crayon-sy">(</span><span class="crayon-v">vrDeviceCallback</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca37f0415077976-2">&nbsp;</div><div class="crayon-line" id="crayon-5f664abca37f0415077976-3"><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">vrDeviceCallback</span><span class="crayon-sy">(</span><span class="crayon-v">devices</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca37f0415077976-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-c">// Here, we would get all available devices.</span></div><div class="crayon-line" id="crayon-5f664abca37f0415077976-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">for</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">i</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-v">i</span><span class="crayon-h"> </span><span class="crayon-o">&lt;</span><span class="crayon-h"> </span><span class="crayon-v">devices</span><span class="crayon-sy">.</span><span class="crayon-v">length</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-o">++</span><span class="crayon-v">i</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca37f0415077976-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">devices</span><span class="crayon-sy">[</span><span class="crayon-v">i</span><span class="crayon-sy">]</span><span class="crayon-h"> </span><span class="crayon-r">instanceof</span><span class="crayon-h"> </span><span class="crayon-v">HMDVRDevice</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f664abca37f0415077976-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-v">vrHMD</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">devices</span><span class="crayon-sy">[</span><span class="crayon-v">i</span><span class="crayon-sy">]</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca37f0415077976-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f664abca37f0415077976-9"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// Pair HMDVRDevice and PositionSensor via hardwareUnitId</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca37f0415077976-10"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">vrHMD</span><span class="crayon-h"> </span><span class="crayon-o">&amp;&amp;</span><span class="crayon-h"> </span><span class="crayon-v">devices</span><span class="crayon-sy">[</span><span class="crayon-v">i</span><span class="crayon-sy">]</span><span class="crayon-h"> </span><span class="crayon-r">instanceof</span><span class="crayon-h"> </span><span class="crayon-v">PositionSensorVRDevice</span></div><div class="crayon-line" id="crayon-5f664abca37f0415077976-11"><span class="crayon-o">&amp;&amp;</span><span class="crayon-h"> </span><span class="crayon-v">devices</span><span class="crayon-sy">[</span><span class="crayon-v">i</span><span class="crayon-sy">]</span><span class="crayon-sy">.</span><span class="crayon-v">hardwareUnitId</span><span class="crayon-h"> </span><span class="crayon-o">==</span><span class="crayon-h"> </span><span class="crayon-v">vrHMD</span><span class="crayon-sy">.</span><span class="crayon-v">hardwareUnitId</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca37f0415077976-12"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">vrPosSensor</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">devices</span><span class="crayon-sy">[</span><span class="crayon-v">i</span><span class="crayon-sy">]</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f664abca37f0415077976-13"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// We just want to get the first VR device.</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca37f0415077976-14"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">break</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f664abca37f0415077976-15"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca37f0415077976-16"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f664abca37f0415077976-17"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0007 seconds] -->
+<p></p>
+<h2>HMDVRDevice</h2>
+<p>在 VR 裝置的設計中，最重要的部分就是模擬人類視覺。人類的雙眼視覺有其固定的可視範圍 (FOV，Field of view) 以及位移量。<br />
+<a href="http://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-4.40.20-PM.png"><img class="aligncenter wp-image-6683" src="http://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-4.40.20-PM-1024x581.png" alt="" width="580" height="329" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-4.40.20-PM-1024x581.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-4.40.20-PM-300x170.png 300w" sizes="(max-width: 580px) 100vw, 580px" /></a></p>
+<p>在 WebVR API 中，HMDVRDevice 負責提供開發者 VR 視覺相關的參數。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f664abca37fc930543149" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+// Get eye parameters from HMDVRDevice
+var eyeParamsL = vrHMD.getEyeParameters( 'left' );
+var eyeParamsR = vrHMD.getEyeParameters( 'right' );
+// Get the translation of eyes
+var eyeTranslationL = eyeParamsL.eyeTranslation;
+var eyeTranslationR = eyeParamsR.eyeTranslation;
+// Get the field of view of eyes
+var eyeFOVL = eyeParamsL.recommendedFieldOfView;
+var eyeFOVR = eyeParamsR.recommendedFieldOfView;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f664abca37fc930543149-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca37fc930543149-2">2</div><div class="crayon-num" data-line="crayon-5f664abca37fc930543149-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca37fc930543149-4">4</div><div class="crayon-num" data-line="crayon-5f664abca37fc930543149-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca37fc930543149-6">6</div><div class="crayon-num" data-line="crayon-5f664abca37fc930543149-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca37fc930543149-8">8</div><div class="crayon-num" data-line="crayon-5f664abca37fc930543149-9">9</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f664abca37fc930543149-1"><span class="crayon-c">// Get eye parameters from HMDVRDevice</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca37fc930543149-2"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">eyeParamsL</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">vrHMD</span><span class="crayon-sy">.</span><span class="crayon-e">getEyeParameters</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-s">'left'</span><span class="crayon-h"> </span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f664abca37fc930543149-3"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">eyeParamsR</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">vrHMD</span><span class="crayon-sy">.</span><span class="crayon-e">getEyeParameters</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-s">'right'</span><span class="crayon-h"> </span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca37fc930543149-4"><span class="crayon-c">// Get the translation of eyes</span></div><div class="crayon-line" id="crayon-5f664abca37fc930543149-5"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">eyeTranslationL</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">eyeParamsL</span><span class="crayon-sy">.</span><span class="crayon-v">eyeTranslation</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca37fc930543149-6"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">eyeTranslationR</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">eyeParamsR</span><span class="crayon-sy">.</span><span class="crayon-v">eyeTranslation</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f664abca37fc930543149-7"><span class="crayon-c">// Get the field of view of eyes</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca37fc930543149-8"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">eyeFOVL</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">eyeParamsL</span><span class="crayon-sy">.</span><span class="crayon-v">recommendedFieldOfView</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f664abca37fc930543149-9"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">eyeFOVR</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">eyeParamsR</span><span class="crayon-sy">.</span><span class="crayon-v">recommendedFieldOfView</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0004 seconds] -->
+<p>這些參數能夠讓我們產生人類視覺的立體繪圖 (Stereoscopic Rendering) [1]效果。根據立體繪圖的理論，我們使用 <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API">WebGL</a> 處理三維繪圖 (3D Renderering) 時，需要對同一個三維場景分別使用左右眼的視覺參數進行兩次繪圖作業。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f664abca3800324451993" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+// Setup camera projection matrix
+cameraL.projectionMatrix = fovToProjection( eyeFOVL, viewNear, viewFar );
+cameraR.projectionMatrix = fovToProjection( eyeFOVR, viewNear, viewFar );
+// Set the view translation to camera
+cameraL.translateX( eyeTranslationL.x );
+cameraR.translateX( eyeTranslationR.x );
+
+var rendererWidth = window.innerWidth * 0.5;
+var rendererHeight = window.innerHeight;
+// WebGL render left eye
+renderer.setViewport( 0, 0, rendererWidth, rendererHeight );
+renderer.setScissor( 0, 0, rendererWidth, rendererHeight );
+renderer.render( sceneL, cameraL );
+
+// WebGL render right eye
+renderer.setViewport( rendererWidth, 0, rendererWidth, rendererHeight );
+renderer.setScissor( rendererWidth, 0, rendererWidth, rendererHeight );
+renderer.render( sceneR, cameraR );</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f664abca3800324451993-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3800324451993-2">2</div><div class="crayon-num" data-line="crayon-5f664abca3800324451993-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3800324451993-4">4</div><div class="crayon-num" data-line="crayon-5f664abca3800324451993-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3800324451993-6">6</div><div class="crayon-num" data-line="crayon-5f664abca3800324451993-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3800324451993-8">8</div><div class="crayon-num" data-line="crayon-5f664abca3800324451993-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3800324451993-10">10</div><div class="crayon-num" data-line="crayon-5f664abca3800324451993-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3800324451993-12">12</div><div class="crayon-num" data-line="crayon-5f664abca3800324451993-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3800324451993-14">14</div><div class="crayon-num" data-line="crayon-5f664abca3800324451993-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3800324451993-16">16</div><div class="crayon-num" data-line="crayon-5f664abca3800324451993-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3800324451993-18">18</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f664abca3800324451993-1"><span class="crayon-c">// Setup camera projection matrix</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3800324451993-2"><span class="crayon-v">cameraL</span><span class="crayon-sy">.</span><span class="crayon-v">projectionMatrix</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">fovToProjection</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-v">eyeFOVL</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">viewNear</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-i">viewFar</span><span class="crayon-h"> </span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f664abca3800324451993-3"><span class="crayon-v">cameraR</span><span class="crayon-sy">.</span><span class="crayon-v">projectionMatrix</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">fovToProjection</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-v">eyeFOVR</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">viewNear</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-i">viewFar</span><span class="crayon-h"> </span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3800324451993-4"><span class="crayon-c">// Set the view translation to camera</span></div><div class="crayon-line" id="crayon-5f664abca3800324451993-5"><span class="crayon-v">cameraL</span><span class="crayon-sy">.</span><span class="crayon-e">translateX</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-v">eyeTranslationL</span><span class="crayon-sy">.</span><span class="crayon-i">x</span><span class="crayon-h"> </span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3800324451993-6"><span class="crayon-v">cameraR</span><span class="crayon-sy">.</span><span class="crayon-e">translateX</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-v">eyeTranslationR</span><span class="crayon-sy">.</span><span class="crayon-i">x</span><span class="crayon-h"> </span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f664abca3800324451993-7">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3800324451993-8"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">rendererWidth</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">window</span><span class="crayon-sy">.</span><span class="crayon-v">innerWidth</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-cn">0.5</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f664abca3800324451993-9"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">rendererHeight</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">window</span><span class="crayon-sy">.</span><span class="crayon-v">innerHeight</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3800324451993-10"><span class="crayon-c">// WebGL render left eye</span></div><div class="crayon-line" id="crayon-5f664abca3800324451993-11"><span class="crayon-v">renderer</span><span class="crayon-sy">.</span><span class="crayon-e">setViewport</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">rendererWidth</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-i">rendererHeight</span><span class="crayon-h"> </span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3800324451993-12"><span class="crayon-v">renderer</span><span class="crayon-sy">.</span><span class="crayon-e">setScissor</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">rendererWidth</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-i">rendererHeight</span><span class="crayon-h"> </span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f664abca3800324451993-13"><span class="crayon-v">renderer</span><span class="crayon-sy">.</span><span class="crayon-e">render</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-v">sceneL</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-i">cameraL</span><span class="crayon-h"> </span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3800324451993-14">&nbsp;</div><div class="crayon-line" id="crayon-5f664abca3800324451993-15"><span class="crayon-c">// WebGL render right eye</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3800324451993-16"><span class="crayon-v">renderer</span><span class="crayon-sy">.</span><span class="crayon-e">setViewport</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-v">rendererWidth</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">rendererWidth</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-i">rendererHeight</span><span class="crayon-h"> </span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f664abca3800324451993-17"><span class="crayon-v">renderer</span><span class="crayon-sy">.</span><span class="crayon-e">setScissor</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-v">rendererWidth</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">rendererWidth</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-i">rendererHeight</span><span class="crayon-h"> </span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3800324451993-18"><span class="crayon-v">renderer</span><span class="crayon-sy">.</span><span class="crayon-e">render</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-v">sceneR</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-i">cameraR</span><span class="crayon-h"> </span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0009 seconds] -->
+<p></p>
+<h2>PositionSensorVRDevice</h2>
+<p>PositionSensorVRDevice 提供關於 VR 裝置的三維座標位置與轉動方面的資訊，目前使用方式如下：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f664abca3804574052353" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+var state = vrPosSensor.getState();
+// If it has orientation data.
+if ( state.hasOrientation ) {
+  cameraL.quaternion.set(
+    state.orientation.x, 
+    state.orientation.y, 
+    state.orientation.z, 
+    state.orientation.w);
+
+  cameraR.quaternion.set(
+    state.orientation.x, 
+    state.orientation.y, 
+    state.orientation.z, 
+    state.orientation.w);
+}
+// If it has position data.
+if ( state.hasPosition ) {
+  cameraL.position.set(
+    state.position.x, 
+    state.position.y, 
+    state.position.z);
+
+  cameraR.position.set(
+    state.position.x, 
+    state.position.y, 
+    state.position.z);
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f664abca3804574052353-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3804574052353-2">2</div><div class="crayon-num" data-line="crayon-5f664abca3804574052353-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3804574052353-4">4</div><div class="crayon-num" data-line="crayon-5f664abca3804574052353-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3804574052353-6">6</div><div class="crayon-num" data-line="crayon-5f664abca3804574052353-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3804574052353-8">8</div><div class="crayon-num" data-line="crayon-5f664abca3804574052353-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3804574052353-10">10</div><div class="crayon-num" data-line="crayon-5f664abca3804574052353-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3804574052353-12">12</div><div class="crayon-num" data-line="crayon-5f664abca3804574052353-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3804574052353-14">14</div><div class="crayon-num" data-line="crayon-5f664abca3804574052353-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3804574052353-16">16</div><div class="crayon-num" data-line="crayon-5f664abca3804574052353-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3804574052353-18">18</div><div class="crayon-num" data-line="crayon-5f664abca3804574052353-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3804574052353-20">20</div><div class="crayon-num" data-line="crayon-5f664abca3804574052353-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3804574052353-22">22</div><div class="crayon-num" data-line="crayon-5f664abca3804574052353-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3804574052353-24">24</div><div class="crayon-num" data-line="crayon-5f664abca3804574052353-25">25</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664abca3804574052353-26">26</div><div class="crayon-num" data-line="crayon-5f664abca3804574052353-27">27</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f664abca3804574052353-1"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">state</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">vrPosSensor</span><span class="crayon-sy">.</span><span class="crayon-e">getState</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3804574052353-2"><span class="crayon-c">// If it has orientation data.</span></div><div class="crayon-line" id="crayon-5f664abca3804574052353-3"><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-i">hasOrientation</span><span class="crayon-h"> </span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3804574052353-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">cameraL</span><span class="crayon-sy">.</span><span class="crayon-v">quaternion</span><span class="crayon-sy">.</span><span class="crayon-e">set</span><span class="crayon-sy">(</span></div><div class="crayon-line" id="crayon-5f664abca3804574052353-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-v">orientation</span><span class="crayon-sy">.</span><span class="crayon-v">x</span><span class="crayon-sy">,</span><span class="crayon-h"> </span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3804574052353-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-v">orientation</span><span class="crayon-sy">.</span><span class="crayon-v">y</span><span class="crayon-sy">,</span><span class="crayon-h"> </span></div><div class="crayon-line" id="crayon-5f664abca3804574052353-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-v">orientation</span><span class="crayon-sy">.</span><span class="crayon-v">z</span><span class="crayon-sy">,</span><span class="crayon-h"> </span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3804574052353-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-v">orientation</span><span class="crayon-sy">.</span><span class="crayon-v">w</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f664abca3804574052353-9">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3804574052353-10"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">cameraR</span><span class="crayon-sy">.</span><span class="crayon-v">quaternion</span><span class="crayon-sy">.</span><span class="crayon-e">set</span><span class="crayon-sy">(</span></div><div class="crayon-line" id="crayon-5f664abca3804574052353-11"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-v">orientation</span><span class="crayon-sy">.</span><span class="crayon-v">x</span><span class="crayon-sy">,</span><span class="crayon-h"> </span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3804574052353-12"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-v">orientation</span><span class="crayon-sy">.</span><span class="crayon-v">y</span><span class="crayon-sy">,</span><span class="crayon-h"> </span></div><div class="crayon-line" id="crayon-5f664abca3804574052353-13"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-v">orientation</span><span class="crayon-sy">.</span><span class="crayon-v">z</span><span class="crayon-sy">,</span><span class="crayon-h"> </span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3804574052353-14"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-v">orientation</span><span class="crayon-sy">.</span><span class="crayon-v">w</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f664abca3804574052353-15"><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3804574052353-16"><span class="crayon-c">// If it has position data.</span></div><div class="crayon-line" id="crayon-5f664abca3804574052353-17"><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-i">hasPosition</span><span class="crayon-h"> </span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3804574052353-18"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">cameraL</span><span class="crayon-sy">.</span><span class="crayon-v">position</span><span class="crayon-sy">.</span><span class="crayon-e">set</span><span class="crayon-sy">(</span></div><div class="crayon-line" id="crayon-5f664abca3804574052353-19"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-v">position</span><span class="crayon-sy">.</span><span class="crayon-v">x</span><span class="crayon-sy">,</span><span class="crayon-h"> </span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3804574052353-20"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-v">position</span><span class="crayon-sy">.</span><span class="crayon-v">y</span><span class="crayon-sy">,</span><span class="crayon-h"> </span></div><div class="crayon-line" id="crayon-5f664abca3804574052353-21"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-v">position</span><span class="crayon-sy">.</span><span class="crayon-v">z</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3804574052353-22">&nbsp;</div><div class="crayon-line" id="crayon-5f664abca3804574052353-23"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">cameraR</span><span class="crayon-sy">.</span><span class="crayon-v">position</span><span class="crayon-sy">.</span><span class="crayon-e">set</span><span class="crayon-sy">(</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3804574052353-24"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-v">position</span><span class="crayon-sy">.</span><span class="crayon-v">x</span><span class="crayon-sy">,</span><span class="crayon-h"> </span></div><div class="crayon-line" id="crayon-5f664abca3804574052353-25"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-v">position</span><span class="crayon-sy">.</span><span class="crayon-v">y</span><span class="crayon-sy">,</span><span class="crayon-h"> </span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664abca3804574052353-26"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">state</span><span class="crayon-sy">.</span><span class="crayon-v">position</span><span class="crayon-sy">.</span><span class="crayon-v">z</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f664abca3804574052353-27"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0008 seconds] -->
+<p>在更新各個幀數 (Frame) 時，即從感測器取得最新的數值，再將此數值傳給三維空間中的相機，來更新目前使用者在 VR 場景中的位置。</p>
+<h2>Fullscreen</h2>
+<p>Fullscreen API 目前僅能用於 Oculus。在 Oculus 啟動全螢幕模式時，會像圖 1 所示開啟全螢幕濾鏡 (fullscreen filter)，其中包含幾項功能：</p>
+<ul>
+<li>將 VR 畫面投射到頭戴顯示器。</li>
+<li>校正鏡片扭曲 (Distortion)
+<ul>
+<li>因為 Oculus 搭配一種特殊的超廣角鏡片，讓使用者可達到 90 度的水平可視角度。此副作用就像魚眼鏡頭拍攝廣角時發生的畫面邊緣扭曲，所以需要校正。</li>
+</ul>
+</li>
+<li>校正幀率 (Framerate) 以及時空扭曲 (Timewarp)
+<ul>
+<li>Oculus DK2 建議幀率應高於 75 Hz，低於此標準會讓使用者不舒服。Oculus 在 Windows 版本 App 中即時 (real-time) 使用預測 (prediction) 方式做到時空扭曲，藉以協助 App 補間不足的幀數。</li>
+</ul>
+</li>
+<li>顏色像差校正 (Chromatic aberration correction)
+<ul>
+<li>校正鏡片影響的色差，並處理立體繪圖的像差問題。</li>
+</ul>
+</li>
+</ul>
+<p>啟動方式：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f664abca3808243873668" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+canvas.mozRequestFullScreen( { vrDisplay: vrHMD } );</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f664abca3808243873668-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f664abca3808243873668-1"><span class="crayon-v">canvas</span><span class="crayon-sy">.</span><span class="crayon-e">mozRequestFullScreen</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-v">vrDisplay</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-i">vrHMD</span><span class="crayon-h"> </span><span class="crayon-sy">}</span><span class="crayon-h"> </span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p></p>
+<h2>行動裝置上的 WebVR</h2>
+<p>WebVR API 雖可用於 Firefox for Android 與 Firefox OS 之上，但並未完全支援，以下幾點要注意：</p>
+<ul>
+<li>不支援全螢幕濾鏡
+<ul>
+<li>目前僅 Oculus 可用，所以整體畫面尚不夠立體，配戴 Cardboard 多少有些失真。</li>
+</ul>
+</li>
+<li><code>PositionSensorVRDevice</code> 支援不完全
+<ul>
+<li>只支援方向狀態 (orientation state)，但不支援位置狀態 ( position state)。畢竟 Cardboard 沒有深度攝影機。</li>
+<li>某些裝置的方向狀態並無法運作。而我們所用的 GAME_ROTATION_VECTOR 僅支援 Android 4.3 或更高版本。可透過 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Detecting_device_orientation" target="_blank"><code>deviceorientation</code></a> API 偵測是否支援該裝置。</li>
+</ul>
+</li>
+</ul>
+<p>目前 WebVR API 已進入 Firefox 每夜更新版 (Nightly)。首先可於桌機上安裝 Oculus runtime；但Firefox for Android 與 Firefox OS 上則不需安裝任何 runtime。接著下載 <a href="https://nightly.mozilla.org/" target="_blank">Firefox Nightly</a> 並開啟之：</p>
+<ul>
+<li>在 Firefox 的瀏覽列輸入 <em>about:config</em></li>
+<li>layout.frame_rate 改為「75」</li>
+<li>開啟「偏好設定 (Preferences)」，取消勾選「Enable multi-process Nightly」</li>
+</ul>
+<p>值得注意的是，Oculus runtime 的 Mac 版本已於 <a href="https://developer.oculus.com/downloads/pc/0.5.0.1-beta/Oculus_Runtime_for_OS_X/" target="_blank">version 0.5.0.1</a> 停止更新，主因是 Oculus 要將主力放在 Windows 平台。而目前的 <a href="https://developer.oculus.com/downloads/pc/0.7.0.0-beta/Oculus_Runtime_for_Windows/" target="_blank">version 0.8.0.0</a> 也是 WebVR API 在跟隨的主要版本。瀏覽器先前的垂直同步率 (VSync) 最多只能到 60Hz，但此一限制會嚴重影響 Oculus 顯示器的效果 (其規格為 75Hz，低於此規格會讓使用者頭暈)。layout.frame_rate 可協助我們將目前的更新頻率提高到 Oculus 的建議值，以提供更好的使用者體驗。</p>
+<h2>結語</h2>
+<p>VR 的應用吸引了許多開發者的目光。為了支援立體繪圖，其整體圖形效能需求比以往高出許多，其幀率約為 VR 關閉時的一半。目前很多繪圖卡廠商為了此一熱門的產業，也都開始優化自己的整體繪圖程序，期待能夠讓使用者更容易接觸到這些應用。另一方面，體感控制對於 VR 也是很重要的議題。在 WebVR 的應用上，可考慮透過 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API" target="_blank">Gamepad API</a> 以抓到電腦上安裝的搖桿驅動程式，同時也可嘗試使用 <a href="https://www.leapmotion.com/" target="_blank">Leapmotion</a> 手勢操作三維場景中的三維物件。此影片是筆者在 Whistler Workweek 做的 Leapmotion 整合 Firefox OS WebVR 展示：<div id="video-op9vvrwC9GM" class="arve-wrapper " data-arve-mode="normal"   itemscope itemtype="http://schema.org/VideoObject"><div class="arve-embed-container" style="padding-bottom: 56.25%"><iframe  src="//www.youtube.com/embed/op9vvrwC9GM?wmode=transparent&#038;iv_load_policy=3&#038;modestbranding=1&#038;rel=0&#038;autohide=1&#038;autoplay=0" class="arve-inner" allowfullscreen frameborder="0" scrolling="no"></iframe></div><button class="arve-btn arve-btn-close arve-hidden">x</button></div></p>
+<p>如果讀者對於 VR 應用有興趣，歡迎來試試 WebVR API。此外，Mozilla 的 VR 團隊剛發表的 <a href="https://aframe.io/" target="_blank">A-Frame</a> 也可讓開發者透過標記 (markup) 與基本組裝元件 (building block)，在 Web 上快速建構 VR 內容。有了 A-Frame，即便你沒時間了解底層的 WebVR API，也能單純地使用 HTML5 標記來打造酷炫的跨裝置 VR 內容。如果想進一步了解 Web 的開發方式，則可參考範例 [2][3]。當然另也可以聯絡筆者，一起在 Web 上帶來更多創新的 VR 應用吧！</p>
+<p>&nbsp;</p>
+<p>[1] <a href="https://hacks.mozilla.org/2015/09/stereoscopic-rendering-in-webvr/" target="_blank">https://hacks.mozilla.org/2015/09/stereoscopic-rendering-in-webvr/</a></p>
+<p>[2] Demo source code, <a href="http://daoshengmu.github.com/ConsoleGameOnWeb/" target="_blank">http://daoshengmu.github.com/ConsoleGameOnWeb/</a></p>
+<p>[3] three.js VR demo, <a href="http://threejs.org/examples/#vr_cubes" target="_blank">http://threejs.org/examples/#vr_cubes</a></p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://tech.mozilla.com.tw/?cat=4" rel="category">Firefox</a>、<a href="https://tech.mozilla.com.tw/?cat=3" rel="category">Firefox OS(B2G)</a>、<a href="https://tech.mozilla.com.tw/?cat=9" rel="category">Javascript</a>      </div>
+    </footer> 
+    </article><!-- #post-6650 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" 
+	              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+			<h3 id="comments-title">
+			共 1 則讀者回應
+		</h3>
+
+		
+		<ol class="commentlist">
+				<li class="post pingback">
+		<p>參照： <a href='http://blog.mozilla.com.tw/posts/8572/webvr-api-1-0' rel='external nofollow' class='url'>介紹 WebVR API 提案 1.0 版 | 部落格 | Mozilla Taiwan</a></p>
+	</li><!-- #comment-## -->
+		</ol>
+
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/?p=6650#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required='true' required='required' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required='true' required='required' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表" /> <input type='hidden' name='comment_post_ID' value='6650' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="d1ca2ac567" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="12"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class='name-title'><a class="profile-link" href="https://tech.mozilla.com.tw/?author=161"><span class="gravatar left"><img src="https://secure.gravatar.com/avatar/b12d1063942e6acd16770307f90e3c28?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=48" alt="" class="avatar user-161-avatar" width='48' height='48' /></span><span class="name">Daosheng Mu</span></a></span><p class='contact'></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="18" href="https://tech.mozilla.com.tw/?author=18"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg" alt="" class="avatar user-18-avatar" width='96' height='96' /></a><a data-author-id="60" href="https://tech.mozilla.com.tw/?author=60"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg" alt="" class="avatar user-60-avatar" width='96' height='96' /></a><a data-author-id="52" href="https://tech.mozilla.com.tw/?author=52"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg" alt="" class="avatar user-52-avatar" width='96' height='96' /></a><a data-author-id="14" href="https://tech.mozilla.com.tw/?author=14"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg" alt="" class="avatar user-14-avatar" width='96' height='96' /></a><a data-author-id="41" href="https://tech.mozilla.com.tw/?author=41"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg" alt="" class="avatar user-41-avatar" width='96' height='96' /></a><a data-author-id="61" href="https://tech.mozilla.com.tw/?author=61"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg" alt="" class="avatar user-61-avatar" width='96' height='96' /></a></div><a class="more" href="/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://tech.mozilla.com.tw/?cat=8" >CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://tech.mozilla.com.tw/?cat=4" >Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://tech.mozilla.com.tw/?cat=3" >Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://tech.mozilla.com.tw/?cat=30" >Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://tech.mozilla.com.tw/?cat=9" >Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://tech.mozilla.com.tw/?cat=42" >Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://tech.mozilla.com.tw/?cat=5" >Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://tech.mozilla.com.tw/?cat=7" >Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://tech.mozilla.com.tw/?cat=29" >UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">選擇月份</option>
+				<option value='https://tech.mozilla.com.tw/?m=201605'> 2016 年 五月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201602'> 2016 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201507'> 2015 年 七月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201506'> 2015 年 六月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201505'> 2015 年 五月 &nbsp;(2)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201504'> 2015 年 四月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201503'> 2015 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201502'> 2015 年 二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201501'> 2015 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201412'> 2014 年 十二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201411'> 2014 年 十一月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201410'> 2014 年 十月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201409'> 2014 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201408'> 2014 年 八月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201407'> 2014 年 七月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201405'> 2014 年 五月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201404'> 2014 年 四月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201403'> 2014 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201402'> 2014 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201401'> 2014 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201312'> 2013 年 十二月 &nbsp;(6)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201311'> 2013 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201310'> 2013 年 十月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201309'> 2013 年 九月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201308'> 2013 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201307'> 2013 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201306'> 2013 年 六月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201305'> 2013 年 五月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201304'> 2013 年 四月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201303'> 2013 年 三月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201302'> 2013 年 二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201301'> 2013 年 一月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201212'> 2012 年 十二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201211'> 2012 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201210'> 2012 年 十月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201209'> 2012 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201208'> 2012 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201207'> 2012 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201206'> 2012 年 六月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201205'> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

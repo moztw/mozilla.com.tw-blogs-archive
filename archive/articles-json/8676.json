@@ -1,0 +1,89 @@
+{
+  "post_id": 8676,
+  "title": "Web 內容的分析與偵測函式",
+  "date": "2016-04-13",
+  "year": 2016,
+  "month": 4,
+  "day": 13,
+  "categories": [
+    "Web App"
+  ],
+  "tags": [],
+  "author": "",
+  "original_url": "https://blog.mozilla.com.tw/?p=8676",
+  "archive_url": "https://web.archive.org/web/20191113172001id_/https://blog.mozilla.com.tw/?p=8676",
+  "wayback_timestamp": "20191113172001",
+  "content_html": "<div class=\"entry-content close\">\n    <p>此專案屬於波特蘭州立大學 (Portland State University) 為大四生所設計的總整課程之一，共由 7 名學生完成為期六個月的課程。專案期間是由 Mozilla 的 <a href=\"https://twitter.com/dietrich\">Dietrich Ayala</a> 從旁輔導，為我們留意專案的基本需求。團隊內的 7 名學生為：</p>\n<ul>\n<li><a href=\"http://www.linkedin.com/in/katieabrahams\">Abrahams, Katie</a>: Research Lead</li>\n<li><a href=\"https://linkedin.com/in/finchd\">Finch, Donovan</a>: SQA Team / Research</li>\n<li><a href=\"https://www.linkedin.com/in/charles-hanchett-a6494b40\">Hanchett, Charles</a>: SQA Team / Research</li>\n<li><a href=\"http://www.linkedin.com/in/jhasbun\">Hasbun, Jonathan</a>: Team Lead / Dev Team / Research</li>\n<li><a href=\"https://www.linkedin.com/in/mierzwik\">Mierzwik, Bryan</a>: Dev Team / Research</li>\n<li><a href=\"https://www.linkedin.com/in/tylersorg\">Sorg, Tyler</a>: Dev Team / Research</li>\n<li><a href=\"https://github.com/Kiarasht\">Torkian, Kiarash</a>: Dev Team / Research</li>\n</ul>\n<p>&nbsp;</p>\n<h4>專案概述與目標</h4>\n<p>此專案為著重研究的概念驗證，期能為讀者拓展、發掘文章以外的內容；這也是 Mozilla 的專案之一。由於網頁往往充斥著許多影響使用者經驗的非必要內容，我們希望真正達到「將網路交回使用者的手上」。</p>\n<p>開發中國家往往是低功率智慧型手機較為普及，且網路連線速度較慢，因此瀏覽作業亦將耗用較高運算成本且影響電池壽命。我們的研究依此分為 4 個部分：</p>\n<ol>\n<li>使用者網路連線速度的品質</li>\n<li>使用者的裝置</li>\n<li>使用者需要＼在乎的內容</li>\n<li>在相關惡劣條件下的資料取得難易度</li>\n</ol>\n<p>以下圖所測試的網頁為例，是否使用閱讀器模式就相差<strong>將近</strong><strong> 6mb</strong> 的流量。</p>\n<p><img class=\"aligncenter wp-image-8677\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/image1.png\" alt=\"image1\" width=\"590\" height=\"376\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/image1.png 766w, https://blog.mozilla.com.tw/wp-content/uploads/image1-300x191.png 300w\" sizes=\"(max-width: 590px) 100vw, 590px\" /></p>\n<p>在辨識出哪些是網頁的內容之後，就能僅下載相關內容進而限制資料流量。此外，如果能擷取網站上的必要內容，也就能讓使用者裝置以最佳檢視效果呈現該筆資料。</p>\n<p>此一針對情境式呈現 (Contextual presentation) 的資料轉換作業，可用以改善資料存取的難易度，亦可為另項替代的瀏覽形式。雖然我們列出數個可進行內容分析的有效函式，但目前發現的工具僅能解決部分的問題。若能妥善利用報告所提的多個工具與概念，相信足以建構此一功能。</p>\n<p>這對 Web 開發者的意義為何？試想更聰明的內容分析、偵測、最佳化工具，將能為瀏覽器帶來如何的進階功能？試想開發者工具能提高網站的存取效率，且平台將提供成本更低、更簡單易用的專屬功能。</p>\n<p>接著概述我們專為測試作業所設計的研究方式與成果。</p>\n<h4>安裝與用途</h4>\n<p>我們報告所提示的為「最簡脈絡化＼情境化 (Contextualization) 程序」。此一程序另可分為三大階段：內容分析、內容篩選、內容轉換。而各階段又有數個步驟。</p>\n<p>「Phoenix-node」是以 Node.js 所撰寫的命令列應用，用以分析 HTML 文章架構。其基礎為 Node.js 4.0+、npm 封包管理、<em>jsdom</em> 的 npm 套件及其相依套件。</p>\n<ol>\n<li>依照 <a href=\"https://nodejs.org/\">https://nodejs.org/</a> 說明，在自己的環境中安裝 Node.js 4.0+</li>\n<li>從 <a href=\"https://github.com/cap7pdx/phoenix-node\">https://github.com/cap7pdx/phoenix-node</a> 上複製 Phoenix-node 的 repo</li>\n<li>透過「npm install jsdom」指令將<em> jsdom</em> 安裝到原始碼目錄。隨即會建立「node_modules」資料夾</li>\n<li>透過「node alt.js」指令執行 phoenix-node 對 <a href=\"http://google.com\">http://google.com</a> 的剖析作業。如此可於終端機上列出 DOM 架構。<br />\n<img class=\"aligncenter size-full wp-image-8678\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/image5.png\" alt=\"image5\" width=\"401\" height=\"425\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/image5.png 401w, https://blog.mozilla.com.tw/wp-content/uploads/image5-283x300.png 283w\" sizes=\"(max-width: 401px) 100vw, 401px\" /></li>\n</ol>\n<h4>研究發現</h4>\n<p>我們的研究找出脈絡化＼情境化過程的 3 大階段：內容分析、內容篩選、內容轉換。而我們的研究結果著重內容分析，先行省略後面兩個階段。</p>\n<p><img class=\"aligncenter size-full wp-image-8679\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/image2.png\" alt=\"image2\" width=\"557\" height=\"182\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/image2.png 557w, https://blog.mozilla.com.tw/wp-content/uploads/image2-300x98.png 300w\" sizes=\"(max-width: 557px) 100vw, 557px\" /></p>\n<p>針對內容分析，我們建議兩個嚴謹步驟：首先利用文件架構的叢集分析，找出網站所屬的「結構群組 (Structure Group)」，接著利用多個函式之一剖析整個網站，找出使用者能了解該網站的必要內容。舉例來說，如果網站屬於多文字的叢集且冗餘內容不多，那基本的閱讀器模式 (如 shallow-text 函式) 當然就能達到極高效益；否則應該要用如語意片段偵測 (semantic segment detection) 的高階函式。</p>\n<p>透過研究，我們了解現有閱讀器技術的限制，以及類似研究的狀態。我們團隊建議的內容分析與偵測函式，應該要對群組 (如多個網頁) 利用叢集分析，才能在類似架構的叢集與群組網站中找出「原始結構 (archetypal structure)」。</p>\n<p>另可參閱完整報告：</p>\n<p><a href=\"https://github.com/Cap7pdx/phoenix-node\" target=\"_blank\">Methods for Web Content Analysis and Context Detection</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2016/03/methods-for-web-content-analysis-and-context-detection/\" target=\"_blank\">Methods for Web Content Analysis and Context Detection</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
+  "content_text": "此專案屬於波特蘭州立大學 (Portland State University) 為大四生所設計的總整課程之一，共由 7 名學生完成為期六個月的課程。專案期間是由 Mozilla 的 Dietrich Ayala 從旁輔導，為我們留意專案的基本需求。團隊內的 7 名學生為： Abrahams, Katie : Research Lead Finch, Donovan : SQA Team / Research Hanchett, Charles : SQA Team / Research Hasbun, Jonathan : Team Lead / Dev Team / Research Mierzwik, Bryan : Dev Team / Research Sorg, Tyler : Dev Team / Research Torkian, Kiarash : Dev Team / Research 專案概述與目標 此專案為著重研究的概念驗證，期能為讀者拓展、發掘文章以外的內容；這也是 Mozilla 的專案之一。由於網頁往往充斥著許多影響使用者經驗的非必要內容，我們希望真正達到「將網路交回使用者的手上」。 開發中國家往往是低功率智慧型手機較為普及，且網路連線速度較慢，因此瀏覽作業亦將耗用較高運算成本且影響電池壽命。我們的研究依此分為 4 個部分： 使用者網路連線速度的品質 使用者的裝置 使用者需要＼在乎的內容 在相關惡劣條件下的資料取得難易度 以下圖所測試的網頁為例，是否使用閱讀器模式就相差 將近 6mb 的流量。 在辨識出哪些是網頁的內容之後，就能僅下載相關內容進而限制資料流量。此外，如果能擷取網站上的必要內容，也就能讓使用者裝置以最佳檢視效果呈現該筆資料。 此一針對情境式呈現 (Contextual presentation) 的資料轉換作業，可用以改善資料存取的難易度，亦可為另項替代的瀏覽形式。雖然我們列出數個可進行內容分析的有效函式，但目前發現的工具僅能解決部分的問題。若能妥善利用報告所提的多個工具與概念，相信足以建構此一功能。 這對 Web 開發者的意義為何？試想更聰明的內容分析、偵測、最佳化工具，將能為瀏覽器帶來如何的進階功能？試想開發者工具能提高網站的存取效率，且平台將提供成本更低、更簡單易用的專屬功能。 接著概述我們專為測試作業所設計的研究方式與成果。 安裝與用途 我們報告所提示的為「最簡脈絡化＼情境化 (Contextualization) 程序」。此一程序另可分為三大階段：內容分析、內容篩選、內容轉換。而各階段又有數個步驟。 「Phoenix-node」是以 Node.js 所撰寫的命令列應用，用以分析 HTML 文章架構。其基礎為 Node.js 4.0+、npm 封包管理、 jsdom 的 npm 套件及其相依套件。 依照 https://nodejs.org/ 說明，在自己的環境中安裝 Node.js 4.0+ 從 https://github.com/cap7pdx/phoenix-node 上複製 Phoenix-node 的 repo 透過「npm install jsdom」指令將 jsdom 安裝到原始碼目錄。隨即會建立「node_modules」資料夾 透過「node alt.js」指令執行 phoenix-node 對 http://google.com 的剖析作業。如此可於終端機上列出 DOM 架構。 研究發現 我們的研究找出脈絡化＼情境化過程的 3 大階段：內容分析、內容篩選、內容轉換。而我們的研究結果著重內容分析，先行省略後面兩個階段。 針對內容分析，我們建議兩個嚴謹步驟：首先利用文件架構的叢集分析，找出網站所屬的「結構群組 (Structure Group)」，接著利用多個函式之一剖析整個網站，找出使用者能了解該網站的必要內容。舉例來說，如果網站屬於多文字的叢集且冗餘內容不多，那基本的閱讀器模式 (如 shallow-text 函式) 當然就能達到極高效益；否則應該要用如語意片段偵測 (semantic segment detection) 的高階函式。 透過研究，我們了解現有閱讀器技術的限制，以及類似研究的狀態。我們團隊建議的內容分析與偵測函式，應該要對群組 (如多個網頁) 利用叢集分析，才能在類似架構的叢集與群組網站中找出「原始結構 (archetypal structure)」。 另可參閱完整報告： Methods for Web Content Analysis and Context Detection 原文連結： Methods for Web Content Analysis and Context Detection",
+  "images": [
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/image1.png",
+      "alt": "image1"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/image5.png",
+      "alt": "image5"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/image2.png",
+      "alt": "image2"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://twitter.com/dietrich",
+      "text": "Dietrich Ayala"
+    },
+    {
+      "url": "https://www.linkedin.com/in/katieabrahams",
+      "text": "Abrahams, Katie"
+    },
+    {
+      "url": "https://linkedin.com/in/finchd",
+      "text": "Finch, Donovan"
+    },
+    {
+      "url": "https://www.linkedin.com/in/charles-hanchett-a6494b40",
+      "text": "Hanchett, Charles"
+    },
+    {
+      "url": "https://www.linkedin.com/in/jhasbun",
+      "text": "Hasbun, Jonathan"
+    },
+    {
+      "url": "https://www.linkedin.com/in/mierzwik",
+      "text": "Mierzwik, Bryan"
+    },
+    {
+      "url": "https://www.linkedin.com/in/tylersorg",
+      "text": "Sorg, Tyler"
+    },
+    {
+      "url": "https://github.com/Kiarasht",
+      "text": "Torkian, Kiarash"
+    },
+    {
+      "url": "https://nodejs.org/",
+      "text": "https://nodejs.org/"
+    },
+    {
+      "url": "https://github.com/cap7pdx/phoenix-node",
+      "text": "https://github.com/cap7pdx/phoenix-node"
+    },
+    {
+      "url": "https://google.com/",
+      "text": "http://google.com"
+    },
+    {
+      "url": "https://github.com/Cap7pdx/phoenix-node",
+      "text": "Methods for Web Content Analysis and Context Detection"
+    },
+    {
+      "url": "https://hacks.mozilla.org/2016/03/methods-for-web-content-analysis-and-context-detection/",
+      "text": "Methods for Web Content Analysis and Context Detection"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": []
+}

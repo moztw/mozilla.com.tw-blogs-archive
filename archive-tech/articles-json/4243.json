@@ -1,0 +1,164 @@
+{
+  "post_id": 4243,
+  "title": "我也想成為 mozillian！ Part 2 – 你也來Try Try 看",
+  "date": "2014-04-21",
+  "year": 2014,
+  "month": 4,
+  "day": 21,
+  "categories": [
+    "Mozilla",
+    "Open Source"
+  ],
+  "tags": [],
+  "author": "jwwang",
+  "page_type": "post",
+  "original_url": "https://tech.mozilla.com.tw/?p=4243",
+  "archive_url": "https://web.archive.org/web/20191118133854id_/https://tech.mozilla.com.tw/?p=4243",
+  "wayback_timestamp": "20191118133854",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian.png\"><img class=\" wp-image-4125 alignleft\" alt=\"mozillian\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian.png\" width=\"200\" height=\"191\" /></a>這篇文章針對 <a href=\"http://tech.mozilla.com.tw/posts/4116/我也想成為-mozillian！教你如何貢獻到-mozilla-code-base\">part 1</a> 的 Step 5 中的 Try Server 作進一步的說明。</p>\n<p>測試是軟體開發中一個重要的步驟，用來確保軟體正確性、完整性、安全性和品質的過程。測試又分手動測試跟自動測試。在 Mozilla Gecko 這樣的大型軟體專案中，自動測試尤其重要。因為在大型軟體專案中，每個check in 的 code，都可能牽一髮動全身。在人力有限的情況下，我們希望能多多利用自動測試來維持軟體的品質。在我們的 try server 提供了成千上萬個 test case，以確保你每個即將 check in 的 code，都能在不耗費人力的狀況下，自動完成各方面的測試，以確保軟體的正確性、完整性、安全性和品質。</p>\n<p>Try server 是跑自動測試的地方，那麼我們怎麼來觀察測試結果呢？這時候，就不得不提到TPBL(Tinderboxpushlog)。TBPL 是一個用來顯示測試結果的工具，提供整合性的界面，讓你一覽各種測試結果。當你使用 hg，把 patch 丟到 Try Server 跑測試時，會得到類似以下的畫面（如果沒有馬上出來，表示 Try Server 忙碌中，請耐心等候）：</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-111522.png\"><img class=\"alignnone size-full wp-image-4247\" alt=\"Screenshot from 2014-03-31 11:15:22\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-111522.png\" width=\"845\" height=\"291\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-111522.png 845w, https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-111522-300x103.png 300w\" sizes=\"(max-width: 845px) 100vw, 845px\" /></a></p>\n<p>最後一行文字，https://tbpl.mozilla.org/?tree=Try&amp;rev=181e30c50179，就是用來觀看測試結果的網址。當你點進網址，會看到類似以下的畫面：</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-110831.png\"><img class=\"alignnone size-full wp-image-4250\" alt=\"Screenshot from 2014-03-31 11:08:31\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-110831.png\" width=\"1858\" height=\"775\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-110831.png 1858w, https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-110831-300x125.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-110831-1024x427.png 1024w\" sizes=\"(max-width: 1858px) 100vw, 1858px\" /></a></p>\n<p>第一次看到這密密麻麻的畫面，可能會讓初學者望之卻步，但是別急，一步一步解釋，你便會明白了。首先來看右半部的畫面，右半部列表中，從 Linux Opt, Linux PGO，一直到最下面的 B2G ICS Emulator Opt，代表著不同的平台。Mozilla gecko 是個跨多平台的軟體，在多個平台上測試，自然也是相當合理的結果。其中的 B2G，就是們最近很火紅的 Firefox OS 以前的名字。緊接著在平台名字後面的，是一個綠色大寫的 B，B 代表 Build，而綠色代表成功。也就是說，當你看到綠色的 B 時，就代表你的 patch，在這個平台上是建置成功的。建置成功為測試之本，你必須有一個成功的 build，才能開始測試。Build fail 通常以紅色呈現，通常代表你的 <a href=\"http://www.dgfev.com/\">online casino</a>  code 有 compile error，這時候，你就必須修正錯誤，再丟一次 patch。但也有可能是 build machine 本身的錯誤造成，這時候，你就不需要重丟 patch，只要叫 build machine，再重新編譯一次就行了，請見下圖：</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-113613.png\"><img class=\"alignnone size-full wp-image-4253\" alt=\"Screenshot from 2014-03-31 11:36:13\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-113613.png\" width=\"742\" height=\"491\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-113613.png 742w, https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-113613-300x198.png 300w\" sizes=\"(max-width: 742px) 100vw, 742px\" /></a></p>\n<p>首先，用滑鼠在紅色大寫的B上點一下，下面就會出現淺藍色的框框，列出錯誤訊息。你可以進一步點選左下角的 view brief log or view full log，看完整的錯誤訊息。也可以點那個小小的十字架(加號)，來再 build 一次。而 go to build directory，可以讓你進到 FTP 目錄，把 build 出來的執行檔或是測試的 log 檔抓回自己電腦，做進一步的分析。</p>\n<p>接下來繼續看大寫B後面一串密密的字母，代表各種測試，當你把滑鼠移到字母上，會出現小小的提示對話盒，告訴你這是什麼樣的測試。常見的有 mochitest，用來測試 Javascript API 的正確性；crashtest，用來測試程式會不會當掉；reftest，用來測試不同而等效的網路元件，呈現出來的畫面是否相同。同樣地，綠色代表測試成功，藍色通常代表 server side 的錯誤，通常再多跑一次就會正常。而橘色代表測試失敗，這就是特別要注意的。橘色旁邊有標星號，表示警長已知的測試錯誤，這也代表這個是一個已知的錯誤，應該不是你的 patch 造成的。</p>\n<p>滑鼠點到橘色的字母，會進一步出現錯誤訊息，顯示在淺藍色的提示框裡，如下圖所示：</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-115715.png\"><img class=\"alignnone size-full wp-image-4255\" alt=\"Screenshot from 2014-03-31 11:57:15\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-115715.png\" width=\"997\" height=\"213\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-115715.png 997w, https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-115715-300x64.png 300w\" sizes=\"(max-width: 997px) 100vw, 997px\" /></a></p>\n<p>在錯誤訊息下面，會列出可能造成這錯誤的 bug，如上面所列的 Bug 758476、Bug 981086 等等，這是系統根據錯誤訊息，自動關聯到 bug 的資料庫。這些橘色的錯誤，通常都是偶發生的錯誤，不常發生。所以當你遇到橘色錯誤，可以再試著多跑幾次測試看看(同上面的 rebuild，你可以按左下角的十字架讓測試重跑一次，甚至多次)。如果橘色出現的頻率頗高的話，就要特別注意，是不是你的 code，讓這一類偶發性的錯誤，更容易發生。</p>\n<p>再來看左半邊的畫面，12個一組的藍色字母是每個 commit 的 revision number，滑鼠可以點進去看這個 commit 修改了什麼檔案，改了什麼內容，如下圖所示：</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-120903.png\"><img class=\"alignnone size-full wp-image-4257\" alt=\"Screenshot from 2014-03-31 12:09:03\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-120903.png\" width=\"817\" height=\"784\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-120903.png 817w, https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-120903-300x287.png 300w\" sizes=\"(max-width: 817px) 100vw, 817px\" /></a></p>\n<p>這讓你可以確認，你丟到 Try server 上的 patch 所修改的內容，是你所預期的。</p>\n<p>經過以上的說明，相信你對 Try server 跟 TBPL 有更進一步的了解，不會再對一開始密密麻麻的畫面望之卻步了。期待你也一起加入 Mozillian的行列，一起來 Try Try 看！</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
+  "content_text": "這篇文章針對 part 1 的 Step 5 中的 Try Server 作進一步的說明。 測試是軟體開發中一個重要的步驟，用來確保軟體正確性、完整性、安全性和品質的過程。測試又分手動測試跟自動測試。在 Mozilla Gecko 這樣的大型軟體專案中，自動測試尤其重要。因為在大型軟體專案中，每個check in 的 code，都可能牽一髮動全身。在人力有限的情況下，我們希望能多多利用自動測試來維持軟體的品質。在我們的 try server 提供了成千上萬個 test case，以確保你每個即將 check in 的 code，都能在不耗費人力的狀況下，自動完成各方面的測試，以確保軟體的正確性、完整性、安全性和品質。 Try server 是跑自動測試的地方，那麼我們怎麼來觀察測試結果呢？這時候，就不得不提到TPBL(Tinderboxpushlog)。TBPL 是一個用來顯示測試結果的工具，提供整合性的界面，讓你一覽各種測試結果。當你使用 hg，把 patch 丟到 Try Server 跑測試時，會得到類似以下的畫面（如果沒有馬上出來，表示 Try Server 忙碌中，請耐心等候）： 最後一行文字，https://tbpl.mozilla.org/?tree=Try&rev=181e30c50179，就是用來觀看測試結果的網址。當你點進網址，會看到類似以下的畫面： 第一次看到這密密麻麻的畫面，可能會讓初學者望之卻步，但是別急，一步一步解釋，你便會明白了。首先來看右半部的畫面，右半部列表中，從 Linux Opt, Linux PGO，一直到最下面的 B2G ICS Emulator Opt，代表著不同的平台。Mozilla gecko 是個跨多平台的軟體，在多個平台上測試，自然也是相當合理的結果。其中的 B2G，就是們最近很火紅的 Firefox OS 以前的名字。緊接著在平台名字後面的，是一個綠色大寫的 B，B 代表 Build，而綠色代表成功。也就是說，當你看到綠色的 B 時，就代表你的 patch，在這個平台上是建置成功的。建置成功為測試之本，你必須有一個成功的 build，才能開始測試。Build fail 通常以紅色呈現，通常代表你的 online casino code 有 compile error，這時候，你就必須修正錯誤，再丟一次 patch。但也有可能是 build machine 本身的錯誤造成，這時候，你就不需要重丟 patch，只要叫 build machine，再重新編譯一次就行了，請見下圖： 首先，用滑鼠在紅色大寫的B上點一下，下面就會出現淺藍色的框框，列出錯誤訊息。你可以進一步點選左下角的 view brief log or view full log，看完整的錯誤訊息。也可以點那個小小的十字架(加號)，來再 build 一次。而 go to build directory，可以讓你進到 FTP 目錄，把 build 出來的執行檔或是測試的 log 檔抓回自己電腦，做進一步的分析。 接下來繼續看大寫B後面一串密密的字母，代表各種測試，當你把滑鼠移到字母上，會出現小小的提示對話盒，告訴你這是什麼樣的測試。常見的有 mochitest，用來測試 Javascript API 的正確性；crashtest，用來測試程式會不會當掉；reftest，用來測試不同而等效的網路元件，呈現出來的畫面是否相同。同樣地，綠色代表測試成功，藍色通常代表 server side 的錯誤，通常再多跑一次就會正常。而橘色代表測試失敗，這就是特別要注意的。橘色旁邊有標星號，表示警長已知的測試錯誤，這也代表這個是一個已知的錯誤，應該不是你的 patch 造成的。 滑鼠點到橘色的字母，會進一步出現錯誤訊息，顯示在淺藍色的提示框裡，如下圖所示： 在錯誤訊息下面，會列出可能造成這錯誤的 bug，如上面所列的 Bug 758476、Bug 981086 等等，這是系統根據錯誤訊息，自動關聯到 bug 的資料庫。這些橘色的錯誤，通常都是偶發生的錯誤，不常發生。所以當你遇到橘色錯誤，可以再試著多跑幾次測試看看(同上面的 rebuild，你可以按左下角的十字架讓測試重跑一次，甚至多次)。如果橘色出現的頻率頗高的話，就要特別注意，是不是你的 code，讓這一類偶發性的錯誤，更容易發生。 再來看左半邊的畫面，12個一組的藍色字母是每個 commit 的 revision number，滑鼠可以點進去看這個 commit 修改了什麼檔案，改了什麼內容，如下圖所示： 這讓你可以確認，你丟到 Try server 上的 patch 所修改的內容，是你所預期的。 經過以上的說明，相信你對 Try server 跟 TBPL 有更進一步的了解，不會再對一開始密密麻麻的畫面望之卻步了。期待你也一起加入 Mozillian的行列，一起來 Try Try 看！",
+  "images": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian.png",
+      "alt": "mozillian",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/4243/wp-content/uploads/2014/02/mozillian.png",
+      "markdown_path": "../assets/4243/wp-content/uploads/2014/02/mozillian.png",
+      "wayback_timestamp": "20191118133854",
+      "asset_archive_url": "https://web.archive.org/web/20191118133854id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-111522.png",
+      "alt": "Screenshot from 2014-03-31 11:15:22",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-110831.png",
+      "alt": "Screenshot from 2014-03-31 11:08:31",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-113613.png",
+      "alt": "Screenshot from 2014-03-31 11:36:13",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-115715.png",
+      "alt": "Screenshot from 2014-03-31 11:57:15",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-120903.png",
+      "alt": "Screenshot from 2014-03-31 12:09:03",
+      "kind": "image",
+      "source": "img"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian.png",
+      "alt": "mozillian",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/4243/wp-content/uploads/2014/02/mozillian.png",
+      "markdown_path": "../assets/4243/wp-content/uploads/2014/02/mozillian.png",
+      "wayback_timestamp": "20191118133854",
+      "asset_archive_url": "https://web.archive.org/web/20191118133854id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-111522.png",
+      "alt": "Screenshot from 2014-03-31 11:15:22",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-110831.png",
+      "alt": "Screenshot from 2014-03-31 11:08:31",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-113613.png",
+      "alt": "Screenshot from 2014-03-31 11:36:13",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-115715.png",
+      "alt": "Screenshot from 2014-03-31 11:57:15",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-120903.png",
+      "alt": "Screenshot from 2014-03-31 12:09:03",
+      "kind": "image",
+      "source": "img"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian.png",
+      "text": ""
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/posts/4116/%E6%88%91%E4%B9%9F%E6%83%B3%E6%88%90%E7%82%BA-mozillian%EF%BC%81%E6%95%99%E4%BD%A0%E5%A6%82%E4%BD%95%E8%B2%A2%E7%8D%BB%E5%88%B0-mozilla-code-base",
+      "text": "part 1"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-111522.png",
+      "text": ""
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-110831.png",
+      "text": ""
+    },
+    {
+      "url": "https://www.dgfev.com/",
+      "text": "online casino"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-113613.png",
+      "text": ""
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-115715.png",
+      "text": ""
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-120903.png",
+      "text": ""
+    }
+  ],
+  "status": "ok",
+  "asset_status": "partial_assets_failed",
+  "asset_errors": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-111522.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-110831.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-113613.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-115715.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/03/Screenshot-from-2014-03-31-120903.png",
+      "reason": "article_media_missing"
+    }
+  ]
+}

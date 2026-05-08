@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="提供 Mozilla 與 Firefox、Firefox OS 的五花八門最新訊息，包括 Firefox 開發、Firefox 最新功能、Firefox 使用教學、Firefox 錯誤迷思導正、Firefox 好用附加元件訊息，以及由 Mozilla Taiwan 官方舉辦的各式 Firefox 活動訊息、新聞、部落文分享" />
+<meta name="keywords" content="Firefox, Firefox Desktop, Firefox OS, Firefox for Android, Firefox 行動, Firefox 繁體中文, Firefox 正體中文, Firefox 官方, Firefox tw, Firefox blog, Firefox 文章, Firefox 部落格, Firefox 討論, Mozilla, Mozilla Taiwan, browser, 好用瀏覽器" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+幾個 HTML 秘訣 | 部落格 | Mozilla Taiwan</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="https://blog.mozilla.com.tw/?p=9085"/><meta property="og:image" content="https://blog.mozilla.com.tw/wp-content/uploads/螢幕快照-2016-08-25-15.55.15.png"/><link rel="stylesheet" type="text/css" media="all" href="https://blog.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<!--<link rel="pingback" href="https://blog.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="https://blog.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<link rel='dns-prefetch' href='//s.w.org'>
+<link rel="alternate" type="application/rss+xml" title="訂閱 部落格 | Mozilla Taiwan &raquo;" href="https://blog.mozilla.com.tw/?feed=rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 部落格 | Mozilla Taiwan &raquo; 迴響" href="https://blog.mozilla.com.tw/?feed=comments-rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 部落格 | Mozilla Taiwan &raquo; 幾個 HTML 秘訣 迴響" href="https://blog.mozilla.com.tw/?feed=rss2&#038;p=9085" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/blog.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='crayon-css'  href='https://blog.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-arduino-ide-css'  href='https://blog.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='https://blog.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='events-manager-css'  href='https://blog.mozilla.com.tw/wp-content/plugins/events-manager/includes/css/events_manager.css?ver=5.64' type='text/css' media='all' />
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/blog.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-includes/js/jquery/ui/core.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-includes/js/jquery/ui/widget.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-includes/js/jquery/ui/position.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-includes/js/jquery/ui/mouse.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-includes/js/jquery/ui/sortable.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-includes/js/jquery/ui/datepicker.min.js?ver=1.11.4'></script>
+<script type='text/javascript'>
+jQuery(document).ready(function(jQuery){jQuery.datepicker.setDefaults({"closeText":"\u95dc\u9589","currentText":"\u4eca\u5929","monthNames":["\u4e00\u6708","\u4e8c\u6708","\u4e09\u6708","\u56db\u6708","\u4e94\u6708","\u516d\u6708","\u4e03\u6708","\u516b\u6708","\u4e5d\u6708","\u5341\u6708","\u5341\u4e00\u6708","\u5341\u4e8c\u6708"],"monthNamesShort":["\u4e00\u6708","\u4e8c\u6708","\u4e09\u6708","\u56db\u6708","\u4e94\u6708","\u516d\u6708","\u4e03\u6708","\u516b\u6708","\u4e5d\u6708","\u5341\u6708","\u5341\u4e00\u6708","\u5341\u4e8c\u6708"],"nextText":"\u4e0b\u4e00\u6b65","prevText":"\u4e0a\u4e00\u500b","dayNames":["\u661f\u671f\u65e5","\u661f\u671f\u4e00","\u661f\u671f\u4e8c","\u661f\u671f\u4e09","\u661f\u671f\u56db","\u661f\u671f\u4e94","\u661f\u671f\u516d"],"dayNamesShort":["\u9031\u65e5","\u9031\u4e00","\u9031\u4e8c","\u9031\u4e09","\u9031\u56db","\u9031\u4e94","\u9031\u516d"],"dayNamesMin":["\u65e5","\u4e00","\u4e8c","\u4e09","\u56db","\u4e94","\u516d"],"dateFormat":"yy\/mm\/dd","firstDay":1,"isRTL":false});});
+</script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-includes/js/jquery/ui/menu.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-includes/js/wp-a11y.min.js?ver=4.6'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var uiAutocompleteL10n = {"noResults":"\u6c92\u6709\u4efb\u4f55\u641c\u5c0b\u7d50\u679c\u3002","oneResult":"\u767c\u73fe\u4e00\u500b\u7d50\u679c\u3002 \u8acb\u4f7f\u7528\u4e0a\u4e0b\u9375\u4f86\u700f\u89bd\u3002","manyResults":"\u767c\u73fe %d \u500b\u7d50\u679c\u3002\u8acb\u4f7f\u7528\u4e0a\u4e0b\u9375\u4f86\u700f\u89bd\u3002"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-includes/js/jquery/ui/autocomplete.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-includes/js/jquery/ui/resizable.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-includes/js/jquery/ui/draggable.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-includes/js/jquery/ui/button.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-includes/js/jquery/ui/dialog.min.js?ver=1.11.4'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var EM = {"ajaxurl":"https:\/\/blog.mozilla.com.tw\/wp-admin\/admin-ajax.php","locationajaxurl":"https:\/\/blog.mozilla.com.tw\/wp-admin\/admin-ajax.php?action=locations_search","firstDay":"1","locale":"zh","dateFormat":"yy\/mm\/dd","ui_css":"https:\/\/blog.mozilla.com.tw\/wp-content\/plugins\/events-manager\/includes\/css\/jquery-ui.css","show24hours":"0","is_ssl":"1","bookingInProgress":"\u5831\u540d\u6b63\u5728\u88ab\u767c\u9001\uff0c\u8acb\u7a0d\u7b49\u3002","tickets_save":"\u4fdd\u5b58\u9580\u7968","bookingajaxurl":"https:\/\/blog.mozilla.com.tw\/wp-admin\/admin-ajax.php","bookings_export_save":"\u5c0e\u51fa\u5831\u540d","bookings_settings_save":"\u4fdd\u5b58\u8a2d\u7f6e","booking_delete":"\u60a8\u78ba\u5b9a\u60f3\u8981\u522a\u9664\u55ce\uff1f","bb_full":"Sold Out","bb_book":"Book Now","bb_booking":"Booking...","bb_booked":"Booking Submitted","bb_error":"Booking Error. Try again?","bb_cancel":"Cancel","bb_canceling":"Canceling...","bb_cancelled":"Cancelled","bb_cancel_error":"Cancellation Error. Try again?","txt_search":"Search","txt_searching":"\u641c\u7d22\u4e2d...","txt_loading":"\u52a0\u8f09\u4e2d..."};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://blog.mozilla.com.tw/wp-content/plugins/events-manager/includes/js/events-manager.js?ver=5.64'></script>
+<link rel='https://api.w.org/' href='https://blog.mozilla.com.tw/?rest_route=/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://blog.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://blog.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='為大家精選 6 部有關加密的電影 (下)' href='https://blog.mozilla.com.tw/?p=9043' />
+<link rel='next' title='js13kGames：遊戲開發專屬的 Code Golf' href='https://blog.mozilla.com.tw/?p=9063' />
+<meta name="generator" content="WordPress 4.6" />
+<link rel="canonical" href="https://blog.mozilla.com.tw/?p=9085" />
+<link rel='shortlink' href='https://blog.mozilla.com.tw/?p=9085' />
+<link rel="alternate" type="application/json+oembed" href="https://blog.mozilla.com.tw/?rest_route=%2Foembed%2F1.0%2Fembed&#038;url=https%3A%2F%2Fblog.mozilla.com.tw%2F%3Fp%3D9085" />
+<link rel="stylesheet" href="https://blog.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-9085 single-format-standard sky">
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='http://mozilla.com.tw' class='home'>Home</a>
+            <b>&raquo;</b>
+                          <a href='//mozilla.com.tw/news/'>訊息中心</a>
+              <b>&raquo;</b>
+              <a href='/main/'>部落格</a>
+<b>&raquo;</b>                              <span>幾個 HTML 秘訣</span>                                    </nav>
+                  </header>
+        <div id="main">
+  <div id="social-box">
+    <div class="fg-share">
+     <div class="fb-like" data-href="https://blog.mozilla.com.tw/?p=9085" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>     <!-- Place this tag where you want the +1 button to render. -->
+     <div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="https://blog.mozilla.com.tw/?p=9085"></div></div>    </div>
+    <div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=https://blog.mozilla.com.tw/?p=9085&media=https://blog.mozilla.com.tw/wp-content/uploads/螢幕快照-2016-08-25-15.55.15-150x150.png" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>      <div class="plurk-share">
+        <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+          <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+        </a>
+      </div>
+      <div class="comment-share">
+      <a class="comment-button" href="#respond"><div class="count-bubble">0</div>留言</a>
+    </div>
+  </div>
+
+  	<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://blog.mozilla.com.tw/?p=9043"><div class="post-tip"><img width="48" height="48" src="https://blog.mozilla.com.tw/wp-content/uploads/1U9MM2AJ7tlXR_1BDvEcdoQ-50x50.jpeg" class="attachment-48x48 size-48x48 wp-post-image" alt="1*U9MM2AJ7tlXR_1BDvEcdoQ" srcset="https://blog.mozilla.com.tw/wp-content/uploads/1U9MM2AJ7tlXR_1BDvEcdoQ-50x50.jpeg 50w, https://blog.mozilla.com.tw/wp-content/uploads/1U9MM2AJ7tlXR_1BDvEcdoQ-150x150.jpeg 150w" sizes="(max-width: 48px) 100vw, 48px" /><span class="meta-nav">為大家精選 6 部有關加密的電影 (下)</span></div></a></div>		
+							<div class="nav-next"><a href="https://blog.mozilla.com.tw/?p=9063"><div class="post-tip"><img width="48" height="48" src="https://blog.mozilla.com.tw/wp-content/uploads/js13kgames-banner-50x50.jpg" class="attachment-48x48 size-48x48 wp-post-image" alt="js13kgames-banner" srcset="https://blog.mozilla.com.tw/wp-content/uploads/js13kgames-banner-50x50.jpg 50w, https://blog.mozilla.com.tw/wp-content/uploads/js13kgames-banner-150x150.jpg 150w" sizes="(max-width: 48px) 100vw, 48px" /><span class="meta-nav">js13kGames：遊戲開發專屬的 Code Golf</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+	
+  <div id="primary" role="main" class="subwarp">
+    <div id="article">
+                  
+<article id="post-9085" class="post-9085 post type-post status-publish format-standard has-post-thumbnail hentry category-1">
+     <header class="entry-header">
+    <h1 class="entry-title">幾個 HTML 秘訣</h1>
+      <p class="entry-posted">
+        <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+          <a title="See all posts from May, 2014" href="https://blog.mozilla.com.tw/?m=201608" class="posted-month">8月</a>
+          <span class="posted-date">25</span>
+          <a title="See all posts from 2014" href="https://blog.mozilla.com.tw/?m=2016" class="posted-year">2016</a>
+        </time>
+      </p>
+  </header><!-- .entry-header -->
+
+  <div class="entry-content close">
+    <p>不久前才有一篇文章聊到<a href="https://hacks.mozilla.org/2016/05/css-coding-techniques/">某些 CSS 秘訣</a>，接著再來跟大家聊聊 HTML 的竅門了！本文將提點某些 HTML 程式碼的小訣竅與建議，其中更有幾點很適合初學者納為己用，例如適當分段落、使用標題標籤、改善表單。但我們仍會討論圖像的 SVG sprites，以及更進階的。</p>
+<h3>文字方面</h3>
+<h4>段落</h4>
+<p>我們寫的大多數程式碼必須再予以分段，這時應該使用 <code>&lt;p&gt;</code> 這個 HTML 元素分段。<strong>請勿使用</strong> <code>&lt;br&gt;</code> <strong>斷行標籤</strong>切割出文字的段落；斷行標籤本來就不是這種用法。</p>
+<p><strong>避免：</strong><code class="language-html hljs xml"></code></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dab09867412e575850741" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+Cupcake ipsum dolor sit. Amet chupa chups chupa chups sesame snaps. Ice cream pie jelly
+beans muffin donut marzipan oat cake.
+
+&lt;br&gt;
+
+Gummi bears tart cotton candy icing. Muffin bear claw carrot cake jelly jujubes pudding
+chocolate cake cheesecake toffee.</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dab09867412e575850741-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab09867412e575850741-2">2</div><div class="crayon-num" data-line="crayon-5dab09867412e575850741-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab09867412e575850741-4">4</div><div class="crayon-num" data-line="crayon-5dab09867412e575850741-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab09867412e575850741-6">6</div><div class="crayon-num" data-line="crayon-5dab09867412e575850741-7">7</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dab09867412e575850741-1">Cupcake<span class="crayon-h"> </span>ipsum<span class="crayon-h"> </span>dolor<span class="crayon-h"> </span>sit<span class="crayon-sy">.</span><span class="crayon-h"> </span>Amet<span class="crayon-h"> </span>chupa<span class="crayon-h"> </span>chups<span class="crayon-h"> </span>chupa<span class="crayon-h"> </span>chups<span class="crayon-h"> </span>sesame<span class="crayon-h"> </span>snaps<span class="crayon-sy">.</span><span class="crayon-h"> </span>Ice<span class="crayon-h"> </span>cream<span class="crayon-h"> </span>pie<span class="crayon-h"> </span>jelly</div><div class="crayon-line crayon-striped-line" id="crayon-5dab09867412e575850741-2">beans<span class="crayon-h"> </span>muffin<span class="crayon-h"> </span>donut<span class="crayon-h"> </span>marzipan<span class="crayon-h"> </span>oat<span class="crayon-h"> </span>cake<span class="crayon-sy">.</span></div><div class="crayon-line" id="crayon-5dab09867412e575850741-3">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5dab09867412e575850741-4"><span class="crayon-r ">&lt;br&gt;</span></div><div class="crayon-line" id="crayon-5dab09867412e575850741-5">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5dab09867412e575850741-6">Gummi<span class="crayon-h"> </span>bears<span class="crayon-h"> </span>tart<span class="crayon-h"> </span>cotton<span class="crayon-h"> </span>candy<span class="crayon-h"> </span>icing<span class="crayon-sy">.</span><span class="crayon-h"> </span>Muffin<span class="crayon-h"> </span>bear<span class="crayon-h"> </span>claw<span class="crayon-h"> </span>carrot<span class="crayon-h"> </span>cake<span class="crayon-h"> </span>jelly<span class="crayon-h"> </span>jujubes<span class="crayon-h"> </span>pudding</div><div class="crayon-line" id="crayon-5dab09867412e575850741-7">chocolate<span class="crayon-h"> </span>cake<span class="crayon-h"> </span>cheesecake<span class="crayon-h"> </span>toffee<span class="crayon-sy">.</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0011 seconds] -->
+<p><strong>建議：</strong><code class="language-html hljs xml"> </code></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dab09867413c043732242" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;p&gt;Cupcake ipsum dolor sit. Amet chupa chups chupa chups sesame snaps. Ice cream
+pie jelly beans muffin donut marzipan oat cake.&lt;/p&gt;
+
+&lt;p&gt;Gummi bears tart cotton candy icing. Muffin bear claw carrot cake jelly jujubes
+pudding chocolate cake cheesecake toffee.&lt;/p&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dab09867413c043732242-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab09867413c043732242-2">2</div><div class="crayon-num" data-line="crayon-5dab09867413c043732242-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab09867413c043732242-4">4</div><div class="crayon-num" data-line="crayon-5dab09867413c043732242-5">5</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dab09867413c043732242-1"><span class="crayon-r ">&lt;p&gt;</span><span class="crayon-i ">Cupcake ipsum dolor sit. Amet chupa chups chupa chups sesame snaps. Ice cream</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab09867413c043732242-2"><span class="crayon-i ">pie jelly beans muffin donut marzipan oat cake.</span><span class="crayon-r ">&lt;/p&gt;</span></div><div class="crayon-line" id="crayon-5dab09867413c043732242-3">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5dab09867413c043732242-4"><span class="crayon-r ">&lt;p&gt;</span><span class="crayon-i ">Gummi bears tart cotton candy icing. Muffin bear claw carrot cake jelly jujubes</span></div><div class="crayon-line" id="crayon-5dab09867413c043732242-5"><span class="crayon-i ">pudding chocolate cake cheesecake toffee.</span><span class="crayon-r ">&lt;/p&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>&nbsp;</p>
+<p>斷行標籤應用於詩、歌的斷行：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dab098674140821113327" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;p&gt;So close, no matter how far&lt;br&gt;
+Couldn’t be much more from the hearth&lt;br&gt;
+Forever trusting who we are&lt;br&gt;
+And nothing else matters&lt;/p&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dab098674140821113327-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674140821113327-2">2</div><div class="crayon-num" data-line="crayon-5dab098674140821113327-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674140821113327-4">4</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dab098674140821113327-1"><span class="crayon-r ">&lt;p&gt;</span><span class="crayon-i ">So close, no matter how far</span><span class="crayon-r ">&lt;br&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674140821113327-2"><span class="crayon-i ">Couldn’t be much more from the hearth</span><span class="crayon-r ">&lt;br&gt;</span></div><div class="crayon-line" id="crayon-5dab098674140821113327-3"><span class="crayon-i ">Forever trusting who we are</span><span class="crayon-r ">&lt;br&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674140821113327-4"><span class="crayon-i ">And nothing else matters</span><span class="crayon-r ">&lt;/p&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>&nbsp;</p>
+<h4>標題</h4>
+<p>標題標籤從 <code>&lt;h1&gt;</code> 到 <code>&lt;h6&gt;</code>，各自代表 1 (最重要) 到 6 (最不重要) 的等級。</p>
+<p><a href="https://www.w3.org/TR/html5/sections.html#headings-and-sections">為正確傳達語義</a>，請依照順序使用標頭，而不要只顧及瀏覽器所將繪製的標頭效果。若只是單純需要字體大小的效果，你可以、也應該使用 CSS 達到你所需。</p>
+<p><strong>避免：</strong><code class="language-html hljs xml"></code></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dab098674143469294469" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;article&gt;
+    &lt;h1&gt;Monkey Island&lt;/h1&gt;
+    &lt;h4&gt;Look behind you! A three-headed monkey!&lt;/h4&gt;
+    &lt;!-- ... --&gt;
+&lt;/article&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dab098674143469294469-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674143469294469-2">2</div><div class="crayon-num" data-line="crayon-5dab098674143469294469-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674143469294469-4">4</div><div class="crayon-num" data-line="crayon-5dab098674143469294469-5">5</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dab098674143469294469-1"><span class="crayon-r ">&lt;article&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674143469294469-2"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r ">&lt;h1&gt;</span><span class="crayon-i ">Monkey Island</span><span class="crayon-r ">&lt;/h1&gt;</span></div><div class="crayon-line" id="crayon-5dab098674143469294469-3"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r ">&lt;h4&gt;</span><span class="crayon-i ">Look behind you! A three-headed monkey!</span><span class="crayon-r ">&lt;/h4&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674143469294469-4"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">&lt;!-- ... --&gt;</span></div><div class="crayon-line" id="crayon-5dab098674143469294469-5"><span class="crayon-r ">&lt;/article&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>&nbsp;</p>
+<p><strong>建議：</strong><code class="language-html hljs xml"> </code></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dab098674147804650078" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;article&gt;
+    &lt;h1&gt;Monkey Island&lt;/h1&gt;
+    &lt;h2&gt;Look behind you! A three-headed monkey!&lt;/h2&gt;
+    &lt;!-- ... --&gt;
+&lt;/article&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dab098674147804650078-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674147804650078-2">2</div><div class="crayon-num" data-line="crayon-5dab098674147804650078-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674147804650078-4">4</div><div class="crayon-num" data-line="crayon-5dab098674147804650078-5">5</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dab098674147804650078-1"><span class="crayon-r ">&lt;article&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674147804650078-2"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r ">&lt;h1&gt;</span><span class="crayon-i ">Monkey Island</span><span class="crayon-r ">&lt;/h1&gt;</span></div><div class="crayon-line" id="crayon-5dab098674147804650078-3"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r ">&lt;h2&gt;</span><span class="crayon-i ">Look behind you! A three-headed monkey!</span><span class="crayon-r ">&lt;/h2&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674147804650078-4"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">&lt;!-- ... --&gt;</span></div><div class="crayon-line" id="crayon-5dab098674147804650078-5"><span class="crayon-r ">&lt;/article&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>&nbsp;</p>
+<p>另外應該考慮的，就是該如何搭配標題來<strong>建立子標題或標籤行。</strong><a href="https://www.w3.org/TR/html5/common-idioms.html#common-idioms">根據 W3C 的建議</a> ，應使用一般文字標記 (Markup)，而避免較低層級的標題。</p>
+<p><strong>避免：</strong><code class="language-html hljs xml"> </code></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dab098674149334397242" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;header&gt;
+    &lt;h1&gt;Star Wars VII&lt;/h1&gt;
+    &lt;h2&gt;The Force Awakens&lt;/h2&gt;
+&lt;/header&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dab098674149334397242-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674149334397242-2">2</div><div class="crayon-num" data-line="crayon-5dab098674149334397242-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674149334397242-4">4</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dab098674149334397242-1"><span class="crayon-r ">&lt;header&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674149334397242-2"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r ">&lt;h1&gt;</span><span class="crayon-i ">Star Wars VII</span><span class="crayon-r ">&lt;/h1&gt;</span></div><div class="crayon-line" id="crayon-5dab098674149334397242-3"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r ">&lt;h2&gt;</span><span class="crayon-i ">The Force Awakens</span><span class="crayon-r ">&lt;/h2&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674149334397242-4"><span class="crayon-r ">&lt;/header&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>&nbsp;</p>
+<p><strong>建議：</strong><code class="language-html hljs xml"> </code></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dab09867414c090160427" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;header&gt;
+    &lt;h1&gt;Star Wars VII&lt;/h1&gt;
+    &lt;p&gt;The Force Awakens&lt;/p&gt;
+&lt;/header&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dab09867414c090160427-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab09867414c090160427-2">2</div><div class="crayon-num" data-line="crayon-5dab09867414c090160427-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab09867414c090160427-4">4</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dab09867414c090160427-1"><span class="crayon-r ">&lt;header&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab09867414c090160427-2"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r ">&lt;h1&gt;</span><span class="crayon-i ">Star Wars VII</span><span class="crayon-r ">&lt;/h1&gt;</span></div><div class="crayon-line" id="crayon-5dab09867414c090160427-3"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r ">&lt;p&gt;</span><span class="crayon-i ">The Force Awakens</span><span class="crayon-r ">&lt;/p&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab09867414c090160427-4"><span class="crayon-r ">&lt;/header&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>&nbsp;</p>
+<h3>表單方面</h3>
+<h4>提示欄位輸入文字</h4>
+<p>在 <code>&lt;input&gt;</code> 表單元素中的輸入欄位提示文字 (Placeholder)，可為使用者呈現範例值，並在使用者於該欄位輸入時自動消除。此提示文字即是某一欄位的有效格式範例。</p>
+<p>但現有的實作上，有很多提示文字都如同 <code>&lt;label&gt;</code> 元素「告知此為何種欄位」的作用，而不是作為有效輸入值的範例。這種實作的<a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility">親和度</a>較低，開發者更應避免之。</p>
+<p><strong>避免：</strong><code class="language-html hljs xml"> </code></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dab09867414f747645168" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;input type="email" placeholder="Your e-mail" name="mail"&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dab09867414f747645168-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dab09867414f747645168-1"><span class="crayon-r ">&lt;input </span><span class="crayon-e ">type</span><span class="crayon-o">=</span><span class="crayon-s ">"email"</span><span class="crayon-h"> </span><span class="crayon-e ">placeholder</span><span class="crayon-o">=</span><span class="crayon-s ">"Your e-mail"</span><span class="crayon-h"> </span><span class="crayon-e ">name</span><span class="crayon-o">=</span><span class="crayon-s ">"mail"</span><span class="crayon-r ">&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>&nbsp;</p>
+<p><strong>建議：</strong><code class="language-html hljs xml"> </code></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dab098674152969125328" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;label&gt;
+    Your e-mail:
+    &lt;input type="email" placeholder="darth.vader@empire.gov" name="mail"&gt;
+&lt;/label&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dab098674152969125328-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674152969125328-2">2</div><div class="crayon-num" data-line="crayon-5dab098674152969125328-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674152969125328-4">4</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dab098674152969125328-1"><span class="crayon-r ">&lt;label&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674152969125328-2"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;Your e-mail:</span></div><div class="crayon-line" id="crayon-5dab098674152969125328-3"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r ">&lt;input </span><span class="crayon-e ">type</span><span class="crayon-o">=</span><span class="crayon-s ">"email"</span><span class="crayon-h"> </span><span class="crayon-e ">placeholder</span><span class="crayon-o">=</span><span class="crayon-s ">"darth.vader@empire.gov"</span><span class="crayon-h"> </span><span class="crayon-e ">name</span><span class="crayon-o">=</span><span class="crayon-s ">"mail"</span><span class="crayon-r ">&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674152969125328-4"><span class="crayon-r ">&lt;/label&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>&nbsp;</p>
+<h4>行動裝置的鍵盤</h4>
+<p>針對如手機或平板電腦等行動裝置上的瀏覽活動，理應<strong>提供打字秘訣</strong>給使用者。只要為我們所使用的 <code>&lt;input&gt;</code> 元素選出<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#Attributes">正確的類別</a>，就能達到此效果。</p>
+<p><code></code>舉例來說，<code>type="number"</code> 可讓手機顯示數字鍵盤，而非常見的英數字元鍵盤。同理，<code>type="email"</code>、<code>type="tel"</code> 等都是。</p>
+<p><strong>避免：</strong><code class="language-html hljs xml"> </code></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dab098674156835904202" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;label&gt;Phone number: &lt;input type="text" name="mobile"&gt;&lt;/label&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dab098674156835904202-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dab098674156835904202-1"><span class="crayon-r ">&lt;label&gt;</span><span class="crayon-i ">Phone number: </span><span class="crayon-r ">&lt;input </span><span class="crayon-e ">type</span><span class="crayon-o">=</span><span class="crayon-s ">"text"</span><span class="crayon-h"> </span><span class="crayon-e ">name</span><span class="crayon-o">=</span><span class="crayon-s ">"mobile"</span><span class="crayon-r ">&gt;</span><span class="crayon-r ">&lt;/label&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>&nbsp;</p>
+<p><strong>建議：</strong></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dab098674159452016408" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;label&gt;Phone number: &lt;input type="tel" name="mobile"&gt;&lt;/label&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dab098674159452016408-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dab098674159452016408-1"><span class="crayon-r ">&lt;label&gt;</span><span class="crayon-i ">Phone number: </span><span class="crayon-r ">&lt;input </span><span class="crayon-e ">type</span><span class="crayon-o">=</span><span class="crayon-s ">"tel"</span><span class="crayon-h"> </span><span class="crayon-e ">name</span><span class="crayon-o">=</span><span class="crayon-s ">"mobile"</span><span class="crayon-r ">&gt;</span><span class="crayon-r ">&lt;/label&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>&nbsp;</p>
+<p>下圖的左、右兩邊分別是用 <code>type="text"</code>與 <code>type="tel"</code> 所顯示的鍵盤：</p>
+<p>&nbsp;</p>
+<p><img class="aligncenter wp-image-30153 " src="https://2r4s9p1yi1fa2jd7j43zph8r-wpengine.netdna-ssl.com/files/2016/08/keyboard_compare-500x443.png" sizes="(max-width: 500px) 100vw, 500px" srcset="https://hacks.mozilla.org/files/2016/08/keyboard_compare-500x443.png 500w, https://hacks.mozilla.org/files/2016/08/keyboard_compare-250x222.png 250w, https://hacks.mozilla.org/files/2016/08/keyboard_compare-768x681.png 768w, https://hacks.mozilla.org/files/2016/08/keyboard_compare.png 1282w" alt="keyboard comparison" width="500" height="443" /></p>
+<h3>圖像</h3>
+<p>來認識 SVG 檔案！你不僅可以透過 <code>&lt;img&gt;</code> 標籤使用向量圖片：<code class="language-html hljs xml"> </code></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dab09867416d353896118" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;img src="acolyte_cartoon.svg" alt="acolyte"&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dab09867416d353896118-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dab09867416d353896118-1"><span class="crayon-r ">&lt;img </span><span class="crayon-e ">src</span><span class="crayon-o">=</span><span class="crayon-s ">"acolyte_cartoon.svg"</span><span class="crayon-h"> </span><span class="crayon-e ">alt</span><span class="crayon-o">=</span><span class="crayon-s ">"acolyte"</span><span class="crayon-r ">&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>也可以在自己的網站中使用 <strong>SVG sprites </strong><strong>實作向量圖示</strong>，藉以取代 Web Font。因為瀏覽器將 Web Font 圖示當做文字而非圖像，所以 Web Font 可能無法產生較平滑的線條而發生鋸齒效果，且還有如內容＼廣告阻擋軟體可能阻擋下載 Web Fonts 等的潛在問題。你可<a href="http://wordpress.tv/2016/05/28/sarah-semark-stop-using-icon-fonts-love-svg/" target="_blank">欣賞由 Sarah Semark 主講的影片</a>，進一步了解 SVG 較 Web Font 更優於用做圖示的理由。你也可參閱 <a href="https://css-tricks.com/svg-sprites-use-better-icon-fonts/" target="_blank">CSS-Tricks</a> 知道此一技術。</p>
+<p>其實 SVG sprites 的概念與 <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Images/Implementing_image_sprites_in_CSS" target="_blank">CSS sprites</a> 極為類似。實作上必須將所有的 SVG 靜態檔案 (Asset) 融入單一圖像檔案之中。在 SVG 的狀態下，所有靜態檔案應包裹進單一 <code>&lt;symbol&gt;</code> 標籤之中，如下所示：<code class="language-html hljs xml"> </code></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dab098674172535926308" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;svg&gt;
+    &lt;symbol id="social-twitter" viewBox="..."&gt;
+        &lt;!-- actual image data here --&gt;
+    &lt;/symbol&gt;
+&lt;/svg&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dab098674172535926308-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674172535926308-2">2</div><div class="crayon-num" data-line="crayon-5dab098674172535926308-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674172535926308-4">4</div><div class="crayon-num" data-line="crayon-5dab098674172535926308-5">5</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dab098674172535926308-1"><span class="crayon-r ">&lt;svg&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674172535926308-2"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r ">&lt;symbol </span><span class="crayon-e ">id</span><span class="crayon-o">=</span><span class="crayon-s ">"social-twitter"</span><span class="crayon-h"> </span><span class="crayon-e ">viewBox</span><span class="crayon-o">=</span><span class="crayon-s ">"..."</span><span class="crayon-r ">&gt;</span></div><div class="crayon-line" id="crayon-5dab098674172535926308-3"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">&lt;!-- actual image data here --&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674172535926308-4"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r ">&lt;/symbol&gt;</span></div><div class="crayon-line" id="crayon-5dab098674172535926308-5"><span class="crayon-r ">&lt;/svg&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>&nbsp;</p>
+<p>接著，可在你的 HTML 中透過類似的 <code>&lt;svg&gt;</code> 標籤使用該圖示。我們這裡即以 SVG 檔案指向 symbol ID：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dab098674175904983402" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;svg class="social-icon"&gt;
+    &lt;use xlink:href="icons.svg#social-twitter /&gt;
+&lt;/svg&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dab098674175904983402-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674175904983402-2">2</div><div class="crayon-num" data-line="crayon-5dab098674175904983402-3">3</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dab098674175904983402-1"><span class="crayon-r ">&lt;svg </span><span class="crayon-e ">class</span><span class="crayon-o">=</span><span class="crayon-s ">"social-icon"</span><span class="crayon-r ">&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674175904983402-2"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r ">&lt;use </span>xlink<span class="crayon-o">:</span><span class="crayon-e ">href</span><span class="crayon-o">=</span>"icons<span class="crayon-sy">.</span>svg<span class="crayon-o">#</span>social<span class="crayon-o">-</span>twitter<span class="crayon-r "> /&gt;</span></div><div class="crayon-line" id="crayon-5dab098674175904983402-3"><span class="crayon-r ">&lt;/svg&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>&nbsp;</p>
+<p>建立 SVG spritesheet 看起來太麻煩了嗎？所以才有類似「<a href="https://github.com/w0rm/gulp-svgstore">gulp-svgstore</a>」的工具，可自動進行整個程序，依據各個靜態圖像檔案產生 1 組 spritesheet。</p>
+<p>另請記得，因為我們是以 <code>&lt;svg&gt;</code> 標籤取代 <code>&lt;img&gt;</code> 來包裹圖像，所以也能透過 CSS 套用樣式。如此一來，你用 Web Font 圖樣達到的酷炫效果，也同樣能用 SVG 圖樣完成。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dab098674178433106237" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+.social-icon {
+    fill: #000;
+    transition: all 0.2s;
+}
+
+.social-icon:hover {
+    fill: #00f;
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dab098674178433106237-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674178433106237-2">2</div><div class="crayon-num" data-line="crayon-5dab098674178433106237-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674178433106237-4">4</div><div class="crayon-num" data-line="crayon-5dab098674178433106237-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674178433106237-6">6</div><div class="crayon-num" data-line="crayon-5dab098674178433106237-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dab098674178433106237-8">8</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dab098674178433106237-1"><span class="crayon-sy">.</span><span class="crayon-v">social</span><span class="crayon-o">-</span><span class="crayon-e">icon</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674178433106237-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">fill</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-p">#000;</span></div><div class="crayon-line" id="crayon-5dab098674178433106237-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">transition</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-i">all</span><span class="crayon-h"> </span><span class="crayon-cn">0.2s</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674178433106237-4"><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5dab098674178433106237-5">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674178433106237-6"><span class="crayon-sy">.</span><span class="crayon-v">social</span><span class="crayon-o">-</span><span class="crayon-v">icon</span><span class="crayon-o">:</span><span class="crayon-e">hover</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5dab098674178433106237-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">fill</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-p">#00f;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dab098674178433106237-8"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0011 seconds] -->
+<p>&nbsp;</p>
+<p>但 CSS 仍有某些限制，如當使用 SVG 並以 <code>&lt;use&gt;</code> 連至 <code>&lt;symbol&gt;</code> 之時，圖像會透過 <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components/Shadow_DOM">Shadow DOM</a> 投射，讓我們無法使用某些 CSS 功能。在此情況下，我們就不能擇優挑出 SVG 的元素並套用樣式，且某些屬性 (如 fill) 也只能套用到尚未定義的元素。但 Web Font 圖樣也是相同情況喔！</p>
+<p>在下列展示裡，你可看到 SVG sprite 的運作範例。只要滑鼠游標移到圖像之上，火把上的火焰就會透過 CSS 改變其顏色。</p>
+<div><iframe width="300" height="270" id="cp_embed_OXBQZq" src="https://codepen.io/ladybenko/embed/OXBQZq?embed-version=2&amp;user=ladybenko&amp;default-tab=css%2Cresult&amp;slug-hash=OXBQZq&amp;theme-id=light&amp;height=270" scrolling="no" allowtransparency="true" allowfullscreen="allowfullscreen" name="CodePen Embed" title="CodePen Embed" class="cp_embed_iframe " frameborder="0"></iframe></div>
+<hr />
+<p>希望這些秘訣能幫到你。如果你有任何問題，或要對大家分享自己的秘訣，歡迎在下方留言！</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>原文連結：<a href="https://hacks.mozilla.org/2016/08/a-few-html-tips/" target="_blank">A few HTML tips</a></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+      </div><!-- .entry-content -->
+                                <footer class="entry-footer">
+        <div class="entry-category-box">
+          文章分類：
+          <a href="https://blog.mozilla.com.tw/?cat=1" rel="category">未分類</a>        </div>
+      </footer> 
+          </article><!-- #post-9085 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+          <a class="shareButton">我要分享這篇文章</a>
+          <iframe id="after-share-subscribe" src="about:blank" 
+              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+          </iframe>
+                      <!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+            <div>目前找不到相關文章</div>          
+          	<div id="comments">
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/?p=9085#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://blog.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required='true' required='required' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required='true' required='required' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表" /> <input type='hidden' name='comment_post_ID' value='9085' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="fa66ea0f44" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="170"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+             </div> <!-- #article -->
+  </div><!-- #primary -->
+  <div class="subwarp">
+      		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://blog.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+<li id="sidebar-planet-moztw">
+<a href="http://planet.moztw.org/">Planet MozTW</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">文章分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://blog.mozilla.com.tw/?cat=8" >Firefox</a> (354)
+</li>
+	<li class="cat-item cat-item-11"><a href="https://blog.mozilla.com.tw/?cat=11" >Firefox for Android</a> (50)
+</li>
+	<li class="cat-item cat-item-154"><a href="https://blog.mozilla.com.tw/?cat=154" >Firefox for iOS</a> (3)
+</li>
+	<li class="cat-item cat-item-10"><a href="https://blog.mozilla.com.tw/?cat=10" >Firefox OS</a> (213)
+</li>
+	<li class="cat-item cat-item-43"><a href="https://blog.mozilla.com.tw/?cat=43" >Identity</a> (10)
+</li>
+	<li class="cat-item cat-item-12"><a href="https://blog.mozilla.com.tw/?cat=12" >Mozilla</a> (305)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://blog.mozilla.com.tw/?cat=42" >Privacy</a> (57)
+</li>
+	<li class="cat-item cat-item-149"><a href="https://blog.mozilla.com.tw/?cat=149" >Security</a> (19)
+</li>
+	<li class="cat-item cat-item-35"><a href="https://blog.mozilla.com.tw/?cat=35" >Web App</a> (165)
+</li>
+	<li class="cat-item cat-item-16"><a href="https://blog.mozilla.com.tw/?cat=16" >新聞訊息</a> (132)
+</li>
+	<li class="cat-item cat-item-1"><a href="https://blog.mozilla.com.tw/?cat=1" >未分類</a> (10)
+</li>
+	<li class="cat-item cat-item-44"><a href="https://blog.mozilla.com.tw/?cat=44" >校園大使</a> (12)
+</li>
+	<li class="cat-item cat-item-21"><a href="https://blog.mozilla.com.tw/?cat=21" >活動</a> (98)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">選擇月份</option>
+				<option value='https://blog.mozilla.com.tw/?m=201610'> 2016 年 十月 &nbsp;(10)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201609'> 2016 年 九月 &nbsp;(10)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201608'> 2016 年 八月 &nbsp;(11)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201607'> 2016 年 七月 &nbsp;(9)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201606'> 2016 年 六月 &nbsp;(6)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201605'> 2016 年 五月 &nbsp;(11)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201604'> 2016 年 四月 &nbsp;(11)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201603'> 2016 年 三月 &nbsp;(18)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201602'> 2016 年 二月 &nbsp;(11)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201601'> 2016 年 一月 &nbsp;(11)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201512'> 2015 年 十二月 &nbsp;(14)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201511'> 2015 年 十一月 &nbsp;(15)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201510'> 2015 年 十月 &nbsp;(11)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201509'> 2015 年 九月 &nbsp;(11)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201508'> 2015 年 八月 &nbsp;(15)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201507'> 2015 年 七月 &nbsp;(10)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201506'> 2015 年 六月 &nbsp;(8)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201505'> 2015 年 五月 &nbsp;(14)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201504'> 2015 年 四月 &nbsp;(15)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201503'> 2015 年 三月 &nbsp;(16)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201502'> 2015 年 二月 &nbsp;(11)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201501'> 2015 年 一月 &nbsp;(16)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201412'> 2014 年 十二月 &nbsp;(11)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201411'> 2014 年 十一月 &nbsp;(19)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201410'> 2014 年 十月 &nbsp;(21)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201409'> 2014 年 九月 &nbsp;(16)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201408'> 2014 年 八月 &nbsp;(15)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201407'> 2014 年 七月 &nbsp;(17)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201406'> 2014 年 六月 &nbsp;(15)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201405'> 2014 年 五月 &nbsp;(17)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201404'> 2014 年 四月 &nbsp;(21)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201403'> 2014 年 三月 &nbsp;(19)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201402'> 2014 年 二月 &nbsp;(23)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201401'> 2014 年 一月 &nbsp;(15)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201312'> 2013 年 十二月 &nbsp;(22)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201311'> 2013 年 十一月 &nbsp;(22)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201310'> 2013 年 十月 &nbsp;(19)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201309'> 2013 年 九月 &nbsp;(14)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201308'> 2013 年 八月 &nbsp;(19)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201307'> 2013 年 七月 &nbsp;(23)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201306'> 2013 年 六月 &nbsp;(14)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201305'> 2013 年 五月 &nbsp;(16)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201304'> 2013 年 四月 &nbsp;(23)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201303'> 2013 年 三月 &nbsp;(11)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201302'> 2013 年 二月 &nbsp;(14)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201301'> 2013 年 一月 &nbsp;(12)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201212'> 2012 年 十二月 &nbsp;(9)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201211'> 2012 年 十一月 &nbsp;(13)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201210'> 2012 年 十月 &nbsp;(19)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201209'> 2012 年 九月 &nbsp;(11)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201208'> 2012 年 八月 &nbsp;(8)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201207'> 2012 年 七月 &nbsp;(12)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201206'> 2012 年 六月 &nbsp;(7)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201205'> 2012 年 五月 &nbsp;(9)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201204'> 2012 年 四月 &nbsp;(8)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201203'> 2012 年 三月 &nbsp;(8)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201202'> 2012 年 二月 &nbsp;(6)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201201'> 2012 年 一月 &nbsp;(4)</option>
+	<option value='https://blog.mozilla.com.tw/?m=201112'> 2011 年 十二月 &nbsp;(6)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		  </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    
+    <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://blog.mozilla.com.tw/wp-content/themes/toolbox/js/main.js"></script>
+    <script type="text/javascript" src="https://blog.mozilla.com.tw/wp-content/themes/toolbox/js/simplegallery.js"></script>
+    <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+		
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

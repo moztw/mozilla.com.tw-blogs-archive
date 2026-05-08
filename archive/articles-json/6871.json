@@ -1,0 +1,196 @@
+{
+  "post_id": 6871,
+  "title": "淺談 Firefox 36 開發者工具",
+  "date": "2014-12-22",
+  "year": 2014,
+  "month": 12,
+  "day": 22,
+  "categories": [
+    "Firefox",
+    "Mozilla"
+  ],
+  "tags": [],
+  "author": "",
+  "original_url": "https://blog.mozilla.com.tw/?p=6871",
+  "archive_url": "https://web.archive.org/web/20190919102909id_/https://blog.mozilla.com.tw/?p=6871",
+  "wayback_timestamp": "20190919102909",
+  "content_html": "<div class=\"entry-content close\">\n    <h4 style=\"text-align: center;\">「Promise」檢視功能、虛擬元素 (Pseudo element)、原始檔頭 (Raw header)，還有更多</h4>\n<p style=\"text-align: left;\"><b></b><b></b><span lang=\"EN-US\">Firefox 36 </span>現已進入<span lang=\"EN-US\"><a href=\"http://mozilla.com.tw/firefox/channel/#aurora\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">「開發者</span></span><span lang=\"EN-US\"><span lang=\"EN-US\"> (Developer)</span></span><span lang=\"EN-US\"><span lang=\"EN-US\">」版本</span></span></a></span>釋出頻道，先來看看又新增了哪些重要的開發者工具。另外針對<span lang=\"EN-US\"><a href=\"http://blog.mozilla.com.tw/posts/6679\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發者版本發表</span></span></a></span>之前不久一起釋出的 <span lang=\"EN-US\">Firefox 35</span>，也將一併說明其上的數項變化。</p>\n<h4>檢測器 (Inspector)</h4>\n<p>現在已可檢測「<span lang=\"EN-US\">::before」</span>與「<span lang=\"EN-US\">::after」</span>這兩種虛擬元素 <span lang=\"EN-US\">(Pseudo element)</span>。而這些元素在「標記結構樹狀檢視欄<span lang=\"EN-US\"> (Markup tree)</span>」與「檢測器」側邊欄中的呈現方式，均與其他元素相同<span lang=\"EN-US\"> (</span>版本 <span lang=\"EN-US\">35 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/920141\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a></span><span lang=\"EN-US\">)</span>。</p>\n<p><img class=\"aligncenter  wp-image-6872\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/before-after-inspection.png\" alt=\"before-after-inspection\" width=\"590\" height=\"378\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/before-after-inspection.png 1001w, https://blog.mozilla.com.tw/wp-content/uploads/before-after-inspection-300x192.png 300w\" sizes=\"(max-width: 590px) 100vw, 590px\" /></p>\n<p>標記結構樹狀檢視欄的右鍵選單現新增了「顯示<span lang=\"EN-US\"> DOM </span>屬性<span lang=\"EN-US\"> (Show DOM Properties)</span>」<span lang=\"EN-US\">(</span>版本 <span lang=\"EN-US\">35 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/992679\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a></span>、<span lang=\"EN-US\">MDN </span>上的<span lang=\"EN-US\"><a href=\"https://developer.mozilla.org/en-US/docs/Tools/Page_Inspector#Element_popup_menu_2\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">本功能說明文件</span></span></a></span><span lang=\"EN-US\">)</span>。</p>\n<p><img class=\"aligncenter wp-image-6873\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/show-dom-properties-1024x463.png\" alt=\"show-dom-properties\" width=\"590\" height=\"267\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/show-dom-properties-1024x463.png 1024w, https://blog.mozilla.com.tw/wp-content/uploads/show-dom-properties-300x135.png 300w, https://blog.mozilla.com.tw/wp-content/uploads/show-dom-properties.png 1092w\" sizes=\"(max-width: 590px) 100vw, 590px\" /></p>\n<p><span lang=\"EN-US\">Box Model </span>的強調功能<span lang=\"EN-US\"> (Highlighter) </span>現可用於遠端的目標元素上，因此不論是在<span lang=\"EN-US\"> Firefox for Android </span>頁面或是<span lang=\"EN-US\"> Firefox OS App </span>上除錯，都能有完整的強調功能<span lang=\"EN-US\"> (</span>版本 <span lang=\"EN-US\">36 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/985597\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a></span>，還有<span lang=\"EN-US\"><a href=\"https://wiki.mozilla.org/DevTools/Highlighter\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">技術說明文章</span></span></a></span>可帶你建構自訂的強調器<span lang=\"EN-US\">)</span>。</p>\n<p>現在亦可於標記結構樹狀檢視欄中看到 <span lang=\"EN-US\">Shadow DOM </span>內容。另請注意：開發者必須將<span lang=\"EN-US\"> dom.webcomponents.enabled </span>設定為「<span lang=\"EN-US\">true</span>」，進而測試此功能 <span lang=\"EN-US\">(</span>版本 <span lang=\"EN-US\">36 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/1079185\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a></span>，並可參閱 <span lang=\"EN-US\"><a href=\"http://bugzil.la/1053898\" target=\"_blank\">bug 1053898</a></span> 以了解相關資訊<span lang=\"EN-US\">)</span>。</p>\n<p>我們另外從<span lang=\"EN-US\"> Firebug </span>借用了一項功能，只要對標記結構樹狀檢視欄中的節點按下滑鼠右鍵，就能獲得更多「貼上<span lang=\"EN-US\"> (Paste)</span>」的功能選項<span lang=\"EN-US\"> (</span>版本 <span lang=\"EN-US\">36 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/1095521\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a></span>、<span lang=\"EN-US\">MDN </span>上的<span lang=\"EN-US\"><a href=\"https://developer.mozilla.org/en-US/docs/Tools/Page_Inspector#Element_popup_menu_2\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">本功能說明文件</span></span></a></span><span lang=\"EN-US\">)</span>。</p>\n<p><img class=\"aligncenter wp-image-6874\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/paste-options-500x258.png\" alt=\"paste-options-500x258\" width=\"550\" height=\"284\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/paste-options-500x258.png 500w, https://blog.mozilla.com.tw/wp-content/uploads/paste-options-500x258-300x154.png 300w\" sizes=\"(max-width: 550px) 100vw, 550px\" /></p>\n<p>而<span lang=\"EN-US\"> Firefox 35 </span>與<span lang=\"EN-US\"> 36 </span>中的檢測器另有更多變化：</p>\n<ul>\n<li>在刪除節點後，會選擇前一個相鄰節點，而不會選到上層節點<span lang=\"EN-US\"> (</span>版本 <span lang=\"EN-US\">36 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/1094622\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a>)</span></li>\n<li>在「M<span lang=\"EN-US\">arkup view」</span>模式中，將滑鼠游標停於節點之上，將以更強烈的對比效果顯示<span lang=\"EN-US\"> (</span>版本 <span lang=\"EN-US\">36 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/1102084\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a>)</span>。</li>\n<li>在「計算樣式<span lang=\"EN-US\">computed</span>」檢視分頁中，將滑鼠游標停於<span lang=\"EN-US\"> CSS </span>選擇器之上，即可強調顯示網頁上符合該選擇器的所有節點<span lang=\"EN-US\"> (</span>版本<span lang=\"EN-US\"> 35 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/1059360\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a>)</span>。</li>\n</ul>\n<h4>除錯器 (Debugger)＼主控台 (Console)</h4>\n<p>現在已可檢視 <span lang=\"EN-US\"><a title=\"DOm Promises on MDN\" href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise\" target=\"_blank\">DOM Promises</a></span>，並能隨時檢視 <span lang=\"EN-US\">Promises </span>的狀態與數值<span lang=\"EN-US\"> (</span>版本 <span lang=\"EN-US\">36 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/1033153\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a></span><span lang=\"EN-US\">)</span>。</p>\n<p><img class=\"aligncenter wp-image-6875\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/promise-inspection-1024x249.png\" alt=\"promise-inspection\" width=\"590\" height=\"144\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/promise-inspection-1024x249.png 1024w, https://blog.mozilla.com.tw/wp-content/uploads/promise-inspection-300x72.png 300w, https://blog.mozilla.com.tw/wp-content/uploads/promise-inspection.png 1348w\" sizes=\"(max-width: 590px) 100vw, 590px\" /></p>\n<p>&nbsp;</p>\n<p>經過「<span lang=\"EN-US\">eval</span>」函式執行的程式碼，均可由除錯器辨識並搭配除錯 <span lang=\"EN-US\">(</span>版本 <span lang=\"EN-US\">36 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/905700\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a></span><span lang=\"EN-US\">)</span>。</p>\n<p>「<span lang=\"EN-US\">eval</span>」函式執行的程式碼現支援 <code><span lang=\"EN-US\">//# sourceURL=path.js</span></code> 語法，使其於除錯器中，以及由 <code><span lang=\"EN-US\">Error.prototype.stack </span>回報的呼叫堆疊中，均</code>顯示為正常檔案<code>。可參閱</code> <span lang=\"EN-US\"><a href=\"http://fitzgeraldnick.com/weblog/59/\" target=\"_blank\">http://fitzgeraldnick.com/<wbr />weblog/59/</a></span> 以進一步了解 <span lang=\"EN-US\">(</span>版本 <span lang=\"EN-US\">36 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/1107541\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a></span>；<span lang=\"EN-US\"><a href=\"http://bugzil.la/583083\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">更多討論記錄</span></span></a></span><span lang=\"EN-US\">)</span>。</p>\n<p>主控台內的訊息除了顯示既有的「行」數之外，<wbr />亦提供來源程式碼的「欄」數<span lang=\"EN-US\"> (</span>版本 <span lang=\"EN-US\">36 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/684096\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a></span><span lang=\"EN-US\">)</span>。</p>\n<h4><span lang=\"EN-US\">WebIDE</span></h4>\n<p>開發者現可透過 <span lang=\"EN-US\">WebIDE </span>連上 <span lang=\"EN-US\">Firefox for Android</span>。可參閱<span lang=\"EN-US\"> MDN </span>上的《<span lang=\"EN-US\"><a href=\"https://developer.mozilla.org/en-US/docs/Tools/Remote_Debugging/Debugging_Firefox_for_Android_with_WebIDE\" target=\"_blank\">debugging firefox for android</a></span>》以進一步了解<span lang=\"EN-US\"> (</span>版本 <span lang=\"EN-US\">36 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/982890\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a></span><span lang=\"EN-US\">)</span>。</p>\n<p>另外進行數項修正，提升<span lang=\"EN-US\"> WebIDE </span>的使用者經驗：</p>\n<ul>\n<li>當選擇某執行環境<span lang=\"EN-US\"> (Runtime) </span>的<span lang=\"EN-US\"> App</span>＼分頁時，亦預設帶出開發者工具 <span lang=\"EN-US\">(</span>版本 <span lang=\"EN-US\">35 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/1055279\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a>)</span>。</li>\n<li>若連接執行環境時，就會重新連上該環境中最近開啟過的<span lang=\"EN-US\"> App </span>專案 <span lang=\"EN-US\">(</span>版本 <span lang=\"EN-US\">35 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/1055666\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a>)</span>。</li>\n<li>如果找得到最近使用的執行環境，則會自動選擇並連線 <span lang=\"EN-US\">(</span>版本 <span lang=\"EN-US\">35 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/1045660\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a>)</span>。</li>\n<li>可縮放字形大小 <span lang=\"EN-US\">(</span>版本 <span lang=\"EN-US\">36 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/1027817\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a>)</span>。</li>\n<li>只要輸入網址 <span lang=\"EN-US\">(</span>如：<span lang=\"EN-US\"><a href=\"http://example.com\" target=\"_blank\">http://example.com</a>)</span>，即可新增托管＼<wbr />架設式<span lang=\"EN-US\"> (Hosted) App </span>專案，而不需再輸入<span lang=\"EN-US\"> manifest.webapp </span>檔案的完整路徑<span lang=\"EN-US\"> (</span>版本 <span lang=\"EN-US\">35 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/913711\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a>)</span>。</li>\n</ul>\n<h4>網路監測器 (Network Monitor)</h4>\n<p>新增了純文字的請求＼回應檔頭<span lang=\"EN-US\"> (Request/response header) </span>檢視模式，可輕鬆檢視並複製某一請求上的原始檔頭<span lang=\"EN-US\"> (</span>版本 <span lang=\"EN-US\">35 </span>的<span lang=\"EN-US\"><a href=\"http://bugzil.la/859133\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">開發討論記錄</span></span></a></span><span lang=\"EN-US\">)</span>。</p>\n<p><img class=\"aligncenter wp-image-6876\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/net-headers-raw.png\" alt=\"net-headers-raw\" width=\"590\" height=\"332\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/net-headers-raw.png 548w, https://blog.mozilla.com.tw/wp-content/uploads/net-headers-raw-300x168.png 300w\" sizes=\"(max-width: 590px) 100vw, 590px\" /></p>\n<p>&nbsp;</p>\n<p>另列出<span lang=\"EN-US\"><a href=\"http://mzl.la/1oltPdy\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">已解決的</span></span> Firefox 35 <span lang=\"EN-US\"><span lang=\"EN-US\">錯誤</span></span></a></span>，以及<span lang=\"EN-US\"><a href=\"http://mzl.la/1tS0R2i\" target=\"_blank\"><span lang=\"EN-US\"><span lang=\"EN-US\">已解決的</span></span> Firefox 36 <span lang=\"EN-US\"><span lang=\"EN-US\">錯誤</span></span></a></span>。</p>\n<p>如果你有任何問題、意見、功能需求，甚或想回報錯誤，同樣都能在下方留言，<a href=\"http://mzl.la/devtools\">到 UserVoice 填寫＼投票給某個意見</a>，也能<a href=\"https://twitter.com/FirefoxDevTools\">到 Twitter 上聯絡 @FirefoxDevTools 團隊</a>。</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a title=\"Permanent link to “Pseudo elements, promise inspection, raw headers, and much more – Firefox Developer Edition 36”\" href=\"https://hacks.mozilla.org/2014/12/pseudo-elements-promise-inspection-raw-headers-and-much-more-firefox-developer-edition-36/\" rel=\"bookmark\">Pseudo elements, promise inspection, raw headers, and much more – Firefox Developer Edition 36 </a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
+  "content_text": "「Promise」檢視功能、虛擬元素 (Pseudo element)、原始檔頭 (Raw header)，還有更多 Firefox 36 現已進入 「開發者 (Developer) 」版本 釋出頻道，先來看看又新增了哪些重要的開發者工具。另外針對 開發者版本發表 之前不久一起釋出的 Firefox 35 ，也將一併說明其上的數項變化。 檢測器 (Inspector) 現在已可檢測「 ::before」 與「 ::after」 這兩種虛擬元素 (Pseudo element) 。而這些元素在「標記結構樹狀檢視欄 (Markup tree) 」與「檢測器」側邊欄中的呈現方式，均與其他元素相同 ( 版本 35 的 開發討論記錄 ) 。 標記結構樹狀檢視欄的右鍵選單現新增了「顯示 DOM 屬性 (Show DOM Properties) 」 ( 版本 35 的 開發討論記錄 、 MDN 上的 本功能說明文件 ) 。 Box Model 的強調功能 (Highlighter) 現可用於遠端的目標元素上，因此不論是在 Firefox for Android 頁面或是 Firefox OS App 上除錯，都能有完整的強調功能 ( 版本 36 的 開發討論記錄 ，還有 技術說明文章 可帶你建構自訂的強調器 ) 。 現在亦可於標記結構樹狀檢視欄中看到 Shadow DOM 內容。另請注意：開發者必須將 dom.webcomponents.enabled 設定為「 true 」，進而測試此功能 ( 版本 36 的 開發討論記錄 ，並可參閱 bug 1053898 以了解相關資訊 ) 。 我們另外從 Firebug 借用了一項功能，只要對標記結構樹狀檢視欄中的節點按下滑鼠右鍵，就能獲得更多「貼上 (Paste) 」的功能選項 ( 版本 36 的 開發討論記錄 、 MDN 上的 本功能說明文件 ) 。 而 Firefox 35 與 36 中的檢測器另有更多變化： 在刪除節點後，會選擇前一個相鄰節點，而不會選到上層節點 ( 版本 36 的 開發討論記錄 ) 在「M arkup view」 模式中，將滑鼠游標停於節點之上，將以更強烈的對比效果顯示 ( 版本 36 的 開發討論記錄 ) 。 在「計算樣式 computed 」檢視分頁中，將滑鼠游標停於 CSS 選擇器之上，即可強調顯示網頁上符合該選擇器的所有節點 ( 版本 35 的 開發討論記錄 ) 。 除錯器 (Debugger)＼主控台 (Console) 現在已可檢視 DOM Promises ，並能隨時檢視 Promises 的狀態與數值 ( 版本 36 的 開發討論記錄 ) 。 經過「 eval 」函式執行的程式碼，均可由除錯器辨識並搭配除錯 ( 版本 36 的 開發討論記錄 ) 。 「 eval 」函式執行的程式碼現支援 //# sourceURL=path.js 語法，使其於除錯器中，以及由 Error.prototype.stack 回報的呼叫堆疊中，均 顯示為正常檔案 。可參閱 http://fitzgeraldnick.com/ weblog/59/ 以進一步了解 ( 版本 36 的 開發討論記錄 ； 更多討論記錄 ) 。 主控台內的訊息除了顯示既有的「行」數之外， 亦提供來源程式碼的「欄」數 ( 版本 36 的 開發討論記錄 ) 。 WebIDE 開發者現可透過 WebIDE 連上 Firefox for Android 。可參閱 MDN 上的《 debugging firefox for android 》以進一步了解 ( 版本 36 的 開發討論記錄 ) 。 另外進行數項修正，提升 WebIDE 的使用者經驗： 當選擇某執行環境 (Runtime) 的 App ＼分頁時，亦預設帶出開發者工具 ( 版本 35 的 開發討論記錄 ) 。 若連接執行環境時，就會重新連上該環境中最近開啟過的 App 專案 ( 版本 35 的 開發討論記錄 ) 。 如果找得到最近使用的執行環境，則會自動選擇並連線 ( 版本 35 的 開發討論記錄 ) 。 可縮放字形大小 ( 版本 36 的 開發討論記錄 ) 。 只要輸入網址 ( 如： http://example.com ) ，即可新增托管＼ 架設式 (Hosted) App 專案，而不需再輸入 manifest.webapp 檔案的完整路徑 ( 版本 35 的 開發討論記錄 ) 。 網路監測器 (Network Monitor) 新增了純文字的請求＼回應檔頭 (Request/response header) 檢視模式，可輕鬆檢視並複製某一請求上的原始檔頭 ( 版本 35 的 開發討論記錄 ) 。 另列出 已解決的 Firefox 35 錯誤 ，以及 已解決的 Firefox 36 錯誤 。 如果你有任何問題、意見、功能需求，甚或想回報錯誤，同樣都能在下方留言， 到 UserVoice 填寫＼投票給某個意見 ，也能 到 Twitter 上聯絡 @FirefoxDevTools 團隊 。 原文連結： Pseudo elements, promise inspection, raw headers, and much more – Firefox Developer Edition 36",
+  "images": [
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/before-after-inspection.png",
+      "alt": "before-after-inspection",
+      "archive_path": "assets/6871/wp-content/uploads/before-after-inspection.png",
+      "markdown_path": "../assets/6871/wp-content/uploads/before-after-inspection.png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/show-dom-properties-1024x463.png",
+      "alt": "show-dom-properties",
+      "archive_path": "assets/6871/wp-content/uploads/show-dom-properties-1024x463.png",
+      "markdown_path": "../assets/6871/wp-content/uploads/show-dom-properties-1024x463.png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/paste-options-500x258.png",
+      "alt": "paste-options-500x258",
+      "archive_path": "assets/6871/wp-content/uploads/paste-options-500x258.png",
+      "markdown_path": "../assets/6871/wp-content/uploads/paste-options-500x258.png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/promise-inspection-1024x249.png",
+      "alt": "promise-inspection",
+      "archive_path": "assets/6871/wp-content/uploads/promise-inspection-1024x249.png",
+      "markdown_path": "../assets/6871/wp-content/uploads/promise-inspection-1024x249.png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/net-headers-raw.png",
+      "alt": "net-headers-raw",
+      "archive_path": "assets/6871/wp-content/uploads/net-headers-raw.png",
+      "markdown_path": "../assets/6871/wp-content/uploads/net-headers-raw.png"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://mozilla.com.tw/firefox/channel/#aurora",
+      "text": "「開發者 (Developer) 」版本"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/posts/6679",
+      "text": "開發者版本發表"
+    },
+    {
+      "url": "https://bugzil.la/920141",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://bugzil.la/992679",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Tools/Page_Inspector#Element_popup_menu_2",
+      "text": "本功能說明文件"
+    },
+    {
+      "url": "https://bugzil.la/985597",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://wiki.mozilla.org/DevTools/Highlighter",
+      "text": "技術說明文章"
+    },
+    {
+      "url": "https://bugzil.la/1079185",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://bugzil.la/1053898",
+      "text": "bug 1053898"
+    },
+    {
+      "url": "https://bugzil.la/1095521",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Tools/Page_Inspector#Element_popup_menu_2",
+      "text": "本功能說明文件"
+    },
+    {
+      "url": "https://bugzil.la/1094622",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://bugzil.la/1102084",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://bugzil.la/1059360",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+      "text": "DOM Promises"
+    },
+    {
+      "url": "https://bugzil.la/1033153",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://bugzil.la/905700",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://fitzgeraldnick.com/weblog/59/",
+      "text": "http://fitzgeraldnick.com/ weblog/59/"
+    },
+    {
+      "url": "https://bugzil.la/1107541",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://bugzil.la/583083",
+      "text": "更多討論記錄"
+    },
+    {
+      "url": "https://bugzil.la/684096",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Tools/Remote_Debugging/Debugging_Firefox_for_Android_with_WebIDE",
+      "text": "debugging firefox for android"
+    },
+    {
+      "url": "https://bugzil.la/982890",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://bugzil.la/1055279",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://bugzil.la/1055666",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://bugzil.la/1045660",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://bugzil.la/1027817",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://example.com/",
+      "text": "http://example.com"
+    },
+    {
+      "url": "https://bugzil.la/913711",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://bugzil.la/859133",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://mzl.la/1oltPdy",
+      "text": "已解決的 Firefox 35 錯誤"
+    },
+    {
+      "url": "https://mzl.la/1tS0R2i",
+      "text": "已解決的 Firefox 36 錯誤"
+    },
+    {
+      "url": "https://mzl.la/devtools",
+      "text": "到 UserVoice 填寫＼投票給某個意見"
+    },
+    {
+      "url": "https://twitter.com/FirefoxDevTools",
+      "text": "到 Twitter 上聯絡 @FirefoxDevTools 團隊"
+    },
+    {
+      "url": "https://hacks.mozilla.org/2014/12/pseudo-elements-promise-inspection-raw-headers-and-much-more-firefox-developer-edition-36/",
+      "text": "Pseudo elements, promise inspection, raw headers, and much more – Firefox Developer Edition 36"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": []
+}

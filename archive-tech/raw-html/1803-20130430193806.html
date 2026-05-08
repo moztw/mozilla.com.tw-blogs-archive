@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width" />
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+Application 效能分析有妙招 &#8212; 使用 perf 走天下 | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:image" content="http://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing-150x150.jpg" />
+
+<link rel="stylesheet" type="text/css" media="all" href="http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<!--<link rel="pingback" href="http://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="http://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<link rel="alternate" type="application/rss+xml" title="Mozilla Tech | 謀智台客 &raquo; 源料" href="http://tech.mozilla.com.tw/feed" />
+<link rel="alternate" type="application/rss+xml" title="Mozilla Tech | 謀智台客 &raquo; 迴響源料" href="http://tech.mozilla.com.tw/comments/feed" />
+<link rel="alternate" type="application/rss+xml" title="Mozilla Tech | 謀智台客 &raquo; Application 效能分析有妙招 &#8212; 使用 perf 走天下 迴響源料" href="http://tech.mozilla.com.tw/posts/1803/application-%e6%95%88%e8%83%bd%e5%88%86%e6%9e%90-%e4%bd%bf%e7%94%a8-perf/feed" />
+<script type='text/javascript' src='http://tech.mozilla.com.tw/wp-includes/js/comment-reply.js?ver=3.4.1'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='和 Firefox OS 介面的第一次親密接觸 &#8211; 基本觸控手勢看招！' href='http://tech.mozilla.com.tw/posts/1393/%e5%92%8c-firefox-os-%e4%bb%8b%e9%9d%a2%e7%9a%84%e7%ac%ac%e4%b8%80%e6%ac%a1%e8%a6%aa%e5%af%86%e6%8e%a5%e8%a7%b8-%e5%9f%ba%e6%9c%ac%e8%a7%b8%e6%8e%a7%e6%89%8b%e5%8b%a2%e7%9c%8b%e6%8b%9b%ef%bc%81' />
+<link rel='next' title='耳目一新－自定 Event Handler！' href='http://tech.mozilla.com.tw/posts/1771/%e8%80%b3%e7%9b%ae%e4%b8%80%e6%96%b0%ef%bc%8d%e8%87%aa%e5%ae%9a-event-handler%ef%bc%81' />
+<meta name="generator" content="WordPress 3.4.1" />
+<link rel='canonical' href='http://tech.mozilla.com.tw/posts/1803/application-%e6%95%88%e8%83%bd%e5%88%86%e6%9e%90-%e4%bd%bf%e7%94%a8-perf' />
+<link rel='shortlink' href='http://tech.mozilla.com.tw/?p=1803' />
+<link rel="stylesheet" href="http://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/zh_TW/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+</script>
+
+<!-- Place this tag after the last +1 button tag. -->
+<script type="text/javascript">
+  window.___gcfg = {lang: 'zh-TW'};
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+</head>
+
+<body class="single single-post postid-1803 single-format-standard">
+      <div id="default-header">
+    <div class="header-promo">
+        <a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox" onClick="_gaq.push(['_trackEvent', 'home-link', 'nav-firefox-mobile', '']);" target="_blank"><img src="https://mozilla.com.tw/assets/pic/FirefoxforAndroid.png" alt="Firefox for Android"></a>
+    </div>
+    <ul>
+<li class="sitemap">
+<a href="http://mozilla.com.tw/firefox/" title="下載 Mozilla Firefox 中文版">Firefox</a>
+<ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/features/" title="下載 Mozilla Firefox 中文桌面版">Firefox 桌面版</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/firefox/mobile/" title="Mozilla Firefox 行動版">Firefox 行動版</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/firefox/channel/" title="Mozilla Firefox 未來發行版">Firefox 未來發行版</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/firefoxos/" title="Firefox 行動作業系統">Firefox OS</a>
+</li>
+<li>
+<a href="https://addons.mozilla.org/zh-TW/firefox/" title="Firefox 附加元件">附加元件</a>
+</li>
+<li>
+<a href="https://support.mozilla.com/zh-TW/home" title="Firefox 說明文件、支援中心">支援中心</a>
+</li>
+</ul>
+</li>
+<li class="sitemap">
+<a href="http://mozilla.com.tw/community/" title="社群參與">社群參與</a>
+<ul>
+<li>
+<a href="http://firefox.club.tw/" title="Firefox 活力軍">Firefox 活力軍</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/community/student/" title="校園大使">校園大使</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/community/contribute/" title="社群專案">社群專案</a>
+</li>
+</ul>
+</li>
+<li class="sitemap">
+<a href="http://mozilla.com.tw/news/" title="訊息中心">訊息中心</a>
+<ul>
+<li>
+<a href="http://blog.mozilla.com.tw/main" title="部落格">部落格</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/news/press/" title="Mozilla 新聞">Mozilla 新聞</a>
+</li>
+<li>
+<a href="http://blog.mozilla.com.tw/events-list" title="活動訊息">活動訊息</a>
+</li>
+<li>
+<a href="http://tech.mozilla.com.tw/" title="謀智台客">謀智台客</a>
+</li>
+</ul>
+</li>
+<li class="sitemap">
+<a href="http://mozilla.com.tw/about/" title="關於我們">關於我們</a>
+<ul>
+<li>
+<a href="http://mozilla.com.tw/about/manifesto/" title="Mozilla 宣言">Mozilla 宣言</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/about/space/" title="Mozilla Space">Mozilla Space</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/about/careers/" title="工作機會">工作機會</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/about/contact/" title="聯絡資訊">聯絡資訊</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw//mozilla.org/en-US/" title="Mozilla (US)">Mozilla (US)</a>
+</li>
+</ul>
+</li>
+</ul>
+    </div>
+    <div id="outer-wrapper">
+    <div id="wrapper">
+       <div id="doc">
+        <!-- start header-->
+        <div id="header">
+          <header>
+          <p>
+            		<a href="http://mozilla.com.tw" title="回首頁" class="close">
+            			<span id="header_firefox">Mozilla Firefox|美商謀智</span>
+            		</a>
+            </p>
+          </header>
+            <a class="mozilla" href="http://mozilla.org/">mozilla</a>
+            <!-- start menu #nav-main -->
+            <div id="nav-main" role="navigation">
+              <nav>
+		            <ul role="menubar">
+<li class="topMenu" role="menuitem">
+<a tabindex="0" href="http://mozilla.com.tw/firefox/" title="下載 Mozilla Firefox 中文版">Firefox</a>
+<ul>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/firefox/features/" title="下載 Mozilla Firefox 中文桌面版">Firefox 桌面版</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/firefox/mobile/" title="Mozilla Firefox 行動版">Firefox 行動版</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/firefox/channel/" title="Mozilla Firefox 未來發行版">Firefox 未來發行版</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/firefoxos/" title="Firefox 行動作業系統">Firefox OS</a>
+</li>
+<li>
+<a tabindex="0" href="https://addons.mozilla.org/zh-TW/firefox/" title="Firefox 附加元件">附加元件</a>
+</li>
+<li>
+<a tabindex="0" href="https://support.mozilla.com/zh-TW/home" title="Firefox 說明文件、支援中心">支援中心</a>
+</li>
+</ul>
+</li>
+<li class="topMenu" role="menuitem">
+<a tabindex="0" href="http://mozilla.com.tw/community/" title="社群參與">社群參與</a>
+<ul>
+<li>
+<a tabindex="0" href="http://firefox.club.tw/" title="Firefox 活力軍">Firefox 活力軍</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/community/student/" title="校園大使">校園大使</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/community/contribute/" title="社群專案">社群專案</a>
+</li>
+</ul>
+</li>
+<li class="topMenu" role="menuitem">
+<a tabindex="0" href="http://mozilla.com.tw/news/" title="訊息中心">訊息中心</a>
+<ul>
+<li>
+<a tabindex="0" href="http://blog.mozilla.com.tw/main" title="部落格">部落格</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/news/press/" title="Mozilla 新聞">Mozilla 新聞</a>
+</li>
+<li>
+<a tabindex="0" href="http://blog.mozilla.com.tw/events-list" title="活動訊息">活動訊息</a>
+</li>
+<li>
+<a tabindex="0" href="http://tech.mozilla.com.tw/" title="謀智台客">謀智台客</a>
+</li>
+</ul>
+</li>
+<li class="topMenu" role="menuitem">
+<a tabindex="0" href="http://mozilla.com.tw/about/" title="關於我們">關於我們</a>
+<ul>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/about/manifesto/" title="Mozilla 宣言">Mozilla 宣言</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/about/space/" title="Mozilla Space">Mozilla Space</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/about/careers/" title="工作機會">工作機會</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/about/contact/" title="聯絡資訊">聯絡資訊</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw//mozilla.org/en-US/" title="Mozilla (US)">Mozilla (US)</a>
+</li>
+</ul>
+</li>
+</ul>
+		          </nav>
+		          <div class="close"></div>
+            </div> <!-- end nav-->
+                    </div><!--end header-->
+        <div id="main">		<p id="breadcrumbs"><a href='http://mozilla.com.tw/' class='home'>Home</a><b>&raquo;</b><a href='http://blog.mozilla.com.tw/'>訊息中心</a><b>&raquo;</b><a href='http://tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>Application 效能分析有妙招 &#8212; 使用 perf 走天下</p>
+		<div id="primary" role="main">
+			<div id="article">
+			
+					<nav id="nav-above">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+		<div class="nav-previous"><a href="http://tech.mozilla.com.tw/posts/1393/%e5%92%8c-firefox-os-%e4%bb%8b%e9%9d%a2%e7%9a%84%e7%ac%ac%e4%b8%80%e6%ac%a1%e8%a6%aa%e5%af%86%e6%8e%a5%e8%a7%b8-%e5%9f%ba%e6%9c%ac%e8%a7%b8%e6%8e%a7%e6%89%8b%e5%8b%a2%e7%9c%8b%e6%8b%9b%ef%bc%81" rel="prev"><span class="meta-nav">&larr;</span> 和 Firefox OS 介面的第一次親密接觸 &#8211; 基本觸控手勢看招！</a></div>		<div class="nav-next"><a href="http://tech.mozilla.com.tw/posts/1771/%e8%80%b3%e7%9b%ae%e4%b8%80%e6%96%b0%ef%bc%8d%e8%87%aa%e5%ae%9a-event-handler%ef%bc%81" rel="next">耳目一新－自定 Event Handler！ <span class="meta-nav">&rarr;</span></a></div>
+	
+	</nav><!-- #nav-above -->
+	
+				
+<article id="post-1803" class="post-1803 post type-post status-publish format-standard hentry category-b2g">
+	<header class="entry-header">
+		<div class="entry-meta">
+		  <div id="post-date">
+		    發表於：2013 年 03 月 26 日		  </div>
+		  <div id="author-meta">
+		    <div id="author-info">
+		      投稿者 <br />
+		      痞得		    </div>
+		      <img src="http://www.gravatar.com/avatar/7f0531435419c0febe53da3f1dcfbbf3?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=32" alt="" class="avatar user-38-avatar" width='32' height='32' />		  </div>
+		</div><!-- .entry-meta -->
+		<h1 class="entry-title">Application 效能分析有妙招 &#8212; 使用 perf 走天下</h1>
+		<div id="pintrest"><a href="http://pinterest.com/pin/create/button/?url=http://tech.mozilla.com.tw/posts/1803/application-%e6%95%88%e8%83%bd%e5%88%86%e6%9e%90-%e4%bd%bf%e7%94%a8-perf&media=http://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing-150x150.jpg" class="pin-it-button" count-layout="none"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>    <div class="plurk-share">
+      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+        <img src="http://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+      </a>
+    </div>
+   <div class="fb-like" data-href="http://tech.mozilla.com.tw/posts/1803/application-%e6%95%88%e8%83%bd%e5%88%86%e6%9e%90-%e4%bd%bf%e7%94%a8-perf" data-send="false" data-layout="button_count" data-width="50" data-show-faces="false" data-font="arial"></div>   <!-- Place this tag where you want the +1 button to render. -->
+   <div class="g-plusone" data-size="small" data-annotation="inline" data-width="120" data-href="http://tech.mozilla.com.tw/posts/1803/application-%e6%95%88%e8%83%bd%e5%88%86%e6%9e%90-%e4%bd%bf%e7%94%a8-perf"></div>   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p>在手機上面，Application 的實作往往會影響到效能好壞以及是否夠省電，其中 Application 的 CPU 使用量會是一個非常關鍵的因素。</p>
+<p>以下就拿使用 Firefox OS 的手機來做舉例說明，首先透過下面的 top 指令，可以看到整體 System 以及 Application 的 CPU 使用量，有助於了解 System 或者是 Application 的負載。</p>
+<pre>peter@pchang:~$ adb shell top -s cpu -m 10 -d 1
+User 77%, System 18%, IOW 2%, IRQ 0%
+User 65 + Nice 30 + Sys 23 + Idle 2 + IOW 3 + IRQ 0 + SIRQ 0 = 123
+
+  PID PR CPU% S  #THR     VSS     RSS PCY UID      Name
+  108  0  59% R    44 180304K  60156K  fg root     /system/b2g/b2g
+  483  0  26% R    11  85824K  34104K  fg app_483  /system/b2g/plugin-container
+  563  0   4% R     1   1056K    408K  fg root     top
+...</pre>
+<p>為了要進一步分析 Application 的效能瓶頸，可以使用 Linux 上分析的工具， perf (<a href="http://www.nvidia.com/content/devzone/tegra-android-developer-pack.html">Download from Tegra Android Toolkit</a>)。<br />
+Perf 是根據 Linux Kernel 已經定義的 perf_event 來紀錄程式運作的過程，所以只要是 Linux based system 都可以支援，包含 Android/Firefox OS phone。目前 perf_event 在 Linux Kernel 上預設為啓動，所以使用 perf 只要準備好 Application debug symbols 就可以來進行分析。有興趣的朋友可以參考<a href="https://wiki.linaro.org/KenWerner/Sandbox/perf#kernel_support"> perf kernel support </a>，來進一步確定你的手機是否有啟動 perf_event。</p>
+<p>Perf 上也有類似 top 指令，可以看到整體 System 的負載，譬如下面的結果，就可以看到 WebGLContext::Conver 佔用了最多 CPU 資源。</p>
+<pre>peter@pchang:~$ adb shell perf top
+
+-------------------------------------------------------------------------------
+   PerfTop:     325 irqs/sec  kernel:24.9%  exact:  0.0% [1000Hz cycles],  (all, 1 CPUs)
+-------------------------------------------------------------------------------
+
+         samples  pcnt function                      DSO
+         _______ _____ _____________________________ ______________________
+
+          697.00 50.6% mozilla::WebGLContext::Conver /system/b2g/libxul.so 
+          424.00 30.8% yamato_tile_texture           libGLESv2_adreno200.so
+          124.00  9.0% yamato_untile_texture         libGLESv2_adreno200.so
+           26.00  1.9% rb_surface_read               libGLESv2_adreno200.so
+           11.00  0.8% mozilla::gl::SwapRAndBCompone /system/b2g/libxul.so 
+            5.00  0.4% yamato_texfmt_to_pixfmt_for_m libGLESv2_adreno200.so</pre>
+<p>也可以透過 perf record/perf report ，來針對特定的 Application 做負載的分析。不過在分析之前，需要準備除錯用的 gecko modules 和對應的 debug symbols。以 Firefox OS 為範例，先做下面的修改，然後重新編譯和取代 gecko modules 到手機上，這樣是為了把 debug symbols 放到編譯好的 gecko modules，之後才能得到詳盡的分析結果。</p>
+<pre>peter@pchang:~/B2G/gonk-misc$ git diff ./default-gecko-config
+diff --git a/default-gecko-config b/default-gecko-config
+index c14919a..9a18176 100644
+--- a/default-gecko-config
++++ b/default-gecko-config
+@@ -25,6 +25,7 @@ ac_add_options --enable-debug-symbols
+ if [ "${B2G_DEBUG:-0}" != "0" ]; then
+ ac_add_options --enable-debug
+ fi
++ac_add_options --enable-profiling
+
+ if [ "${B2G_NOOPT:-0}" != "0" ]; then</pre>
+<p>透過下面的指令把 debug symbols 存放在 tmp folder 下面。</p>
+<pre>cp -pr out/target/product/device_name/system/ /tmp/b2g_perf/system/
+cp -pr out/target/product/device_name/symbols/system/ /tmp/b2g_perf/system/
+cp -pr objdir-gecko/dist/bin/b2g /tmp/b2g_perf/system/b2g/
+cp -pr objdir-gecko/dist/lib/*.so /tmp/b2g_perf/system/b2g/</pre>
+<p>接下來可以開始分析 Application 運作上的瓶頸。<br />
+Perf record 會針對 Application 記錄 20 秒的運作訊息，接著把記錄的資料從手機上下載出來。<br />
+最後使用 perf report 就可以看到使用 CPU 資源最多的函式名稱，接下來開發者就可以開始進行評估是否有改善的計劃讓 Application 運行的更快更省電。</p>
+<pre>peter@pchang:~$ adb shell perf record -p pid -o /data/local/perf.data sleep 20
+peter@pchang:~$ adb pull /data/local/perf.data /tmp/b2g_perf/
+
+peter@pchang:~$ perf report --symfs=/tmp/b2g_perf/system/ --sort dso,symbol
+
+ 71.38%  libxul.so                 [.] mozilla::WebGLContext::Conver
+ 15.28%  [ath6kl_sdio]             [k] 0x106fd7c
+  7.40%  libGLESv2_adreno200.so    [.] yamato_tile_texture
+  1.81%  libc.so                   [.] memcpy
+...</pre>
+<p>Perf 還有更多的功能，有興趣的讀者可以參考下面的連結。<br />
+<a title="https://perf.wiki.kernel.org/index.php/Tutorial" href="https://perf.wiki.kernel.org/index.php/Tutorial">https://perf.wiki.kernel.org/index.php/Tutorial</a></p>
+<p>&nbsp;</p>
+<p><a href="http://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing.jpg"><img class="aligncenter  wp-image-1900" title="14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing" src="http://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing-1024x901.jpg" alt="" width="385" height="338" /></a></p>
+<p style="text-align: center;"><a href="http://www.123rf.com/photo_14590126_cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing.html" target="_blank">圖檔出處</a></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+			</div><!-- .entry-content -->
+	
+	<footer class="entry-meta">
+   <div class="fb-like" data-href="http://tech.mozilla.com.tw/posts/1803/application-%e6%95%88%e8%83%bd%e5%88%86%e6%9e%90-%e4%bd%bf%e7%94%a8-perf" data-send="false" data-width="350" data-show-faces="false" data-font="arial"></div>	 <br />	</footer><!-- .entry-meta -->
+</article><!-- #post-1803 -->
+<div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團
+	 
+
+					<nav id="nav-below">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+		<div class="nav-previous"><a href="http://tech.mozilla.com.tw/posts/1393/%e5%92%8c-firefox-os-%e4%bb%8b%e9%9d%a2%e7%9a%84%e7%ac%ac%e4%b8%80%e6%ac%a1%e8%a6%aa%e5%af%86%e6%8e%a5%e8%a7%b8-%e5%9f%ba%e6%9c%ac%e8%a7%b8%e6%8e%a7%e6%89%8b%e5%8b%a2%e7%9c%8b%e6%8b%9b%ef%bc%81" rel="prev"><span class="meta-nav">&larr;</span> 和 Firefox OS 介面的第一次親密接觸 &#8211; 基本觸控手勢看招！</a></div>		<div class="nav-next"><a href="http://tech.mozilla.com.tw/posts/1771/%e8%80%b3%e7%9b%ae%e4%b8%80%e6%96%b0%ef%bc%8d%e8%87%aa%e5%ae%9a-event-handler%ef%bc%81" rel="next">耳目一新－自定 Event Handler！ <span class="meta-nav">&rarr;</span></a></div>
+	
+	</nav><!-- #nav-below -->
+					<span class='st_facebook_large' st_title='Application 效能分析有妙招 &#8212; 使用 perf 走天下' st_url='http://tech.mozilla.com.tw/posts/1803/application-%e6%95%88%e8%83%bd%e5%88%86%e6%9e%90-%e4%bd%bf%e7%94%a8-perf' displayText='share'></span>
+				<span class='st_plusone_large' st_title='Application 效能分析有妙招 &#8212; 使用 perf 走天下' st_url='http://tech.mozilla.com.tw/posts/1803/application-%e6%95%88%e8%83%bd%e5%88%86%e6%9e%90-%e4%bd%bf%e7%94%a8-perf' displayText='share'></span>
+				<span class='st_twitter_large' st_title='Application 效能分析有妙招 &#8212; 使用 perf 走天下' st_url='http://tech.mozilla.com.tw/posts/1803/application-%e6%95%88%e8%83%bd%e5%88%86%e6%9e%90-%e4%bd%bf%e7%94%a8-perf' displayText='share'></span>
+					<div id="comments">
+	
+	  <div class="fb-comments" data-href="http://tech.mozilla.com.tw/posts/1803/application-%e6%95%88%e8%83%bd%e5%88%86%e6%9e%90-%e4%bd%bf%e7%94%a8-perf" data-num-posts="5" data-width="470"></div>	
+	
+										<div id="respond">
+				<h3 id="reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/posts/1803/application-%e6%95%88%e8%83%bd%e5%88%86%e6%9e%90-%e4%bd%bf%e7%94%a8-perf#respond" style="display:none;">取消回覆</a></small></h3>
+									<form action="http://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">您的電子郵件位址並不會被公開。 必要欄位標記為 <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">名稱</label> <span class="required">*</span><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">電子郵件</label> <span class="required">*</span><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">迴響</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>												<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="發表" />
+							<input type='hidden' name='comment_post_ID' value='1803' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="e010367025" /></p>					</form>
+							</div><!-- #respond -->
+							
+</div><!-- #comments -->
+
+			      </div> <!-- #article--!>
+		</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" action="http://tech.mozilla.com.tw/" >
+	<div><label class="screen-reader-text" for="s">搜尋：</label>
+	<input type="text" value="" name="s" id="s" />
+	<input type="submit" id="searchsubmit" value="搜尋" />
+	</div>
+	</form></aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="http://tech.mozilla.com.tw/posts/category/css" title="觀看全部分類為「CSS」的文章">CSS</a>
+</li>
+	<li class="cat-item cat-item-4"><a href="http://tech.mozilla.com.tw/posts/category/firefox" title="觀看全部分類為「Firefox」的文章">Firefox</a>
+</li>
+	<li class="cat-item cat-item-3"><a href="http://tech.mozilla.com.tw/posts/category/b2g" title="觀看全部分類為「Firefox OS(B2G)」的文章">Firefox OS(B2G)</a>
+</li>
+	<li class="cat-item cat-item-9"><a href="http://tech.mozilla.com.tw/posts/category/javascript" title="觀看全部分類為「Javascript」的文章">Javascript</a>
+</li>
+	<li class="cat-item cat-item-5"><a href="http://tech.mozilla.com.tw/posts/category/mozilla" title="觀看全部分類為「Mozilla」的文章">Mozilla</a>
+</li>
+	<li class="cat-item cat-item-7"><a href="http://tech.mozilla.com.tw/posts/category/open-source" title="觀看全部分類為「Open Source」的文章">Open Source</a>
+</li>
+	<li class="cat-item cat-item-6"><a href="http://tech.mozilla.com.tw/posts/category/browser-id" title="觀看全部分類為「Persona」的文章">Persona</a>
+</li>
+	<li class="cat-item cat-item-1"><a href="http://tech.mozilla.com.tw/posts/category/%e6%9c%aa%e5%88%86%e9%a1%9e" title="觀看全部分類為「未分類」的文章">未分類</a>
+</li>
+		</ul>
+</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">相關連結</h1>			<div class="textwidget"><ul>
+<li id="footer-Facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="footer-Google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="footer-Plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="footer-Youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="footer-Flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <!-- start sub-footer-->
+    <div id="footer">  
+      <footer>
+        <div id="footer-wrapper">
+          <div id="footer-logo" class="footer-content">
+            <a href="http://mozilla.org/en-US/" target="_blank">
+              <img src="http://mozilla.com.tw/assets/css/img/mozcomtw/footer-mozilla.png" alt="mozilla" border="0" />
+            </a>
+          </div>
+          <div id="sub-footer" class="footer-content">
+           <div id="sub-footer-contents">
+            <strong>與我們為友</strong>
+            <ul>
+<li id="footer-Facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="footer-Google+">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google+</a>
+</li>
+<li id="footer-Plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="footer-Youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="footer-Flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+<li id="footer-電子報">
+<a href="http://mozilla.com.tw/join_us/">電子報</a>
+</li>
+<li class="close"></li></ul>
+          </div>
+         </div><!--end sub-footer-->
+          <div id="copyright" class="footer-content">
+            <p id="footer-links">
+              <a href="http://www.mozilla.org/zh-TW/privacy-policy.html">隱私資料政策</a> &nbsp;|&nbsp;
+              <a href="http://www.mozilla.org/zh-TW/about/legal.html">法律資訊</a> &nbsp;|&nbsp;
+              <a href="http://www.mozilla.org/zh-TW/legal/fraud-report/index.html">回報商標濫用</a>
+            </p>
+            <p>除另有<a href="http://www.mozilla.org/zh-TW/about/legal.html#site">註明</a>外，本站內容皆採用<br><a href="http://creativecommons.org/licenses/by-sa/3.0/">創用 CC 姓名標示—相同方式分享條款 3.0 </a>或更新版本授權大眾使用。</p>
+         </div><!-- end copyright-->
+         <div class='close'></div>
+        </div><!-- end footer-wrapper--!>
+     </footer>
+    </div><!-- end footer-->
+    <noscript>
+    </noscript>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+		<script type="text/javascript" src="http://tech.mozilla.com.tw/wp-content/themes/toolbox/js/main.js"></script>
+		
+		<script type="text/javascript">
+      $('.mozilla').click(function(e){
+        e.preventDefault();
+        if ($('.click_mozilla').is('*')){
+          $('.mozilla').removeClass('click_mozilla');
+            $('#default-header').css('height','0px');
+          
+        }else{
+          $('.mozilla').addClass('click_mozilla');
+          $('#default-header').css('height','150px');
+        }
+      });
+    </script>
+    <script type="text/javascript">
+		  $(function(){
+		    $('#pageTab a').bind('mouseenter', function() {
+		      var current='#'+$('ul#contentTab li').not('.default').children().attr('id');
+		      var show_content=$(this).attr('href');
+		      if(current!=show_content){
+            $('#pageTab li').removeClass('clicked');
+            $(this).parent().addClass('clicked');
+            $('ul#contentTab li').not('.default').addClass('default');
+            $(show_content).parent().removeClass('default');
+            $('.event-plugin li').removeClass('default');
+            $('#flickrFeed li').removeClass('default');
+          }
+        }).click( function (e){
+		        e.preventDefault();
+		    });
+		    
+		    if ( $('#postsyear').lenght!=0 ){
+		         $('#postsyear').change(function(){
+		          var url=location.protocol + '//' + location.host + location.pathname+'?y='+$('#postsyear').val();
+		          location.href=url;
+		         }); 
+		    }
+		  
+		  });
+		</script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

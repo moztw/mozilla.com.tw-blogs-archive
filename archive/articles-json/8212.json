@@ -1,0 +1,66 @@
+{
+  "post_id": 8212,
+  "title": "透過 WebExtensions 將 Chrome 的擴充套件移植到 Firefox 上使用",
+  "date": "2015-12-15",
+  "year": 2015,
+  "month": 12,
+  "day": 15,
+  "categories": [
+    "Firefox",
+    "Web App"
+  ],
+  "tags": [],
+  "author": "",
+  "original_url": "https://blog.mozilla.com.tw/?p=8212",
+  "archive_url": "https://web.archive.org/web/20190919103533id_/https://blog.mozilla.com.tw/?p=8212",
+  "wayback_timestamp": "20190919103533",
+  "content_html": "<div class=\"entry-content close\">\n    <p>在我看過〈<a href=\"https://hacks.mozilla.org/2015/09/lets_write_a_webextension/\" target=\"_blank\">Let’s Write a Web Extension</a>〉一文之後，我就想要實際將附加元件移植到 WebExtension。而我又特別想把高人氣且開放源碼的 Chrome 版本「<a href=\"http://redditenhancementsuite.com/\" target=\"_blank\">Reddit Enhancement Suite</a> (RES)」移植成 Firefox 版本。以下就是我的一點心得，希望能讓大家能立刻準備移植自己的附加元件。</p>\n<p><img class=\"aligncenter wp-image-8218\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/螢幕快照-2015-11-30-上午10.43.49-1024x658.png\" alt=\"螢幕快照 2015-11-30 上午10.43.49\" width=\"590\" height=\"379\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/螢幕快照-2015-11-30-上午10.43.49-1024x658.png 1024w, https://blog.mozilla.com.tw/wp-content/uploads/螢幕快照-2015-11-30-上午10.43.49-300x193.png 300w, https://blog.mozilla.com.tw/wp-content/uploads/螢幕快照-2015-11-30-上午10.43.49.png 1159w\" sizes=\"(max-width: 590px) 100vw, 590px\" /></p>\n<p>&nbsp;</p>\n<p><strong>附註：</strong>連 RES 的作者群都對 WebExtensions 有著高度興趣，也計畫要正式移植此附加元件。但重點是，如果你要使用 RES，就必須先到 <a href=\"https://addons.mozilla.org/en-US/firefox/addon/reddit-enhancement-suite/\" target=\"_blank\">AMO</a> 上安裝可支援的版本。</p>\n<p>首先，我要強調 <a href=\"https://developer.mozilla.org/Add-ons/WebExtensions\" target=\"_blank\">WebExtensions</a> 是多年的長期專案。首次釋出版本是以基礎架構、完整支援、可跨瀏覽器的 API 為主。這也代表在能支援特定瀏覽器功能的複雜附加元件之前，還有不算短的一段路要走。但我們一定會達到目標。</p>\n<p>由於目前進度仍早期的實驗性質，你必須搭配 Firefox 的「<a href=\"http://mozilla.com.tw/firefox/channel/#nightly\" target=\"_blank\">每夜更新版 (Nightly)</a>」才能繼續以下步驟。下列內容也僅限淺嚐即止，還不足以讓你著手佈署。</p>\n<p>簡單的說，如果你手上 Chrome 擴充套件或跨瀏覽器的附加元件，就能開始實驗 WebExtensions 並提供意見。任何人的寶貴建議，都能協助 Mozilla 儘早規劃高優先性的 API 及其支援功能。</p>\n<h4>準備移植</h4>\n<ol>\n<li>需先行下載並安裝 Firefox <a href=\"http://mozilla.com.tw/firefox/channel/#nightly\" target=\"_blank\">每夜更新版 (Nightly)</a>。</li>\n<li>建立<a href=\"https://support.mozilla.org/kb/profile-manager-create-and-remove-firefox-profiles\" target=\"_blank\">新的設定檔</a>進行測試與開發。</li>\n<li>於網址列鍵入 <code>about:config</code>，將 <code>xpinstall.signatures.required</code> 設定為「<code>false</code>」。</li>\n</ol>\n<h4>宣稱 Firefox 的相容性</h4>\n<p>你必須先將 <code>applications</code> 鍵值加入 manifest.json 檔案，以明確標記自己的附加元件可相容於 Firefox。如下：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5d8359f4d7307988333263\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n\"applications\": {\r\n  \"gecko\": {\r\n    \"id\": \"YOUR_ADDON_ID\"\r\n  }\r\n},</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5d8359f4d7307988333263-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5d8359f4d7307988333263-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5d8359f4d7307988333263-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5d8359f4d7307988333263-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5d8359f4d7307988333263-5\">5</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5d8359f4d7307988333263-1\"><span class=\"crayon-s\">\"applications\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5d8359f4d7307988333263-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-s\">\"gecko\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5d8359f4d7307988333263-3\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-s\">\"id\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"YOUR_ADDON_ID\"</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5d8359f4d7307988333263-4\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5d8359f4d7307988333263-5\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>將「<code>YOUR_ADDON_ID</code>」設定為像是捏造的字串格式，如「<code>ext@example.org</code>」。如果你計畫要讓你的使用者從現有 Firefox 附加元件升級為 WebExtension 版本附加元件，就要重複使用自己 package.json 檔案中的「<code>id</code>」欄位值。</p>\n<p>&nbsp;</p>\n<hr />\n<p>你手上有一堆好用的 Chrome 擴充套件，也想弄到 Firefox 上使用嗎？那還不快來試試強大的 WebExtensions？敬請<a href=\"https://hacks.mozilla.org/2015/10/porting-chrome-extensions-to-firefox-with-webextensions/\" target=\"_blank\">回到原文觀看</a>更多精采細節內容與範例程式碼。</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2015/10/porting-chrome-extensions-to-firefox-with-webextensions/\" target=\"_blank\">Porting Chrome Extensions to Firefox with WebExtensions</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
+  "content_text": "在我看過〈 Let’s Write a Web Extension 〉一文之後，我就想要實際將附加元件移植到 WebExtension。而我又特別想把高人氣且開放源碼的 Chrome 版本「 Reddit Enhancement Suite (RES)」移植成 Firefox 版本。以下就是我的一點心得，希望能讓大家能立刻準備移植自己的附加元件。 附註： 連 RES 的作者群都對 WebExtensions 有著高度興趣，也計畫要正式移植此附加元件。但重點是，如果你要使用 RES，就必須先到 AMO 上安裝可支援的版本。 首先，我要強調 WebExtensions 是多年的長期專案。首次釋出版本是以基礎架構、完整支援、可跨瀏覽器的 API 為主。這也代表在能支援特定瀏覽器功能的複雜附加元件之前，還有不算短的一段路要走。但我們一定會達到目標。 由於目前進度仍早期的實驗性質，你必須搭配 Firefox 的「 每夜更新版 (Nightly) 」才能繼續以下步驟。下列內容也僅限淺嚐即止，還不足以讓你著手佈署。 簡單的說，如果你手上 Chrome 擴充套件或跨瀏覽器的附加元件，就能開始實驗 WebExtensions 並提供意見。任何人的寶貴建議，都能協助 Mozilla 儘早規劃高優先性的 API 及其支援功能。 準備移植 需先行下載並安裝 Firefox 每夜更新版 (Nightly) 。 建立 新的設定檔 進行測試與開發。 於網址列鍵入 about:config ，將 xpinstall.signatures.required 設定為「 false 」。 宣稱 Firefox 的相容性 你必須先將 applications 鍵值加入 manifest.json 檔案，以明確標記自己的附加元件可相容於 Firefox。如下： \"applications\": { \"gecko\": { \"id\": \"YOUR_ADDON_ID\" } }, 1 2 3 4 5 \"applications\" : { \"gecko\" : { \"id\" : \"YOUR_ADDON_ID\" } } , 將「 YOUR_ADDON_ID 」設定為像是捏造的字串格式，如「 ext@example.org 」。如果你計畫要讓你的使用者從現有 Firefox 附加元件升級為 WebExtension 版本附加元件，就要重複使用自己 package.json 檔案中的「 id 」欄位值。 你手上有一堆好用的 Chrome 擴充套件，也想弄到 Firefox 上使用嗎？那還不快來試試強大的 WebExtensions？敬請 回到原文觀看 更多精采細節內容與範例程式碼。 原文連結： Porting Chrome Extensions to Firefox with WebExtensions",
+  "images": [
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2015-11-30-%E4%B8%8A%E5%8D%8810.43.49-1024x658.png",
+      "alt": "螢幕快照 2015-11-30 上午10.43.49"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://hacks.mozilla.org/2015/09/lets_write_a_webextension/",
+      "text": "Let’s Write a Web Extension"
+    },
+    {
+      "url": "https://redditenhancementsuite.com/",
+      "text": "Reddit Enhancement Suite"
+    },
+    {
+      "url": "https://addons.mozilla.org/en-US/firefox/addon/reddit-enhancement-suite/",
+      "text": "AMO"
+    },
+    {
+      "url": "https://developer.mozilla.org/Add-ons/WebExtensions",
+      "text": "WebExtensions"
+    },
+    {
+      "url": "https://mozilla.com.tw/firefox/channel/#nightly",
+      "text": "每夜更新版 (Nightly)"
+    },
+    {
+      "url": "https://mozilla.com.tw/firefox/channel/#nightly",
+      "text": "每夜更新版 (Nightly)"
+    },
+    {
+      "url": "https://support.mozilla.org/kb/profile-manager-create-and-remove-firefox-profiles",
+      "text": "新的設定檔"
+    },
+    {
+      "url": "https://hacks.mozilla.org/2015/10/porting-chrome-extensions-to-firefox-with-webextensions/",
+      "text": "回到原文觀看"
+    },
+    {
+      "url": "https://hacks.mozilla.org/2015/10/porting-chrome-extensions-to-firefox-with-webextensions/",
+      "text": "Porting Chrome Extensions to Firefox with WebExtensions"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": []
+}

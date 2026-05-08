@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+解析 XPCOM 物件的 Reference Count | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="https://tech.mozilla.com.tw/?p=6496"/><meta property="og:image" content="https://tech.mozilla.com.tw/wp-content/uploads/2015/06/5575089139_ffec7b5846_m.jpg" />
+
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css" /><!--<link rel="pingback" href="https://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="https://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://tech.mozilla.com.tw/","urlLoginRedirect":"https://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=bbf4b82746","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel='dns-prefetch' href='//s.w.org'>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo;" href="https://tech.mozilla.com.tw/?feed=rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 迴響" href="https://tech.mozilla.com.tw/?feed=comments-rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 解析 XPCOM 物件的 Reference Count 迴響" href="https://tech.mozilla.com.tw/?feed=rss2&#038;p=6496" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='crayon-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-arduino-ide-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='advanced-responsive-video-embedder-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0' type='text/css' media='all' />
+<link rel='stylesheet' id='persona-style-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46' type='text/css' media='all' />
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<link rel='https://api.w.org/' href='https://tech.mozilla.com.tw/?rest_route=/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Mozilla 開發人員的強力小幫手 &#8211; Autolander' href='https://tech.mozilla.com.tw/?p=6455' />
+<link rel='next' title='淺談 W3C Sensor API的發展' href='https://tech.mozilla.com.tw/?p=6218' />
+<meta name="generator" content="WordPress 4.6" />
+<link rel="canonical" href="https://tech.mozilla.com.tw/?p=6496" />
+<link rel='shortlink' href='https://tech.mozilla.com.tw/?p=6496' />
+<link rel="alternate" type="application/json+oembed" href="https://tech.mozilla.com.tw/?rest_route=%2Foembed%2F1.0%2Fembed&#038;url=https%3A%2F%2Ftech.mozilla.com.tw%2F%3Fp%3D6496" />
+<link rel="stylesheet" href="https://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-6496 single-format-standard sand">
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='//mozilla.com.tw/' class='home'>Home</a>
+            <b>&raquo;</b>
+            <a href='//mozilla.com.tw/news/'>訊息中心</a>
+            <b>&raquo;</b>
+                          <a href='//tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>
+              <span>解析 XPCOM 物件的 Reference Count</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="https://tech.mozilla.com.tw/?p=6496" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="https://tech.mozilla.com.tw/?p=6496"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=https://tech.mozilla.com.tw/?p=6496&media=https://tech.mozilla.com.tw/wp-content/uploads/2015/06/5575089139_ffec7b5846_m-150x150.jpg" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+	        <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">1</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://tech.mozilla.com.tw/?p=6455"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2015/05/Screen-Shot-2015-05-08-at-5.36.46-PM-50x50.png" class="attachment-48x48 size-48x48 wp-post-image" alt="Screen Shot 2015-05-08 at 5.36.46 PM" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2015/05/Screen-Shot-2015-05-08-at-5.36.46-PM-50x50.png 50w, https://tech.mozilla.com.tw/wp-content/uploads/2015/05/Screen-Shot-2015-05-08-at-5.36.46-PM-150x150.png 150w" sizes="(max-width: 48px) 100vw, 48px" /><span class="meta-nav">Mozilla 開發人員的強力小幫手 - Autolander</span></div></a></div>		
+							<div class="nav-next"><a href="https://tech.mozilla.com.tw/?p=6218"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2015/07/axes-50x50.png" class="attachment-48x48 size-48x48 wp-post-image" alt="axes" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2015/07/axes-50x50.png 50w, https://tech.mozilla.com.tw/wp-content/uploads/2015/07/axes-150x150.png 150w" sizes="(max-width: 48px) 100vw, 48px" /><span class="meta-nav">淺談 W3C Sensor API的發展</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-6496" class="post-6496 post type-post status-publish format-standard has-post-thumbnail hentry category-firefox category-b2g tag-gecko tag-xpcom">
+	 	<header class="entry-header">
+		<h1 class="entry-title">解析 XPCOM 物件的 Reference Count</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://tech.mozilla.com.tw/?m=201506" class="posted-month">6月</a>
+	        <span class="posted-date">22</span>
+	        <a title="See all posts from 2014" href="https://tech.mozilla.com.tw/?m=2015" class="posted-year">2015</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="155">
+		  	<a href="https://tech.mozilla.com.tw/?author=155">
+	          <img src="https://secure.gravatar.com/avatar/3c96fa13a2285d3d098b4b4b2ff7f89c?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=24" alt="" class="avatar user-155-avatar" width='24' height='24' /><!--
+	       --><div class="author-info">James Cheng</div><!--
+	       --><div class="author-title"></div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p>在 Gecko 的實作裡，我們大量使用 smart pointer 作為指標傳遞間的媒介，而為了能完善的操作 reference count ，我們必須保證 reference count 的增減是 thread safe 的。若無法妥善處理 reference count 的增減而產生 race condition ，會造成至少以下兩個問題：</p>
+<ol>
+<li>兩條以上的 thread 同時執行了 delete pointer 的動作，造成了 double free ，程式 crash</li>
+<li>兩條以上的 thread 同時執行 Release 的動作，但卻同時判斷 reference count 為非0，導致該有的 delete 並沒有如預期的去執行，造成 memory leak</li>
+</ol>
+<p>以下會一步步針對 Gecko 中 XPCOM 物件的 reference count 如何確保 thread safe 來作解析。以常見的Smart Pointer實作上，大致分為兩種：</p>
+<ol>
+<li>reference count 是 smart pointer 本身的 class 負責控管，在 constructor/destructor 作 reference count 的增減</li>
+<li>reference count 是綁在每個 object 上，而 smart pointer 本身 class 只是在建構解構時，請物件對自 己的reference count作增減</li>
+</ol>
+<p>兩者各有利弊, 像常見的 std::shared_ptr 就是第一種設計方式，而 Mozilla 的實作則是將 reference count 長在每一個 XPCOM 的物件上。</p>
+<p>而要成為 Gecko 中 smart pointer 能夠操作的物件，要滿足以下幾點：</p>
+<ol>
+<li>不能有公開的解構子 destructor 。如果一個物件是受到 smart pointer 控管生命週期，我們不允許在 class scope 外可以 explicit 利用 operator delete 操作物件。除了跟使用smart pointer 做reference counted 的本意牴觸外，也會有額外的濳在問題發生，例如 smart pointer 操作了已經 deleted 的物件</li>
+<li>需要實作 AddRef(void) 和 Release(void) 這兩組界面</li>
+</ol>
+<hr />
+<h2>解析 Gecko 的實作</h2>
+<p>在 Gecko 中 , <a title="nsISupportsImpl.h" href="https://dxr.mozilla.org/mozilla-central/source/xpcom/glue/nsISupportsImpl.h#396" target="_blank">nsISupportsImpl.h</a> 有提供許多 MACRO 好讓開發者能夠直接在 XPCOM class 內產生滿足上面的條件的程式碼，以下已兩個常見的 MACRO 作為例子</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f66590f0aae0519027045" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+#define NS_DECL_ISUPPORTS                                                     \
+public:                                                                       \
+  NS_IMETHOD QueryInterface(REFNSIID aIID,                                    \
+                            void** aInstancePtr) override;                    \
+  NS_IMETHOD_(MozExternalRefCountType) AddRef(void) override;                 \
+  NS_IMETHOD_(MozExternalRefCountType) Release(void) override;                \
+protected:                                                                    \
+  nsAutoRefCnt mRefCnt;                                                       \
+  nsAutoOwningThread _mOwningThread;                                          \</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f66590f0aae0519027045-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aae0519027045-2">2</div><div class="crayon-num" data-line="crayon-5f66590f0aae0519027045-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aae0519027045-4">4</div><div class="crayon-num" data-line="crayon-5f66590f0aae0519027045-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aae0519027045-6">6</div><div class="crayon-num" data-line="crayon-5f66590f0aae0519027045-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aae0519027045-8">8</div><div class="crayon-num" data-line="crayon-5f66590f0aae0519027045-9">9</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2;"><div class="crayon-line" id="crayon-5f66590f0aae0519027045-1"><span class="crayon-p">#define NS_DECL_ISUPPORTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aae0519027045-2"><span class="crayon-m">public</span><span class="crayon-o">:</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aae0519027045-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">NS_IMETHOD </span><span class="crayon-e">QueryInterface</span><span class="crayon-sy">(</span><span class="crayon-e">REFNSIID </span><span class="crayon-v">aIID</span><span class="crayon-sy">,</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aae0519027045-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">void</span><span class="crayon-o">*</span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-v">aInstancePtr</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-v">override</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aae0519027045-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">NS_IMETHOD_</span><span class="crayon-sy">(</span><span class="crayon-v">MozExternalRefCountType</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">AddRef</span><span class="crayon-sy">(</span><span class="crayon-t">void</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-v">override</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aae0519027045-6"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">NS_IMETHOD_</span><span class="crayon-sy">(</span><span class="crayon-v">MozExternalRefCountType</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">Release</span><span class="crayon-sy">(</span><span class="crayon-t">void</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-v">override</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aae0519027045-7"><span class="crayon-m">protected</span><span class="crayon-o">:</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aae0519027045-8"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsAutoRefCnt </span><span class="crayon-v">mRefCnt</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aae0519027045-9"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsAutoOwningThread </span><span class="crayon-v">_mOwningThread</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0013 seconds] -->
+<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f66590f0aae9807174079" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+#define NS_DECL_THREADSAFE_ISUPPORTS                                          \
+public:                                                                       \
+  NS_IMETHOD QueryInterface(REFNSIID aIID,                                    \
+                            void** aInstancePtr) override;                    \
+  NS_IMETHOD_(MozExternalRefCountType) AddRef(void) override;                 \
+  NS_IMETHOD_(MozExternalRefCountType) Release(void) override;                \
+protected:                                                                    \
+  ::mozilla::ThreadSafeAutoRefCnt mRefCnt;                                    \
+  nsAutoOwningThread _mOwningThread;                                          \</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f66590f0aae9807174079-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aae9807174079-2">2</div><div class="crayon-num" data-line="crayon-5f66590f0aae9807174079-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aae9807174079-4">4</div><div class="crayon-num" data-line="crayon-5f66590f0aae9807174079-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aae9807174079-6">6</div><div class="crayon-num" data-line="crayon-5f66590f0aae9807174079-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aae9807174079-8">8</div><div class="crayon-num" data-line="crayon-5f66590f0aae9807174079-9">9</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2;"><div class="crayon-line" id="crayon-5f66590f0aae9807174079-1"><span class="crayon-p">#define NS_DECL_THREADSAFE_ISUPPORTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aae9807174079-2"><span class="crayon-m">public</span><span class="crayon-o">:</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aae9807174079-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">NS_IMETHOD </span><span class="crayon-e">QueryInterface</span><span class="crayon-sy">(</span><span class="crayon-e">REFNSIID </span><span class="crayon-v">aIID</span><span class="crayon-sy">,</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aae9807174079-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">void</span><span class="crayon-o">*</span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-v">aInstancePtr</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-v">override</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aae9807174079-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">NS_IMETHOD_</span><span class="crayon-sy">(</span><span class="crayon-v">MozExternalRefCountType</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">AddRef</span><span class="crayon-sy">(</span><span class="crayon-t">void</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-v">override</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aae9807174079-6"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">NS_IMETHOD_</span><span class="crayon-sy">(</span><span class="crayon-v">MozExternalRefCountType</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">Release</span><span class="crayon-sy">(</span><span class="crayon-t">void</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-v">override</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aae9807174079-7"><span class="crayon-m">protected</span><span class="crayon-o">:</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aae9807174079-8"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">::</span><span class="crayon-v">mozilla</span><span class="crayon-o">::</span><span class="crayon-e">ThreadSafeAutoRefCnt </span><span class="crayon-v">mRefCnt</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aae9807174079-9"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsAutoOwningThread </span><span class="crayon-v">_mOwningThread</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0004 seconds] -->
+<p>這兩個 MACRO 唯一的差異只有在 mRefCnt 的型態不一樣，這是因為 XPCOM 物件在設計的時候必須考慮到執行環境是在 single-thread 還是 multi-thread 。若是你自認只有單一 thread 會去操作這物件，就要優先考量使用非 THREADSAFE 版本的實作方式。</p>
+<p>來分析這兩種 reference count 的差異，</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f66590f0aaec292375965" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+class nsAutoRefCnt
+{
+public:
+  nsAutoRefCnt() : mValue(0) {}
+  explicit nsAutoRefCnt(nsrefcnt aValue) : mValue(aValue) {}
+
+  // only support prefix increment/decrement
+  nsrefcnt operator++() { return ++mValue; }
+  nsrefcnt operator--() { return --mValue; }
+
+  nsrefcnt operator=(nsrefcnt aValue) { return (mValue = aValue); }
+  operator nsrefcnt() const { return mValue; }
+  nsrefcnt get() const { return mValue; }
+
+  static const bool isThreadSafe = false;
+private:
+  nsrefcnt operator++(int) = delete;
+  nsrefcnt operator--(int) = delete;
+  nsrefcnt mValue;
+};</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f66590f0aaec292375965-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaec292375965-2">2</div><div class="crayon-num" data-line="crayon-5f66590f0aaec292375965-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaec292375965-4">4</div><div class="crayon-num" data-line="crayon-5f66590f0aaec292375965-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaec292375965-6">6</div><div class="crayon-num" data-line="crayon-5f66590f0aaec292375965-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaec292375965-8">8</div><div class="crayon-num" data-line="crayon-5f66590f0aaec292375965-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaec292375965-10">10</div><div class="crayon-num" data-line="crayon-5f66590f0aaec292375965-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaec292375965-12">12</div><div class="crayon-num" data-line="crayon-5f66590f0aaec292375965-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaec292375965-14">14</div><div class="crayon-num" data-line="crayon-5f66590f0aaec292375965-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaec292375965-16">16</div><div class="crayon-num" data-line="crayon-5f66590f0aaec292375965-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaec292375965-18">18</div><div class="crayon-num" data-line="crayon-5f66590f0aaec292375965-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaec292375965-20">20</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2;"><div class="crayon-line" id="crayon-5f66590f0aaec292375965-1"><span class="crayon-t">class</span><span class="crayon-h"> </span><span class="crayon-e">nsAutoRefCnt</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaec292375965-2"><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f66590f0aaec292375965-3"><span class="crayon-m">public</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaec292375965-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsAutoRefCnt</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-e">mValue</span><span class="crayon-sy">(</span><span class="crayon-cn">0</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f66590f0aaec292375965-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-r">explicit</span><span class="crayon-h"> </span><span class="crayon-e">nsAutoRefCnt</span><span class="crayon-sy">(</span><span class="crayon-e">nsrefcnt </span><span class="crayon-v">aValue</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-e">mValue</span><span class="crayon-sy">(</span><span class="crayon-v">aValue</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaec292375965-6">&nbsp;</div><div class="crayon-line" id="crayon-5f66590f0aaec292375965-7"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-c">// only support prefix increment/decrement</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaec292375965-8"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsrefcnt </span><span class="crayon-t">operator</span><span class="crayon-o">++</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-o">++</span><span class="crayon-v">mValue</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f66590f0aaec292375965-9"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsrefcnt </span><span class="crayon-t">operator</span><span class="crayon-o">--</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-v">mValue</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaec292375965-10">&nbsp;</div><div class="crayon-line" id="crayon-5f66590f0aaec292375965-11"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsrefcnt </span><span class="crayon-t">operator</span><span class="crayon-o">=</span><span class="crayon-sy">(</span><span class="crayon-e">nsrefcnt </span><span class="crayon-v">aValue</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">mValue</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">aValue</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaec292375965-12"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-t">operator</span><span class="crayon-h"> </span><span class="crayon-e">nsrefcnt</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-m">const</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-v">mValue</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f66590f0aaec292375965-13"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsrefcnt </span><span class="crayon-e">get</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-m">const</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-v">mValue</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaec292375965-14">&nbsp;</div><div class="crayon-line" id="crayon-5f66590f0aaec292375965-15"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-m">static</span><span class="crayon-h"> </span><span class="crayon-m">const</span><span class="crayon-h"> </span><span class="crayon-t">bool</span><span class="crayon-h"> </span><span class="crayon-v">isThreadSafe</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">false</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaec292375965-16"><span class="crayon-m">private</span><span class="crayon-o">:</span></div><div class="crayon-line" id="crayon-5f66590f0aaec292375965-17"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsrefcnt </span><span class="crayon-t">operator</span><span class="crayon-o">++</span><span class="crayon-sy">(</span><span class="crayon-t">int</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">delete</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaec292375965-18"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsrefcnt </span><span class="crayon-t">operator</span><span class="crayon-o">--</span><span class="crayon-sy">(</span><span class="crayon-t">int</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">delete</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f66590f0aaec292375965-19"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsrefcnt </span><span class="crayon-v">mValue</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaec292375965-20"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0008 seconds] -->
+<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f66590f0aaef479566809" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+class ThreadSafeAutoRefCnt
+{
+public:
+  ThreadSafeAutoRefCnt() : mValue(0) {}
+  explicit ThreadSafeAutoRefCnt(nsrefcnt aValue) : mValue(aValue) {}
+
+  // only support prefix increment/decrement
+  MOZ_ALWAYS_INLINE nsrefcnt operator++() { return ++mValue; }
+  MOZ_ALWAYS_INLINE nsrefcnt operator--() { return --mValue; }
+
+  MOZ_ALWAYS_INLINE nsrefcnt operator=(nsrefcnt aValue)
+  {
+    return (mValue = aValue);
+  }
+  MOZ_ALWAYS_INLINE operator nsrefcnt() const { return mValue; }
+  MOZ_ALWAYS_INLINE nsrefcnt get() const { return mValue; }
+
+  static const bool isThreadSafe = true;
+private:
+  nsrefcnt operator++(int) = delete;
+  nsrefcnt operator--(int) = delete;
+  // In theory, RelaseAcquire consistency (but no weaker) is sufficient for
+  // the counter. Making it weaker could speed up builds on ARM (but not x86),
+  // but could break pre-existing code that assumes sequential consistency.
+  Atomic&lt;nsrefcnt&gt; mValue;
+};</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f66590f0aaef479566809-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaef479566809-2">2</div><div class="crayon-num" data-line="crayon-5f66590f0aaef479566809-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaef479566809-4">4</div><div class="crayon-num" data-line="crayon-5f66590f0aaef479566809-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaef479566809-6">6</div><div class="crayon-num" data-line="crayon-5f66590f0aaef479566809-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaef479566809-8">8</div><div class="crayon-num" data-line="crayon-5f66590f0aaef479566809-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaef479566809-10">10</div><div class="crayon-num" data-line="crayon-5f66590f0aaef479566809-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaef479566809-12">12</div><div class="crayon-num" data-line="crayon-5f66590f0aaef479566809-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaef479566809-14">14</div><div class="crayon-num" data-line="crayon-5f66590f0aaef479566809-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaef479566809-16">16</div><div class="crayon-num" data-line="crayon-5f66590f0aaef479566809-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaef479566809-18">18</div><div class="crayon-num" data-line="crayon-5f66590f0aaef479566809-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaef479566809-20">20</div><div class="crayon-num" data-line="crayon-5f66590f0aaef479566809-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaef479566809-22">22</div><div class="crayon-num" data-line="crayon-5f66590f0aaef479566809-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaef479566809-24">24</div><div class="crayon-num" data-line="crayon-5f66590f0aaef479566809-25">25</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaef479566809-26">26</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2;"><div class="crayon-line" id="crayon-5f66590f0aaef479566809-1"><span class="crayon-t">class</span><span class="crayon-h"> </span><span class="crayon-e">ThreadSafeAutoRefCnt</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaef479566809-2"><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f66590f0aaef479566809-3"><span class="crayon-m">public</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaef479566809-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">ThreadSafeAutoRefCnt</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-e">mValue</span><span class="crayon-sy">(</span><span class="crayon-cn">0</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f66590f0aaef479566809-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-r">explicit</span><span class="crayon-h"> </span><span class="crayon-e">ThreadSafeAutoRefCnt</span><span class="crayon-sy">(</span><span class="crayon-e">nsrefcnt </span><span class="crayon-v">aValue</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-e">mValue</span><span class="crayon-sy">(</span><span class="crayon-v">aValue</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaef479566809-6">&nbsp;</div><div class="crayon-line" id="crayon-5f66590f0aaef479566809-7"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-c">// only support prefix increment/decrement</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaef479566809-8"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">MOZ_ALWAYS_INLINE </span><span class="crayon-e">nsrefcnt </span><span class="crayon-t">operator</span><span class="crayon-o">++</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-o">++</span><span class="crayon-v">mValue</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f66590f0aaef479566809-9"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">MOZ_ALWAYS_INLINE </span><span class="crayon-e">nsrefcnt </span><span class="crayon-t">operator</span><span class="crayon-o">--</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-v">mValue</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaef479566809-10">&nbsp;</div><div class="crayon-line" id="crayon-5f66590f0aaef479566809-11"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">MOZ_ALWAYS_INLINE </span><span class="crayon-e">nsrefcnt </span><span class="crayon-t">operator</span><span class="crayon-o">=</span><span class="crayon-sy">(</span><span class="crayon-e">nsrefcnt </span><span class="crayon-v">aValue</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaef479566809-12"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f66590f0aaef479566809-13"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">mValue</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">aValue</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaef479566809-14"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f66590f0aaef479566809-15"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">MOZ_ALWAYS_INLINE </span><span class="crayon-t">operator</span><span class="crayon-h"> </span><span class="crayon-e">nsrefcnt</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-m">const</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-v">mValue</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaef479566809-16"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">MOZ_ALWAYS_INLINE </span><span class="crayon-e">nsrefcnt </span><span class="crayon-e">get</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-m">const</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-v">mValue</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f66590f0aaef479566809-17">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaef479566809-18"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-m">static</span><span class="crayon-h"> </span><span class="crayon-m">const</span><span class="crayon-h"> </span><span class="crayon-t">bool</span><span class="crayon-h"> </span><span class="crayon-v">isThreadSafe</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">true</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f66590f0aaef479566809-19"><span class="crayon-m">private</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaef479566809-20"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsrefcnt </span><span class="crayon-t">operator</span><span class="crayon-o">++</span><span class="crayon-sy">(</span><span class="crayon-t">int</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">delete</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f66590f0aaef479566809-21"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsrefcnt </span><span class="crayon-t">operator</span><span class="crayon-o">--</span><span class="crayon-sy">(</span><span class="crayon-t">int</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">delete</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaef479566809-22"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-c">// In theory, RelaseAcquire consistency (but no weaker) is sufficient for</span></div><div class="crayon-line" id="crayon-5f66590f0aaef479566809-23"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-c">// the counter. Making it weaker could speed up builds on ARM (but not x86),</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaef479566809-24"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-c">// but could break pre-existing code that assumes sequential consistency.</span></div><div class="crayon-line" id="crayon-5f66590f0aaef479566809-25"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">Atomic</span><span class="crayon-o">&lt;</span><span class="crayon-v">nsrefcnt</span><span class="crayon-o">&gt;</span><span class="crayon-h"> </span><span class="crayon-v">mValue</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaef479566809-26"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0008 seconds] -->
+<p>基本上這兩者的實作幾乎一模一樣，同樣都提供了 prefix 版本的 operator++ 和 &#8211; &#8211; 來針對內部的 mValue 作加減，也都提供了 cast operator 來讓外部可以判別 mValue 是否等於0，差別就只有在 mValue 的型別，以及 isThreadSafe 這 flag 在 ThreadSafeAutoRefCnt 裡會設定為 true 。nsAutoRefCnt::mValue 的型別其實就只是個透過 typedef 出來的 primitive type ,因為最初的假設就是 single thread 會使用這物件，並不會有 race condition 發生的可能性，所以只是非常單純的對數值做加減，不須特別對 reference count 作特別保護，以減少不必要的 overhead 。然而 ThreadSafeAutoRefCnt::mValue 則是使用 mfbt 所wrap過的 <a title="Atomic class" href="https://dxr.mozilla.org/mozilla-central/source/mfbt/Atomics.h" target="_blank">Atomic class</a> ，來確保操作 mValue 是一個 atomic operation 。而 mfbt 的實作則是封裝了 c++11 所提供的 <a title="std::atomic" href="http://en.cppreference.com/w/cpp/atomic/atomic" target="_blank">std::atomic</a> 。</p>
+<p>剛剛在 NS_DECL_ISUPPORTS 和 NS_DECL_THREADSAFE_ISUPPORTS 的 MACRO 中，我們會在 Debug Build 或是 Nightly Build 中偷偷宣告一個物件 
+			<span id="crayon-5f66590f0aaf2049212954" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">nsAutoOwningThread </span><span class="crayon-v">_mOwningThread</span><span class="crayon-sy">;</span></span></span> 他的實作相當簡單，只是透過 PR_GetCurrentThread 這 function 透過系統API得到 current thread 的 handle 紀錄在 mThread，之後會介紹他的用途。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f66590f0aaf5010632254" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+class nsAutoOwningThread
+{
+public:
+  nsAutoOwningThread() { mThread = PR_GetCurrentThread(); }
+  void* GetThread() const { return mThread; }
+
+private:
+  void* mThread;
+};</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f66590f0aaf5010632254-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaf5010632254-2">2</div><div class="crayon-num" data-line="crayon-5f66590f0aaf5010632254-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaf5010632254-4">4</div><div class="crayon-num" data-line="crayon-5f66590f0aaf5010632254-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaf5010632254-6">6</div><div class="crayon-num" data-line="crayon-5f66590f0aaf5010632254-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaf5010632254-8">8</div><div class="crayon-num" data-line="crayon-5f66590f0aaf5010632254-9">9</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2;"><div class="crayon-line" id="crayon-5f66590f0aaf5010632254-1"><span class="crayon-t">class</span><span class="crayon-h"> </span><span class="crayon-e">nsAutoOwningThread</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaf5010632254-2"><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f66590f0aaf5010632254-3"><span class="crayon-m">public</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaf5010632254-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsAutoOwningThread</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-v">mThread</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">PR_GetCurrentThread</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f66590f0aaf5010632254-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-t">void</span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-e">GetThread</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-m">const</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-v">mThread</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaf5010632254-6">&nbsp;</div><div class="crayon-line" id="crayon-5f66590f0aaf5010632254-7"><span class="crayon-m">private</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaf5010632254-8"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-t">void</span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-v">mThread</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f66590f0aaf5010632254-9"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p>接下來我們來看一下 AddRef 和 Release 兩者的實作，不管是否 thread safe ，實作方式都一樣透過
+			<span id="crayon-5f66590f0aaf7999096703" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">NS_IMPL_ADDREF</span><span class="crayon-sy">(</span><span class="crayon-v">_class</span><span class="crayon-sy">)</span></span></span> 和 
+			<span id="crayon-5f66590f0aaf9020325763" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">NS_IMPL_RELEASE</span><span class="crayon-sy">(</span><span class="crayon-v">_class</span><span class="crayon-sy">)</span></span></span> 來達成，</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f66590f0aafb674551697" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+#define NS_IMPL_ADDREF(_class)                                                \
+NS_IMETHODIMP_(MozExternalRefCountType) _class::AddRef(void)                  \
+{                                                                             \
+  MOZ_ASSERT_TYPE_OK_FOR_REFCOUNTING(_class)                                  \
+  MOZ_ASSERT(int32_t(mRefCnt) &gt;= 0, "illegal refcnt");                        \
+  if (!mRefCnt.isThreadSafe)                                                  \
+    NS_ASSERT_OWNINGTHREAD(_class);                                           \
+  nsrefcnt count = ++mRefCnt;                                                 \
+  NS_LOG_ADDREF(this, count, #_class, sizeof(*this));                         \
+  return count;                                                               \
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f66590f0aafb674551697-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aafb674551697-2">2</div><div class="crayon-num" data-line="crayon-5f66590f0aafb674551697-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aafb674551697-4">4</div><div class="crayon-num" data-line="crayon-5f66590f0aafb674551697-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aafb674551697-6">6</div><div class="crayon-num" data-line="crayon-5f66590f0aafb674551697-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aafb674551697-8">8</div><div class="crayon-num" data-line="crayon-5f66590f0aafb674551697-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aafb674551697-10">10</div><div class="crayon-num" data-line="crayon-5f66590f0aafb674551697-11">11</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2;"><div class="crayon-line" id="crayon-5f66590f0aafb674551697-1"><span class="crayon-p">#define NS_IMPL_ADDREF(_class)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aafb674551697-2"><span class="crayon-e">NS_IMETHODIMP_</span><span class="crayon-sy">(</span><span class="crayon-v">MozExternalRefCountType</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-v">_class</span><span class="crayon-o">::</span><span class="crayon-e">AddRef</span><span class="crayon-sy">(</span><span class="crayon-t">void</span><span class="crayon-sy">)</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aafb674551697-3"><span class="crayon-sy">{</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aafb674551697-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">MOZ_ASSERT_TYPE_OK_FOR_REFCOUNTING</span><span class="crayon-sy">(</span><span class="crayon-v">_class</span><span class="crayon-sy">)</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aafb674551697-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">MOZ_ASSERT</span><span class="crayon-sy">(</span><span class="crayon-e">int32_t</span><span class="crayon-sy">(</span><span class="crayon-v">mRefCnt</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">&gt;=</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">"illegal refcnt"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aafb674551697-6"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-o">!</span><span class="crayon-v">mRefCnt</span><span class="crayon-sy">.</span><span class="crayon-v">isThreadSafe</span><span class="crayon-sy">)</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aafb674551697-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-e">NS_ASSERT_OWNINGTHREAD</span><span class="crayon-sy">(</span><span class="crayon-v">_class</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aafb674551697-8"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsrefcnt </span><span class="crayon-v">count</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-o">++</span><span class="crayon-v">mRefCnt</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aafb674551697-9"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">NS_LOG_ADDREF</span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">count</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-p">#_class, sizeof(*this));&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aafb674551697-10"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-v">count</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aafb674551697-11"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0005 seconds] -->
+<p>首先先看第一個 MACRO 
+			<span id="crayon-5f66590f0aafd077390426" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">MOZ_ASSERT_TYPE_OK_FOR_REFCOUNTING</span></span></span></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f66590f0aaff464324732" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+#define MOZ_ASSERT_TYPE_OK_FOR_REFCOUNTING(X) \
+  static_assert(!MOZ_IS_DESTRUCTIBLE(X) || \
+                mozilla::HasDangerousPublicDestructor::value, \
+                "略"); \
+  static_assert(!mozilla::HasDangerousPublicDestructor::value || \
+                MOZ_IS_DESTRUCTIBLE(X), \
+                "略");</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f66590f0aaff464324732-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaff464324732-2">2</div><div class="crayon-num" data-line="crayon-5f66590f0aaff464324732-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaff464324732-4">4</div><div class="crayon-num" data-line="crayon-5f66590f0aaff464324732-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0aaff464324732-6">6</div><div class="crayon-num" data-line="crayon-5f66590f0aaff464324732-7">7</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2;"><div class="crayon-line" id="crayon-5f66590f0aaff464324732-1"><span class="crayon-p">#define MOZ_ASSERT_TYPE_OK_FOR_REFCOUNTING(X) \</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaff464324732-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">static_assert</span><span class="crayon-sy">(</span><span class="crayon-o">!</span><span class="crayon-e">MOZ_IS_DESTRUCTIBLE</span><span class="crayon-sy">(</span><span class="crayon-v">X</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">||</span><span class="crayon-h"> </span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aaff464324732-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">mozilla</span><span class="crayon-o">::</span><span class="crayon-v">HasDangerousPublicDestructor</span><span class="crayon-o">::</span><span class="crayon-t">value</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaff464324732-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-s">"略"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aaff464324732-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">static_assert</span><span class="crayon-sy">(</span><span class="crayon-o">!</span><span class="crayon-v">mozilla</span><span class="crayon-o">::</span><span class="crayon-v">HasDangerousPublicDestructor</span><span class="crayon-o">::</span><span class="crayon-t">value</span><span class="crayon-h"> </span><span class="crayon-o">||</span><span class="crayon-h"> </span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0aaff464324732-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-e">MOZ_IS_DESTRUCTIBLE</span><span class="crayon-sy">(</span><span class="crayon-v">X</span><span class="crayon-sy">)</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0aaff464324732-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-s">"略"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p>這邊就是一開始提到的 XPCOM 物件不能有公開的解構子，利用 static_assert 在 compile time 做檢查，若
+			<span id="crayon-5f66590f0ab02859205106" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">HasDangerousPublicDestructor</span><span class="crayon-o">::</span><span class="crayon-t">value</span></span></span> 沒特別作手腳則預設是 false ，若真的有 public destructor 的需求，<a title="請針對 HasDangerousPublicDestructor 作特化" href="https://dxr.mozilla.org/mozilla-central/source/xpfe/appshell/nsContentTreeOwner.cpp#73" target="_blank">請針對 HasDangerousPublicDestructor 作特化</a> ，但這種需求再 Gecko code 裡面非常的少。要怎麼判斷一個 class 是否含有 public 解構子呢？ Gecko 這邊有針對 compiler 版本作檢查，如果有支援，則直接使用 <a title="std::is_destructible" href="http://www.cplusplus.com/reference/type_traits/is_destructible/" target="_blank">std::is_destructible</a> 標準函式庫來作判斷，若不支援， Gecko 也有自己實作的版本</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f66590f0ab04281945763" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+namespace mozilla {
+    struct IsDestructibleFallbackImpl
+    {
+      template&lt;typename T&gt; static T&amp;&amp; Declval();
+
+      template&lt;typename T, typename = decltype(Declval&lt;T&gt;().~T())&gt;
+      static TrueType Test(int);
+
+      template&lt;typename&gt;
+      static FalseType Test(...);
+
+      template&lt;typename T&gt;
+      struct Selector
+      {
+        typedef decltype(Test&lt;T&gt;(0)) type;
+      };
+    };
+
+    template&lt;typename T&gt;
+    struct IsDestructibleFallback
+      : IsDestructibleFallbackImpl::Selector&lt;T&gt;::type
+    {
+    };
+  }
+#define MOZ_IS_DESTRUCTIBLE(X) (mozilla::IsDestructibleFallback&lt;X&gt;::value)</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f66590f0ab04281945763-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab04281945763-2">2</div><div class="crayon-num" data-line="crayon-5f66590f0ab04281945763-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab04281945763-4">4</div><div class="crayon-num" data-line="crayon-5f66590f0ab04281945763-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab04281945763-6">6</div><div class="crayon-num" data-line="crayon-5f66590f0ab04281945763-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab04281945763-8">8</div><div class="crayon-num" data-line="crayon-5f66590f0ab04281945763-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab04281945763-10">10</div><div class="crayon-num" data-line="crayon-5f66590f0ab04281945763-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab04281945763-12">12</div><div class="crayon-num" data-line="crayon-5f66590f0ab04281945763-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab04281945763-14">14</div><div class="crayon-num" data-line="crayon-5f66590f0ab04281945763-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab04281945763-16">16</div><div class="crayon-num" data-line="crayon-5f66590f0ab04281945763-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab04281945763-18">18</div><div class="crayon-num" data-line="crayon-5f66590f0ab04281945763-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab04281945763-20">20</div><div class="crayon-num" data-line="crayon-5f66590f0ab04281945763-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab04281945763-22">22</div><div class="crayon-num" data-line="crayon-5f66590f0ab04281945763-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab04281945763-24">24</div><div class="crayon-num" data-line="crayon-5f66590f0ab04281945763-25">25</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2;"><div class="crayon-line" id="crayon-5f66590f0ab04281945763-1"><span class="crayon-t">namespace</span><span class="crayon-h"> </span><span class="crayon-e">mozilla</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab04281945763-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">struct</span><span class="crayon-h"> </span><span class="crayon-e">IsDestructibleFallbackImpl</span></div><div class="crayon-line" id="crayon-5f66590f0ab04281945763-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab04281945763-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">template</span><span class="crayon-o">&lt;</span><span class="crayon-r">typename</span><span class="crayon-h"> </span><span class="crayon-v">T</span><span class="crayon-o">&gt;</span><span class="crayon-h"> </span><span class="crayon-m">static</span><span class="crayon-h"> </span><span class="crayon-v">T</span><span class="crayon-o">&amp;&amp;</span><span class="crayon-h"> </span><span class="crayon-e">Declval</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f66590f0ab04281945763-5">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab04281945763-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">template</span><span class="crayon-o">&lt;</span><span class="crayon-r">typename</span><span class="crayon-h"> </span><span class="crayon-v">T</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-r">typename</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">decltype</span><span class="crayon-sy">(</span><span class="crayon-v">Declval</span><span class="crayon-o">&lt;</span><span class="crayon-v">T</span><span class="crayon-o">&gt;</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-o">~</span><span class="crayon-e">T</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span><span class="crayon-o">&gt;</span></div><div class="crayon-line" id="crayon-5f66590f0ab04281945763-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-m">static</span><span class="crayon-h"> </span><span class="crayon-e">TrueType </span><span class="crayon-e">Test</span><span class="crayon-sy">(</span><span class="crayon-t">int</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab04281945763-8">&nbsp;</div><div class="crayon-line" id="crayon-5f66590f0ab04281945763-9"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">template</span><span class="crayon-o">&lt;</span><span class="crayon-r">typename</span><span class="crayon-o">&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab04281945763-10"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-m">static</span><span class="crayon-h"> </span><span class="crayon-e">FalseType </span><span class="crayon-e">Test</span><span class="crayon-sy">(</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f66590f0ab04281945763-11">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab04281945763-12"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">template</span><span class="crayon-o">&lt;</span><span class="crayon-r">typename</span><span class="crayon-h"> </span><span class="crayon-e">T</span><span class="crayon-o">&gt;</span></div><div class="crayon-line" id="crayon-5f66590f0ab04281945763-13"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">struct</span><span class="crayon-h"> </span><span class="crayon-e">Selector</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab04281945763-14"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f66590f0ab04281945763-15"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">typedef</span><span class="crayon-h"> </span><span class="crayon-t">decltype</span><span class="crayon-sy">(</span><span class="crayon-v">Test</span><span class="crayon-o">&lt;</span><span class="crayon-v">T</span><span class="crayon-o">&gt;</span><span class="crayon-sy">(</span><span class="crayon-cn">0</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-v">type</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab04281945763-16"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f66590f0ab04281945763-17"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab04281945763-18">&nbsp;</div><div class="crayon-line" id="crayon-5f66590f0ab04281945763-19"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">template</span><span class="crayon-o">&lt;</span><span class="crayon-r">typename</span><span class="crayon-h"> </span><span class="crayon-v">T</span><span class="crayon-o">&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab04281945763-20"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">struct</span><span class="crayon-h"> </span><span class="crayon-v">IsDestructibleFallback</span></div><div class="crayon-line" id="crayon-5f66590f0ab04281945763-21"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">IsDestructibleFallbackImpl</span><span class="crayon-o">::</span><span class="crayon-v">Selector</span><span class="crayon-o">&lt;</span><span class="crayon-v">T</span><span class="crayon-o">&gt;</span><span class="crayon-o">::</span><span class="crayon-e">type</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab04281945763-22"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f66590f0ab04281945763-23"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab04281945763-24"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f66590f0ab04281945763-25"><span class="crayon-p">#define MOZ_IS_DESTRUCTIBLE(X) (mozilla::IsDestructibleFallback&lt;X&gt;::value)</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0007 seconds] -->
+<p>這部份最關鍵的地方是用神妙的 template deduction 透過這行<br />
+
+			<span id="crayon-5f66590f0ab07785448296" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-t">template</span><span class="crayon-o">&lt;</span><span class="crayon-r">typename</span><span class="crayon-h"> </span><span class="crayon-v">T</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-r">typename</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">decltype</span><span class="crayon-sy">(</span><span class="crayon-v">Declval</span><span class="crayon-o">&lt;</span><span class="crayon-v">T</span><span class="crayon-o">&gt;</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-o">~</span><span class="crayon-e">T</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span><span class="crayon-o">&gt;</span></span></span> 顯式呼叫解構子，在 compile time 推導出是否含有 public 解構子，達成確保 XPCOM 物件中沒有 expose public destructor 的條件限制。</p>
+<p>回到剛剛 AddRef 的實作，</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f66590f0ab09654209990" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+if (!mRefCnt.isThreadSafe) \
+NS_ASSERT_OWNINGTHREAD(_class);</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f66590f0ab09654209990-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab09654209990-2">2</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2;"><div class="crayon-line" id="crayon-5f66590f0ab09654209990-1"><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-o">!</span><span class="crayon-v">mRefCnt</span><span class="crayon-sy">.</span><span class="crayon-v">isThreadSafe</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab09654209990-2"><span class="crayon-e">NS_ASSERT_OWNINGTHREAD</span><span class="crayon-sy">(</span><span class="crayon-v">_class</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>假如 isThreadSafe 是 false 也就是說我們預期我們的 XPCOM 物件是執行在 single thread 上，會針對這個前提作一個 asssert 來確保這個假設是成立而沒有漏考慮的情況
+			<span id="crayon-5f66590f0ab0b435918855" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">NS_ASSERT_OWNINGTHREAD</span><span class="crayon-sy">(</span><span class="crayon-v">_class</span><span class="crayon-sy">)</span></span></span> 展開後會是</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f66590f0ab0d152635596" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+if (MOZ_UNLIKELY(_class-&gt;_mOwningThread.GetThread() != PR_GetCurrentThread())) {  \
+  MOZ_CRASH(msg);                                           \
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f66590f0ab0d152635596-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab0d152635596-2">2</div><div class="crayon-num" data-line="crayon-5f66590f0ab0d152635596-3">3</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2;"><div class="crayon-line" id="crayon-5f66590f0ab0d152635596-1"><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-e">MOZ_UNLIKELY</span><span class="crayon-sy">(</span><span class="crayon-v">_class</span><span class="crayon-o">-&gt;</span><span class="crayon-v">_mOwningThread</span><span class="crayon-sy">.</span><span class="crayon-e">GetThread</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">!=</span><span class="crayon-h"> </span><span class="crayon-e">PR_GetCurrentThread</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab0d152635596-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">MOZ_CRASH</span><span class="crayon-sy">(</span><span class="crayon-v">msg</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0ab0d152635596-3"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>很明顯可以看出這邊判斷了一個我們一開始生成 XPCOM 物件所偷偷紀錄的 thread handle 是否跟目前所在的 thread handle 相同？如果不一樣則觸發 crash ，讓開發者好在 Debug build 或是 Nightly build 的時候能夠明確知道有與設計上衝突的情況發生，讓開發者能夠及早發現及早修正。反之,若是THREADSAFE版本的 XPCOM Object 則不需要執行這個判斷。接下來就是直接執行
+			<span id="crayon-5f66590f0ab0f314910262" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">nsrefcnt </span><span class="crayon-v">count</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-o">++</span><span class="crayon-v">mRefCnt</span><span class="crayon-sy">;</span></span></span> 再將reference count return。</p>
+<p>看完了 AddRef 後，Release 的實作也都大同小異</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f66590f0ab11884960940" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2; font-size: 12px !important; line-height: 15px !important;">
+#define NS_IMPL_RELEASE_WITH_DESTROY(_class, _destroy)                        \
+NS_IMETHODIMP_(MozExternalRefCountType) _class::Release(void)                 \
+{                                                                             \
+  MOZ_ASSERT(int32_t(mRefCnt) &gt; 0, "dup release");                            \
+  if (!mRefCnt.isThreadSafe)                                                  \
+    NS_ASSERT_OWNINGTHREAD(_class);                                           \
+  nsrefcnt count = --mRefCnt;                                                 \
+  NS_LOG_RELEASE(this, count, #_class);                                       \
+  if (count == 0) {                                                           \
+    if (!mRefCnt.isThreadSafe)                                                \
+      NS_ASSERT_OWNINGTHREAD(_class);                                         \
+    mRefCnt = 1; /* stabilize */                                              \
+    _destroy;                                                                 \
+    return 0;                                                                 \
+  }                                                                           \
+  return count;                                                               \
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f66590f0ab11884960940-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab11884960940-2">2</div><div class="crayon-num" data-line="crayon-5f66590f0ab11884960940-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab11884960940-4">4</div><div class="crayon-num" data-line="crayon-5f66590f0ab11884960940-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab11884960940-6">6</div><div class="crayon-num" data-line="crayon-5f66590f0ab11884960940-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab11884960940-8">8</div><div class="crayon-num" data-line="crayon-5f66590f0ab11884960940-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab11884960940-10">10</div><div class="crayon-num" data-line="crayon-5f66590f0ab11884960940-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab11884960940-12">12</div><div class="crayon-num" data-line="crayon-5f66590f0ab11884960940-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab11884960940-14">14</div><div class="crayon-num" data-line="crayon-5f66590f0ab11884960940-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f66590f0ab11884960940-16">16</div><div class="crayon-num" data-line="crayon-5f66590f0ab11884960940-17">17</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:2; -o-tab-size:2; -webkit-tab-size:2; tab-size:2;"><div class="crayon-line" id="crayon-5f66590f0ab11884960940-1"><span class="crayon-p">#define NS_IMPL_RELEASE_WITH_DESTROY(_class, _destroy)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab11884960940-2"><span class="crayon-e">NS_IMETHODIMP_</span><span class="crayon-sy">(</span><span class="crayon-v">MozExternalRefCountType</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-v">_class</span><span class="crayon-o">::</span><span class="crayon-e">Release</span><span class="crayon-sy">(</span><span class="crayon-t">void</span><span class="crayon-sy">)</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0ab11884960940-3"><span class="crayon-sy">{</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab11884960940-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">MOZ_ASSERT</span><span class="crayon-sy">(</span><span class="crayon-e">int32_t</span><span class="crayon-sy">(</span><span class="crayon-v">mRefCnt</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">&gt;</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">"dup release"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0ab11884960940-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-o">!</span><span class="crayon-v">mRefCnt</span><span class="crayon-sy">.</span><span class="crayon-v">isThreadSafe</span><span class="crayon-sy">)</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab11884960940-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-e">NS_ASSERT_OWNINGTHREAD</span><span class="crayon-sy">(</span><span class="crayon-v">_class</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0ab11884960940-7"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">nsrefcnt </span><span class="crayon-v">count</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-v">mRefCnt</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab11884960940-8"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">NS_LOG_RELEASE</span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">count</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-p">#_class);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \</span></div><div class="crayon-line" id="crayon-5f66590f0ab11884960940-9"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">count</span><span class="crayon-h"> </span><span class="crayon-o">==</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab11884960940-10"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-o">!</span><span class="crayon-v">mRefCnt</span><span class="crayon-sy">.</span><span class="crayon-v">isThreadSafe</span><span class="crayon-sy">)</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0ab11884960940-11"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-e">NS_ASSERT_OWNINGTHREAD</span><span class="crayon-sy">(</span><span class="crayon-v">_class</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab11884960940-12"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">mRefCnt</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-cn">1</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-c">/* stabilize */</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0ab11884960940-13"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">_destroy</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab11884960940-14"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0ab11884960940-15"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f66590f0ab11884960940-16"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-v">count</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-sy">\</span></div><div class="crayon-line" id="crayon-5f66590f0ab11884960940-17"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0009 seconds] -->
+<p>當 reference count 歸零時，會去執行帶入的 _destroy，若沒特別指定就是帶入 
+			<span id="crayon-5f66590f0ab14330982046" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">delete</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">)</span></span></span> ，完美的處理記憶體的回收。</p>
+<hr />
+<h2>結語</h2>
+<p>當你在設計自己的 XPCOM Component 時，必須先考慮到這個 Component 是否會在多條 thread 間傳遞,如果有這種可能，就必須用 NS_DECL_THREADSAFE_ISUPPORTS ，否則就應該直接使用 NS_DECL_ISUPPORTS 。<br />
+如果原先預期是在 single thread 而不小心在不同 thread 使用了也不用擔心，在傳遞 smart pointer 時都會經過 AddRef 和 Release,上面提到的 assert 都會在 debug stage 就讓你知道，讓你可以趕緊分析問題並且修正。<br />
+這邊必須提醒的是,上述保護的只有 reference count 並沒有做任何 member function 內的thread synchronization 保護，還是必須要針對 function 內部如果有 critical section 的情形，透過Gecko提供的 mutex， monitor &#8230;等 synchronized 物件來確保 thread safe 。</p>
+<p>在 Gecko 中，<a title="也有非XPCOM的物件" href="https://dxr.mozilla.org/mozilla-central/source/dom/media/MediaDecoderStateMachine.h?from=mediadecoderstatemachine.h#118" target="_blank">也有非XPCOM的物件</a>，因為也想使用 smart pointer 來操控，也會透過 MACRO 來實作 AddRef 和 Release ，實際的實作內容也都大同小異在這邊就不多作解釋了。</p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://tech.mozilla.com.tw/?cat=4" rel="category">Firefox</a>、<a href="https://tech.mozilla.com.tw/?cat=3" rel="category">Firefox OS(B2G)</a>      </div>
+    </footer> 
+    </article><!-- #post-6496 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" 
+	              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+			<h3 id="comments-title">
+			共 1 則讀者回應
+		</h3>
+
+		
+		<ol class="commentlist">
+				<li class="comment even thread-even depth-1" id="li-comment-50056">
+		<article id="comment-50056" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/231dc673a044c0e3eafd64c487d25fdb?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/231dc673a044c0e3eafd64c487d25fdb?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn">foxfooding</cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=6496#comment-50056"><time pubdate datetime="2015-07-13T19:58:31+00:00">
+					2015 年 07 月 13 日 下午 07:58					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>請問我有機會認識您嗎? 從字裡行間感覺初你天真自然不做作的性格 請問有機會向您討教XPCOM 相關的問題嗎? 謝謝</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=6496&#038;replytocom=50056#respond' onclick='return addComment.moveForm( "comment-50056", "50056", "respond", "6496" )' aria-label='回覆 foxfooding'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+		</ol>
+
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/?p=6496#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required='true' required='required' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required='true' required='required' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表" /> <input type='hidden' name='comment_post_ID' value='6496' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="7e32ae152f" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="204"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class='name-title'><a class="profile-link" href="https://tech.mozilla.com.tw/?author=155"><span class="gravatar left"><img src="https://secure.gravatar.com/avatar/3c96fa13a2285d3d098b4b4b2ff7f89c?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=48" alt="" class="avatar user-155-avatar" width='48' height='48' /></span><span class="name">James Cheng</span></a></span><p class='contact'></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="103" href="https://tech.mozilla.com.tw/?author=103"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg" alt="" class="avatar user-103-avatar" width='96' height='96' /></a><a data-author-id="43" href="https://tech.mozilla.com.tw/?author=43"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg" alt="" class="avatar user-43-avatar" width='96' height='96' /></a><a data-author-id="52" href="https://tech.mozilla.com.tw/?author=52"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg" alt="" class="avatar user-52-avatar" width='96' height='96' /></a><a data-author-id="41" href="https://tech.mozilla.com.tw/?author=41"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg" alt="" class="avatar user-41-avatar" width='96' height='96' /></a><a data-author-id="18" href="https://tech.mozilla.com.tw/?author=18"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg" alt="" class="avatar user-18-avatar" width='96' height='96' /></a><a data-author-id="60" href="https://tech.mozilla.com.tw/?author=60"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg" alt="" class="avatar user-60-avatar" width='96' height='96' /></a></div><a class="more" href="/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://tech.mozilla.com.tw/?cat=8" >CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://tech.mozilla.com.tw/?cat=4" >Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://tech.mozilla.com.tw/?cat=3" >Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://tech.mozilla.com.tw/?cat=30" >Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://tech.mozilla.com.tw/?cat=9" >Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://tech.mozilla.com.tw/?cat=42" >Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://tech.mozilla.com.tw/?cat=5" >Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://tech.mozilla.com.tw/?cat=7" >Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://tech.mozilla.com.tw/?cat=29" >UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">選擇月份</option>
+				<option value='https://tech.mozilla.com.tw/?m=201605'> 2016 年 五月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201602'> 2016 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201507'> 2015 年 七月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201506'> 2015 年 六月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201505'> 2015 年 五月 &nbsp;(2)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201504'> 2015 年 四月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201503'> 2015 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201502'> 2015 年 二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201501'> 2015 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201412'> 2014 年 十二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201411'> 2014 年 十一月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201410'> 2014 年 十月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201409'> 2014 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201408'> 2014 年 八月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201407'> 2014 年 七月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201405'> 2014 年 五月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201404'> 2014 年 四月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201403'> 2014 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201402'> 2014 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201401'> 2014 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201312'> 2013 年 十二月 &nbsp;(6)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201311'> 2013 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201310'> 2013 年 十月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201309'> 2013 年 九月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201308'> 2013 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201307'> 2013 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201306'> 2013 年 六月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201305'> 2013 年 五月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201304'> 2013 年 四月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201303'> 2013 年 三月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201302'> 2013 年 二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201301'> 2013 年 一月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201212'> 2012 年 十二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201211'> 2012 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201210'> 2012 年 十月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201209'> 2012 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201208'> 2012 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201207'> 2012 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201206'> 2012 年 六月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201205'> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

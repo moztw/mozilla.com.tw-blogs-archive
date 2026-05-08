@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+四個 SVG 動畫應用範例 － Firefox 十週年活動網站技術解密 | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="http://tech.mozilla.com.tw/posts/5660/%e5%9b%9b%e5%80%8b-svg-%e5%8b%95%e7%95%ab%e6%87%89%e7%94%a8%e7%af%84%e4%be%8b-%ef%bc%8d-firefox-%e5%8d%81%e9%80%b1%e5%b9%b4%e6%b4%bb%e5%8b%95%e7%b6%b2%e7%ab%99%e6%8a%80%e8%a1%93%e8%a7%a3%e5%af%86"/><meta property="og:image" content="http://tech.mozilla.com.tw/wp-content/uploads/2014/11/10years-svg.png" />
+
+<link rel="stylesheet" type="text/css" media="all" href="http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<link rel="stylesheet" type="text/css" media="all" href="http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css" /><!--<link rel="pingback" href="http://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="http://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"http://tech.mozilla.com.tw/","urlLoginRedirect":"http://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"http://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"http://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=3530475bc1","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel='dns-prefetch' href='//s.w.org'>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo;" href="http://tech.mozilla.com.tw/feed" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 迴響" href="http://tech.mozilla.com.tw/comments/feed" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 四個 SVG 動畫應用範例 － Firefox 十週年活動網站技術解密 迴響" href="http://tech.mozilla.com.tw/posts/5660/%e5%9b%9b%e5%80%8b-svg-%e5%8b%95%e7%95%ab%e6%87%89%e7%94%a8%e7%af%84%e4%be%8b-%ef%bc%8d-firefox-%e5%8d%81%e9%80%b1%e5%b9%b4%e6%b4%bb%e5%8b%95%e7%b6%b2%e7%ab%99%e6%8a%80%e8%a1%93%e8%a7%a3%e5%af%86/feed" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"http:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='crayon-css'  href='http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-arduino-ide-css'  href='http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='advanced-responsive-video-embedder-css'  href='http://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0' type='text/css' media='all' />
+<link rel='stylesheet' id='persona-style-css'  href='http://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46' type='text/css' media='all' />
+<script type='text/javascript' src='http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"http:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<link rel='https://api.w.org/' href='http://tech.mozilla.com.tw/wp-json/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Web app 如何操作硬體功能（Firefox OS 的內部溝通 － 藍牙篇）' href='http://tech.mozilla.com.tw/posts/5232/web-app-%e5%a6%82%e4%bd%95%e6%93%8d%e4%bd%9c%e7%a1%ac%e9%ab%94%e5%8a%9f%e8%83%bd%ef%bc%88firefox-os-%e7%9a%84%e5%85%a7%e9%83%a8%e6%ba%9d%e9%80%9a-%e8%97%8d%e7%89%99%e7%af%87%ef%bc%89' />
+<link rel='next' title='建構 Firefox OS 操作介面的基本元素: Fira Sans 字型' href='http://tech.mozilla.com.tw/posts/5686/%e5%bb%ba%e6%a7%8b-firefox-os-%e6%93%8d%e4%bd%9c%e4%bb%8b%e9%9d%a2%e7%9a%84%e5%9f%ba%e6%9c%ac%e5%85%83%e7%b4%a0-fira-sans-%e5%ad%97%e5%9e%8b' />
+<meta name="generator" content="WordPress 4.6" />
+<link rel="canonical" href="http://tech.mozilla.com.tw/posts/5660/%e5%9b%9b%e5%80%8b-svg-%e5%8b%95%e7%95%ab%e6%87%89%e7%94%a8%e7%af%84%e4%be%8b-%ef%bc%8d-firefox-%e5%8d%81%e9%80%b1%e5%b9%b4%e6%b4%bb%e5%8b%95%e7%b6%b2%e7%ab%99%e6%8a%80%e8%a1%93%e8%a7%a3%e5%af%86" />
+<link rel='shortlink' href='http://tech.mozilla.com.tw/?p=5660' />
+<link rel="alternate" type="application/json+oembed" href="http://tech.mozilla.com.tw/wp-json/oembed/1.0/embed?url=http%3A%2F%2Ftech.mozilla.com.tw%2Fposts%2F5660%2F%25e5%259b%259b%25e5%2580%258b-svg-%25e5%258b%2595%25e7%2595%25ab%25e6%2587%2589%25e7%2594%25a8%25e7%25af%2584%25e4%25be%258b-%25ef%25bc%258d-firefox-%25e5%258d%2581%25e9%2580%25b1%25e5%25b9%25b4%25e6%25b4%25bb%25e5%258b%2595%25e7%25b6%25b2%25e7%25ab%2599%25e6%258a%2580%25e8%25a1%2593%25e8%25a7%25a3%25e5%25af%2586" />
+<link rel="stylesheet" href="http://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-5660 single-format-standard sand">
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='//mozilla.com.tw/' class='home'>Home</a>
+            <b>&raquo;</b>
+            <a href='//mozilla.com.tw/news/'>訊息中心</a>
+            <b>&raquo;</b>
+                          <a href='//tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>
+              <span>四個 SVG 動畫應用範例 － Firefox 十週年活動網站技術解密</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="http://tech.mozilla.com.tw/posts/5660/%e5%9b%9b%e5%80%8b-svg-%e5%8b%95%e7%95%ab%e6%87%89%e7%94%a8%e7%af%84%e4%be%8b-%ef%bc%8d-firefox-%e5%8d%81%e9%80%b1%e5%b9%b4%e6%b4%bb%e5%8b%95%e7%b6%b2%e7%ab%99%e6%8a%80%e8%a1%93%e8%a7%a3%e5%af%86" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="http://tech.mozilla.com.tw/posts/5660/%e5%9b%9b%e5%80%8b-svg-%e5%8b%95%e7%95%ab%e6%87%89%e7%94%a8%e7%af%84%e4%be%8b-%ef%bc%8d-firefox-%e5%8d%81%e9%80%b1%e5%b9%b4%e6%b4%bb%e5%8b%95%e7%b6%b2%e7%ab%99%e6%8a%80%e8%a1%93%e8%a7%a3%e5%af%86"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=http://tech.mozilla.com.tw/posts/5660/%e5%9b%9b%e5%80%8b-svg-%e5%8b%95%e7%95%ab%e6%87%89%e7%94%a8%e7%af%84%e4%be%8b-%ef%bc%8d-firefox-%e5%8d%81%e9%80%b1%e5%b9%b4%e6%b4%bb%e5%8b%95%e7%b6%b2%e7%ab%99%e6%8a%80%e8%a1%93%e8%a7%a3%e5%af%86&media=http://tech.mozilla.com.tw/wp-content/uploads/2014/11/10years-svg-150x150.png" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+	        <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">0</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="http://tech.mozilla.com.tw/posts/5232/web-app-%e5%a6%82%e4%bd%95%e6%93%8d%e4%bd%9c%e7%a1%ac%e9%ab%94%e5%8a%9f%e8%83%bd%ef%bc%88firefox-os-%e7%9a%84%e5%85%a7%e9%83%a8%e6%ba%9d%e9%80%9a-%e8%97%8d%e7%89%99%e7%af%87%ef%bc%89"><div class="post-tip"><img width="48" height="48" src="http://tech.mozilla.com.tw/wp-content/uploads/2014/09/B2G_BT5-50x50.png" class="attachment-48x48 size-48x48 wp-post-image" alt="B2G_BT5" srcset="http://tech.mozilla.com.tw/wp-content/uploads/2014/09/B2G_BT5-50x50.png 50w, http://tech.mozilla.com.tw/wp-content/uploads/2014/09/B2G_BT5-150x150.png 150w" sizes="(max-width: 48px) 100vw, 48px" /><span class="meta-nav">Web app 如何操作硬體功能（Firefox OS 的內部溝通 － 藍牙篇）</span></div></a></div>		
+							<div class="nav-next"><a href="http://tech.mozilla.com.tw/posts/5686/%e5%bb%ba%e6%a7%8b-firefox-os-%e6%93%8d%e4%bd%9c%e4%bb%8b%e9%9d%a2%e7%9a%84%e5%9f%ba%e6%9c%ac%e5%85%83%e7%b4%a0-fira-sans-%e5%ad%97%e5%9e%8b"><div class="post-tip"><img width="48" height="48" src="http://tech.mozilla.com.tw/wp-content/uploads/2014/11/FiraSase_mark2-50x50.png" class="attachment-48x48 size-48x48 wp-post-image" alt="FiraSase_mark" srcset="http://tech.mozilla.com.tw/wp-content/uploads/2014/11/FiraSase_mark2-50x50.png 50w, http://tech.mozilla.com.tw/wp-content/uploads/2014/11/FiraSase_mark2-150x150.png 150w" sizes="(max-width: 48px) 100vw, 48px" /><span class="meta-nav">建構 Firefox OS 操作介面的基本元素: Fira Sans 字型</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-5660" class="post-5660 post type-post status-publish format-standard has-post-thumbnail hentry category-css category-javascript">
+	 	<header class="entry-header">
+		<h1 class="entry-title">四個 SVG 動畫應用範例 － Firefox 十週年活動網站技術解密</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="http://tech.mozilla.com.tw/posts/date/2014/11" class="posted-month">11月</a>
+	        <span class="posted-date">12</span>
+	        <a title="See all posts from 2014" href="http://tech.mozilla.com.tw/posts/date/2014" class="posted-year">2014</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="61">
+		  	<a href="http://tech.mozilla.com.tw/posts/author/elinmozilla-com">
+	          <img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg" alt="" class="avatar user-61-avatar" width='24' height='24' /><!--
+	       --><div class="author-info">小y</div><!--
+	       --><div class="author-title">&nbsp;- 網站開發類編輯</div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p><a href="http://tech.mozilla.com.tw/wp-content/uploads/2014/11/10years-svg.png"><img class="aligncenter size-full wp-image-5744" src="http://tech.mozilla.com.tw/wp-content/uploads/2014/11/10years-svg.png" alt="10years-svg" width="286" height="230" /></a>不知道大家有沒有注意到，這次的 <a title="Firefox 十週年 - 幸福的狐家元件" href="http://mozilla.com.tw/10years/firefox-family/" target="_blank">Firefox 十週年活動網站</a>上出現了一些特殊的動畫元素。這些元素不是 GIF 圖素，也不需要複雜的動畫套件，而是運用了 SVG 本身具備的動畫功能。</p>
+<p>使用 SVG 來做動畫有幾個好處：</p>
+<ul>
+<li>首先因為是向量圖形，所以任意縮放變形都不怕出現鋸齒顆粒。</li>
+<li>多數向量繪圖軟體都支援 SVG 輸出，詳細支援度可參考 <a href="http://en.wikipedia.org/wiki/Comparison_of_vector_graphics_editors#File_format_support" target="_blank">Wikipedia 上的比較表</a>。</li>
+<li>除了進行一些數值型的動畫漸變（位置、顏色等）以外，也支援路徑和形狀漸變。</li>
+<li>可內嵌於網頁中，並搭配 CSS/Javascript 進行樣式變化、設定動畫、互動功能等。</li>
+<li>支援導引線動畫。</li>
+<li>可透過 
+			<span id="crayon-59ebe1d8b14ca267001514" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">xlink</span><span class="crayon-o">:</span><span class="crayon-v">href</span></span></span> 屬性重用元素。</li>
+</ul>
+<p>以下的四個範例將會一一示範這些 SVG 的特異功能。</p>
+<h2>線條繪製動畫</h2>
+<p class='codepen'  data-height='268' data-theme-id='0' data-slug-hash='riDwh' data-default-tab='result' data-animations='run' data-editable='' data-embed-version='2'>
+See the Pen <a href=’https://codepen.io/yshlin/pen/riDwh/’>SVG Line Drawing Animation</a> by Eddie Lin (<a href=’http://codepen.io/yshlin’>@yshlin</a>) on <a href=’http://codepen.io’>CodePen</a>.0</p>
+<script async src="//codepen.io/assets/embed/ei.js"></script>
+<p>可以看到<a title="Firefox 十週年 - 幸福的狐家元件" href="http://mozilla.com.tw/10years/firefox-family/" target="_blank">幸福的狐家元件活動網頁</a>裡，在往下捲動的過程中，附加元件的圖示線條流暢地繪製出來，這是如何做到的呢？首先當然需要 SVG 圖素，這部分需要先請設計師在向量圖軟體中繪製完成，再透過軟體匯出為 SVG 檔案。有了 SVG 檔案以後接下來的就簡單了，只需要運用兩個 SVG 圖形元素的屬性：
+			<span id="crayon-59ebe1d8b14d7847835515" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">stroke</span><span class="crayon-o">-</span><span class="crayon-v">dasharray</span></span></span> 、
+			<span id="crayon-59ebe1d8b14d9119542343" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">stroke</span><span class="crayon-o">-</span><span class="crayon-v">dashoffset</span></span></span> 。</p>
+<p>
+			<span id="crayon-59ebe1d8b14db911432194" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">stroke</span><span class="crayon-o">-</span><span class="crayon-v">dasharray</span></span></span> 的用途是指定線條的虛線樣式，通常由一組數字陣列所組成，在繪製虛線時會依據陣列內的數字決定線條或間隔的長度，詳細的使用方式可參考 <a title="stroke-dasharray - SVG" href="https://developer.mozilla.org/zh-TW/docs/Web/SVG/Attribute/stroke-dasharray" target="_blank">MDN 說明文件</a>，在這裡只需要用到最簡單的單一值用法，簡單來說 
+			<span id="crayon-59ebe1d8b14de469097285" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">stroke</span><span class="crayon-o">-</span><span class="crayon-v">dasharray</span><span class="crayon-o">=</span><span class="crayon-s">"5"</span></span></span> 代表了虛線會以 5px 的長度及 5px 的間隔來繪製，那麼如果 
+			<span id="crayon-59ebe1d8b14df554741285" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">stroke</span><span class="crayon-o">-</span><span class="crayon-v">dasharray</span></span></span> 內指定的長度完全和線條的長度一樣（或更長），會發生什麼事呢？我們會看到完整的實線被繪製出來，並且不會有任何短少或接縫出現，例如線條長度有 100px，而 
+			<span id="crayon-59ebe1d8b14e1077485790" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">stroke</span><span class="crayon-o">-</span><span class="crayon-v">dasharray</span><span class="crayon-o">=</span><span class="crayon-s">"100"</span></span></span>，則我們會得到和原本沒設定時一模一樣的 100px 實線。</p>
+<p><a href="http://tech.mozilla.com.tw/wp-content/uploads/2014/11/stroke-dasharray.svg_1.png"><img src="http://tech.mozilla.com.tw/wp-content/uploads/2014/11/stroke-dasharray.svg_1.png" alt="" /></a></p>
+<p>那麼為什麼要做這樣的設定呢？其實我們是要運用虛線接下來的 100px 間隔來幫助我們完成繪製動畫。設定了 
+			<span id="crayon-59ebe1d8b14e3891311691" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">stroke</span><span class="crayon-o">-</span><span class="crayon-v">dasharray</span><span class="crayon-o">=</span><span class="crayon-s">"100"</span></span></span> 之後，後面的 100px 間隔並非不存在，只是目前的位置看不到罷了。因此我們只需要再運用 
+			<span id="crayon-59ebe1d8b14e5422608380" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">stroke</span><span class="crayon-o">-</span><span class="crayon-v">dashoffset</span></span></span> 屬性，改變虛線繪製的啟始位置即可。比如說設定 
+			<span id="crayon-59ebe1d8b14e7931521408" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">stroke</span><span class="crayon-o">-</span><span class="crayon-v">dashoffset</span><span class="crayon-o">=</span><span class="crayon-s">"50"</span></span></span>，我們會看到 100px 線條只畫出了一半，而當 
+			<span id="crayon-59ebe1d8b14e9803514735" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">stroke</span><span class="crayon-o">-</span><span class="crayon-v">dashoffset</span><span class="crayon-o">=</span><span class="crayon-s">"100"</span></span></span> 時，我們發現整個線條都不見了！</p>
+<p><a href="http://tech.mozilla.com.tw/wp-content/uploads/2014/11/stroke-dashoffset.svg_1.png"><img src="http://tech.mozilla.com.tw/wp-content/uploads/2014/11/stroke-dashoffset.svg_1.png" alt="" /></a></p>
+<p>這樣一來我們只要透過 SVG 的 
+			<span id="crayon-59ebe1d8b14eb912012452" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">animate</span></span></span> 元素設定，或是 CSS、Javascript 來漸進式地改變 
+			<span id="crayon-59ebe1d8b14ec817569375" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">stroke</span><span class="crayon-o">-</span><span class="crayon-v">dashoffset</span></span></span> 的數值，就可以做出線條繪製的動畫效果囉！以下示範 CSS 動畫的設定方式：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59ebe1d8b14ee116201035" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.logo-outline path {
+  animation: draw 3s linear infinite;
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59ebe1d8b14ee116201035-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b14ee116201035-2">2</div><div class="crayon-num" data-line="crayon-59ebe1d8b14ee116201035-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b14ee116201035-4">4</div><div class="crayon-num" data-line="crayon-59ebe1d8b14ee116201035-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b14ee116201035-6">6</div><div class="crayon-num" data-line="crayon-59ebe1d8b14ee116201035-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b14ee116201035-8">8</div><div class="crayon-num" data-line="crayon-59ebe1d8b14ee116201035-9">9</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59ebe1d8b14ee116201035-1"><span class="crayon-n">@keyframes draw </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b14ee116201035-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-k ">to </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-59ebe1d8b14ee116201035-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-e ">stroke-dashoffset</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">0</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b14ee116201035-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-59ebe1d8b14ee116201035-5"><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b14ee116201035-6">&nbsp;</div><div class="crayon-line" id="crayon-59ebe1d8b14ee116201035-7"><span class="crayon-k ">.logo-outline path </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b14ee116201035-8"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e ">animation</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">draw</span><span class="crayon-h"> </span><span class="crayon-i ">3s</span><span class="crayon-h"> </span><span class="crayon-i ">linear</span><span class="crayon-h"> </span><span class="crayon-i ">infinite</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-59ebe1d8b14ee116201035-9"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0007 seconds] -->
+<p>可以看到 CSS 動畫中除了針對一般 HTML 屬性以外，也可對 svg 圖形特有的屬性進行漸變。這裡建議在 SVG 路徑內的 
+			<span id="crayon-59ebe1d8b14ef633445134" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">stroke<span class="crayon-o">-</span>dasharray</span></span> 、
+			<span id="crayon-59ebe1d8b14f1970148854" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">stroke<span class="crayon-o">-</span>dashoffset</span></span>上設定和線條總長度一樣的值，比如說
+			<span id="crayon-59ebe1d8b14f2972771435" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e ">stroke-dasharray</span><span class="crayon-o">=</span><span class="crayon-s ">"100"</span><span class="crayon-h"> </span><span class="crayon-e ">stroke-dashoffset</span><span class="crayon-o">=</span><span class="crayon-s ">"100"</span></span></span>，並在
+			<span id="crayon-59ebe1d8b14f4625678762" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-n">@keyframes</span></span></span>中指定
+			<span id="crayon-59ebe1d8b14f5509049782" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-i ">to</span></span></span>，讓
+			<span id="crayon-59ebe1d8b14f6411747630" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">stroke<span class="crayon-o">-</span>dashoffset</span></span>的數值漸變為 0，這樣就能達到繪製線條的動畫效果，且指定
+			<span id="crayon-59ebe1d8b14f8453468927" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-i ">to</span></span></span>的好處是
+			<span id="crayon-59ebe1d8b14f9184753859" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-n">@keyframes</span></span></span>設定可以重用在總長度不同的路徑圖形之上，不需要為了各別的路徑分別作設定。</p>
+<p>這邊比較麻煩的地方是需要預先取得線條的總長度，如果線條是 
+			<span id="crayon-59ebe1d8b14fb912346290" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">circle</span></span></span>、
+			<span id="crayon-59ebe1d8b14fc499046972" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">rect</span></span></span>、
+			<span id="crayon-59ebe1d8b14fd403718363" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">line</span></span></span> 等等簡單形狀的話，長度可以透過簡單的公式自己算出來，如果是 
+			<span id="crayon-59ebe1d8b14ff424580071" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">polyline</span></span></span> 的話稍微麻煩一點，線段少的就當作多條 
+			<span id="crayon-59ebe1d8b1500373476264" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">line</span></span></span>  來運算加總，線段多的可能直接用目視猜測慢慢逼近。那麼如果是包含複雜曲線的 
+			<span id="crayon-59ebe1d8b1502392124544" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">path</span></span></span> 元素呢？其實這反而相對簡單，只需要利用 Javascript 取得元素之後，呼叫 
+			<span id="crayon-59ebe1d8b1503264887465" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">getTotalLength</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 函式即可，有時候 
+			<span id="crayon-59ebe1d8b1505041949125" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">getTotalLengh</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 取得的數字會有些微的誤差，這部分要再視圖形的狀況個別調整。</p>
+<p>另外如果想要讓線條繪製動畫可以配合捲軸動畫來運作，可以參考活動網站的作法（<a href="https://github.com/elin-moco/bedrock/blob/master/media/js/mocotw/10years-firefox-family.js#L449" target="_blank">Github 連結在此</a>）。</p>
+<h2>多影格動畫</h2>
+<p class='codepen'  data-height='268' data-theme-id='0' data-slug-hash='vubHw' data-default-tab='result' data-animations='run' data-editable='' data-embed-version='2'>
+See the Pen <a href=’https://codepen.io/yshlin/pen/vubHw/’>SVG Waving Smoke</a> by Eddie Lin (<a href=’http://codepen.io/yshlin’>@yshlin</a>) on <a href=’http://codepen.io’>CodePen</a>.0</p>
+<script async src="//codepen.io/assets/embed/ei.js"></script>
+<p>SVG 動畫很方便的地方在於，我們只需要設定形狀或路徑的關鍵畫格（<a href="http://en.wikipedia.org/wiki/Key_frame" target="_blank">keyframes</a>），它會自動補齊中間的漸變動畫。這個範例中要做的是類似卡通裡波浪式的冒煙效果。首先我們需要四組 S 型路徑以組成一組波浪動畫：</p>
+<p><a href="http://tech.mozilla.com.tw/wp-content/uploads/2014/11/smoke-waves.svg_1.png"><img src="http://tech.mozilla.com.tw/wp-content/uploads/2014/11/smoke-waves.svg_1.png" alt="" /></a></p>
+<p>這個範例的四組路徑的定義值分別為
+			<span id="crayon-59ebe1d8b1507346990639" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e ">d</span><span class="crayon-o">=</span><span class="crayon-s ">"M 5 5 c -3 2, -3 8, 0 10 s 3 8, 0 10"</span></span></span>、
+			<span id="crayon-59ebe1d8b1509962417965" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e ">d</span><span class="crayon-o">=</span><span class="crayon-s ">"M 3 5 c 0 3, 4 7, 4 10 s -4 7, -4 10"</span></span></span>、
+			<span id="crayon-59ebe1d8b150a173805767" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e ">d</span><span class="crayon-o">=</span><span class="crayon-s ">"M 5 5 c 3 2, 3 8, 0 10 s -3 8"</span></span></span>、
+			<span id="crayon-59ebe1d8b150c949726453" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e ">d</span><span class="crayon-o">=</span><span class="crayon-s ">"M 7 5 c 0 3, -4 7, -4 10 s 4 7, 4 10"</span></span></span> 。接下來要做的就是將它們加入動畫的關鍵畫格設定中，讓我們在 
+			<span id="crayon-59ebe1d8b150d458714394" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">path</span></span></span> 元素內加上一個 
+			<span id="crayon-59ebe1d8b150e332510843" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">animate</span></span></span> 元素如下：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59ebe1d8b1510712300019" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;path id="smoke" fill="none" stroke="#999999" stroke-width="6" 
+      stroke-linecap="round" stroke-linejoin="round"&gt;
+  &lt;animate attributeName="d"
+           values="M 5 5 c -3 2, -3 8, 0 10 s 3 8, 0 10;M 3 5 c 0 3, 4 7, 4 10 s -4 7, -4 10;M 5 5 c 3 2, 3 8, 0 10 s -3 8, 0 10;M 7 5 c 0 3, -4 7, -4 10 s 4 7, 4 10;M 5 5 c -3 2, -3 8, 0 10 s 3 8, 0 10"
+           dur="1s"
+           repeatCount="indefinite"/&gt;
+&lt;/path&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59ebe1d8b1510712300019-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b1510712300019-2">2</div><div class="crayon-num" data-line="crayon-59ebe1d8b1510712300019-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b1510712300019-4">4</div><div class="crayon-num" data-line="crayon-59ebe1d8b1510712300019-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b1510712300019-6">6</div><div class="crayon-num" data-line="crayon-59ebe1d8b1510712300019-7">7</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59ebe1d8b1510712300019-1"><span class="crayon-r ">&lt;path </span><span class="crayon-e ">id</span><span class="crayon-o">=</span><span class="crayon-s ">"smoke"</span><span class="crayon-h"> </span><span class="crayon-e ">fill</span><span class="crayon-o">=</span><span class="crayon-s ">"none"</span><span class="crayon-h"> </span><span class="crayon-e ">stroke</span><span class="crayon-o">=</span><span class="crayon-s ">"#999999"</span><span class="crayon-h"> </span><span class="crayon-e ">stroke-width</span><span class="crayon-o">=</span><span class="crayon-s ">"6"</span><span class="crayon-h"> </span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b1510712300019-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-e ">stroke-linecap</span><span class="crayon-o">=</span><span class="crayon-s ">"round"</span><span class="crayon-h"> </span><span class="crayon-e ">stroke-linejoin</span><span class="crayon-o">=</span><span class="crayon-s ">"round"</span><span class="crayon-r ">&gt;</span></div><div class="crayon-line" id="crayon-59ebe1d8b1510712300019-3"><span class="crayon-i ">&nbsp;&nbsp;</span><span class="crayon-r ">&lt;animate </span><span class="crayon-e ">attributeName</span><span class="crayon-o">=</span><span class="crayon-s ">"d"</span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b1510712300019-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-e ">values</span><span class="crayon-o">=</span><span class="crayon-s ">"M 5 5 c -3 2, -3 8, 0 10 s 3 8, 0 10;M 3 5 c 0 3, 4 7, 4 10 s -4 7, -4 10;M 5 5 c 3 2, 3 8, 0 10 s -3 8, 0 10;M 7 5 c 0 3, -4 7, -4 10 s 4 7, 4 10;M 5 5 c -3 2, -3 8, 0 10 s 3 8, 0 10"</span></div><div class="crayon-line" id="crayon-59ebe1d8b1510712300019-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-e ">dur</span><span class="crayon-o">=</span><span class="crayon-s ">"1s"</span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b1510712300019-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-e ">repeatCount</span><span class="crayon-o">=</span><span class="crayon-s ">"indefinite"</span><span class="crayon-r ">/&gt;</span></div><div class="crayon-line" id="crayon-59ebe1d8b1510712300019-7"><span class="crayon-r ">&lt;/path&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p>
+			<span id="crayon-59ebe1d8b1511333664151" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">attributeName</span></span>是用來指定要漸變的屬性，這裡設定
+			<span id="crayon-59ebe1d8b1513678506967" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e ">attributeName</span><span class="crayon-o">=</span><span class="crayon-s ">"d"</span></span></span>以進行路徑值的漸變。通常簡單的情況我們只在 
+			<span id="crayon-59ebe1d8b1514718918905" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">animate</span></span></span> 元素上加上 
+			<span id="crayon-59ebe1d8b1516783932978" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">from</span></span></span>  或 
+			<span id="crayon-59ebe1d8b1517184603814" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-st">to</span></span></span> 屬性，讓圖形只針對頭尾兩組設定值進行漸變，但在這個範例中需要多個關鍵畫格才能讓動畫流暢地漸變，因此我們改用 
+			<span id="crayon-59ebe1d8b1518310031137" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">values</span></span></span>  屬性。
+			<span id="crayon-59ebe1d8b151a141538601" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">values</span></span></span> 屬性的用法如上例，只要用分號 ; 來區隔每個關鍵畫格的設定值即可，要注意的是為了讓動畫能夠完成循環，最後一個關鍵畫格要和第一格一樣，因此範例中有五組關鍵畫格設定。
+			<span id="crayon-59ebe1d8b151b306323715" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">dur</span></span></span> 屬性是設定動畫的時間長度，如果像現在有五組關鍵畫格設定的話， 
+			<span id="crayon-59ebe1d8b151d991239926" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">dur</span></span></span> 可以針對中間產生的四組漸變區段各別設定不同的時間長度，在這個範例中只設定了一個總長度 
+			<span id="crayon-59ebe1d8b151e105065105" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">dur</span><span class="crayon-o">=</span><span class="crayon-s">"1s"</span></span></span>，如此一來三個區段的時間長度就會平均分配，也就是變成每一段 0.25 秒。最後因為要讓它無限循環所以要設定 
+			<span id="crayon-59ebe1d8b1520089248750" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">repeatCount</span><span class="crayon-o">=</span><span class="crayon-s">"indefinite"</span></span></span> 。</p>
+<p>有了一條波浪後，接下來就是想辦法複製三條出來。為了將來維護方便，我不希望同樣的東西被複製貼上三次，以免到時要更改設定時要改三次。這時就可以使用 
+			<span id="crayon-59ebe1d8b1522250902125" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">xlink<span class="crayon-o">:</span>href</span></span> 屬性。首先在 svg 元素上加上 
+			<span id="crayon-59ebe1d8b1523788194963" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">xmlns<span class="crayon-o">:</span>xlink</span></span> 屬性以引用 
+			<span id="crayon-59ebe1d8b1525925183452" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">xlink</span></span> 的命名空間定義：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59ebe1d8b1526623676407" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;svg version="1.1" 
+     xmlns="http://www.w3.org/2000/svg" 
+     xmlns:xlink="http://www.w3.org/1999/xlink"&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59ebe1d8b1526623676407-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b1526623676407-2">2</div><div class="crayon-num" data-line="crayon-59ebe1d8b1526623676407-3">3</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59ebe1d8b1526623676407-1"><span class="crayon-r ">&lt;svg </span><span class="crayon-e ">version</span><span class="crayon-o">=</span><span class="crayon-s ">"1.1"</span><span class="crayon-h"> </span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b1526623676407-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-e ">xmlns</span><span class="crayon-o">=</span><span class="crayon-s ">"http://www.w3.org/2000/svg"</span><span class="crayon-h"> </span></div><div class="crayon-line" id="crayon-59ebe1d8b1526623676407-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span>xmlns<span class="crayon-o">:</span><span class="crayon-e ">xlink</span><span class="crayon-o">=</span><span class="crayon-s ">"http://www.w3.org/1999/xlink"</span><span class="crayon-r ">&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>接著在波浪的 
+			<span id="crayon-59ebe1d8b1528645095086" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">path</span></span> 元素底下加上兩個 
+			<span id="crayon-59ebe1d8b1529596729959" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">use</span></span> 元素：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59ebe1d8b152b018978593" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+  &lt;use xlink:href="#smoke" transform="translate(10,0)" /&gt;
+  &lt;use xlink:href="#smoke" transform="translate(20,0)" /&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59ebe1d8b152b018978593-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b152b018978593-2">2</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59ebe1d8b152b018978593-1"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-r ">&lt;use </span>xlink<span class="crayon-o">:</span><span class="crayon-e ">href</span><span class="crayon-o">=</span><span class="crayon-s ">"#smoke"</span><span class="crayon-h"> </span><span class="crayon-e ">transform</span><span class="crayon-o">=</span><span class="crayon-s ">"translate(10,0)"</span><span class="crayon-r "> /&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b152b018978593-2"><span class="crayon-i ">&nbsp;&nbsp;</span><span class="crayon-r ">&lt;use </span>xlink<span class="crayon-o">:</span><span class="crayon-e ">href</span><span class="crayon-o">=</span><span class="crayon-s ">"#smoke"</span><span class="crayon-h"> </span><span class="crayon-e ">transform</span><span class="crayon-o">=</span><span class="crayon-s ">"translate(20,0)"</span><span class="crayon-r "> /&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>
+			<span id="crayon-59ebe1d8b152c272587524" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">xlink<span class="crayon-o">:</span><span class="crayon-e ">href</span><span class="crayon-o">=</span><span class="crayon-s ">"#smoke"</span></span></span>透過 
+			<span id="crayon-59ebe1d8b152d990236636" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">path</span></span> 的 id 來引用波浪動畫路徑，達到複製的效果，而
+			<span id="crayon-59ebe1d8b152f596240867" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e ">transform</span><span class="crayon-o">=</span><span class="crayon-s ">"translate(10,0)"</span></span></span>則是指定複製出來路徑的位移，這邊設定讓三條波浪動畫水平間隔 10 像素排列。如此一來就完成冒煙的動畫啦！</p>
+<h2>導引線動畫</h2>
+<p class='codepen'  data-height='268' data-theme-id='0' data-slug-hash='dxGlH' data-default-tab='result' data-animations='run' data-editable='' data-embed-version='2'>
+See the Pen <a href=’https://codepen.io/yshlin/pen/dxGlH/’>SVG Animate Along Path</a> by Eddie Lin (<a href=’http://codepen.io/yshlin’>@yshlin</a>) on <a href=’http://codepen.io’>CodePen</a>.0</p>
+<script async src="//codepen.io/assets/embed/ei.js"></script>
+<p>導引線動畫的效果就是讓圖形可以沿著指定的路徑移動，要達到這個效果首先需要一條繪製好的路徑，要注意的是導引線路徑只支援 
+			<span id="crayon-59ebe1d8b1531657223019" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">path</span></span></span> 元素，所以如果發現匯出的 SVG 內容出現 
+			<span id="crayon-59ebe1d8b1532684816579" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">polyline</span></span></span> 或是其它元素，那麼可能要想辦法在向量圖軟體中進行轉換（可以試著切斷封閉路徑、或接上一小段曲線路徑再匯出）。假設我們已經把 
+			<span id="crayon-59ebe1d8b1534727805356" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">path</span></span></span> 元素準備好，並設定 
+			<span id="crayon-59ebe1d8b1535152985722" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">id</span><span class="crayon-o">=</span><span class="crayon-s">"wire"</span></span></span>：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59ebe1d8b1536710821632" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;path d="M-1,1.499h83c0,0,10.5,1,10.5,11.25s-10.25,12.25-10.25,12.25h-43.5c0,0-10.75,0.75-11.75,11.5s9.75,12.25,9.75,12.25H343.5"
+      stroke="none" fill="none" id="wire"&gt;&lt;/path&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59ebe1d8b1536710821632-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b1536710821632-2">2</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59ebe1d8b1536710821632-1"><span class="crayon-r ">&lt;path </span><span class="crayon-e ">d</span><span class="crayon-o">=</span><span class="crayon-s ">"M-1,1.499h83c0,0,10.5,1,10.5,11.25s-10.25,12.25-10.25,12.25h-43.5c0,0-10.75,0.75-11.75,11.5s9.75,12.25,9.75,12.25H343.5"</span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b1536710821632-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-e ">stroke</span><span class="crayon-o">=</span><span class="crayon-s ">"none"</span><span class="crayon-h"> </span><span class="crayon-e ">fill</span><span class="crayon-o">=</span><span class="crayon-s ">"none"</span><span class="crayon-h"> </span><span class="crayon-e ">id</span><span class="crayon-o">=</span><span class="crayon-s ">"wire"</span><span class="crayon-r ">&gt;</span><span class="crayon-r ">&lt;/path&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>而我們想讓一個 
+			<span id="crayon-59ebe1d8b1538501006570" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">circle</span></span></span> 元素沿著此路徑移動，只需要在 
+			<span id="crayon-59ebe1d8b1539042802398" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">circle</span></span></span> 元素內加上一個 
+			<span id="crayon-59ebe1d8b153b432944040" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">animateMotion</span></span></span> 子元素如下：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59ebe1d8b153c254342554" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;circle cx="" cy="" r="5" fill="#529fd9"&gt;
+  &lt;animateMotion dur="1.6s" repeatCount="indefinite"&gt;
+    &lt;mpath xlink:href="#wire"&gt;&lt;/mpath&gt;
+  &lt;/animateMotion&gt;
+&lt;/circle&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59ebe1d8b153c254342554-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b153c254342554-2">2</div><div class="crayon-num" data-line="crayon-59ebe1d8b153c254342554-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b153c254342554-4">4</div><div class="crayon-num" data-line="crayon-59ebe1d8b153c254342554-5">5</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59ebe1d8b153c254342554-1"><span class="crayon-r ">&lt;circle </span><span class="crayon-e ">cx</span><span class="crayon-o">=</span><span class="crayon-s ">""</span><span class="crayon-h"> </span><span class="crayon-e ">cy</span><span class="crayon-o">=</span><span class="crayon-s ">""</span><span class="crayon-h"> </span><span class="crayon-e ">r</span><span class="crayon-o">=</span><span class="crayon-s ">"5"</span><span class="crayon-h"> </span><span class="crayon-e ">fill</span><span class="crayon-o">=</span><span class="crayon-s ">"#529fd9"</span><span class="crayon-r ">&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b153c254342554-2"><span class="crayon-i ">&nbsp;&nbsp;</span><span class="crayon-r ">&lt;animateMotion </span><span class="crayon-e ">dur</span><span class="crayon-o">=</span><span class="crayon-s ">"1.6s"</span><span class="crayon-h"> </span><span class="crayon-e ">repeatCount</span><span class="crayon-o">=</span><span class="crayon-s ">"indefinite"</span><span class="crayon-r ">&gt;</span></div><div class="crayon-line" id="crayon-59ebe1d8b153c254342554-3"><span class="crayon-i ">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r ">&lt;mpath </span>xlink<span class="crayon-o">:</span><span class="crayon-e ">href</span><span class="crayon-o">=</span><span class="crayon-s ">"#wire"</span><span class="crayon-r ">&gt;</span><span class="crayon-r ">&lt;/mpath&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b153c254342554-4"><span class="crayon-i ">&nbsp;&nbsp;</span><span class="crayon-r ">&lt;/animateMotion&gt;</span></div><div class="crayon-line" id="crayon-59ebe1d8b153c254342554-5"><span class="crayon-r ">&lt;/circle&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>其中 
+			<span id="crayon-59ebe1d8b153e130205485" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">dur</span></span></span> 和 
+			<span id="crayon-59ebe1d8b1540320393397" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">repeatCount</span></span></span> 屬性就和前述 
+			<span id="crayon-59ebe1d8b1541766830673" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">animate</span></span></span> 元素的屬性作用相同，接著在 
+			<span id="crayon-59ebe1d8b1542467430816" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">animateMotion</span></span></span> 元素內再加上一個 
+			<span id="crayon-59ebe1d8b1544047594658" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">mpath</span></span></span> 子元素，並設定屬性值 
+			<span id="crayon-59ebe1d8b1545000546298" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">xlink</span><span class="crayon-o">:</span><span class="crayon-v">href</span><span class="crayon-o">=</span><span class="crayon-s">"#wire"</span></span></span>，透過 
+			<span id="crayon-59ebe1d8b1547771377660" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">path</span></span></span> 的 id 
+			<span id="crayon-59ebe1d8b1548184760215" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-p">#wire</span></span></span> 來指定行進路徑。<a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element/animateMotion" target="_blank">詳細說明文件請見 MDN</a>。</p>
+<h2>環形進度列</h2>
+<p class='codepen'  data-height='268' data-theme-id='0' data-slug-hash='wrkec' data-default-tab='result' data-animations='run' data-editable='' data-embed-version='2'>
+See the Pen <a href=’https://codepen.io/yshlin/pen/wrkec/’>SVG Progress Circle</a> by Eddie Lin (<a href=’http://codepen.io/yshlin’>@yshlin</a>) on <a href=’http://codepen.io’>CodePen</a>.0</p>
+<script async src="//codepen.io/assets/embed/ei.js"></script>
+<p>這個範例中將示範 SVG 如何搭配 Javascript 來做動畫，實際的應用在這次<a href="http://mozilla.com.tw/10years/browser-survey/" target="_blank">十週年活動的問卷調查結果</a>中，往下捲動可以看到環形的進度列逐漸填滿至指定的百分比。首先要準備的 SVG 很簡單，只需要兩個圓圈，內容如下：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59ebe1d8b154a797508155" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+  &lt;circle class="gauge" cx="200" cy="200" r="100"&gt;&lt;/circle&gt;
+  &lt;circle stroke-dasharray="629" stroke-dashoffset="629" class="arc" cx="200" cy="200" r="100" data-to="88"&gt;&lt;/circle&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59ebe1d8b154a797508155-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b154a797508155-2">2</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59ebe1d8b154a797508155-1"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-r ">&lt;circle </span><span class="crayon-e ">class</span><span class="crayon-o">=</span><span class="crayon-s ">"gauge"</span><span class="crayon-h"> </span><span class="crayon-e ">cx</span><span class="crayon-o">=</span><span class="crayon-s ">"200"</span><span class="crayon-h"> </span><span class="crayon-e ">cy</span><span class="crayon-o">=</span><span class="crayon-s ">"200"</span><span class="crayon-h"> </span><span class="crayon-e ">r</span><span class="crayon-o">=</span><span class="crayon-s ">"100"</span><span class="crayon-r ">&gt;</span><span class="crayon-r ">&lt;/circle&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b154a797508155-2"><span class="crayon-i ">&nbsp;&nbsp;</span><span class="crayon-r ">&lt;circle </span><span class="crayon-e ">stroke-dasharray</span><span class="crayon-o">=</span><span class="crayon-s ">"629"</span><span class="crayon-h"> </span><span class="crayon-e ">stroke-dashoffset</span><span class="crayon-o">=</span><span class="crayon-s ">"629"</span><span class="crayon-h"> </span><span class="crayon-e ">class</span><span class="crayon-o">=</span><span class="crayon-s ">"arc"</span><span class="crayon-h"> </span><span class="crayon-e ">cx</span><span class="crayon-o">=</span><span class="crayon-s ">"200"</span><span class="crayon-h"> </span><span class="crayon-e ">cy</span><span class="crayon-o">=</span><span class="crayon-s ">"200"</span><span class="crayon-h"> </span><span class="crayon-e ">r</span><span class="crayon-o">=</span><span class="crayon-s ">"100"</span><span class="crayon-h"> </span><span class="crayon-e ">data-to</span><span class="crayon-o">=</span><span class="crayon-s ">"88"</span><span class="crayon-r ">&gt;</span><span class="crayon-r ">&lt;/circle&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0004 seconds] -->
+<p>第一行的 
+			<span id="crayon-59ebe1d8b154c250074903" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">circle</span></span> 是靜態的灰色底，而第二行的 
+			<span id="crayon-59ebe1d8b154d641086948" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">circle</span></span> 元素則是我們要用 Javascript 來控制增長的進度列。這邊一樣運用前述線條繪製動畫的作法，設定
+			<span id="crayon-59ebe1d8b154f637990647" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">stroke<span class="crayon-o">-</span>dasharray</span></span> 及 
+			<span id="crayon-59ebe1d8b1550989372332" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">stroke</span><span class="crayon-o">-</span><span class="crayon-v">dashoffset</span></span></span> ，而線條的總長度即圓周的長度 2r * pi，範例中 r 值（即半徑）為 100，因此圓周總長為 <span id="cwos" class="cwcot">628.31</span>，為了避免填滿時出現細縫，採用無條件進位，也就是 629，我們先把這個數值設定在
+			<span id="crayon-59ebe1d8b1552646634606" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">stroke<span class="crayon-o">-</span>dasharray</span></span> 、 
+			<span id="crayon-59ebe1d8b1553860557542" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">stroke</span><span class="crayon-o">-</span><span class="crayon-v">dashoffset</span></span></span> 屬性中，讓進度列一開始即為歸零的狀態。接著把目標的進度值（百分比）放在進度列元素的 
+			<span id="crayon-59ebe1d8b1555765647220" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">data<span class="crayon-o">-</span>to</span></span> 自訂屬性中，以便 Javascript 可以直接從元素中取得目標值，不用針對每個進度列個別設定在 Javascript 之中。</p>
+<p>接下來我們針對進度列的 circle 元素設定漸變：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59ebe1d8b1556258184290" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+.arc {
+  .transition(stroke-dashoffset 1s linear);
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59ebe1d8b1556258184290-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b1556258184290-2">2</div><div class="crayon-num" data-line="crayon-59ebe1d8b1556258184290-3">3</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59ebe1d8b1556258184290-1"><span class="crayon-sy">.</span><span class="crayon-i">arc</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b1556258184290-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">.</span><span class="crayon-e">transition</span><span class="crayon-sy">(</span><span class="crayon-v">stroke</span><span class="crayon-o">-</span><span class="crayon-i">dashoffset</span><span class="crayon-h"> </span><span class="crayon-cn">1s</span><span class="crayon-h"> </span><span class="crayon-v">linear</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-59ebe1d8b1556258184290-3"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>詳細的樣式設定就不在此贅述，可直接參考上面的 Codepen。這邊透過 CSS 設定了 
+			<span id="crayon-59ebe1d8b1558107908569" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-i ">.arc</span></span></span> 元素的 
+			<span id="crayon-59ebe1d8b1559410360367" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">stroke<span class="crayon-o">-</span>dashoffset</span></span> 屬性，使數值在改變時進行 1 秒鐘的線性漸變。這樣一來我們就不必使用 Javascript 去運算補齊中間的漸變值。</p>
+<p>最後就是透過 Javascript 將 
+			<span id="crayon-59ebe1d8b155b450277304" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">stroke<span class="crayon-o">-</span>dashoffset</span></span> 依照比例設定為目標值，範例中的重點在這段程式碼：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59ebe1d8b155c159628945" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+var toOffset = (100 - to) * fullOffset / 100;
+$('#go').click(function() {
+  progressCircle.attr('stroke-dashoffset', toOffset);
+});</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59ebe1d8b155c159628945-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b155c159628945-2">2</div><div class="crayon-num" data-line="crayon-59ebe1d8b155c159628945-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-59ebe1d8b155c159628945-4">4</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59ebe1d8b155c159628945-1"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">toOffset</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-cn">100</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-st">to</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-v">fullOffset</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-h"> </span><span class="crayon-cn">100</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b155c159628945-2"><span class="crayon-sy">$</span><span class="crayon-sy">(</span><span class="crayon-s">'#go'</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-e">click</span><span class="crayon-sy">(</span><span class="crayon-t">function</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-59ebe1d8b155c159628945-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">progressCircle</span><span class="crayon-sy">.</span><span class="crayon-e">attr</span><span class="crayon-sy">(</span><span class="crayon-s">'stroke-dashoffset'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">toOffset</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-59ebe1d8b155c159628945-4"><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0010 seconds] -->
+<p>先算出 
+			<span id="crayon-59ebe1d8b155e604308819" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">stroke<span class="crayon-o">-</span>dashoffset</span></span>  的目標值 
+			<span id="crayon-59ebe1d8b1560144143243" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">toOffset</span></span></span>，接著在按鈕 
+			<span id="crayon-59ebe1d8b1562306908881" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-i ">#go</span></span></span>  按下時改變 
+			<span id="crayon-59ebe1d8b1563713479176" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;">stroke<span class="crayon-o">-</span>dashoffset</span></span> 的值，以啟動前面在 CSS 中設定的漸變動畫。</p>
+<p>若想支援一口氣啟動多個不同進度的進度列，可以參考<a href="https://github.com/elin-moco/bedrock/blob/master/media/js/mocotw/10years-browser-survey.js#L46-L73" target="_blank">活動網頁 Github 的 JQuery Plugin 寫法</a>。</p>
+<p>另外<a href="http://mozilla.com.tw/10years/browser-survey/" target="_blank">問卷統計結果頁</a>中還使用了 <a href="http://imakewebthings.com/jquery-waypoints/" target="_blank">JQuery Waypoints 套件</a>以在捲動至進度列時驅動它，用法<a href="https://github.com/elin-moco/bedrock/blob/master/media/js/mocotw/10years-browser-survey.js#L108-L120" target="_blank">詳見此活動網頁 Github</a>。</p>
+<h2>偵測相容性</h2>
+<p>關於 SVG 以及 SVG SMIL 動畫（註 1）的瀏覽器相容性，在 <a title="Firefox 電子報" href="http://mozilla.com.tw/newsletter/2014-09-30/" target="_blank">27 期電子報</a>有介紹過的 <a href="http://caniuse.com" target="_blank">caniuse.com</a> 網站中可以查詢得到，詳見這兩個連結－<a href="http://caniuse.com/#feat=svg" target="_blank">Can I use SVG?</a> <a href="http://caniuse.com/#feat=svg-smil" target="_blank">Can I use SVG SMIL animation?</a></p>
+<p>那麼問題是，SVG SMIL 動畫 和透過 CSS、Javascript 設定的動畫，支援度有沒有不同呢？經測試 IE9 以上有支援靜態 SVG，但目前完全不支援 SMIL，透過 CSS 設定的 animation、transition 也沒有任何作用，但透過 Javascript 進行的漸變則可以正常運作。而支援 SMIL 的瀏覽器版本如 Firefox、Chrome、Safari、Opera 等則同時也支援 CSS、Javascript 漸變動畫。</p>
+<p>因此若要最大化相容性可考慮使用 Javascript 來進行動畫的設定（註 2）。若只想簡單地使用 SMIL 或 CSS 來設定動畫，在不支援 SVG 動畫時降級為靜態圖片或 GIF 等等，則可透過 
+			<span id="crayon-59ebe1d8b1566341262910" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">Modernizr</span><span class="crayon-sy">.</span><span class="crayon-v">svg</span></span></span> 、
+			<span id="crayon-59ebe1d8b1568875017061" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">Modernizr</span><span class="crayon-sy">.</span><span class="crayon-v">smil</span></span></span> 來偵測瀏覽器支援（註 3）。</p>
+<h2>Firefox 十週年系列活動</h2>
+<p>最後，如果你還沒聽過 <a href="http://mozilla.com.tw/10years/" target="_blank">Firefox 十週年系列活動</a>，別忘了參加<a href="http://mozilla.com.tw/10years/firefox-family/" target="_blank">幸福的狐家元件線上活動</a>轉輪抽大獎，並領票參加 11/22 ~ 11/23 在華山文創園區舉辦的<a href="http://mozilla.com.tw/10years/firefox-day/" target="_blank">網路自由日展覽活動</a>哦！</p>
+<h2>附註</h2>
+<ul>
+<li>註 1：SVG SMIL (<a class="external external-icon" title="http://www.w3.org/TR/REC-smil" href="http://www.w3.org/TR/REC-smil" target="_blank">Synchronized Multimedia Integration Language</a>) 泛指以 XML 形式在 SVG 圖形內設定的動畫，除了前面用到過的 animate、animateMotion 元素以外還有 animateTransform 等，<a href="https://developer.mozilla.org/en-US/docs/Web/SVG/SVG_animation_with_SMIL" target="_blank">詳見 MDN 說明文件</a>。</li>
+<li>註 2：除了簡單的數值型漸變外，若要用 Javascript 實作依循時間函式的數值型漸變或是路徑形狀的漸變，可透過額外的 Javascript 套件如 <a href="http://snapsvg.io/" target="_blank">Snap.svg</a>。</li>
+<li>註 3：在 <a href="http://modernizr.com" target="_blank">Modernizr 網站</a>上可自訂想偵測的功能，產生對應的 Javascript 腳本並嵌入你的網頁。讓你在開發時可以偵測瀏覽器的支援度以執行對應的 CSS/Javascript。</li>
+</ul>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="http://tech.mozilla.com.tw/posts/category/css" rel="category tag">CSS</a>、<a href="http://tech.mozilla.com.tw/posts/category/javascript" rel="category tag">Javascript</a>      </div>
+    </footer> 
+    </article><!-- #post-5660 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" 
+	              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/posts/5660/%E5%9B%9B%E5%80%8B-svg-%E5%8B%95%E7%95%AB%E6%87%89%E7%94%A8%E7%AF%84%E4%BE%8B-%EF%BC%8D-firefox-%E5%8D%81%E9%80%B1%E5%B9%B4%E6%B4%BB%E5%8B%95%E7%B6%B2%E7%AB%99%E6%8A%80%E8%A1%93%E8%A7%A3%E5%AF%86#respond" style="display:none;">取消回覆</a></small></h3>				<form action="http://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required='true' required='required' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required='true' required='required' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表" /> <input type='hidden' name='comment_post_ID' value='5660' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="1f431e6fe1" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="240"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class='name-title'><a class="profile-link" href="http://tech.mozilla.com.tw/posts/author/elinmozilla-com"><span class="gravatar left"><img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg" alt="" class="avatar user-61-avatar" width='48' height='48' /></span><span class="name">小y</span></a></span><pre class="bio no-style">擅長  JavaScript、Python，
+擔任 Mozilla 網站工程師</pre><p class='contact'><span class="web"><strong>網站：</strong><a href="http://yshl.in">http://yshl.in</a></span></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="18" href="http://tech.mozilla.com.tw/posts/author/cyumozilla-com"><img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg" alt="" class="avatar user-18-avatar" width='96' height='96' /></a><a data-author-id="14" href="http://tech.mozilla.com.tw/posts/author/sleemozilla-com"><img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg" alt="" class="avatar user-14-avatar" width='96' height='96' /></a><a data-author-id="59" href="http://tech.mozilla.com.tw/posts/author/pyangmozilla-com"><img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg" alt="" class="avatar user-59-avatar" width='96' height='96' /></a><a data-author-id="43" href="http://tech.mozilla.com.tw/posts/author/atsaimozilla-com"><img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg" alt="" class="avatar user-43-avatar" width='96' height='96' /></a><a data-author-id="103" href="http://tech.mozilla.com.tw/posts/author/jaliumozilla-com"><img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg" alt="" class="avatar user-103-avatar" width='96' height='96' /></a><a data-author-id="61" href="http://tech.mozilla.com.tw/posts/author/elinmozilla-com"><img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg" alt="" class="avatar user-61-avatar" width='96' height='96' /></a></div><a class="more" href="/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="http://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="http://tech.mozilla.com.tw/posts/category/css" >CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="http://tech.mozilla.com.tw/posts/category/firefox" >Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="http://tech.mozilla.com.tw/posts/category/b2g" >Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="http://tech.mozilla.com.tw/posts/category/interaction-design" >Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="http://tech.mozilla.com.tw/posts/category/javascript" >Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="http://tech.mozilla.com.tw/posts/category/life-at-mozilla" >Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="http://tech.mozilla.com.tw/posts/category/mozilla" >Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="http://tech.mozilla.com.tw/posts/category/open-source" >Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="http://tech.mozilla.com.tw/posts/category/ux" >UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">選擇月份</option>
+				<option value='http://tech.mozilla.com.tw/posts/date/2016/05'> 2016 年 五月 &nbsp;(1)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2016/02'> 2016 年 二月 &nbsp;(1)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2015/07'> 2015 年 七月 &nbsp;(1)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2015/06'> 2015 年 六月 &nbsp;(1)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2015/05'> 2015 年 五月 &nbsp;(2)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2015/04'> 2015 年 四月 &nbsp;(3)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2015/03'> 2015 年 三月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2015/02'> 2015 年 二月 &nbsp;(3)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2015/01'> 2015 年 一月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/12'> 2014 年 十二月 &nbsp;(3)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/11'> 2014 年 十一月 &nbsp;(3)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/10'> 2014 年 十月 &nbsp;(3)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/09'> 2014 年 九月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/08'> 2014 年 八月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/07'> 2014 年 七月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/05'> 2014 年 五月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/04'> 2014 年 四月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/03'> 2014 年 三月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/02'> 2014 年 二月 &nbsp;(1)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/01'> 2014 年 一月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/12'> 2013 年 十二月 &nbsp;(6)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/11'> 2013 年 十一月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/10'> 2013 年 十月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/09'> 2013 年 九月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/08'> 2013 年 八月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/07'> 2013 年 七月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/06'> 2013 年 六月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/05'> 2013 年 五月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/04'> 2013 年 四月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/03'> 2013 年 三月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/02'> 2013 年 二月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/01'> 2013 年 一月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/12'> 2012 年 十二月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/11'> 2012 年 十一月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/10'> 2012 年 十月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/09'> 2012 年 九月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/08'> 2012 年 八月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/07'> 2012 年 七月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/06'> 2012 年 六月 &nbsp;(3)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/05'> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

@@ -1,0 +1,211 @@
+{
+  "post_id": 5765,
+  "title": "Where am I?－Part II－在 Google Maps 標記地圖資訊",
+  "date": "2015-02-16",
+  "year": 2015,
+  "month": 2,
+  "day": 16,
+  "categories": [
+    "Firefox OS(B2G)",
+    "Javascript"
+  ],
+  "tags": [],
+  "author": "Ouyang Owen",
+  "page_type": "post",
+  "original_url": "https://tech.mozilla.com.tw/?p=5765",
+  "archive_url": "https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/?p=5765",
+  "wayback_timestamp": "20201019211917",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>在看過  <a href=\"http://tech.mozilla.com.tw/posts/5762/where-am-i？－part-i－使用-google-maps-地圖快速簡單查看你的位置\" target=\"_blank\">Part I</a> 部分，相信大部分人都可以了解如何完成一個 Firefox OS 地圖應用程式。在了解了地圖的基本應用之後，我也想要做一個簡單的程式。我想要完成一個可以在地圖上呈現更多資訊的地圖應用程式。除了顯示個人地理位置資訊，可以把我們感興趣的地圖資訊也呈現出來。</p>\n<p>我們生活中常用的就是交通的資訊，以一個台北市民來說，可以使用微笑單車是很方便的事。不過在騎單車前可以了解目前附近單車的使用狀況會很有幫助。所以在這篇文章中，我希望可以以 Part I 中的地圖為基礎來開發一個應用去呈現台北市微笑單車即時資訊。</p>\n<p>&nbsp;</p>\n<p>所以本篇文章會呈現的內容如下:</p>\n<p>1. 微笑單車的即時資訊的取得及分析。</p>\n<p>2. 在地圖上利用 Google Maps 提供的工具標示及顯示微笑單車使用情況。</p>\n<p>目前台北市政府把微笑單車的即時資訊以 json 的格式對外公開，所以任何人都可以根據自已的需求來使用這些資訊。我們使用的方式就是從台北市政府抓到最新的資料，從中取出我們感興趣的內容。在微笑單車的資料中，我們需要知道單車站點的位置資訊及單車數量。在研究的過程中，我們知道資料中有提供站點資訊的英文訊息，所以也可以針對不是中文語係的裝置以英文來提供資訊。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-182226-的螢幕擷圖.png\"><img class=\"alignnone size-medium wp-image-5903\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-182226-的螢幕擷圖-300x246.png\" alt=\"2014-12-18 18:22:26 的螢幕擷圖\" width=\"300\" height=\"246\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-182226-的螢幕擷圖-300x246.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-182226-的螢幕擷圖.png 703w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a></p>\n<p>我們需要的資料包含了 : sna, tot, sbi, lat, lng, ar, snaen, aren</p>\n<p>首先需要從台北市的 opendata 中把 json 資料抓回來。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8e02d4e8c7f374329741\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nfunction httpGet(url) {\r\n xmlHttp = new XMLHttpRequest({mozSystem:true});\r\n xmlHttp.open( \"GET\", url, false );\r\n xmlHttp.send( null );\r\n return xmlHttp.responseText;\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8e02d4e8c7f374329741-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e02d4e8c7f374329741-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f8e02d4e8c7f374329741-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e02d4e8c7f374329741-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f8e02d4e8c7f374329741-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e02d4e8c7f374329741-6\">6</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8e02d4e8c7f374329741-1\"><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">httpGet</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">url</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e02d4e8c7f374329741-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">xmlHttp</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">new</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">XMLHttpRequest</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">{</span><span class=\"crayon-v\">mozSystem</span><span class=\"crayon-o\">:</span><span class=\"crayon-t\">true</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8e02d4e8c7f374329741-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">xmlHttp</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">open</span><span class=\"crayon-sy\">(</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"GET\"</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">url</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">false</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e02d4e8c7f374329741-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">xmlHttp</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">send</span><span class=\"crayon-sy\">(</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">null</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8e02d4e8c7f374329741-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-st\">return</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">xmlHttp</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">responseText</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e02d4e8c7f374329741-6\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0003 seconds] -->\r\n<p>利用 \r\n\t\t\t<span id=\"crayon-5f8e02d4e8c89069038480\" class=\"crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco\" style=\"font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;\"><span class=\"crayon-pre crayon-code\" style=\"font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><span class=\"crayon-v\">JSON</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">parse</span></span></span> 把傳回來的資料轉換成 javascript object 。就可以利用得到的資料去呈現在地圖上。</p>\n<p>平常我在使用微笑單車時最關心的有下列訊息:</p>\n<p>1. 附近有那些微笑單車站據點。</p>\n<p>2. 那些據點還有車可以借，是不是有位置可以讓我們還車。</p>\n<p>3. 為了一目了然用顏色來標示空車及空位的據點，可以更快讓使用者掌握情況。</p>\n<p>4. 為了呈現即時的資訊，我們知道台北市是每五分鐘更新一次資料，所以我們也根據這項特性來更新我們地圖上的資訊。</p>\n<p>一般我們在找附近的微笑單車的資訊時，最關心的是單車據點，可以很快知道有沒有車可以借，可以避免到達站點後才知道沒有車或是需要點開詳細資訊才知道。我們可以設定三種顏色來分別最簡單的站點資訊 &#8211; 沒有車 ( 橘色 )，有車有位 ( 綠色 ) 及 沒有車位 ( 紅色 ) 。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-的螢幕擷圖.png\"><img class=\"alignnone size-medium wp-image-5904\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-的螢幕擷圖-300x195.png\" alt=\"2014-12-18 18:49:53 的螢幕擷圖\" width=\"300\" height=\"195\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-的螢幕擷圖-300x195.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-的螢幕擷圖.png 487w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a></p>\n<p>站點位置可以用 lat 及 lng 在 Google Maps 上以 marker 的方式標式出來。為了讓使用者可以了解更細節的資訊，在使用者在 marker 上點選之後，可以了解站點名稱 ( sna ) , 站點位置 ( ar  ), 單車數 ( sbi ),  空位數 ( tot &#8211; sbi )。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152328-的螢幕擷圖.png\">&lt;img class=&quot;alignnone size-medium <a href=\"http://www.dgfev.com\">online casino</a>  wp-image-5882&#8243; src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152328-的螢幕擷圖-300&#215;200.png\" alt=\"2014-12-18 15:23:28 的螢幕擷圖\" width=\"300&#8243; height=\"200&#8243; /&gt;</a></p>\n<p>英文的資訊可以用 snaen 及 aren 來根據 \r\n\t\t\t<span id=\"crayon-5f8e02d4e8c8f726934523\" class=\"crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco\" style=\"font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;\"><span class=\"crayon-pre crayon-code\" style=\"font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">language</span></span></span> 調整去呈現中文以外的資訊。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152843-的螢幕擷圖.png\"><img class=\"alignnone size-medium wp-image-5884\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152843-的螢幕擷圖-300x207.png\" alt=\"2014-12-18 15:28:43 的螢幕擷圖\" width=\"300\" height=\"207\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152843-的螢幕擷圖-300x207.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152843-的螢幕擷圖.png 313w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a></p>\n<p>&nbsp;</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8e02d4e8c92949384313\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n latlng = new google.maps.LatLng(retVal[i].lat, retVal[i].lng);\r\n var image = okImage;\r\n if ( retVal[i].sbi == 0 ) {\r\n image = emptyImage;\r\n } else if ( (retVal[i].tot-retVal[i].sbi) == 0 ) {\r\n image = fullImage;\r\n }\r\n\r\n var marker = new google.maps.Marker({\r\n position: latlng,\r\n map: map,\r\n icon: image,\r\n shadow: pinShadow,\r\n //animation: google.maps.Animation.DROP,\r\n title: infoTitle\r\n });</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8e02d4e8c92949384313-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e02d4e8c92949384313-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f8e02d4e8c92949384313-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e02d4e8c92949384313-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f8e02d4e8c92949384313-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e02d4e8c92949384313-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f8e02d4e8c92949384313-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e02d4e8c92949384313-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f8e02d4e8c92949384313-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e02d4e8c92949384313-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5f8e02d4e8c92949384313-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e02d4e8c92949384313-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-5f8e02d4e8c92949384313-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e02d4e8c92949384313-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-5f8e02d4e8c92949384313-15\">15</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e02d4e8c92949384313-16\">16</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8e02d4e8c92949384313-1\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">latlng</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">new</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">google</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">maps</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">LatLng</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">retVal</span><span class=\"crayon-sy\">[</span><span class=\"crayon-v\">i</span><span class=\"crayon-sy\">]</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">lat</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">retVal</span><span class=\"crayon-sy\">[</span><span class=\"crayon-v\">i</span><span class=\"crayon-sy\">]</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">lng</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e02d4e8c92949384313-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">image</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">okImage</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8e02d4e8c92949384313-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">retVal</span><span class=\"crayon-sy\">[</span><span class=\"crayon-v\">i</span><span class=\"crayon-sy\">]</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">sbi</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">==</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">0</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e02d4e8c92949384313-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">image</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">emptyImage</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8e02d4e8c92949384313-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span><span class=\"crayon-h\"> </span><span class=\"crayon-st\">else</span><span class=\"crayon-h\"> </span><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">retVal</span><span class=\"crayon-sy\">[</span><span class=\"crayon-v\">i</span><span class=\"crayon-sy\">]</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">tot</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">retVal</span><span class=\"crayon-sy\">[</span><span class=\"crayon-v\">i</span><span class=\"crayon-sy\">]</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">sbi</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">==</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">0</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e02d4e8c92949384313-6\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">image</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">fullImage</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8e02d4e8c92949384313-7\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e02d4e8c92949384313-8\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5f8e02d4e8c92949384313-9\"><span class=\"crayon-h\"> </span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">marker</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">new</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">google</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">maps</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">Marker</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e02d4e8c92949384313-10\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">position</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">latlng</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-5f8e02d4e8c92949384313-11\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">map</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">map</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e02d4e8c92949384313-12\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">icon</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">image</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-5f8e02d4e8c92949384313-13\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">shadow</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">pinShadow</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e02d4e8c92949384313-14\"><span class=\"crayon-h\"> </span><span class=\"crayon-c\">//animation: google.maps.Animation.DROP,</span></div><div class=\"crayon-line\" id=\"crayon-5f8e02d4e8c92949384313-15\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">title</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-i\">infoTitle</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e02d4e8c92949384313-16\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0008 seconds] -->\r\n<p>&nbsp;</p>\n<p>最後為了呈現最即時的資訊，可以利用 javascript 的 \r\n\t\t\t<span id=\"crayon-5f8e02d4e8c96236740053\" class=\"crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco\" style=\"font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;\"><span class=\"crayon-pre crayon-code\" style=\"font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><span class=\"crayon-r\">setTimeout</span></span></span> 來定期每五分鐘更新一次地圖上的標示及站點資訊。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8e02d4e8c98484961029\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n setTimeout(function() {\r\n updateMap(map);\r\n }, 5 * 60 * 1000); // update the ubike information every 5 minutes.</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8e02d4e8c98484961029-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e02d4e8c98484961029-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f8e02d4e8c98484961029-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8e02d4e8c98484961029-1\"><span class=\"crayon-h\"> </span><span class=\"crayon-e\">setTimeout</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e02d4e8c98484961029-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-e\">updateMap</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">map</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8e02d4e8c98484961029-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">5</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">*</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">60</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">*</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">1000</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// update the ubike information every 5 minutes.</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>相信在這樣的簡單說明下，大家對於這樣的地圖有了進一步的認識。等待大家來開發更多更棒的應用。</p>\n<p>&nbsp;</p>\n<p><strong>參考:</strong></p>\n<p>1. <a href=\"http://tech.mozilla.com.tw/posts/5762/where-am-i？－part-i－使用-google-maps-地圖快速簡單查看你的位置\" target=\"_blank\">Where am I? – Part I – 使用 Google Maps 地圖快速簡單查看你的位置</a></p>\n<p>2. <a href=\"http://ppt.cc/-BSH\" target=\"_blank\">台北市政府的開放資料</a></p>\n\t\t\t</div>",
+  "content_text": "在看過 Part I 部分，相信大部分人都可以了解如何完成一個 Firefox OS 地圖應用程式。在了解了地圖的基本應用之後，我也想要做一個簡單的程式。我想要完成一個可以在地圖上呈現更多資訊的地圖應用程式。除了顯示個人地理位置資訊，可以把我們感興趣的地圖資訊也呈現出來。 我們生活中常用的就是交通的資訊，以一個台北市民來說，可以使用微笑單車是很方便的事。不過在騎單車前可以了解目前附近單車的使用狀況會很有幫助。所以在這篇文章中，我希望可以以 Part I 中的地圖為基礎來開發一個應用去呈現台北市微笑單車即時資訊。 所以本篇文章會呈現的內容如下: 1. 微笑單車的即時資訊的取得及分析。 2. 在地圖上利用 Google Maps 提供的工具標示及顯示微笑單車使用情況。 目前台北市政府把微笑單車的即時資訊以 json 的格式對外公開，所以任何人都可以根據自已的需求來使用這些資訊。我們使用的方式就是從台北市政府抓到最新的資料，從中取出我們感興趣的內容。在微笑單車的資料中，我們需要知道單車站點的位置資訊及單車數量。在研究的過程中，我們知道資料中有提供站點資訊的英文訊息，所以也可以針對不是中文語係的裝置以英文來提供資訊。 我們需要的資料包含了 : sna, tot, sbi, lat, lng, ar, snaen, aren 首先需要從台北市的 opendata 中把 json 資料抓回來。 function httpGet(url) { xmlHttp = new XMLHttpRequest({mozSystem:true}); xmlHttp.open( \"GET\", url, false ); xmlHttp.send( null ); return xmlHttp.responseText; } 1 2 3 4 5 6 function httpGet ( url ) { xmlHttp = new XMLHttpRequest ( { mozSystem : true } ) ; xmlHttp . open ( \"GET\" , url , false ) ; xmlHttp . send ( null ) ; return xmlHttp . responseText ; } 利用 JSON . parse 把傳回來的資料轉換成 javascript object 。就可以利用得到的資料去呈現在地圖上。 平常我在使用微笑單車時最關心的有下列訊息: 1. 附近有那些微笑單車站據點。 2. 那些據點還有車可以借，是不是有位置可以讓我們還車。 3. 為了一目了然用顏色來標示空車及空位的據點，可以更快讓使用者掌握情況。 4. 為了呈現即時的資訊，我們知道台北市是每五分鐘更新一次資料，所以我們也根據這項特性來更新我們地圖上的資訊。 一般我們在找附近的微笑單車的資訊時，最關心的是單車據點，可以很快知道有沒有車可以借，可以避免到達站點後才知道沒有車或是需要點開詳細資訊才知道。我們可以設定三種顏色來分別最簡單的站點資訊 – 沒有車 ( 橘色 )，有車有位 ( 綠色 ) 及 沒有車位 ( 紅色 ) 。 站點位置可以用 lat 及 lng 在 Google Maps 上以 marker 的方式標式出來。為了讓使用者可以了解更細節的資訊，在使用者在 marker 上點選之後，可以了解站點名稱 ( sna ) , 站點位置 ( ar ), 單車數 ( sbi ), 空位數 ( tot – sbi )。 <img class=\"alignnone size-medium online casino wp-image-5882″ src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152328-的螢幕擷圖-300×200.png\" alt=\"2014-12-18 15:23:28 的螢幕擷圖\" width=\"300″ height=\"200″ /> 英文的資訊可以用 snaen 及 aren 來根據 navigator . language 調整去呈現中文以外的資訊。 latlng = new google.maps.LatLng(retVal[i].lat, retVal[i].lng); var image = okImage; if ( retVal[i].sbi == 0 ) { image = emptyImage; } else if ( (retVal[i].tot-retVal[i].sbi) == 0 ) { image = fullImage; } var marker = new google.maps.Marker({ position: latlng, map: map, icon: image, shadow: pinShadow, //animation: google.maps.Animation.DROP, title: infoTitle }); 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 latlng = new google . maps . LatLng ( retVal [ i ] . lat , retVal [ i ] . lng ) ; var image = okImage ; if ( retVal [ i ] . sbi == 0 ) { image = emptyImage ; } else if ( ( retVal [ i ] . tot - retVal [ i ] . sbi ) == 0 ) { image = fullImage ; } var marker = new google . maps . Marker ( { position : latlng , map : map , icon : image , shadow : pinShadow , //animation: google.maps.Animation.DROP, title : infoTitle } ) ; 最後為了呈現最即時的資訊，可以利用 javascript 的 setTimeout 來定期每五分鐘更新一次地圖上的標示及站點資訊。 setTimeout(function() { updateMap(map); }, 5 * 60 * 1000); // update the ubike information every 5 minutes. 1 2 3 setTimeout ( function ( ) { updateMap ( map ) ; } , 5 * 60 * 1000 ) ; // update the ubike information every 5 minutes. 相信在這樣的簡單說明下，大家對於這樣的地圖有了進一步的認識。等待大家來開發更多更棒的應用。 參考: 1. Where am I? – Part I – 使用 Google Maps 地圖快速簡單查看你的位置 2. 台北市政府的開放資料",
+  "images": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-182226-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-300x246.png",
+      "alt": "2014-12-18 18:22:26 的螢幕擷圖",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/5765/wp-content/uploads/2014/12/2014-12-18-182226-的螢幕擷圖-300x246.png",
+      "markdown_path": "../assets/5765/wp-content/uploads/2014/12/2014-12-18-182226-的螢幕擷圖-300x246.png",
+      "wayback_timestamp": "20201019211917",
+      "asset_archive_url": "https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-182226-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-300x246.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-300x195.png",
+      "alt": "2014-12-18 18:49:53 的螢幕擷圖",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/5765/wp-content/uploads/2014/12/2014-12-18-184953-的螢幕擷圖-300x195.png",
+      "markdown_path": "../assets/5765/wp-content/uploads/2014/12/2014-12-18-184953-的螢幕擷圖-300x195.png",
+      "wayback_timestamp": "20201019211917",
+      "asset_archive_url": "https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-300x195.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152843-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-300x207.png",
+      "alt": "2014-12-18 15:28:43 的螢幕擷圖",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/5765/wp-content/uploads/2014/12/2014-12-18-152843-的螢幕擷圖-300x207.png",
+      "markdown_path": "../assets/5765/wp-content/uploads/2014/12/2014-12-18-152843-的螢幕擷圖-300x207.png",
+      "wayback_timestamp": "20201019211917",
+      "asset_archive_url": "https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152843-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-300x207.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-182226-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "alt": "",
+      "kind": "image",
+      "source": "a-href",
+      "archive_path": "assets/5765/wp-content/uploads/2014/12/2014-12-18-182226-的螢幕擷圖.png",
+      "markdown_path": "../assets/5765/wp-content/uploads/2014/12/2014-12-18-182226-的螢幕擷圖.png",
+      "wayback_timestamp": "20201019211917",
+      "asset_archive_url": "https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-182226-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "alt": "",
+      "kind": "image",
+      "source": "a-href",
+      "archive_path": "assets/5765/wp-content/uploads/2014/12/2014-12-18-184953-的螢幕擷圖.png",
+      "markdown_path": "../assets/5765/wp-content/uploads/2014/12/2014-12-18-184953-的螢幕擷圖.png",
+      "wayback_timestamp": "20201019211917",
+      "asset_archive_url": "https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152328-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "alt": "<img class=\"alignnone size-medium online casino",
+      "kind": "image",
+      "source": "a-href",
+      "archive_path": "assets/5765/wp-content/uploads/2014/12/2014-12-18-152328-的螢幕擷圖.png",
+      "markdown_path": "../assets/5765/wp-content/uploads/2014/12/2014-12-18-152328-的螢幕擷圖.png",
+      "wayback_timestamp": "20201019211917",
+      "asset_archive_url": "https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152328-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152843-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "alt": "",
+      "kind": "image",
+      "source": "a-href",
+      "archive_path": "assets/5765/wp-content/uploads/2014/12/2014-12-18-152843-的螢幕擷圖.png",
+      "markdown_path": "../assets/5765/wp-content/uploads/2014/12/2014-12-18-152843-的螢幕擷圖.png",
+      "wayback_timestamp": "20201019211917",
+      "asset_archive_url": "https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152843-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "content_type": "image/png"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-182226-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-300x246.png",
+      "alt": "2014-12-18 18:22:26 的螢幕擷圖",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/5765/wp-content/uploads/2014/12/2014-12-18-182226-的螢幕擷圖-300x246.png",
+      "markdown_path": "../assets/5765/wp-content/uploads/2014/12/2014-12-18-182226-的螢幕擷圖-300x246.png",
+      "wayback_timestamp": "20201019211917",
+      "asset_archive_url": "https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-182226-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-300x246.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-300x195.png",
+      "alt": "2014-12-18 18:49:53 的螢幕擷圖",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/5765/wp-content/uploads/2014/12/2014-12-18-184953-的螢幕擷圖-300x195.png",
+      "markdown_path": "../assets/5765/wp-content/uploads/2014/12/2014-12-18-184953-的螢幕擷圖-300x195.png",
+      "wayback_timestamp": "20201019211917",
+      "asset_archive_url": "https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-300x195.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152843-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-300x207.png",
+      "alt": "2014-12-18 15:28:43 的螢幕擷圖",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/5765/wp-content/uploads/2014/12/2014-12-18-152843-的螢幕擷圖-300x207.png",
+      "markdown_path": "../assets/5765/wp-content/uploads/2014/12/2014-12-18-152843-的螢幕擷圖-300x207.png",
+      "wayback_timestamp": "20201019211917",
+      "asset_archive_url": "https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152843-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-300x207.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-182226-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "alt": "",
+      "kind": "image",
+      "source": "a-href",
+      "archive_path": "assets/5765/wp-content/uploads/2014/12/2014-12-18-182226-的螢幕擷圖.png",
+      "markdown_path": "../assets/5765/wp-content/uploads/2014/12/2014-12-18-182226-的螢幕擷圖.png",
+      "wayback_timestamp": "20201019211917",
+      "asset_archive_url": "https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-182226-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "alt": "",
+      "kind": "image",
+      "source": "a-href",
+      "archive_path": "assets/5765/wp-content/uploads/2014/12/2014-12-18-184953-的螢幕擷圖.png",
+      "markdown_path": "../assets/5765/wp-content/uploads/2014/12/2014-12-18-184953-的螢幕擷圖.png",
+      "wayback_timestamp": "20201019211917",
+      "asset_archive_url": "https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152328-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "alt": "<img class=\"alignnone size-medium online casino",
+      "kind": "image",
+      "source": "a-href",
+      "archive_path": "assets/5765/wp-content/uploads/2014/12/2014-12-18-152328-的螢幕擷圖.png",
+      "markdown_path": "../assets/5765/wp-content/uploads/2014/12/2014-12-18-152328-的螢幕擷圖.png",
+      "wayback_timestamp": "20201019211917",
+      "asset_archive_url": "https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152328-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152843-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "alt": "",
+      "kind": "image",
+      "source": "a-href",
+      "archive_path": "assets/5765/wp-content/uploads/2014/12/2014-12-18-152843-的螢幕擷圖.png",
+      "markdown_path": "../assets/5765/wp-content/uploads/2014/12/2014-12-18-152843-的螢幕擷圖.png",
+      "wayback_timestamp": "20201019211917",
+      "asset_archive_url": "https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152843-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "content_type": "image/png"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://tech.mozilla.com.tw/posts/5762/where-am-i%EF%BC%9F%EF%BC%8Dpart-i%EF%BC%8D%E4%BD%BF%E7%94%A8-google-maps-%E5%9C%B0%E5%9C%96%E5%BF%AB%E9%80%9F%E7%B0%A1%E5%96%AE%E6%9F%A5%E7%9C%8B%E4%BD%A0%E7%9A%84%E4%BD%8D%E7%BD%AE",
+      "text": "Part I"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-182226-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "text": ""
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "text": ""
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152328-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "text": "<img class=\"alignnone size-medium online casino"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152843-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png",
+      "text": ""
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/posts/5762/where-am-i%EF%BC%9F%EF%BC%8Dpart-i%EF%BC%8D%E4%BD%BF%E7%94%A8-google-maps-%E5%9C%B0%E5%9C%96%E5%BF%AB%E9%80%9F%E7%B0%A1%E5%96%AE%E6%9F%A5%E7%9C%8B%E4%BD%A0%E7%9A%84%E4%BD%8D%E7%BD%AE",
+      "text": "Where am I? – Part I – 使用 Google Maps 地圖快速簡單查看你的位置"
+    },
+    {
+      "url": "https://ppt.cc/-BSH",
+      "text": "台北市政府的開放資料"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": []
+}

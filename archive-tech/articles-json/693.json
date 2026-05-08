@@ -1,0 +1,257 @@
+{
+  "post_id": 693,
+  "title": "CSS 連這個也辦的到?! 淺談 CSS media queries",
+  "date": "2012-08-27",
+  "year": 2012,
+  "month": 8,
+  "day": 27,
+  "categories": [
+    "CSS",
+    "Firefox",
+    "Javascript"
+  ],
+  "tags": [],
+  "author": "香蕉人",
+  "page_type": "post",
+  "original_url": "https://tech.mozilla.com.tw/?p=693",
+  "archive_url": "https://web.archive.org/web/20200919195958id_/https://tech.mozilla.com.tw/?p=693",
+  "wayback_timestamp": "20200919195958",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>接續上週的介紹，今天來談談，為~~~什麼我們要多用 CSS 而少用 JS 來做動畫呢? 原因之一，就是今天的主角 media queries 啦！Media queries 主要可以用來對付來自四面八方，奇奇怪怪的解析度。</p>\n<p>你或許會問，這些奇奇怪怪的解析度打哪來的呢?! 除了現在人手 N 支智慧型手機，每一支 Device 的尺寸都不同，還有桌機上的營幕一個比一個大，未來還有 Smart TV 的加入，可怕的解析度戰國時代，真是搞的前端工程師一個頭兩個大啊!!!!還好我們有 media queries。到底有多神奇呢? 我們繼續看下去:</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f66633ddf0c6049679252\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n@media all and (min-width: 768px) and (max-width: 1280px) {\r\n    body{\r\n      font-size:16px;\r\n    }\r\n}\r\n@media all and (min-width: 480px) and (max-width: 768px) {\r\n    body{\r\n      font-size:22px;\r\n    }\r\n}\r\n@media all and (min-width: 320px) and (max-width: 480px) {\r\n    body{\r\n      font-size:28px;\r\n    }\r\n}\r\n@media all and (max-width: 320px) {\r\n    body{\r\n      font-size:32px;\r\n    }\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0c6049679252-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0c6049679252-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0c6049679252-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0c6049679252-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0c6049679252-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0c6049679252-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0c6049679252-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0c6049679252-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0c6049679252-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0c6049679252-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0c6049679252-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0c6049679252-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0c6049679252-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0c6049679252-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0c6049679252-15\">15</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0c6049679252-16\">16</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0c6049679252-17\">17</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0c6049679252-18\">18</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0c6049679252-19\">19</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0c6049679252-20\">20</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f66633ddf0c6049679252-1\"><span class=\"crayon-sy\">@</span><span class=\"crayon-e\">media </span><span class=\"crayon-e\">all </span><span class=\"crayon-st\">and</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">min</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">width</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">768px</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-st\">and</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">max</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">width</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">1280px</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0c6049679252-2\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">body</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0c6049679252-3\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">font</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">size</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">16px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0c6049679252-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0c6049679252-5\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0c6049679252-6\"><span class=\"crayon-sy\">@</span><span class=\"crayon-e\">media </span><span class=\"crayon-e\">all </span><span class=\"crayon-st\">and</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">min</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">width</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">480px</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-st\">and</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">max</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">width</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">768px</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0c6049679252-7\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">body</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0c6049679252-8\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">font</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">size</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">22px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0c6049679252-9\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0c6049679252-10\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0c6049679252-11\"><span class=\"crayon-sy\">@</span><span class=\"crayon-e\">media </span><span class=\"crayon-e\">all </span><span class=\"crayon-st\">and</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">min</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">width</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">320px</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-st\">and</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">max</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">width</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">480px</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0c6049679252-12\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">body</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0c6049679252-13\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">font</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">size</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">28px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0c6049679252-14\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0c6049679252-15\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0c6049679252-16\"><span class=\"crayon-sy\">@</span><span class=\"crayon-e\">media </span><span class=\"crayon-e\">all </span><span class=\"crayon-st\">and</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">max</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">width</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">320px</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0c6049679252-17\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">body</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0c6049679252-18\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">font</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">size</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">32px</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0c6049679252-19\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0c6049679252-20\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0007 seconds] -->\r\n<p>上面的 CSS 一口氣定義了四種不同解析度的 font-size 能確保同一個網頁在不同的解析度中，user 都可以舒服的閱讀網頁。<br />\n問題來了~ 用 <strong>media queries</strong> 寫好的 <strong>CSS</strong> 要怎麼測試呢? 如果你沒有 Wozniak 的背包 *1， 最簡單的方式就是，手動調整瀏覽器的視窗。但是，生在高科技，資訊爆炸的時代，有沒有更棒的方法呢?! 登~登~登~ <strong>Firefox</strong> 就是這麼貼心!!<br />\n<a href=\"http://www.mozilla.com.tw/firefox/\" target=\"_blank\">Firefox 15.0</a> 版提供了一個超酷，超方便的工具，點選「工具」-&gt; 「網頁開發者」 -&gt; 「適應性檢視模式」如圖:<br />\n<a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-27-下午3.26.56.png\"><img class=\"size-large wp-image-701 aligncenter\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-27-下午3.26.56-1024x612.png\" alt=\"\" width=\"640\" height=\"382\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-27-下午3.26.56-1024x612.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-27-下午3.26.56-300x179.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-27-下午3.26.56.png 1313w\" sizes=\"(max-width: 640px) 100vw, 640px\" /></a></p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-27-下午3.46.39.png\"><img class=\"size-full wp-image-708 aligncenter\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-27-下午3.46.39.png\" alt=\"\" width=\"415\" height=\"578\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-27-下午3.46.39.png 415w, https://tech.mozilla.com.tw/wp-content/uploads/2012/07/螢幕快照-2012-07-27-下午3.46.39-215x300.png 215w\" sizes=\"(max-width: 415px) 100vw, 415px\" /></a></p>\n<p>貼心的<strong> Firefox</strong> 就可以輕鬆幫你模擬各種解析度，甚至還可以「旋轉」，太誇張了!!!!</p>\n<p>好了，我們收下 <strong>Firefox</strong> 帶給我們驚奇的心，來看看 <a href=\"http://jsfiddle.net/mpizza/T5fz4/2/embedded/result/\" target=\"_blank\">Live Demo</a>! 這真是~太神奇了，我們的字型大小隨著不同的解析度變大了!!! 或許你會說，這 JS 也辦的到或者透過 PHP,  python 等等去偵測解析度，然後去設定不同的 CSS 就好了，沒錯! 這你知道，我知道，獨眼龍也知道!</p>\n<p>但是香蕉人光是想上面四個不用 RANGE 解析度的判斷式，<a href=\"http://www.kylinpoker.com/\">扑克牌制作</a> 頭腦就要打結了，更何況 media queries 輕鬆寫意就達成了!!! 何不就使用media queries呢? 哦~大家還記得使用 :hover 這個方式來改變背景圖，來取代 mouseover 更換背景圖的這件事嗎(<a href=\"http://tech.mozilla.com.tw/posts/642/%E6%B2%92%E6%83%B3%E5%88%B0css%E4%B9%9F%E5%81%9A%E7%9A%84%E5%88%B0%EF%BC%9F%EF%BC%81\" target=\"_blank\">這篇來幫你復習一下</a>)?! 如果加上media queries 就更有搞頭了，我們可以在media queries 中，在不同的解析度設定不同大小的背景圖，這件事我想用JS處理就很麻煩了!!</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f66633ddf0d2329057557\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n@media all and  (min-width: 768px) and (max-width: 1024px) {\r\n div.bt{\r\n    background:url(&lt;strong&gt;bk-a-1024-768.jpg&lt;/strong&gt;)\r\n }\r\n div.bt:hover{\r\n    background:url(&lt;strong&gt;bk-b-1024-768.jpg&lt;/strong&gt;)\r\n }\r\n}\r\n@media all and (&lt;strong&gt;max-width: 320px&lt;/strong&gt;) {\r\n div.bt{\r\n    background:url(&lt;strong&gt;bk-a-320-480.jpg&lt;/strong&gt;)\r\n }\r\n div.bt:hover{\r\n    background:url(&lt;strong&gt;bk-n-320-480.jpg&lt;/strong&gt;)\r\n }\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0d2329057557-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0d2329057557-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0d2329057557-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0d2329057557-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0d2329057557-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0d2329057557-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0d2329057557-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0d2329057557-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0d2329057557-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0d2329057557-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0d2329057557-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0d2329057557-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0d2329057557-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0d2329057557-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-5f66633ddf0d2329057557-15\">15</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66633ddf0d2329057557-16\">16</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f66633ddf0d2329057557-1\"><span class=\"crayon-sy\">@</span><span class=\"crayon-e\">media </span><span class=\"crayon-e\">all </span><span class=\"crayon-st\">and</span><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">min</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">width</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">768px</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-st\">and</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">max</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">width</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">1024px</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0d2329057557-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">div</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">bt</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0d2329057557-3\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">background</span><span class=\"crayon-o\">:</span><span class=\"crayon-e\">url</span><span class=\"crayon-sy\">(</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-v\">strong</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-v\">bk</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">a</span><span class=\"crayon-o\">-</span><span class=\"crayon-cn\">1024</span><span class=\"crayon-o\">-</span><span class=\"crayon-cn\">768.jpg</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">strong</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-sy\">)</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0d2329057557-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0d2329057557-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">div</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">bt</span><span class=\"crayon-o\">:</span><span class=\"crayon-e\">hover</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0d2329057557-6\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">background</span><span class=\"crayon-o\">:</span><span class=\"crayon-e\">url</span><span class=\"crayon-sy\">(</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-v\">strong</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-v\">bk</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">b</span><span class=\"crayon-o\">-</span><span class=\"crayon-cn\">1024</span><span class=\"crayon-o\">-</span><span class=\"crayon-cn\">768.jpg</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">strong</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-sy\">)</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0d2329057557-7\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0d2329057557-8\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0d2329057557-9\"><span class=\"crayon-sy\">@</span><span class=\"crayon-e\">media </span><span class=\"crayon-e\">all </span><span class=\"crayon-st\">and</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-v\">strong</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-v\">max</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">width</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">320px</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">strong</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0d2329057557-10\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">div</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">bt</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0d2329057557-11\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">background</span><span class=\"crayon-o\">:</span><span class=\"crayon-e\">url</span><span class=\"crayon-sy\">(</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-v\">strong</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-v\">bk</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">a</span><span class=\"crayon-o\">-</span><span class=\"crayon-cn\">320</span><span class=\"crayon-o\">-</span><span class=\"crayon-cn\">480.jpg</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">strong</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-sy\">)</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0d2329057557-12\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0d2329057557-13\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">div</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">bt</span><span class=\"crayon-o\">:</span><span class=\"crayon-e\">hover</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0d2329057557-14\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">background</span><span class=\"crayon-o\">:</span><span class=\"crayon-e\">url</span><span class=\"crayon-sy\">(</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-v\">strong</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-v\">bk</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">n</span><span class=\"crayon-o\">-</span><span class=\"crayon-cn\">320</span><span class=\"crayon-o\">-</span><span class=\"crayon-cn\">480.jpg</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">strong</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-sy\">)</span></div><div class=\"crayon-line\" id=\"crayon-5f66633ddf0d2329057557-15\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66633ddf0d2329057557-16\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0008 seconds] -->\r\n<p>所以啦，如果我們，利用 JS 在不同 event 下，去改變元素的 class 屬性，儘可能的都透過不同 class 的 CSS 去控制我們的網頁 layout，再加上 media queries 這利器，網頁就會乖乖的在不同的解析度上正常呈現啦!! 最後再來個 Live Demo啦，嘿嘿，這次的 Demo 是<a href=\"http://mozilla.com.tw\" target=\"_blank\"> Mozilla Taiwan </a>的官網首頁。登~登~登~~行動版登場啦~~~</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile.png\"><img class=\"wp-image-816 aligncenter\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile.png\" alt=\"\" width=\"311\" height=\"545\" /></a><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile-1.png\"><img class=\"wp-image-815 aligncenter\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile-1.png\" alt=\"\" width=\"308\" height=\"543\" /></a></p>\n<p>香蕉領進門，修行在個人 更多的 <a href=\"https://developer.mozilla.org/en/CSS/Media_queries/\" target=\"_blank\">Media_queries</a> 在這裡 https://developer.mozilla.org/en/CSS/Media_queries/</p>\n<p>*1 Wozniak 的背包 http://chinese.engadget.com/2012/07/18/the-amazing-contents-of-steve-wozniaks-travel-backpac/</p>\n\t\t\t</div>",
+  "content_text": "接續上週的介紹，今天來談談，為~~~什麼我們要多用 CSS 而少用 JS 來做動畫呢? 原因之一，就是今天的主角 media queries 啦！Media queries 主要可以用來對付來自四面八方，奇奇怪怪的解析度。 你或許會問，這些奇奇怪怪的解析度打哪來的呢?! 除了現在人手 N 支智慧型手機，每一支 Device 的尺寸都不同，還有桌機上的營幕一個比一個大，未來還有 Smart TV 的加入，可怕的解析度戰國時代，真是搞的前端工程師一個頭兩個大啊!!!!還好我們有 media queries。到底有多神奇呢? 我們繼續看下去: @media all and (min-width: 768px) and (max-width: 1280px) { body{ font-size:16px; } } @media all and (min-width: 480px) and (max-width: 768px) { body{ font-size:22px; } } @media all and (min-width: 320px) and (max-width: 480px) { body{ font-size:28px; } } @media all and (max-width: 320px) { body{ font-size:32px; } } 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 @ media all and ( min - width : 768px ) and ( max - width : 1280px ) { body { font - size : 16px ; } } @ media all and ( min - width : 480px ) and ( max - width : 768px ) { body { font - size : 22px ; } } @ media all and ( min - width : 320px ) and ( max - width : 480px ) { body { font - size : 28px ; } } @ media all and ( max - width : 320px ) { body { font - size : 32px ; } } 上面的 CSS 一口氣定義了四種不同解析度的 font-size 能確保同一個網頁在不同的解析度中，user 都可以舒服的閱讀網頁。 問題來了~ 用 media queries 寫好的 CSS 要怎麼測試呢? 如果你沒有 Wozniak 的背包 *1， 最簡單的方式就是，手動調整瀏覽器的視窗。但是，生在高科技，資訊爆炸的時代，有沒有更棒的方法呢?! 登~登~登~ Firefox 就是這麼貼心!! Firefox 15.0 版提供了一個超酷，超方便的工具，點選「工具」-> 「網頁開發者」 -> 「適應性檢視模式」如圖: 貼心的 Firefox 就可以輕鬆幫你模擬各種解析度，甚至還可以「旋轉」，太誇張了!!!! 好了，我們收下 Firefox 帶給我們驚奇的心，來看看 Live Demo ! 這真是~太神奇了，我們的字型大小隨著不同的解析度變大了!!! 或許你會說，這 JS 也辦的到或者透過 PHP, python 等等去偵測解析度，然後去設定不同的 CSS 就好了，沒錯! 這你知道，我知道，獨眼龍也知道! 但是香蕉人光是想上面四個不用 RANGE 解析度的判斷式， 扑克牌制作 頭腦就要打結了，更何況 media queries 輕鬆寫意就達成了!!! 何不就使用media queries呢? 哦~大家還記得使用 :hover 這個方式來改變背景圖，來取代 mouseover 更換背景圖的這件事嗎( 這篇來幫你復習一下 )?! 如果加上media queries 就更有搞頭了，我們可以在media queries 中，在不同的解析度設定不同大小的背景圖，這件事我想用JS處理就很麻煩了!! @media all and (min-width: 768px) and (max-width: 1024px) { div.bt{ background:url(<strong>bk-a-1024-768.jpg</strong>) } div.bt:hover{ background:url(<strong>bk-b-1024-768.jpg</strong>) } } @media all and (<strong>max-width: 320px</strong>) { div.bt{ background:url(<strong>bk-a-320-480.jpg</strong>) } div.bt:hover{ background:url(<strong>bk-n-320-480.jpg</strong>) } } 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 @ media all and ( min - width : 768px ) and ( max - width : 1024px ) { div . bt { background : url ( < strong > bk - a - 1024 - 768.jpg < / strong > ) } div . bt : hover { background : url ( < strong > bk - b - 1024 - 768.jpg < / strong > ) } } @ media all and ( < strong > max - width : 320px < / strong > ) { div . bt { background : url ( < strong > bk - a - 320 - 480.jpg < / strong > ) } div . bt : hover { background : url ( < strong > bk - n - 320 - 480.jpg < / strong > ) } } 所以啦，如果我們，利用 JS 在不同 event 下，去改變元素的 class 屬性，儘可能的都透過不同 class 的 CSS 去控制我們的網頁 layout，再加上 media queries 這利器，網頁就會乖乖的在不同的解析度上正常呈現啦!! 最後再來個 Live Demo啦，嘿嘿，這次的 Demo 是 Mozilla Taiwan 的官網首頁。登~登~登~~行動版登場啦~~~ 香蕉領進門，修行在個人 更多的 Media_queries 在這裡 https://developer.mozilla.org/en/CSS/Media_queries/ *1 Wozniak 的背包 http://chinese.engadget.com/2012/07/18/the-amazing-contents-of-steve-wozniaks-travel-backpac/",
+  "images": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/693/wp-content/uploads/2012/07/螢幕快照-2012-07-27-下午3.26.56-1024x612.png",
+      "markdown_path": "../assets/693/wp-content/uploads/2012/07/螢幕快照-2012-07-27-下午3.26.56-1024x612.png",
+      "wayback_timestamp": "20200919195958",
+      "asset_archive_url": "https://web.archive.org/web/20200919195958id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-300x179.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "archive_path": "assets/693/003-d32b3438bc7e.png",
+      "markdown_path": "../assets/693/003-d32b3438bc7e.png",
+      "wayback_timestamp": "20130530084756",
+      "asset_archive_url": "https://web.archive.org/web/20130530084756id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "archive_path": "assets/693/004-d32b3438bc7e.png",
+      "markdown_path": "../assets/693/004-d32b3438bc7e.png",
+      "wayback_timestamp": "20130530084756",
+      "asset_archive_url": "https://web.archive.org/web/20130530084756id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.46.39.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.46.39-215x300.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile-150x150.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile-150x150.png",
+      "archive_path": "assets/693/wp-content/uploads/2012/08/mobile-150x150.png",
+      "markdown_path": "../assets/693/wp-content/uploads/2012/08/mobile-150x150.png",
+      "wayback_timestamp": "20121016051316",
+      "asset_archive_url": "https://web.archive.org/web/20121016051316id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile-150x150.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile-1.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "post_id": 693,
+      "page_type": "post",
+      "title": "CSS 連這個也辦的到?! 淺談 CSS media queries",
+      "page_timestamp": "20200919195958",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "archive_path": "assets/693/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "markdown_path": "../assets/693/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "wayback_timestamp": "20160529093602",
+      "asset_archive_url": "https://web.archive.org/web/20160529093602id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/693/wp-content/uploads/2012/07/螢幕快照-2012-07-27-下午3.26.56-1024x612.png",
+      "markdown_path": "../assets/693/wp-content/uploads/2012/07/螢幕快照-2012-07-27-下午3.26.56-1024x612.png",
+      "wayback_timestamp": "20200919195958",
+      "asset_archive_url": "https://web.archive.org/web/20200919195958id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-300x179.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "archive_path": "assets/693/003-d32b3438bc7e.png",
+      "markdown_path": "../assets/693/003-d32b3438bc7e.png",
+      "wayback_timestamp": "20130530084756",
+      "asset_archive_url": "https://web.archive.org/web/20130530084756id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "archive_path": "assets/693/004-d32b3438bc7e.png",
+      "markdown_path": "../assets/693/004-d32b3438bc7e.png",
+      "wayback_timestamp": "20130530084756",
+      "asset_archive_url": "https://web.archive.org/web/20130530084756id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56-1024x612.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.46.39.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.46.39-215x300.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile-150x150.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile-150x150.png",
+      "archive_path": "assets/693/wp-content/uploads/2012/08/mobile-150x150.png",
+      "markdown_path": "../assets/693/wp-content/uploads/2012/08/mobile-150x150.png",
+      "wayback_timestamp": "20121016051316",
+      "asset_archive_url": "https://web.archive.org/web/20121016051316id_/https://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile-150x150.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile-1.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "post_id": 693,
+      "page_type": "post",
+      "title": "CSS 連這個也辦的到?! 淺談 CSS media queries",
+      "page_timestamp": "20200919195958",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "archive_path": "assets/693/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "markdown_path": "../assets/693/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "wayback_timestamp": "20160529093602",
+      "asset_archive_url": "https://web.archive.org/web/20160529093602id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://www.mozilla.com.tw/firefox/",
+      "text": "Firefox 15.0"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.26.56.png",
+      "text": ""
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.46.39.png",
+      "text": ""
+    },
+    {
+      "url": "https://jsfiddle.net/mpizza/T5fz4/2/embedded/result/",
+      "text": "Live Demo"
+    },
+    {
+      "url": "https://www.kylinpoker.com/",
+      "text": "扑克牌制作"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/posts/642/%E6%B2%92%E6%83%B3%E5%88%B0css%E4%B9%9F%E5%81%9A%E7%9A%84%E5%88%B0%EF%BC%9F%EF%BC%81",
+      "text": "這篇來幫你復習一下"
+    },
+    {
+      "url": "https://mozilla.com.tw/",
+      "text": "Mozilla Taiwan"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile.png",
+      "text": ""
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile-1.png",
+      "text": ""
+    },
+    {
+      "url": "https://developer.mozilla.org/en/CSS/Media_queries/",
+      "text": "Media_queries"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "partial_assets_failed",
+  "asset_errors": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.46.39.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2012-07-27-%E4%B8%8B%E5%8D%883.46.39-215x300.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/mobile-1.png",
+      "reason": "article_media_missing"
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+{
+  "post_id": 4857,
+  "title": "Firefox OS 適用的 WebGL 與 CreateJS (下)",
+  "date": "2014-02-06",
+  "year": 2014,
+  "month": 2,
+  "day": 6,
+  "categories": [
+    "Firefox OS"
+  ],
+  "tags": [
+    "Firefox OS"
+  ],
+  "author": "",
+  "original_url": "https://blog.mozilla.com.tw/?p=4857",
+  "archive_url": "https://web.archive.org/web/20201231235959id_/https://blog.mozilla.com.tw/?p=4857",
+  "wayback_timestamp": "20201231235959",
+  "content_html": "<div class=\"entry-content close\">\n    <p>你對 Firefox OS 的遊戲開發，特別是 WebGL 與 CreateJS 的繪圖功能感興趣嗎？那你絕對不能錯過《<a href=\"http://blog.mozilla.com.tw/posts/4853/\" target=\"_blank\">Firefox OS 適用的 WebGL 與 CreateJS (上)</a>》。</p>\n<p>接著為大家介紹繪圖效能展示與小遊戲。</p>\n<h4><b>範例 1：</b><b>Bunnymark</b></h4>\n<p>Web 圖形處理的高人氣 (但限於特定族群) 效能量測基準就是 Bunnymark。此基準將測試任一繪圖器在 60fps 時，所能處理最多數量的跳躍小兔點陣圖動畫 (測試之後約達五倍快)。</p>\n<p><img class=\"aligncenter size-full wp-image-4854\" alt=\"bunny\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/bunny.jpg\" width=\"404\" height=\"302\" /></p>\n<ul>\n<li><a href=\"http://createjs.com/Demos/EaselJS/bunnymarkEasel/?c2d=1\">Canvas 2D Bunnymark</a></li>\n<li><a href=\"http://createjs.com/Demos/EaselJS/bunnymarkEasel/?c2d=0\">WebGL Bunnymark</a></li>\n<li><a href=\"http://createjs.com/Demos/EaselJS/bunnymarkEasel/install.html\">Firefox OS Installer</a></li>\n</ul>\n<p>下表即常見 Context2D 繪圖器與新 WebGL 繪圖器的 Bunnymark 效能比較分數。數字越高代表效能越好。</p>\n<table>\n<tbody>\n<tr>\n<th>作業環境</th>\n<th>Context2D</th>\n<th>WebGL</th>\n<th>變化量</th>\n</tr>\n<tr>\n<td>2012 Macbook Pro, Firefox 26</td>\n<td>900</td>\n<td>46,000</td>\n<td>51x</td>\n</tr>\n<tr>\n<td>2012 Macbook Pro, Chrome 31</td>\n<td>2,300</td>\n<td>60,000</td>\n<td>26x</td>\n</tr>\n<tr>\n<td>2012 Win 7 laptop, IE11 (x64 NVIDIA GeForce GT 630M, 1 GB VRAM)</td>\n<td>1,900</td>\n<td>9,800</td>\n<td>5x</td>\n</tr>\n<tr>\n<td>Firefox OS 1.2.0.0-prerelease (early 1.2 device)</td>\n<td>45</td>\n<td>270</td>\n<td>6x</td>\n</tr>\n<tr>\n<td>Nexus 5, Firefox 26</td>\n<td>225</td>\n<td>4,400</td>\n<td>20x</td>\n</tr>\n<tr>\n<td>Nexus 5, Chrome 31</td>\n<td>230</td>\n<td>4,800</td>\n<td>21x</td>\n</tr>\n</tbody>\n</table>\n<p>這些數字顯示的最高 sprites 都在 60fps，所以只要降低幀率 (Framerate) 都能大幅提升上面的數字。另外值得注意的是，我們手邊的 Firefox OS 裝置雖然只是搶鮮版的 Firefox OS 1.2 裝置 (採用相對較低的 GPU 功率)，但我們還是看到效能大幅提升。</p>\n<h4><b>範例 2：</b><b>Sparkles Benchmark</b></h4>\n<p>這個簡單的展示頁面，即是在瀏覽器達到 24fps 的情況下，畫面所能顯示的最多顆粒數量。</p>\n<p><img class=\"aligncenter size-large wp-image-4860\" alt=\"easelJS\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/easelJS-1024x597.jpg\" width=\"461\" height=\"268\" /></p>\n<ul>\n<li><a href=\"http://createjs.com/Demos/EaselJS/sparklesBenchmark\">Sparkles Benchmark</a></li>\n<li><a href=\"http://createjs.com/Demos/EaselJS/sparklesBenchmark/install.html\">Firefox OS Installer</a></li>\n</ul>\n<h4><b>範例 3：</b><b>Planetary Gary</b></h4>\n<p>我們常透過 Planetary Gary 遊戲測試 CreateJS 函式庫的新功能。而針對本文所提到的要點，我們將現有遊戲翻新，以能順利使用新的 SpriteStage 與 SpriteContainer 類別，再於 WebGL 中繪製遊戲。</p>\n<p><img class=\"aligncenter size-full wp-image-4861\" alt=\"gary\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/gary.jpg\" width=\"441\" height=\"293\" /></p>\n<ul>\n<li><a href=\"http://createjs.com/Demos/EaselJS/planetaryGary/\">Planetary Gary</a></li>\n</ul>\n<p>整個過程只要修改三行程式碼或添增其他程式碼，真是出乎意料的簡單；而且確實展現新 API 的一致性、簡單易用等特色。此絕佳範例是以 Context2D 繪圖器的完整功能搭配 WebGL 繪圖器 (如遊戲本身) 的絕佳效能，進而架構出使用者介面的元素 (如開始畫面)。</p>\n<p>而且此遊戲的美術部分均屬於向量圖形，可於執行時間 (使用 EaselJS 的 <a href=\"http://www.createjs.com/Docs/EaselJS/classes/SpriteSheetBuilder.html\">SpriteSheetBuilder</a>) 透過 Context2D 繪圖器畫為 sprites，接著再傳送到 WebGL 繪圖器。因此可調整圖形而達到最小檔案容量 (約傳輸 85kb 的容量)，獲得絕佳的效能！</p>\n<h3>未來規劃</h3>\n<p>我們已經把 WebGL 新繪圖器的<a href=\"https://github.com/CreateJS/EaselJS\">公開預覽版</a>放上 GitHub，讓社群能盡情測試並<a href=\"http://community.createjs.com/discussions/easeljs\">提供意見</a>。且不久之後就會納入下一個主要版本。</p>\n<p>請在推特上持續追蹤 <a href=\"https://twitter.com/createjs\">@createjs</a> 與 <a href=\"https://twitter.com/gskinner\">@gskinner</a>，跟我們說你的想法並獲得最新消息。感謝你閱讀本文！</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2014/01/webgl-createjs-for-firefox-os/\" target=\"_blank\">WebGL &amp; CreateJS for Firefox OS</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
+  "content_text": "你對 Firefox OS 的遊戲開發，特別是 WebGL 與 CreateJS 的繪圖功能感興趣嗎？那你絕對不能錯過《 Firefox OS 適用的 WebGL 與 CreateJS (上) 》。 接著為大家介紹繪圖效能展示與小遊戲。 範例 1： Bunnymark Web 圖形處理的高人氣 (但限於特定族群) 效能量測基準就是 Bunnymark。此基準將測試任一繪圖器在 60fps 時，所能處理最多數量的跳躍小兔點陣圖動畫 (測試之後約達五倍快)。 Canvas 2D Bunnymark WebGL Bunnymark Firefox OS Installer 下表即常見 Context2D 繪圖器與新 WebGL 繪圖器的 Bunnymark 效能比較分數。數字越高代表效能越好。 作業環境 Context2D WebGL 變化量 2012 Macbook Pro, Firefox 26 900 46,000 51x 2012 Macbook Pro, Chrome 31 2,300 60,000 26x 2012 Win 7 laptop, IE11 (x64 NVIDIA GeForce GT 630M, 1 GB VRAM) 1,900 9,800 5x Firefox OS 1.2.0.0-prerelease (early 1.2 device) 45 270 6x Nexus 5, Firefox 26 225 4,400 20x Nexus 5, Chrome 31 230 4,800 21x 這些數字顯示的最高 sprites 都在 60fps，所以只要降低幀率 (Framerate) 都能大幅提升上面的數字。另外值得注意的是，我們手邊的 Firefox OS 裝置雖然只是搶鮮版的 Firefox OS 1.2 裝置 (採用相對較低的 GPU 功率)，但我們還是看到效能大幅提升。 範例 2： Sparkles Benchmark 這個簡單的展示頁面，即是在瀏覽器達到 24fps 的情況下，畫面所能顯示的最多顆粒數量。 Sparkles Benchmark Firefox OS Installer 範例 3： Planetary Gary 我們常透過 Planetary Gary 遊戲測試 CreateJS 函式庫的新功能。而針對本文所提到的要點，我們將現有遊戲翻新，以能順利使用新的 SpriteStage 與 SpriteContainer 類別，再於 WebGL 中繪製遊戲。 Planetary Gary 整個過程只要修改三行程式碼或添增其他程式碼，真是出乎意料的簡單；而且確實展現新 API 的一致性、簡單易用等特色。此絕佳範例是以 Context2D 繪圖器的完整功能搭配 WebGL 繪圖器 (如遊戲本身) 的絕佳效能，進而架構出使用者介面的元素 (如開始畫面)。 而且此遊戲的美術部分均屬於向量圖形，可於執行時間 (使用 EaselJS 的 SpriteSheetBuilder ) 透過 Context2D 繪圖器畫為 sprites，接著再傳送到 WebGL 繪圖器。因此可調整圖形而達到最小檔案容量 (約傳輸 85kb 的容量)，獲得絕佳的效能！ 未來規劃 我們已經把 WebGL 新繪圖器的 公開預覽版 放上 GitHub，讓社群能盡情測試並 提供意見 。且不久之後就會納入下一個主要版本。 請在推特上持續追蹤 @createjs 與 @gskinner ，跟我們說你的想法並獲得最新消息。感謝你閱讀本文！ 原文連結： WebGL & CreateJS for Firefox OS",
+  "images": [
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/bunny.jpg",
+      "alt": "bunny",
+      "fallback_url": "https://blog.mozilla.com.tw/wp-content/uploads/bunny.jpg",
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/bunny.jpg",
+      "archive_path": "assets/4857/wp-content/uploads/bunny.jpg",
+      "markdown_path": "../assets/4857/wp-content/uploads/bunny.jpg",
+      "wayback_timestamp": "20140210115352",
+      "asset_archive_url": "https://web.archive.org/web/20140210115352id_/https://blog.mozilla.com.tw/wp-content/uploads/bunny.jpg",
+      "content_type": "image/jpeg",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/easelJS-1024x597.jpg",
+      "alt": "easelJS",
+      "post_id": 4857,
+      "page_type": "other",
+      "title": "Firefox OS 適用的 WebGL 與 CreateJS (下)",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 1,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/easelJS-1024x597.jpg",
+      "archive_path": "assets/4857/wp-content/uploads/easelJS-1024x597.jpg",
+      "markdown_path": "../assets/4857/wp-content/uploads/easelJS-1024x597.jpg",
+      "wayback_timestamp": "20150925084748",
+      "asset_archive_url": "https://web.archive.org/web/20150925084748id_/http://blog.mozilla.com.tw/wp-content/uploads/easelJS-1024x597.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/gary.jpg",
+      "alt": "gary",
+      "post_id": 4857,
+      "page_type": "other",
+      "title": "Firefox OS 適用的 WebGL 與 CreateJS (下)",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 2,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/gary.jpg",
+      "archive_path": "assets/4857/wp-content/uploads/gary.jpg",
+      "markdown_path": "../assets/4857/wp-content/uploads/gary.jpg",
+      "wayback_timestamp": "20140924205851",
+      "asset_archive_url": "https://web.archive.org/web/20140924205851id_/http://blog.mozilla.com.tw/wp-content/uploads/gary.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://blog.mozilla.com.tw/posts/4853/",
+      "text": "Firefox OS 適用的 WebGL 與 CreateJS (上)"
+    },
+    {
+      "url": "https://createjs.com/Demos/EaselJS/bunnymarkEasel/?c2d=1",
+      "text": "Canvas 2D Bunnymark"
+    },
+    {
+      "url": "https://createjs.com/Demos/EaselJS/bunnymarkEasel/?c2d=0",
+      "text": "WebGL Bunnymark"
+    },
+    {
+      "url": "https://createjs.com/Demos/EaselJS/bunnymarkEasel/install.html",
+      "text": "Firefox OS Installer"
+    },
+    {
+      "url": "https://createjs.com/Demos/EaselJS/sparklesBenchmark",
+      "text": "Sparkles Benchmark"
+    },
+    {
+      "url": "https://createjs.com/Demos/EaselJS/sparklesBenchmark/install.html",
+      "text": "Firefox OS Installer"
+    },
+    {
+      "url": "https://createjs.com/Demos/EaselJS/planetaryGary/",
+      "text": "Planetary Gary"
+    },
+    {
+      "url": "https://www.createjs.com/Docs/EaselJS/classes/SpriteSheetBuilder.html",
+      "text": "SpriteSheetBuilder"
+    },
+    {
+      "url": "https://github.com/CreateJS/EaselJS",
+      "text": "公開預覽版"
+    },
+    {
+      "url": "https://community.createjs.com/discussions/easeljs",
+      "text": "提供意見"
+    },
+    {
+      "url": "https://twitter.com/createjs",
+      "text": "@createjs"
+    },
+    {
+      "url": "https://twitter.com/gskinner",
+      "text": "@gskinner"
+    },
+    {
+      "url": "https://hacks.mozilla.org/2014/01/webgl-createjs-for-firefox-os/",
+      "text": "WebGL & CreateJS for Firefox OS"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": [],
+  "media": [
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/bunny.jpg",
+      "alt": "bunny",
+      "fallback_url": "https://blog.mozilla.com.tw/wp-content/uploads/bunny.jpg",
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/bunny.jpg",
+      "archive_path": "assets/4857/wp-content/uploads/bunny.jpg",
+      "markdown_path": "../assets/4857/wp-content/uploads/bunny.jpg",
+      "wayback_timestamp": "20140210115352",
+      "asset_archive_url": "https://web.archive.org/web/20140210115352id_/https://blog.mozilla.com.tw/wp-content/uploads/bunny.jpg",
+      "content_type": "image/jpeg",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/easelJS-1024x597.jpg",
+      "alt": "easelJS",
+      "post_id": 4857,
+      "page_type": "other",
+      "title": "Firefox OS 適用的 WebGL 與 CreateJS (下)",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 1,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/easelJS-1024x597.jpg",
+      "archive_path": "assets/4857/wp-content/uploads/easelJS-1024x597.jpg",
+      "markdown_path": "../assets/4857/wp-content/uploads/easelJS-1024x597.jpg",
+      "wayback_timestamp": "20150925084748",
+      "asset_archive_url": "https://web.archive.org/web/20150925084748id_/http://blog.mozilla.com.tw/wp-content/uploads/easelJS-1024x597.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/gary.jpg",
+      "alt": "gary",
+      "post_id": 4857,
+      "page_type": "other",
+      "title": "Firefox OS 適用的 WebGL 與 CreateJS (下)",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 2,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/gary.jpg",
+      "archive_path": "assets/4857/wp-content/uploads/gary.jpg",
+      "markdown_path": "../assets/4857/wp-content/uploads/gary.jpg",
+      "wayback_timestamp": "20140924205851",
+      "asset_archive_url": "https://web.archive.org/web/20140924205851id_/http://blog.mozilla.com.tw/wp-content/uploads/gary.jpg",
+      "content_type": "image/jpeg"
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "post_id": 3914,
+  "title": "Gecko 多彩多姿多媒體",
+  "date": "2014-03-10",
+  "year": 2014,
+  "month": 3,
+  "day": 10,
+  "categories": [
+    "Firefox OS(B2G)"
+  ],
+  "tags": [
+    "Firefox OS(B2G)"
+  ],
+  "author": "Bruce Sun",
+  "page_type": "post",
+  "original_url": "https://tech.mozilla.com.tw/?p=3914",
+  "archive_url": "https://web.archive.org/web/20150403234719id_/https://tech.mozilla.com.tw/?p=3914",
+  "wayback_timestamp": "20150403234719",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>自從個人電腦愈來愈普及之後，影音娛樂的應用一直是大家關注的焦點之一。在其中，<a title=\"Multimedia\" href=\"http://en.wikipedia.org/wiki/Multimedia\" target=\"_blank\">多媒體</a>的播放功能已經變成基本功能中的基本功能。為了能處理各式各樣的多媒體功能（諸如：錄製、播放、串流、轉換格式、後製處理等），每個平台上幾乎都有設計出一套<a title=\"Multimedia Framework\" href=\"http://en.wikipedia.org/wiki/Multimedia_framework\" target=\"_blank\">多媒體框架</a>用來應付各種的需求，像是 Windows 上有 <a title=\"DirectShow\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/dd375454(v=vs.85).aspx\" target=\"_blank\">DirectShow</a> 跟 <a title=\"Microsoft Media Foundation\" href=\"http://msdn.microsoft.com/en-us/library/windows/desktop/ms694197(v=vs.85).aspx\" target=\"_blank\">Media Foundation</a> 、 Linux 上有 <a title=\"GStreamer: open source multimedia framework\" href=\"http://gstreamer.freedesktop.org/\" target=\"_blank\">GStreamer</a> 、 Mac OS 上有 <a title=\"QuickTime for Developers\" href=\"https://developer.apple.com/quicktime/\" target=\"_blank\">QuickTime</a> 、 Android 上有 <a title=\"Media | Android Developers\" href=\"http://source.android.com/devices/media.html\" target=\"_blank\">StageFright</a> 。至於多媒體檔案在 Gecko 裡是如何被播放的呢？我們現在就來談談。</p>\n<p>在 Gecko 裡的影音處理大致上可以分成兩大類。一種是播放現成的檔案，例如播放本地端的影像檔或聲音檔，或是透過 HTTP 或 RTSP 連到遠端的伺服器抓資料；這類的資料都可以利用 <a title=\"HTML &lt;audio&gt; Tag\" href=\"http://www.w3schools.com/tags/tag_audio.asp\" target=\"_blank\">&lt;audio&gt;</a> 元素跟 <a title=\"HTML &lt;video&gt; Tag\" href=\"http://www.w3schools.com/tags/tag_video.asp\" target=\"_blank\">&lt;video&gt;</a> 元素裡的 <a title=\"HTML Audio/Video DOM src Property\" href=\"http://www.w3schools.com/tags/av_prop_src.asp\" target=\"_blank\">src</a> 屬性或是 <a title=\"HTML &lt;source&gt; Tag\" href=\"http://www.w3schools.com/tags/tag_source.asp\" target=\"_blank\">&lt;source&gt;</a> 元素指定資料來源<sup><a title=\"[註*]\" href=\"#*\">[註*]</a></sup>；這是目前大多數人的使用情境，也是今天所要講的主題。另一種是處理<a title=\"MediaStream Processing API\" href=\"https://dvcs.w3.org/hg/audio/raw-file/tip/streams/StreamProcessing.html\" target=\"_blank\">即時產生的資料</a>，例如<a title=\"Media Capture and Streams\" href=\"http://www.w3.org/TR/mediacapture-streams/\" target=\"_blank\">從相機與麥克風來的即時影像</a>，或是<a title=\"Web Audio API\" href=\"http://www.w3.org/TR/webaudio/\" target=\"_blank\">直接操作音頻內容產生新的音效</a>，或是<a title=\"WebRTC 1.0: Real-time Communication Between Browsers\" href=\"http://www.w3.org/TR/webrtc/\" target=\"_blank\">跟遠端的電腦互傳即時影音資料</a>。這類的資料是透過 <a title=\"Bug 664918 - Infrastructure for media stream graph processing\" href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=664918\" target=\"_blank\">MediaStreamGraph</a> 的機制去做處理，有興趣的朋友可以自行先去了解，今天會略過這個部份。</p>\n<div id=\"attachment_3949\" style=\"width: 791px\" class=\"wp-caption aligncenter\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/Geckos-Media-Framework.png\"><img class=\"size-full wp-image-3949  \" title=\"Gecko's Media Framework\" alt=\"Gecko's Media Framework\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/Geckos-Media-Framework.png\" width=\"781\" height=\"346\" /></a><p class=\"wp-caption-text\">Gecko&#8217;s Media Framework</p></div>\n<p>跟大部份的多媒體框架一樣， Gecko 利用許多模組化的類別完成多媒體的播放；比較特別的是， Gecko 的模組化有部份是為了能夠利用各平台現成的解碼元件而設計。如上圖，當 <a title=\"HTMLMediaElement\" href=\"https://developer.mozilla.org/en/docs/Web/API/HTMLMediaElement\" target=\"_blank\">HTMLMediaElement</a> 需要執行播放功能的時候， MediaDecoder 會負起播放多媒體資料的任務。如果資料來源是檔案或是一般的 <a title=\"HTML Audio/Video DOM src Property\" href=\"http://www.w3schools.com/tags/av_prop_src.asp\" target=\"_blank\">URI</a> <sup><a title=\"[註**]\" href=\"#**\">[註**]</a></sup> ， MediaDecoder 會利用圖中的 MediaResource 、 MediaReader 、 VideoFrameContainer 、 AudioStream 、 MediaDecoderStateMachine 來執行播放動作。其中 MediaResource 是用來把多媒體資料包裝成具有隨機存取功能的類別，諸如檔案、 HTTP 、 RTSP 等資料來源，都分別有不同的子類別提供實作。 MediaReader 是用來把從 MediaResource 拿到的多媒體資料分流出尚未解碼的影像資料與音訊資料，然後再利用解碼器轉成解碼後的影像與音訊；為了能夠利用各平台現有的解碼元件，以及支援不同格式的檔案， Gecko 對於不同的<a title=\"Multimedia framework\" href=\"http://en.wikipedia.org/wiki/Multimedia_framework\" target=\"_blank\">多媒體框架</a>及<a title=\"Digital container format\" href=\"http://en.wikipedia.org/wiki/Digital_container_format\" target=\"_blank\">多媒體封裝格式</a>都分別客製化了不同的 MediaReader 子類別，達成分流與解碼的任務。 VideoFrameContainer 是用來把解碼後的影像轉傳到螢幕畫面上的類別。 AudioStream 是用來把解壓縮之後的音訊轉傳到聲音輸出裝置的類別。 MediaDecoderStateMachine 則是用來監控與記錄解碼的狀態，控制影像與音訊的同步，同時也是管理整個資料流流動的主要角色。</p>\n<p>在上圖中，連結各物件的箭頭代表的是多媒體資料流動的方向，不同的顏色分別代表的是驅動資料流動的不同執行緒；值得一提的是，圖上所有的執行緒通通都是 MediaDecoderStateMachine 在掌控生命週期的。 &#8220;Media Decode&#8221; 執行緒是負責驅動 MediaReader 從 MediaResource 抓取資料進行解碼，並且把解碼過的影像資料與音訊資料分別放在各自的佇列裡。 &#8220;Media Audio&#8221; 執行緒是負責把解碼過的音訊資料從 MediaReader 裡的音訊佇列抓取音訊資料進 AudioStream 播放聲音。 &#8220;Media State&#8221; 執行緒會定期檢查當前的解碼狀態，決定資料流是否該繼續流動，例如佇列滿了就先停止解碼的執行緒，或是在使用者要停止播放的時候停止音訊播放的執行緒；這隻執行緒還會定期檢查影像資料與音訊資料的播放時間，在需要更新影像資料的時候，從 MediaReader 裡的影像佇列抓取符合播放時間點的影像資料進 VideoFrameContainer 播放畫面。</p>\n<p>以上就是 Gecko 如何利用 &lt;audio&gt; 或是 &lt;video&gt; 播放檔案的簡單介紹。由於 Gecko 的程式碼隨時都在變動，只要有任何有志之士提出了更好的實作方式，都有可能改動資料流向與物件關係、甚至是執行緒的生命週期。若想了解更多關於 Gecko 播放多媒體資料的細節，敬請關注 Gecko 的<a title=\"media - DXR\" href=\"http://dxr.mozilla.org/mozilla-central/source/content/media/\" target=\"_blank\">源始碼</a>；希望大家在研究咱們的多媒體架構的同時，生活能過得更多彩多姿。</p>\n<p><a name=\"*\"></a>[註*]： Gecko 能播放的檔案格式請參考<a title=\"Media formats supported by the HTML audio and video elements\" href=\"https://developer.mozilla.org/en-US/docs/HTML/Supported_media_formats\" target=\"_blank\">這裡</a>跟<a title=\"HTML Media support in Firefox\" href=\"http://bluishcoder.co.nz/2013/08/21/html-media-support-in-firefox.html\" target=\"_blank\">這裡</a>。<br />\n<a name=\"**\"></a>[註**]：利用 JavaScript 程式碼其實也可以指定一個 MediaStream 物件到 &lt;audio&gt; 元素或是 &lt;video&gt; 元素的 <a title=\"Bug 792665 - Separate HTMLMediaElement.src from HTMLMediaElement.srcObject\" href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=792665\" target=\"_blank\">srcObject</a> 屬性；不過在此情況下，資料不會經過圖上所列的這幾個類別處理，而是會被導引至 MediaStreamGraph 的相關類別裡做播放。</p>\n\t\t\t</div>",
+  "content_text": "自從個人電腦愈來愈普及之後，影音娛樂的應用一直是大家關注的焦點之一。在其中， 多媒體 的播放功能已經變成基本功能中的基本功能。為了能處理各式各樣的多媒體功能（諸如：錄製、播放、串流、轉換格式、後製處理等），每個平台上幾乎都有設計出一套 多媒體框架 用來應付各種的需求，像是 Windows 上有 DirectShow 跟 Media Foundation 、 Linux 上有 GStreamer 、 Mac OS 上有 QuickTime 、 Android 上有 StageFright 。至於多媒體檔案在 Gecko 裡是如何被播放的呢？我們現在就來談談。 在 Gecko 裡的影音處理大致上可以分成兩大類。一種是播放現成的檔案，例如播放本地端的影像檔或聲音檔，或是透過 HTTP 或 RTSP 連到遠端的伺服器抓資料；這類的資料都可以利用 <audio> 元素跟 <video> 元素裡的 src 屬性或是 <source> 元素指定資料來源 [註*] ；這是目前大多數人的使用情境，也是今天所要講的主題。另一種是處理 即時產生的資料 ，例如 從相機與麥克風來的即時影像 ，或是 直接操作音頻內容產生新的音效 ，或是 跟遠端的電腦互傳即時影音資料 。這類的資料是透過 MediaStreamGraph 的機制去做處理，有興趣的朋友可以自行先去了解，今天會略過這個部份。 Gecko’s Media Framework 跟大部份的多媒體框架一樣， Gecko 利用許多模組化的類別完成多媒體的播放；比較特別的是， Gecko 的模組化有部份是為了能夠利用各平台現成的解碼元件而設計。如上圖，當 HTMLMediaElement 需要執行播放功能的時候， MediaDecoder 會負起播放多媒體資料的任務。如果資料來源是檔案或是一般的 URI [註**] ， MediaDecoder 會利用圖中的 MediaResource 、 MediaReader 、 VideoFrameContainer 、 AudioStream 、 MediaDecoderStateMachine 來執行播放動作。其中 MediaResource 是用來把多媒體資料包裝成具有隨機存取功能的類別，諸如檔案、 HTTP 、 RTSP 等資料來源，都分別有不同的子類別提供實作。 MediaReader 是用來把從 MediaResource 拿到的多媒體資料分流出尚未解碼的影像資料與音訊資料，然後再利用解碼器轉成解碼後的影像與音訊；為了能夠利用各平台現有的解碼元件，以及支援不同格式的檔案， Gecko 對於不同的 多媒體框架 及 多媒體封裝格式 都分別客製化了不同的 MediaReader 子類別，達成分流與解碼的任務。 VideoFrameContainer 是用來把解碼後的影像轉傳到螢幕畫面上的類別。 AudioStream 是用來把解壓縮之後的音訊轉傳到聲音輸出裝置的類別。 MediaDecoderStateMachine 則是用來監控與記錄解碼的狀態，控制影像與音訊的同步，同時也是管理整個資料流流動的主要角色。 在上圖中，連結各物件的箭頭代表的是多媒體資料流動的方向，不同的顏色分別代表的是驅動資料流動的不同執行緒；值得一提的是，圖上所有的執行緒通通都是 MediaDecoderStateMachine 在掌控生命週期的。 “Media Decode” 執行緒是負責驅動 MediaReader 從 MediaResource 抓取資料進行解碼，並且把解碼過的影像資料與音訊資料分別放在各自的佇列裡。 “Media Audio” 執行緒是負責把解碼過的音訊資料從 MediaReader 裡的音訊佇列抓取音訊資料進 AudioStream 播放聲音。 “Media State” 執行緒會定期檢查當前的解碼狀態，決定資料流是否該繼續流動，例如佇列滿了就先停止解碼的執行緒，或是在使用者要停止播放的時候停止音訊播放的執行緒；這隻執行緒還會定期檢查影像資料與音訊資料的播放時間，在需要更新影像資料的時候，從 MediaReader 裡的影像佇列抓取符合播放時間點的影像資料進 VideoFrameContainer 播放畫面。 以上就是 Gecko 如何利用 <audio> 或是 <video> 播放檔案的簡單介紹。由於 Gecko 的程式碼隨時都在變動，只要有任何有志之士提出了更好的實作方式，都有可能改動資料流向與物件關係、甚至是執行緒的生命週期。若想了解更多關於 Gecko 播放多媒體資料的細節，敬請關注 Gecko 的 源始碼 ；希望大家在研究咱們的多媒體架構的同時，生活能過得更多彩多姿。 [註*]： Gecko 能播放的檔案格式請參考 這裡 跟 這裡 。 [註**]：利用 JavaScript 程式碼其實也可以指定一個 MediaStream 物件到 <audio> 元素或是 <video> 元素的 srcObject 屬性；不過在此情況下，資料不會經過圖上所列的這幾個類別處理，而是會被導引至 MediaStreamGraph 的相關類別裡做播放。",
+  "images": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/Geckos-Media-Framework.png",
+      "alt": "Gecko",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/3914/wp-content/uploads/2014/01/Geckos-Media-Framework.png",
+      "markdown_path": "../assets/3914/wp-content/uploads/2014/01/Geckos-Media-Framework.png",
+      "wayback_timestamp": "20150403234719",
+      "asset_archive_url": "https://web.archive.org/web/20150403234719id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/Geckos-Media-Framework.png",
+      "content_type": "image/png"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/Geckos-Media-Framework.png",
+      "alt": "Gecko",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/3914/wp-content/uploads/2014/01/Geckos-Media-Framework.png",
+      "markdown_path": "../assets/3914/wp-content/uploads/2014/01/Geckos-Media-Framework.png",
+      "wayback_timestamp": "20150403234719",
+      "asset_archive_url": "https://web.archive.org/web/20150403234719id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/Geckos-Media-Framework.png",
+      "content_type": "image/png"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://en.wikipedia.org/wiki/Multimedia",
+      "text": "多媒體"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Multimedia_framework",
+      "text": "多媒體框架"
+    },
+    {
+      "url": "https://msdn.microsoft.com/en-us/library/windows/desktop/dd375454(v=vs.85).aspx",
+      "text": "DirectShow"
+    },
+    {
+      "url": "https://msdn.microsoft.com/en-us/library/windows/desktop/ms694197(v=vs.85).aspx",
+      "text": "Media Foundation"
+    },
+    {
+      "url": "https://gstreamer.freedesktop.org/",
+      "text": "GStreamer"
+    },
+    {
+      "url": "https://developer.apple.com/quicktime/",
+      "text": "QuickTime"
+    },
+    {
+      "url": "https://source.android.com/devices/media.html",
+      "text": "StageFright"
+    },
+    {
+      "url": "https://www.w3schools.com/tags/tag_audio.asp",
+      "text": "<audio>"
+    },
+    {
+      "url": "https://www.w3schools.com/tags/tag_video.asp",
+      "text": "<video>"
+    },
+    {
+      "url": "https://www.w3schools.com/tags/av_prop_src.asp",
+      "text": "src"
+    },
+    {
+      "url": "https://www.w3schools.com/tags/tag_source.asp",
+      "text": "<source>"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/?p=3914#*",
+      "text": "[註*]"
+    },
+    {
+      "url": "https://dvcs.w3.org/hg/audio/raw-file/tip/streams/StreamProcessing.html",
+      "text": "即時產生的資料"
+    },
+    {
+      "url": "https://www.w3.org/TR/mediacapture-streams/",
+      "text": "從相機與麥克風來的即時影像"
+    },
+    {
+      "url": "https://www.w3.org/TR/webaudio/",
+      "text": "直接操作音頻內容產生新的音效"
+    },
+    {
+      "url": "https://www.w3.org/TR/webrtc/",
+      "text": "跟遠端的電腦互傳即時影音資料"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=664918",
+      "text": "MediaStreamGraph"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/Geckos-Media-Framework.png",
+      "text": ""
+    },
+    {
+      "url": "https://developer.mozilla.org/en/docs/Web/API/HTMLMediaElement",
+      "text": "HTMLMediaElement"
+    },
+    {
+      "url": "https://www.w3schools.com/tags/av_prop_src.asp",
+      "text": "URI"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/?p=3914#**",
+      "text": "[註**]"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Multimedia_framework",
+      "text": "多媒體框架"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Digital_container_format",
+      "text": "多媒體封裝格式"
+    },
+    {
+      "url": "https://dxr.mozilla.org/mozilla-central/source/content/media/",
+      "text": "源始碼"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/HTML/Supported_media_formats",
+      "text": "這裡"
+    },
+    {
+      "url": "https://bluishcoder.co.nz/2013/08/21/html-media-support-in-firefox.html",
+      "text": "這裡"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=792665",
+      "text": "srcObject"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": []
+}

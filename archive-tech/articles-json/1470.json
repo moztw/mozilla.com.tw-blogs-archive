@@ -1,0 +1,252 @@
+{
+  "post_id": 1470,
+  "title": "缺它不可！靈活運用 Firefox OS Gaia 的單元測試",
+  "date": "",
+  "year": null,
+  "month": null,
+  "day": null,
+  "categories": [],
+  "tags": [],
+  "author": "",
+  "page_type": "post",
+  "original_url": "https://tech.mozilla.com.tw/?p=1470",
+  "archive_url": "https://web.archive.org/web/20130530053954id_/https://tech.mozilla.com.tw/?p=1470",
+  "wayback_timestamp": "20130530053954",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>單元測試一直以來都是確保軟體品質的一種方式，在日益錯綜複雜的軟體中更是重要。Firefox OS 的應用層 Gaia 理所當然的也由單元測試來確保軟體品質。設置妥當後，當你打開任意編輯器對 Javascript 檔案編輯，並且按下『Save』的那一刻，unit test agent 就會默默的被喚起，針對您的修改一項項的進行檢測。當所有測試項目都妥當的通過之後，您將會看到一個優雅的圖示跳出來，告知你的測試均已通過。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed.png\"><img class=\"aligncenter size-medium wp-image-1473\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed-300x225.png\" alt=\"\" width=\"300\" height=\"225\" /></a></p>\n<p>Gaia 的單元測試將會針對修改的部份執行該部份的單元測試，可確保修改的時候所有的測項都可以通過。錯誤的時候當然也會跳出個讓你很難忽視的紅色圖示，提醒你本次修改沒有通過測試。</p>\n<p><img class=\"aligncenter size-full wp-image-1476\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/01/螢幕擷圖存為-2013-01-15-162446.png\" alt=\"\" width=\"660\" height=\"138\" /></p>\n<p>要如何設置 Gaia 的單元測試環境呢？首先你會需要以下環境：</p>\n<ol>\n<li><a href=\"http://nodejs.org/\" target=\"_blank\"> node.js</a></li>\n<li><a href=\"http://nightly.mozilla.org/\" target=\"_blank\">Firefox nightly</a></li>\n<li><a href=\"https://wiki.mozilla.org/Gaia/Hacking\" target=\"_blank\">Gaia 開發環境</a></li>\n</ol>\n<p>因為本文重點是單元測試環境，上面環境的安裝方法就不再贅述。準備好上面的環境後，切換到 gaia 目錄，鍵入以下的指令即可執行 test agent server</p>\n<pre>$ make test-agent-server</pre>\n<p>接下來則需要建立 gaia 除錯環境，請開另外一個終端機視窗鍵入下面指令（本步驟將會建立 debug 版本的 gaia profile）</p>\n<pre>$ DEBUG=1 make</pre>\n<p>最後把 firefox nightly 套用由 DEBUG=1 make 生成的 profile 檔即可執行並完成設定</p>\n<pre>$ firefox-nightly -profile &lt;YOUR_GAIA_PROFILE&gt; http://test-agent.gaiamobile.org:8080/</pre>\n<p>注意！如果你在 Mac OS 上面開發，profile 目錄必須使用絕對路徑。</p>\n<p>這樣就設定完成了，你可以打開已經有撰寫單元測試的 javascript 檔案如 gaia/apps/calendar/js/app.js，修改之後儲存，就會看到相關的單元測試開始執行了！</p>\n<h2>如何運作？</h2>\n<p>其實運作原理很簡單。 gaia 利用 node.js 來監控檔案系統的變化，並且利用 websocket 通知 nightly browser 要執行哪個單元測試檔案，nightly 執行完畢後，再把結果回傳給 node.js。最後再由 node.js 發出 notification 後，就是使用者看到的通過或失敗的測試通知囉！</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/01/test-agent1.png\"><img class=\"aligncenter size-full wp-image-1528\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/01/test-agent1.png\" alt=\"\" width=\"550\" height=\"529\" /></a></p>\n<p>既然 node.js 也是 javascript 的執行環境，為什麼不直接在 node.js 裡面執行單元測試呢？主要的原因是 Firefox Nightly 是一個接近 Firefox OS 的運行環境，也有些 API 在 Firefox nightly 才可以使用。所以在 Firefox nightly 裡面跑是比較合理的方式。</p>\n<h2>撰寫新的單元測試</h2>\n<p>看完了如何執行單元測試，那如果加了新功能要加入單元測試要怎麼作呢？正巧最近修改了 Gaia 的 Calendar app，為其加入 offline 的錯誤訊息的 <a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=809537\" target=\"_blank\">Bug 809537</a> 就需要為離線功能加入單元測試。在這個 bug 裡面我新增了兩個需要測試的部份：</p>\n<ol>\n<li>新的 <a href=\"https://github.com/yurenju/gaia/commit/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66#diff-4\" target=\"_blank\">Errors View</a>，用來顯示主頁的錯誤訊息</li>\n<li>在 <a href=\"https://github.com/yurenju/gaia/commit/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66#diff-3\" target=\"_blank\">caldav provider</a> 裡面的 getAccount, findCalendars, syncEvents, createEvent, updateEvent, deleteEvent 新增偵測離線狀態的功能，當離線時 callback 會帶一個錯誤訊息。</li>\n</ol>\n<p><a href=\"https://github.com/yurenju/gaia/blob/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66/apps/calendar/js/views/errors.js\" target=\"_blank\">Errors View</a> 繼承自 <a href=\"https://github.com/yurenju/gaia/blob/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66/apps/calendar/js/view.js\" target=\"_blank\">View</a> (js/view.js)，其中最主要的功能是對處理來自 syncController 的  &#8216;offline&#8217; event，當 handleEvent 收到 &#8216;offline&#8217; 之後，會採用繼承自 View 的 showErrors 來顯示錯誤訊息，摘要重要的源碼如下：</p>\n<pre>Calendar.ns('Views').Errors = (function() {\r\n\r\n  function Errors() {\r\n    Calendar.View.apply(this, arguments);\r\n    this.app.syncController.on('offline', this);\r\n  }\r\n\r\n  Errors.prototype = {\r\n    __proto__: Calendar.View.prototype,\r\n\r\n(ignore...)\r\n\r\n    handleEvent: function(event) {\r\n      switch (event.type) {\r\n        case 'offline':\r\n          this.showErrors([{name: 'offline'}]);\r\n          break;\r\n      }\r\n    }\r\n  }; (ignore...)\r\n}());</pre>\n<p>針對 caldav provider 的修改，則是新增了 bailWhenOffline 在 offline 的時候新增一個 Error 並且作為 callback 的參數傳回。比如說下面的 findCalendars 就會先確認如果目前是 offline 就不會 request service。</p>\n<pre>findCalendars: function(account, callback) {\r\n  if (this.bailWhenOffline(callback)) {\r\n    return;\r\n  }\r\n  this.service.request('caldav', 'findCalendars', account, callback);\r\n},\r\n\r\n(ignore...)\r\n\r\nbailWhenOffline: function(callback) {\r\n  if (!this.offlineMessage &amp;&amp; 'mozL10n' in window.navigator) {\r\n    this.offlineMessage = window.navigator.mozL10n.get('error-offline');\r\n  }\r\n\r\n  var ret = this.app.offline() &amp;&amp; callback;\r\n  if (ret) {\r\n    var error = new Error();\r\n    error.name = 'offline';\r\n    error.message = this.offlineMessage;\r\n    callback(error);\r\n  }\r\n  return ret;\r\n}</pre>\n<p>在 <a href=\"https://github.com/yurenju/gaia/blob/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66/apps/calendar/js/views/errors.js\" target=\"_blank\">Erros View</a> 裡面，最需要測試的是 handleEvent 到 showErrors 是否正確的傳入了 { name: &#8220;offline&#8221; }，而 showErrors 已經在 view_test.js 裡面測試過了不需要重複測試，所以測試的方法是作一個 Mock 的 showErrors function 塞入原本的 Errors View 物件內，如下圖所示</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/01/mock-showerrors2.png\"><img class=\"aligncenter size-full wp-image-1542\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/01/mock-showerrors2.png\" alt=\"\" width=\"569\" height=\"395\" /></a></p>\n<p>原本的 showErrors 會在手機上顯示錯誤訊息，但我們用 Mock 的 showErrors 之後就只會把傳入的 error name 直接 assign 到 errorName 裡面，如此一來我們對 syncController 發出 &#8220;offline&#8221; 事件，再確認 errorName 最後是不是拿到了 &#8220;offline&#8221; 來判斷 handleEvent 是否正常的運行。</p>\n<pre>requireApp('calendar/test/unit/helper.js', function() {\r\n  requireLib('views/errors.js');\r\n});\r\n\r\nsuite('views/errors', function() {\r\n  var subject, app, errorName;\r\n\r\n  setup(function() {\r\n    app = testSupport.calendar.app();\r\n    subject = new Calendar.Views.Errors({\r\n      app: app\r\n    });\r\n\r\n    subject.showErrors = function(list) {\r\n      errorName = list[0].name;\r\n    }\r\n  });\r\n\r\n  test('offline event', function() {\r\n    subject.app.syncController.emit('offline');\r\n    assert.deepEqual(errorName, 'offline');\r\n  });\r\n});</pre>\n<p>至於 offline 訊息基本上是從 navigator.onLine 這個屬性得知的，所以在撰寫程式的時候我們把偵測 offline 的功能封裝在 app:offline() 裡面：</p>\n<pre>/**\r\n* Returns the offline status.\r\n*/\r\noffline: function() {\r\n  return (navigator &amp;&amp; 'onLine' in navigator) ? !navigator.onLine : true;\r\n}</pre>\n<p>在執行單元測試的時候動態的把原本的 offline 儲存到 realOffline，接著塞一個每次都會回傳 true 的 offline()，如此一來就可以測試離線狀況時上述的 function 如 getAccount, findCalendar 會不會在 callback 裡面帶入 offline error 的錯誤，舉個測試 getAccount 離線狀況的例子：</p>\n<pre>test('offline handling', function(done) {\r\n  var realOffline = app.offline;\r\n  app.offline = function() { return true };\r\n  subject.getAccount(input, function cb(cbError, cbResult) {\r\n    done(function() {\r\n      app.offline = realOffline;\r\n      assert.equal(cbError.name, 'offline');\r\n    })\r\n  })\r\n});</pre>\n<p>我們將 Mock 的 offline function 替換進去，並且執行 getAcount，並且確定 cbError.name 是 offline 就可以確認我們加入的功能是可以正常運作的了。</p>\n<p>感謝單元測試以及 Javascript 的動態特性！</p>\n<p>我們可以在測試的時候非常容易的替換一些 Mock 物件進去來達到單元測試的效果。而且可別小看這些單元測試，當你的程式日益複雜的時候，這些單元測試就是保證軟體品質的第一道防線，也會讓開發的時候感到更加安心喔。</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
+  "content_text": "單元測試一直以來都是確保軟體品質的一種方式，在日益錯綜複雜的軟體中更是重要。Firefox OS 的應用層 Gaia 理所當然的也由單元測試來確保軟體品質。設置妥當後，當你打開任意編輯器對 Javascript 檔案編輯，並且按下『Save』的那一刻，unit test agent 就會默默的被喚起，針對您的修改一項項的進行檢測。當所有測試項目都妥當的通過之後，您將會看到一個優雅的圖示跳出來，告知你的測試均已通過。 Gaia 的單元測試將會針對修改的部份執行該部份的單元測試，可確保修改的時候所有的測項都可以通過。錯誤的時候當然也會跳出個讓你很難忽視的紅色圖示，提醒你本次修改沒有通過測試。 要如何設置 Gaia 的單元測試環境呢？首先你會需要以下環境： node.js Firefox nightly Gaia 開發環境 因為本文重點是單元測試環境，上面環境的安裝方法就不再贅述。準備好上面的環境後，切換到 gaia 目錄，鍵入以下的指令即可執行 test agent server $ make test-agent-server 接下來則需要建立 gaia 除錯環境，請開另外一個終端機視窗鍵入下面指令（本步驟將會建立 debug 版本的 gaia profile） $ DEBUG=1 make 最後把 firefox nightly 套用由 DEBUG=1 make 生成的 profile 檔即可執行並完成設定 $ firefox-nightly -profile <YOUR_GAIA_PROFILE> http://test-agent.gaiamobile.org:8080/ 注意！如果你在 Mac OS 上面開發，profile 目錄必須使用絕對路徑。 這樣就設定完成了，你可以打開已經有撰寫單元測試的 javascript 檔案如 gaia/apps/calendar/js/app.js，修改之後儲存，就會看到相關的單元測試開始執行了！ 如何運作？ 其實運作原理很簡單。 gaia 利用 node.js 來監控檔案系統的變化，並且利用 websocket 通知 nightly browser 要執行哪個單元測試檔案，nightly 執行完畢後，再把結果回傳給 node.js。最後再由 node.js 發出 notification 後，就是使用者看到的通過或失敗的測試通知囉！ 既然 node.js 也是 javascript 的執行環境，為什麼不直接在 node.js 裡面執行單元測試呢？主要的原因是 Firefox Nightly 是一個接近 Firefox OS 的運行環境，也有些 API 在 Firefox nightly 才可以使用。所以在 Firefox nightly 裡面跑是比較合理的方式。 撰寫新的單元測試 看完了如何執行單元測試，那如果加了新功能要加入單元測試要怎麼作呢？正巧最近修改了 Gaia 的 Calendar app，為其加入 offline 的錯誤訊息的 Bug 809537 就需要為離線功能加入單元測試。在這個 bug 裡面我新增了兩個需要測試的部份： 新的 Errors View ，用來顯示主頁的錯誤訊息 在 caldav provider 裡面的 getAccount, findCalendars, syncEvents, createEvent, updateEvent, deleteEvent 新增偵測離線狀態的功能，當離線時 callback 會帶一個錯誤訊息。 Errors View 繼承自 View (js/view.js)，其中最主要的功能是對處理來自 syncController 的 ‘offline’ event，當 handleEvent 收到 ‘offline’ 之後，會採用繼承自 View 的 showErrors 來顯示錯誤訊息，摘要重要的源碼如下： Calendar.ns('Views').Errors = (function() { function Errors() { Calendar.View.apply(this, arguments); this.app.syncController.on('offline', this); } Errors.prototype = { __proto__: Calendar.View.prototype, (ignore...) handleEvent: function(event) { switch (event.type) { case 'offline': this.showErrors([{name: 'offline'}]); break; } } }; (ignore...) }()); 針對 caldav provider 的修改，則是新增了 bailWhenOffline 在 offline 的時候新增一個 Error 並且作為 callback 的參數傳回。比如說下面的 findCalendars 就會先確認如果目前是 offline 就不會 request service。 findCalendars: function(account, callback) { if (this.bailWhenOffline(callback)) { return; } this.service.request('caldav', 'findCalendars', account, callback); }, (ignore...) bailWhenOffline: function(callback) { if (!this.offlineMessage && 'mozL10n' in window.navigator) { this.offlineMessage = window.navigator.mozL10n.get('error-offline'); } var ret = this.app.offline() && callback; if (ret) { var error = new Error(); error.name = 'offline'; error.message = this.offlineMessage; callback(error); } return ret; } 在 Erros View 裡面，最需要測試的是 handleEvent 到 showErrors 是否正確的傳入了 { name: “offline” }，而 showErrors 已經在 view_test.js 裡面測試過了不需要重複測試，所以測試的方法是作一個 Mock 的 showErrors function 塞入原本的 Errors View 物件內，如下圖所示 原本的 showErrors 會在手機上顯示錯誤訊息，但我們用 Mock 的 showErrors 之後就只會把傳入的 error name 直接 assign 到 errorName 裡面，如此一來我們對 syncController 發出 “offline” 事件，再確認 errorName 最後是不是拿到了 “offline” 來判斷 handleEvent 是否正常的運行。 requireApp('calendar/test/unit/helper.js', function() { requireLib('views/errors.js'); }); suite('views/errors', function() { var subject, app, errorName; setup(function() { app = testSupport.calendar.app(); subject = new Calendar.Views.Errors({ app: app }); subject.showErrors = function(list) { errorName = list[0].name; } }); test('offline event', function() { subject.app.syncController.emit('offline'); assert.deepEqual(errorName, 'offline'); }); }); 至於 offline 訊息基本上是從 navigator.onLine 這個屬性得知的，所以在撰寫程式的時候我們把偵測 offline 的功能封裝在 app:offline() 裡面： /** * Returns the offline status. */ offline: function() { return (navigator && 'onLine' in navigator) ? !navigator.onLine : true; } 在執行單元測試的時候動態的把原本的 offline 儲存到 realOffline，接著塞一個每次都會回傳 true 的 offline()，如此一來就可以測試離線狀況時上述的 function 如 getAccount, findCalendar 會不會在 callback 裡面帶入 offline error 的錯誤，舉個測試 getAccount 離線狀況的例子： test('offline handling', function(done) { var realOffline = app.offline; app.offline = function() { return true }; subject.getAccount(input, function cb(cbError, cbResult) { done(function() { app.offline = realOffline; assert.equal(cbError.name, 'offline'); }) }) }); 我們將 Mock 的 offline function 替換進去，並且執行 getAcount，並且確定 cbError.name 是 offline 就可以確認我們加入的功能是可以正常運作的了。 感謝單元測試以及 Javascript 的動態特性！ 我們可以在測試的時候非常容易的替換一些 Mock 物件進去來達到單元測試的效果。而且可別小看這些單元測試，當你的程式日益複雜的時候，這些單元測試就是保證軟體品質的第一道防線，也會讓開發的時候感到更加安心喔。",
+  "images": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed-300x225.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/1470/wp-content/uploads/2013/01/testing-passed-300x225.png",
+      "markdown_path": "../assets/1470/wp-content/uploads/2013/01/testing-passed-300x225.png",
+      "wayback_timestamp": "20130530053954",
+      "asset_archive_url": "https://web.archive.org/web/20130530053954id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed-300x225.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96%E5%AD%98%E7%82%BA-2013-01-15-162446.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/1470/wp-content/uploads/2013/01/螢幕擷圖存為-2013-01-15-162446.png",
+      "markdown_path": "../assets/1470/wp-content/uploads/2013/01/螢幕擷圖存為-2013-01-15-162446.png",
+      "wayback_timestamp": "20130530053954",
+      "asset_archive_url": "https://web.archive.org/web/20130530053954id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96%E5%AD%98%E7%82%BA-2013-01-15-162446.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/test-agent1.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/1470/wp-content/uploads/2013/01/test-agent1.png",
+      "markdown_path": "../assets/1470/wp-content/uploads/2013/01/test-agent1.png",
+      "wayback_timestamp": "20130530053954",
+      "asset_archive_url": "https://web.archive.org/web/20130530053954id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/test-agent1.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/mock-showerrors2.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/1470/wp-content/uploads/2013/01/mock-showerrors2.png",
+      "markdown_path": "../assets/1470/wp-content/uploads/2013/01/mock-showerrors2.png",
+      "wayback_timestamp": "20130530053954",
+      "asset_archive_url": "https://web.archive.org/web/20130530053954id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/mock-showerrors2.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed.png",
+      "alt": "",
+      "kind": "image",
+      "source": "a-href",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed-300x225.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed-300x225.png",
+      "archive_path": "assets/1470/006-e1705928663d.png",
+      "markdown_path": "../assets/1470/006-e1705928663d.png",
+      "wayback_timestamp": "20130530090250",
+      "asset_archive_url": "https://web.archive.org/web/20130530090250id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed-300x225.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "post_id": 1470,
+      "page_type": "post",
+      "title": "缺它不可！靈活運用 Firefox OS Gaia 的單元測試",
+      "page_timestamp": "20130530053954",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/39/a42c553344edcc827244e928b92e2729-bpthumb.jpg",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/39/a42c553344edcc827244e928b92e2729-bpthumb.jpg",
+      "archive_path": "assets/1470/wp-content/uploads/avatars/39/a42c553344edcc827244e928b92e2729-bpthumb.jpg",
+      "markdown_path": "../assets/1470/wp-content/uploads/avatars/39/a42c553344edcc827244e928b92e2729-bpthumb.jpg",
+      "wayback_timestamp": "20130430174457",
+      "asset_archive_url": "https://web.archive.org/web/20130430174457id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/39/a42c553344edcc827244e928b92e2729-bpthumb.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "post_id": 1470,
+      "page_type": "post",
+      "title": "缺它不可！靈活運用 Firefox OS Gaia 的單元測試",
+      "page_timestamp": "20130530053954",
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "source": "img",
+      "kind": "image",
+      "index": 1,
+      "archive_path": "assets/1470/002-8b909b0ca962.png",
+      "markdown_path": "../assets/1470/002-8b909b0ca962.png",
+      "direct_source_url": "https://assets.pinterest.com/images/PinExt.png",
+      "content_type": "image/png",
+      "recovered_from": "direct_external_source"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed-300x225.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/1470/wp-content/uploads/2013/01/testing-passed-300x225.png",
+      "markdown_path": "../assets/1470/wp-content/uploads/2013/01/testing-passed-300x225.png",
+      "wayback_timestamp": "20130530053954",
+      "asset_archive_url": "https://web.archive.org/web/20130530053954id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed-300x225.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96%E5%AD%98%E7%82%BA-2013-01-15-162446.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/1470/wp-content/uploads/2013/01/螢幕擷圖存為-2013-01-15-162446.png",
+      "markdown_path": "../assets/1470/wp-content/uploads/2013/01/螢幕擷圖存為-2013-01-15-162446.png",
+      "wayback_timestamp": "20130530053954",
+      "asset_archive_url": "https://web.archive.org/web/20130530053954id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96%E5%AD%98%E7%82%BA-2013-01-15-162446.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/test-agent1.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/1470/wp-content/uploads/2013/01/test-agent1.png",
+      "markdown_path": "../assets/1470/wp-content/uploads/2013/01/test-agent1.png",
+      "wayback_timestamp": "20130530053954",
+      "asset_archive_url": "https://web.archive.org/web/20130530053954id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/test-agent1.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/mock-showerrors2.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/1470/wp-content/uploads/2013/01/mock-showerrors2.png",
+      "markdown_path": "../assets/1470/wp-content/uploads/2013/01/mock-showerrors2.png",
+      "wayback_timestamp": "20130530053954",
+      "asset_archive_url": "https://web.archive.org/web/20130530053954id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/mock-showerrors2.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed.png",
+      "alt": "",
+      "kind": "image",
+      "source": "a-href",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed-300x225.png",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed-300x225.png",
+      "archive_path": "assets/1470/006-e1705928663d.png",
+      "markdown_path": "../assets/1470/006-e1705928663d.png",
+      "wayback_timestamp": "20130530090250",
+      "asset_archive_url": "https://web.archive.org/web/20130530090250id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed-300x225.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "post_id": 1470,
+      "page_type": "post",
+      "title": "缺它不可！靈活運用 Firefox OS Gaia 的單元測試",
+      "page_timestamp": "20130530053954",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/39/a42c553344edcc827244e928b92e2729-bpthumb.jpg",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/39/a42c553344edcc827244e928b92e2729-bpthumb.jpg",
+      "archive_path": "assets/1470/wp-content/uploads/avatars/39/a42c553344edcc827244e928b92e2729-bpthumb.jpg",
+      "markdown_path": "../assets/1470/wp-content/uploads/avatars/39/a42c553344edcc827244e928b92e2729-bpthumb.jpg",
+      "wayback_timestamp": "20130430174457",
+      "asset_archive_url": "https://web.archive.org/web/20130430174457id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/39/a42c553344edcc827244e928b92e2729-bpthumb.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "post_id": 1470,
+      "page_type": "post",
+      "title": "缺它不可！靈活運用 Firefox OS Gaia 的單元測試",
+      "page_timestamp": "20130530053954",
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "source": "img",
+      "kind": "image",
+      "index": 1,
+      "archive_path": "assets/1470/002-8b909b0ca962.png",
+      "markdown_path": "../assets/1470/002-8b909b0ca962.png",
+      "direct_source_url": "https://assets.pinterest.com/images/PinExt.png",
+      "content_type": "image/png",
+      "recovered_from": "direct_external_source"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed.png",
+      "text": ""
+    },
+    {
+      "url": "https://nodejs.org/",
+      "text": "node.js"
+    },
+    {
+      "url": "https://nightly.mozilla.org/",
+      "text": "Firefox nightly"
+    },
+    {
+      "url": "https://wiki.mozilla.org/Gaia/Hacking",
+      "text": "Gaia 開發環境"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/test-agent1.png",
+      "text": ""
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=809537",
+      "text": "Bug 809537"
+    },
+    {
+      "url": "https://github.com/yurenju/gaia/commit/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66#diff-4",
+      "text": "Errors View"
+    },
+    {
+      "url": "https://github.com/yurenju/gaia/commit/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66#diff-3",
+      "text": "caldav provider"
+    },
+    {
+      "url": "https://github.com/yurenju/gaia/blob/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66/apps/calendar/js/views/errors.js",
+      "text": "Errors View"
+    },
+    {
+      "url": "https://github.com/yurenju/gaia/blob/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66/apps/calendar/js/view.js",
+      "text": "View"
+    },
+    {
+      "url": "https://github.com/yurenju/gaia/blob/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66/apps/calendar/js/views/errors.js",
+      "text": "Erros View"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/mock-showerrors2.png",
+      "text": ""
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": []
+}

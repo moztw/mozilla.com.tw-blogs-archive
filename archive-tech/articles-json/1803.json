@@ -1,0 +1,120 @@
+{
+  "post_id": 1803,
+  "title": "Application 效能分析有妙招 — 使用 perf 走天下",
+  "date": "",
+  "year": null,
+  "month": null,
+  "day": null,
+  "categories": [],
+  "tags": [],
+  "author": "",
+  "page_type": "post",
+  "original_url": "https://tech.mozilla.com.tw/?p=1803",
+  "archive_url": "https://web.archive.org/web/20130430193806id_/https://tech.mozilla.com.tw/?p=1803",
+  "wayback_timestamp": "20130430193806",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>在手機上面，Application 的實作往往會影響到效能好壞以及是否夠省電，其中 Application 的 CPU 使用量會是一個非常關鍵的因素。</p>\n<p>以下就拿使用 Firefox OS 的手機來做舉例說明，首先透過下面的 top 指令，可以看到整體 System 以及 Application 的 CPU 使用量，有助於了解 System 或者是 Application 的負載。</p>\n<pre>peter@pchang:~$ adb shell top -s cpu -m 10 -d 1\r\nUser 77%, System 18%, IOW 2%, IRQ 0%\r\nUser 65 + Nice 30 + Sys 23 + Idle 2 + IOW 3 + IRQ 0 + SIRQ 0 = 123\r\n\r\n  PID PR CPU% S  #THR     VSS     RSS PCY UID      Name\r\n  108  0  59% R    44 180304K  60156K  fg root     /system/b2g/b2g\r\n  483  0  26% R    11  85824K  34104K  fg app_483  /system/b2g/plugin-container\r\n  563  0   4% R     1   1056K    408K  fg root     top\r\n...</pre>\n<p>為了要進一步分析 Application 的效能瓶頸，可以使用 Linux 上分析的工具， perf (<a href=\"http://www.nvidia.com/content/devzone/tegra-android-developer-pack.html\">Download from Tegra Android Toolkit</a>)。<br />\nPerf 是根據 Linux Kernel 已經定義的 perf_event 來紀錄程式運作的過程，所以只要是 Linux based system 都可以支援，包含 Android/Firefox OS phone。目前 perf_event 在 Linux Kernel 上預設為啓動，所以使用 perf 只要準備好 Application debug symbols 就可以來進行分析。有興趣的朋友可以參考<a href=\"https://wiki.linaro.org/KenWerner/Sandbox/perf#kernel_support\"> perf kernel support </a>，來進一步確定你的手機是否有啟動 perf_event。</p>\n<p>Perf 上也有類似 top 指令，可以看到整體 System 的負載，譬如下面的結果，就可以看到 WebGLContext::Conver 佔用了最多 CPU 資源。</p>\n<pre>peter@pchang:~$ adb shell perf top\r\n\r\n-------------------------------------------------------------------------------\r\n   PerfTop:     325 irqs/sec  kernel:24.9%  exact:  0.0% [1000Hz cycles],  (all, 1 CPUs)\r\n-------------------------------------------------------------------------------\r\n\r\n         samples  pcnt function                      DSO\r\n         _______ _____ _____________________________ ______________________\r\n\r\n          697.00 50.6% mozilla::WebGLContext::Conver /system/b2g/libxul.so \r\n          424.00 30.8% yamato_tile_texture           libGLESv2_adreno200.so\r\n          124.00  9.0% yamato_untile_texture         libGLESv2_adreno200.so\r\n           26.00  1.9% rb_surface_read               libGLESv2_adreno200.so\r\n           11.00  0.8% mozilla::gl::SwapRAndBCompone /system/b2g/libxul.so \r\n            5.00  0.4% yamato_texfmt_to_pixfmt_for_m libGLESv2_adreno200.so</pre>\n<p>也可以透過 perf record/perf report ，來針對特定的 Application 做負載的分析。不過在分析之前，需要準備除錯用的 gecko modules 和對應的 debug symbols。以 Firefox OS 為範例，先做下面的修改，然後重新編譯和取代 gecko modules 到手機上，這樣是為了把 debug symbols 放到編譯好的 gecko modules，之後才能得到詳盡的分析結果。</p>\n<pre>peter@pchang:~/B2G/gonk-misc$ git diff ./default-gecko-config\r\ndiff --git a/default-gecko-config b/default-gecko-config\r\nindex c14919a..9a18176 100644\r\n--- a/default-gecko-config\r\n+++ b/default-gecko-config\r\n@@ -25,6 +25,7 @@ ac_add_options --enable-debug-symbols\r\n if [ \"${B2G_DEBUG:-0}\" != \"0\" ]; then\r\n ac_add_options --enable-debug\r\n fi\r\n+ac_add_options --enable-profiling\r\n\r\n if [ \"${B2G_NOOPT:-0}\" != \"0\" ]; then</pre>\n<p>透過下面的指令把 debug symbols 存放在 tmp folder 下面。</p>\n<pre>cp -pr out/target/product/device_name/system/ /tmp/b2g_perf/system/\r\ncp -pr out/target/product/device_name/symbols/system/ /tmp/b2g_perf/system/\r\ncp -pr objdir-gecko/dist/bin/b2g /tmp/b2g_perf/system/b2g/\r\ncp -pr objdir-gecko/dist/lib/*.so /tmp/b2g_perf/system/b2g/</pre>\n<p>接下來可以開始分析 Application 運作上的瓶頸。<br />\nPerf record 會針對 Application 記錄 20 秒的運作訊息，接著把記錄的資料從手機上下載出來。<br />\n最後使用 perf report 就可以看到使用 CPU 資源最多的函式名稱，接下來開發者就可以開始進行評估是否有改善的計劃讓 Application 運行的更快更省電。</p>\n<pre>peter@pchang:~$ adb shell perf record -p pid -o /data/local/perf.data sleep 20\r\npeter@pchang:~$ adb pull /data/local/perf.data /tmp/b2g_perf/\r\n\r\npeter@pchang:~$ perf report --symfs=/tmp/b2g_perf/system/ --sort dso,symbol\r\n\r\n 71.38%  libxul.so                 [.] mozilla::WebGLContext::Conver\r\n 15.28%  [ath6kl_sdio]             [k] 0x106fd7c\r\n  7.40%  libGLESv2_adreno200.so    [.] yamato_tile_texture\r\n  1.81%  libc.so                   [.] memcpy\r\n...</pre>\n<p>Perf 還有更多的功能，有興趣的讀者可以參考下面的連結。<br />\n<a title=\"https://perf.wiki.kernel.org/index.php/Tutorial\" href=\"https://perf.wiki.kernel.org/index.php/Tutorial\">https://perf.wiki.kernel.org/index.php/Tutorial</a></p>\n<p>&nbsp;</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing.jpg\"><img class=\"aligncenter  wp-image-1900\" title=\"14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing-1024x901.jpg\" alt=\"\" width=\"385\" height=\"338\" /></a></p>\n<p style=\"text-align: center;\"><a href=\"http://www.123rf.com/photo_14590126_cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing.html\" target=\"_blank\">圖檔出處</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
+  "content_text": "在手機上面，Application 的實作往往會影響到效能好壞以及是否夠省電，其中 Application 的 CPU 使用量會是一個非常關鍵的因素。 以下就拿使用 Firefox OS 的手機來做舉例說明，首先透過下面的 top 指令，可以看到整體 System 以及 Application 的 CPU 使用量，有助於了解 System 或者是 Application 的負載。 peter@pchang:~$ adb shell top -s cpu -m 10 -d 1 User 77%, System 18%, IOW 2%, IRQ 0% User 65 + Nice 30 + Sys 23 + Idle 2 + IOW 3 + IRQ 0 + SIRQ 0 = 123 PID PR CPU% S #THR VSS RSS PCY UID Name 108 0 59% R 44 180304K 60156K fg root /system/b2g/b2g 483 0 26% R 11 85824K 34104K fg app_483 /system/b2g/plugin-container 563 0 4% R 1 1056K 408K fg root top ... 為了要進一步分析 Application 的效能瓶頸，可以使用 Linux 上分析的工具， perf ( Download from Tegra Android Toolkit )。 Perf 是根據 Linux Kernel 已經定義的 perf_event 來紀錄程式運作的過程，所以只要是 Linux based system 都可以支援，包含 Android/Firefox OS phone。目前 perf_event 在 Linux Kernel 上預設為啓動，所以使用 perf 只要準備好 Application debug symbols 就可以來進行分析。有興趣的朋友可以參考 perf kernel support ，來進一步確定你的手機是否有啟動 perf_event。 Perf 上也有類似 top 指令，可以看到整體 System 的負載，譬如下面的結果，就可以看到 WebGLContext::Conver 佔用了最多 CPU 資源。 peter@pchang:~$ adb shell perf top ------------------------------------------------------------------------------- PerfTop: 325 irqs/sec kernel:24.9% exact: 0.0% [1000Hz cycles], (all, 1 CPUs) ------------------------------------------------------------------------------- samples pcnt function DSO _______ _____ _____________________________ ______________________ 697.00 50.6% mozilla::WebGLContext::Conver /system/b2g/libxul.so 424.00 30.8% yamato_tile_texture libGLESv2_adreno200.so 124.00 9.0% yamato_untile_texture libGLESv2_adreno200.so 26.00 1.9% rb_surface_read libGLESv2_adreno200.so 11.00 0.8% mozilla::gl::SwapRAndBCompone /system/b2g/libxul.so 5.00 0.4% yamato_texfmt_to_pixfmt_for_m libGLESv2_adreno200.so 也可以透過 perf record/perf report ，來針對特定的 Application 做負載的分析。不過在分析之前，需要準備除錯用的 gecko modules 和對應的 debug symbols。以 Firefox OS 為範例，先做下面的修改，然後重新編譯和取代 gecko modules 到手機上，這樣是為了把 debug symbols 放到編譯好的 gecko modules，之後才能得到詳盡的分析結果。 peter@pchang:~/B2G/gonk-misc$ git diff ./default-gecko-config diff --git a/default-gecko-config b/default-gecko-config index c14919a..9a18176 100644 --- a/default-gecko-config +++ b/default-gecko-config @@ -25,6 +25,7 @@ ac_add_options --enable-debug-symbols if [ \"${B2G_DEBUG:-0}\" != \"0\" ]; then ac_add_options --enable-debug fi +ac_add_options --enable-profiling if [ \"${B2G_NOOPT:-0}\" != \"0\" ]; then 透過下面的指令把 debug symbols 存放在 tmp folder 下面。 cp -pr out/target/product/device_name/system/ /tmp/b2g_perf/system/ cp -pr out/target/product/device_name/symbols/system/ /tmp/b2g_perf/system/ cp -pr objdir-gecko/dist/bin/b2g /tmp/b2g_perf/system/b2g/ cp -pr objdir-gecko/dist/lib/*.so /tmp/b2g_perf/system/b2g/ 接下來可以開始分析 Application 運作上的瓶頸。 Perf record 會針對 Application 記錄 20 秒的運作訊息，接著把記錄的資料從手機上下載出來。 最後使用 perf report 就可以看到使用 CPU 資源最多的函式名稱，接下來開發者就可以開始進行評估是否有改善的計劃讓 Application 運行的更快更省電。 peter@pchang:~$ adb shell perf record -p pid -o /data/local/perf.data sleep 20 peter@pchang:~$ adb pull /data/local/perf.data /tmp/b2g_perf/ peter@pchang:~$ perf report --symfs=/tmp/b2g_perf/system/ --sort dso,symbol 71.38% libxul.so [.] mozilla::WebGLContext::Conver 15.28% [ath6kl_sdio] [k] 0x106fd7c 7.40% libGLESv2_adreno200.so [.] yamato_tile_texture 1.81% libc.so [.] memcpy ... Perf 還有更多的功能，有興趣的讀者可以參考下面的連結。 https://perf.wiki.kernel.org/index.php/Tutorial 圖檔出處",
+  "images": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing-1024x901.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/1803/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing-1024x901.jpg",
+      "markdown_path": "../assets/1803/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing-1024x901.jpg",
+      "wayback_timestamp": "20130430193806",
+      "asset_archive_url": "https://web.archive.org/web/20130430193806id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing-1024x901.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "a-href",
+      "archive_path": "assets/1803/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing.jpg",
+      "markdown_path": "../assets/1803/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing.jpg",
+      "wayback_timestamp": "20130430193806",
+      "asset_archive_url": "https://web.archive.org/web/20130430193806id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "post_id": 1803,
+      "page_type": "post",
+      "title": "Application 效能分析有妙招 — 使用 perf 走天下",
+      "page_timestamp": "20130430193806",
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "archive_path": "assets/1803/001-8b909b0ca962.png",
+      "markdown_path": "../assets/1803/001-8b909b0ca962.png",
+      "direct_source_url": "https://assets.pinterest.com/images/PinExt.png",
+      "content_type": "image/png",
+      "recovered_from": "direct_external_source"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing-1024x901.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/1803/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing-1024x901.jpg",
+      "markdown_path": "../assets/1803/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing-1024x901.jpg",
+      "wayback_timestamp": "20130430193806",
+      "asset_archive_url": "https://web.archive.org/web/20130430193806id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing-1024x901.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "a-href",
+      "archive_path": "assets/1803/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing.jpg",
+      "markdown_path": "../assets/1803/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing.jpg",
+      "wayback_timestamp": "20130430193806",
+      "asset_archive_url": "https://web.archive.org/web/20130430193806id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "post_id": 1803,
+      "page_type": "post",
+      "title": "Application 效能分析有妙招 — 使用 perf 走天下",
+      "page_timestamp": "20130430193806",
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "archive_path": "assets/1803/001-8b909b0ca962.png",
+      "markdown_path": "../assets/1803/001-8b909b0ca962.png",
+      "direct_source_url": "https://assets.pinterest.com/images/PinExt.png",
+      "content_type": "image/png",
+      "recovered_from": "direct_external_source"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://www.nvidia.com/content/devzone/tegra-android-developer-pack.html",
+      "text": "Download from Tegra Android Toolkit"
+    },
+    {
+      "url": "https://wiki.linaro.org/KenWerner/Sandbox/perf#kernel_support",
+      "text": "perf kernel support"
+    },
+    {
+      "url": "https://perf.wiki.kernel.org/index.php/Tutorial",
+      "text": "https://perf.wiki.kernel.org/index.php/Tutorial"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing.jpg",
+      "text": ""
+    },
+    {
+      "url": "https://www.123rf.com/photo_14590126_cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing.html",
+      "text": "圖檔出處"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": []
+}

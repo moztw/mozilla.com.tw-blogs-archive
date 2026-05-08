@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+Web activity 讓網頁應用程式能溝通的新技術 | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="https://tech.mozilla.com.tw/?p=839"/><meta property="og:image" content="https://mozilla.com.tw/assets/css/img/mozcomtw/channels-firefox.png" />
+
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css" /><!--<link rel="pingback" href="https://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="https://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://tech.mozilla.com.tw/","urlLoginRedirect":"https://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=b9b467560c","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel='dns-prefetch' href='//s.w.org'>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo;" href="https://tech.mozilla.com.tw/?feed=rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 迴響" href="https://tech.mozilla.com.tw/?feed=comments-rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; Web activity 讓網頁應用程式能溝通的新技術 迴響" href="https://tech.mozilla.com.tw/?feed=rss2&#038;p=839" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='crayon-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-arduino-ide-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='advanced-responsive-video-embedder-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0' type='text/css' media='all' />
+<link rel='stylesheet' id='persona-style-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46' type='text/css' media='all' />
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<link rel='https://api.w.org/' href='https://tech.mozilla.com.tw/?rest_route=/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='十年一覺程式夢' href='https://tech.mozilla.com.tw/?p=796' />
+<link rel='next' title='說說 nsCOMPtr 這東西' href='https://tech.mozilla.com.tw/?p=828' />
+<meta name="generator" content="WordPress 4.6" />
+<link rel="canonical" href="https://tech.mozilla.com.tw/?p=839" />
+<link rel='shortlink' href='https://tech.mozilla.com.tw/?p=839' />
+<link rel="alternate" type="application/json+oembed" href="https://tech.mozilla.com.tw/?rest_route=%2Foembed%2F1.0%2Fembed&#038;url=https%3A%2F%2Ftech.mozilla.com.tw%2F%3Fp%3D839" />
+<link rel="stylesheet" href="https://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-839 single-format-standard sand">
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='//mozilla.com.tw/' class='home'>Home</a>
+            <b>&raquo;</b>
+            <a href='//mozilla.com.tw/news/'>訊息中心</a>
+            <b>&raquo;</b>
+                          <a href='//tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>
+              <span>Web activity 讓網頁應用程式能溝通的新技術</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="https://tech.mozilla.com.tw/?p=839" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="https://tech.mozilla.com.tw/?p=839"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=https://tech.mozilla.com.tw/?p=839&media=http://mozilla.com.tw/assets/css/img/mozcomtw/channels-firefox.png" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+	        <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">0</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://tech.mozilla.com.tw/?p=796"><div class="post-tip"><span class="meta-nav">十年一覺程式夢</span></div></a></div>		
+							<div class="nav-next"><a href="https://tech.mozilla.com.tw/?p=828"><div class="post-tip"><span class="meta-nav">說說 nsCOMPtr 這東西</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-839" class="post-839 post type-post status-publish format-standard hentry category-b2g category-javascript">
+	 	<header class="entry-header">
+		<h1 class="entry-title">Web activity 讓網頁應用程式能溝通的新技術</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://tech.mozilla.com.tw/?m=201209" class="posted-month">9月</a>
+	        <span class="posted-date">24</span>
+	        <a title="See all posts from 2014" href="https://tech.mozilla.com.tw/?m=2012" class="posted-year">2012</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="31">
+		  	<a href="https://tech.mozilla.com.tw/?author=31">
+	          <img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/31/3e50b95ffcabf2380aa9373f3011e694-bpthumb.jpg" alt="" class="avatar user-31-avatar" width='24' height='24' /><!--
+	       --><div class="author-info">Alive Kuo</div><!--
+	       --><div class="author-title"></div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p>Web activity 是由 Mozilla 設計並開發，用來使 web app 之間共享資源的框架。在 Firefox OS 中已經存在 Platform/UI 上的實作，並且有一些內建的主要 Web app 已經利用 Web activity 來達成跨應用程式溝通的目的。（如：Gallery 使用它來讓其他程式從它挑選圖片，也用同一技術來實現圖片分享到不同應用）</p>
+<h3>請求者 (Requester)</h3>
+<p>假設今天 E-mail 應用程式需要從圖片集中挑選圖片來寄送，那麼它必須新增一個 Activity 物件如下：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f2825bb9469f169335441" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+var a = new MozActivity({
+  name: 'pick',
+  data: {
+    type: 'image/png'
+  }
+});</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f2825bb9469f169335441-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb9469f169335441-2">2</div><div class="crayon-num" data-line="crayon-5f2825bb9469f169335441-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb9469f169335441-4">4</div><div class="crayon-num" data-line="crayon-5f2825bb9469f169335441-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb9469f169335441-6">6</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f2825bb9469f169335441-1"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">a</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-r">new</span><span class="crayon-h"> </span><span class="crayon-e">MozActivity</span><span class="crayon-sy">(</span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb9469f169335441-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">name</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">'pick'</span><span class="crayon-sy">,</span></div><div class="crayon-line" id="crayon-5f2825bb9469f169335441-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">data</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb9469f169335441-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">type</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">'image/png'</span></div><div class="crayon-line" id="crayon-5f2825bb9469f169335441-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb9469f169335441-6"><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>type 欄位是用來當 filter 用的<br />
+在 data 中的其他欄位可以傳你想要的資料給接收方。</p>
+<p>當收到資料後，處理回呼函數的方式：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f2825bb946aa427546608" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+a.onsuccess = function on_success() {
+  var image = a.result;
+};
+a.onerror = function on_error() {
+  console.warn('error when picking!');
+};</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f2825bb946aa427546608-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946aa427546608-2">2</div><div class="crayon-num" data-line="crayon-5f2825bb946aa427546608-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946aa427546608-4">4</div><div class="crayon-num" data-line="crayon-5f2825bb946aa427546608-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946aa427546608-6">6</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f2825bb946aa427546608-1"><span class="crayon-v">a</span><span class="crayon-sy">.</span><span class="crayon-v">onsuccess</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">on_success</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946aa427546608-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">image</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">a</span><span class="crayon-sy">.</span><span class="crayon-v">result</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f2825bb946aa427546608-3"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946aa427546608-4"><span class="crayon-v">a</span><span class="crayon-sy">.</span><span class="crayon-v">onerror</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">on_error</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f2825bb946aa427546608-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">console</span><span class="crayon-sy">.</span><span class="crayon-e">warn</span><span class="crayon-sy">(</span><span class="crayon-s">'error when picking!'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946aa427546608-6"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p></p>
+<h3>接收者 (Receiver)</h3>
+<p>接受某個 Activity 的 App 必須在 Manifest.webapp 中宣告：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f2825bb946ad808347983" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+"activities": {
+  "pick": {
+    "filters": {
+      type: ["image/png", "image/gif"],
+    },
+    "disposition": "window"
+  }
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f2825bb946ad808347983-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946ad808347983-2">2</div><div class="crayon-num" data-line="crayon-5f2825bb946ad808347983-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946ad808347983-4">4</div><div class="crayon-num" data-line="crayon-5f2825bb946ad808347983-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946ad808347983-6">6</div><div class="crayon-num" data-line="crayon-5f2825bb946ad808347983-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946ad808347983-8">8</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f2825bb946ad808347983-1"><span class="crayon-s">"activities"</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946ad808347983-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-s">"pick"</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f2825bb946ad808347983-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-s">"filters"</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946ad808347983-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">type</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-sy">[</span><span class="crayon-s">"image/png"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">"image/gif"</span><span class="crayon-sy">]</span><span class="crayon-sy">,</span></div><div class="crayon-line" id="crayon-5f2825bb946ad808347983-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">,</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946ad808347983-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-s">"disposition"</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">"window"</span></div><div class="crayon-line" id="crayon-5f2825bb946ad808347983-7"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946ad808347983-8"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>並且在自己的 javascript 檔中寫好當 Activity 產生時的處理函式</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f2825bb946b0051716147" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+navigator.setMozMessageHandler('activity', function(a) {
+  var image = getImageToReturn();
+  if (!image) {
+    a.postError("NoImage");
+    return;
+  }
+  a.postResult({ type: "image/png", url: image });
+});</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f2825bb946b0051716147-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946b0051716147-2">2</div><div class="crayon-num" data-line="crayon-5f2825bb946b0051716147-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946b0051716147-4">4</div><div class="crayon-num" data-line="crayon-5f2825bb946b0051716147-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946b0051716147-6">6</div><div class="crayon-num" data-line="crayon-5f2825bb946b0051716147-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946b0051716147-8">8</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f2825bb946b0051716147-1"><span class="crayon-v">navigator</span><span class="crayon-sy">.</span><span class="crayon-e">setMozMessageHandler</span><span class="crayon-sy">(</span><span class="crayon-s">'activity'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-sy">(</span><span class="crayon-v">a</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946b0051716147-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">image</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">getImageToReturn</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f2825bb946b0051716147-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-o">!</span><span class="crayon-v">image</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946b0051716147-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">a</span><span class="crayon-sy">.</span><span class="crayon-e">postError</span><span class="crayon-sy">(</span><span class="crayon-s">"NoImage"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f2825bb946b0051716147-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">return</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946b0051716147-6"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f2825bb946b0051716147-7"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">a</span><span class="crayon-sy">.</span><span class="crayon-e">postResult</span><span class="crayon-sy">(</span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-v">type</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">"image/png"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">url</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-i">image</span><span class="crayon-h"> </span><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946b0051716147-8"><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p></p>
+<h3>data/type的用法</h3>
+<p>如聯絡人程式可以接受同一個叫做 pick 的 Activity，但是電子郵件程式需要的是&#8217;email&#8217;這類資料，而電話程式需要的是&#8217;號碼&#8217;這類資料，對於這兩類資料需要呈現的 UI 與最後傳回去的資料當然會是不一樣的。</p>
+<p>解決方法就是利用不同的 data type 來區分同種 activity 的不同需求：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f2825bb946b4630434698" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+// Email app
+var a = new MozActivity({
+  name: 'pick',
+  data: {
+    type: 'web-content/email'
+  }
+});</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f2825bb946b4630434698-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946b4630434698-2">2</div><div class="crayon-num" data-line="crayon-5f2825bb946b4630434698-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946b4630434698-4">4</div><div class="crayon-num" data-line="crayon-5f2825bb946b4630434698-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946b4630434698-6">6</div><div class="crayon-num" data-line="crayon-5f2825bb946b4630434698-7">7</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f2825bb946b4630434698-1"><span class="crayon-c">// Email app</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946b4630434698-2"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">a</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-r">new</span><span class="crayon-h"> </span><span class="crayon-e">MozActivity</span><span class="crayon-sy">(</span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f2825bb946b4630434698-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">name</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">'pick'</span><span class="crayon-sy">,</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946b4630434698-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">data</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f2825bb946b4630434698-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">type</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">'web-content/email'</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946b4630434698-6"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f2825bb946b4630434698-7"><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f2825bb946b6383947693" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+// Dialer app
+var a = new MozActivity({
+  name: 'pick',
+  data: {
+    type: 'web-content/numbers'
+  }
+});</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f2825bb946b6383947693-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946b6383947693-2">2</div><div class="crayon-num" data-line="crayon-5f2825bb946b6383947693-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946b6383947693-4">4</div><div class="crayon-num" data-line="crayon-5f2825bb946b6383947693-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946b6383947693-6">6</div><div class="crayon-num" data-line="crayon-5f2825bb946b6383947693-7">7</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f2825bb946b6383947693-1"><span class="crayon-c">// Dialer app</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946b6383947693-2"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">a</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-r">new</span><span class="crayon-h"> </span><span class="crayon-e">MozActivity</span><span class="crayon-sy">(</span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f2825bb946b6383947693-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">name</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">'pick'</span><span class="crayon-sy">,</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946b6383947693-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">data</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f2825bb946b6383947693-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">type</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">'web-content/numbers'</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946b6383947693-6"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f2825bb946b6383947693-7"><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>在聯絡人程式中</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f2825bb946b9179183632" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+navigator.setMozMessageHandler('activity', function(a) {
+  switch(a.source.data.type) {
+  case 'webcontacts/numbers':
+    // ...
+    break;
+  case 'webcontacts/email':
+    // ...
+    break;
+  }
+});</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f2825bb946b9179183632-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946b9179183632-2">2</div><div class="crayon-num" data-line="crayon-5f2825bb946b9179183632-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946b9179183632-4">4</div><div class="crayon-num" data-line="crayon-5f2825bb946b9179183632-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946b9179183632-6">6</div><div class="crayon-num" data-line="crayon-5f2825bb946b9179183632-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946b9179183632-8">8</div><div class="crayon-num" data-line="crayon-5f2825bb946b9179183632-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946b9179183632-10">10</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f2825bb946b9179183632-1"><span class="crayon-v">navigator</span><span class="crayon-sy">.</span><span class="crayon-e">setMozMessageHandler</span><span class="crayon-sy">(</span><span class="crayon-s">'activity'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-sy">(</span><span class="crayon-v">a</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946b9179183632-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">switch</span><span class="crayon-sy">(</span><span class="crayon-v">a</span><span class="crayon-sy">.</span><span class="crayon-v">source</span><span class="crayon-sy">.</span><span class="crayon-v">data</span><span class="crayon-sy">.</span><span class="crayon-v">type</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f2825bb946b9179183632-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">case</span><span class="crayon-h"> </span><span class="crayon-s">'webcontacts/numbers'</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946b9179183632-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// ...</span></div><div class="crayon-line" id="crayon-5f2825bb946b9179183632-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">break</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946b9179183632-6"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">case</span><span class="crayon-h"> </span><span class="crayon-s">'webcontacts/email'</span><span class="crayon-o">:</span></div><div class="crayon-line" id="crayon-5f2825bb946b9179183632-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// ...</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946b9179183632-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">break</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f2825bb946b9179183632-9"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946b9179183632-10"><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p>如此一來就可以分開處理 UI 變化及後續回傳資料的部分。</p>
+<h3>多於一個可以處理的 Reciever?</h3>
+<p>比如挑選 Homescreen 的 Wallpaper 有兩個以上的應用程式可以挑的時候，<br />
+Firefox OS 的系統 UI 便會自動列出可用的應用程式清單，如圖：<br />
+<a href="http://tech.mozilla.com.tw/wp-content/uploads/2012/09/screenshotpc1.png"><img class="aligncenter size-full wp-image-849" src="http://tech.mozilla.com.tw/wp-content/uploads/2012/09/screenshotpc1.png" alt="" width="480" height="800" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2012/09/screenshotpc1.png 480w, https://tech.mozilla.com.tw/wp-content/uploads/2012/09/screenshotpc1-180x300.png 180w" sizes="(max-width: 480px) 100vw, 480px" /></a><br />
+GAIA 時其實是收到一個從 GECKO 發出的事件 (mozChromeEvent），包含 activity 來源資料以及可以處理該 activity 的應用程式列表。當使用者點選某個選項後，GAIA 會再發另一個事件 (mozContentEvent）到 Gecko 告訴他要用哪一支程式來處理，Gecko 則會再透過另一個 mozChromeEvent 來叫 GAIA 的 Window manager 來開啟該應用程式。這是目前 GAIA 跟GECKO 溝通運作的方式。</p>
+<h3>實際在應用程式之間傳圖片的方式？</h3>
+<p>因為 Web activity 目前只能傳送純文字資料，所以實際上是先用 HTML5 的 Canvas 載入圖片後，將整個 Canvas 轉成dataURL，如此一來就變成一個很長的文字可以傳送了，sample code 如下：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f2825bb946bd525326140" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+function getBase64Image(img) {
+  var canvas = document.createElement("canvas");                                                                             
+  canvas.width = img.width;
+  canvas.height = img.height; 
+  var ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0); 
+  var dataURL = canvas.toDataURL("image/png", 0.2);
+  return dataURL;
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f2825bb946bd525326140-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946bd525326140-2">2</div><div class="crayon-num" data-line="crayon-5f2825bb946bd525326140-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946bd525326140-4">4</div><div class="crayon-num" data-line="crayon-5f2825bb946bd525326140-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946bd525326140-6">6</div><div class="crayon-num" data-line="crayon-5f2825bb946bd525326140-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f2825bb946bd525326140-8">8</div><div class="crayon-num" data-line="crayon-5f2825bb946bd525326140-9">9</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f2825bb946bd525326140-1"><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">getBase64Image</span><span class="crayon-sy">(</span><span class="crayon-v">img</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946bd525326140-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">canvas</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">document</span><span class="crayon-sy">.</span><span class="crayon-e">createElement</span><span class="crayon-sy">(</span><span class="crayon-s">"canvas"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></div><div class="crayon-line" id="crayon-5f2825bb946bd525326140-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">canvas</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946bd525326140-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">canvas</span><span class="crayon-sy">.</span><span class="crayon-v">height</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">height</span><span class="crayon-sy">;</span><span class="crayon-h"> </span></div><div class="crayon-line" id="crayon-5f2825bb946bd525326140-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">ctx</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">canvas</span><span class="crayon-sy">.</span><span class="crayon-e">getContext</span><span class="crayon-sy">(</span><span class="crayon-s">"2d"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946bd525326140-6"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">ctx</span><span class="crayon-sy">.</span><span class="crayon-e">drawImage</span><span class="crayon-sy">(</span><span class="crayon-v">img</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h"> </span></div><div class="crayon-line" id="crayon-5f2825bb946bd525326140-7"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">dataURL</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">canvas</span><span class="crayon-sy">.</span><span class="crayon-e">toDataURL</span><span class="crayon-sy">(</span><span class="crayon-s">"image/png"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">0.2</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f2825bb946bd525326140-8"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-v">dataURL</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f2825bb946bd525326140-9"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0004 seconds] -->
+<p>接收方如果是要拿來當背景圖的話只要直接把 url(dataURL) 塞進 backgroundImage 屬性就可以了。</p>
+<h3>disposition 屬性的差異</h3>
+<p>定義 activity 時的 disposition 欄位目前有 window 跟 inline 兩種選項。<a href="http://www.kylinpoker.com/mahjong.htm">麻将牌</a> 主要不同點在於呼叫接收方時，window 是會真正切換到該應用程式，而且預設並不會回傳資料給請求方。如點 email/http link 時會啟動 email 程式或瀏覽器的行為。inline 用在需要從接收方選某些資料來使用時，此時接收方只是暫時出現在前景程式上方，選完資料就會關閉。</p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://tech.mozilla.com.tw/?cat=3" rel="category">Firefox OS(B2G)</a>、<a href="https://tech.mozilla.com.tw/?cat=9" rel="category">Javascript</a>      </div>
+    </footer> 
+    </article><!-- #post-839 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" 
+	              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/?p=839#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required='true' required='required' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required='true' required='required' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表" /> <input type='hidden' name='comment_post_ID' value='839' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="b194a3396c" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="76"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class='name-title'><a class="profile-link" href="https://tech.mozilla.com.tw/?author=31"><span class="gravatar left"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/31/3e50b95ffcabf2380aa9373f3011e694-bpthumb.jpg" alt="" class="avatar user-31-avatar" width='48' height='48' /></span><span class="name">Alive Kuo</span></a></span><p class='contact'><span class="web"><strong>網站：</strong><a href="http://alivedise.github.com">http://alivedise.github.com</a></span></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="18" href="https://tech.mozilla.com.tw/?author=18"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg" alt="" class="avatar user-18-avatar" width='96' height='96' /></a><a data-author-id="33" href="https://tech.mozilla.com.tw/?author=33"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg" alt="" class="avatar user-33-avatar" width='96' height='96' /></a><a data-author-id="103" href="https://tech.mozilla.com.tw/?author=103"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg" alt="" class="avatar user-103-avatar" width='96' height='96' /></a><a data-author-id="133" href="https://tech.mozilla.com.tw/?author=133"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg" alt="" class="avatar user-133-avatar" width='96' height='96' /></a><a data-author-id="61" href="https://tech.mozilla.com.tw/?author=61"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg" alt="" class="avatar user-61-avatar" width='96' height='96' /></a><a data-author-id="41" href="https://tech.mozilla.com.tw/?author=41"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg" alt="" class="avatar user-41-avatar" width='96' height='96' /></a></div><a class="more" href="/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://tech.mozilla.com.tw/?cat=8" >CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://tech.mozilla.com.tw/?cat=4" >Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://tech.mozilla.com.tw/?cat=3" >Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://tech.mozilla.com.tw/?cat=30" >Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://tech.mozilla.com.tw/?cat=9" >Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://tech.mozilla.com.tw/?cat=42" >Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://tech.mozilla.com.tw/?cat=5" >Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://tech.mozilla.com.tw/?cat=7" >Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://tech.mozilla.com.tw/?cat=29" >UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">選擇月份</option>
+				<option value='https://tech.mozilla.com.tw/?m=201605'> 2016 年 五月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201602'> 2016 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201507'> 2015 年 七月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201506'> 2015 年 六月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201505'> 2015 年 五月 &nbsp;(2)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201504'> 2015 年 四月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201503'> 2015 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201502'> 2015 年 二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201501'> 2015 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201412'> 2014 年 十二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201411'> 2014 年 十一月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201410'> 2014 年 十月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201409'> 2014 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201408'> 2014 年 八月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201407'> 2014 年 七月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201405'> 2014 年 五月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201404'> 2014 年 四月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201403'> 2014 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201402'> 2014 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201401'> 2014 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201312'> 2013 年 十二月 &nbsp;(6)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201311'> 2013 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201310'> 2013 年 十月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201309'> 2013 年 九月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201308'> 2013 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201307'> 2013 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201306'> 2013 年 六月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201305'> 2013 年 五月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201304'> 2013 年 四月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201303'> 2013 年 三月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201302'> 2013 年 二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201301'> 2013 年 一月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201212'> 2012 年 十二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201211'> 2012 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201210'> 2012 年 十月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201209'> 2012 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201208'> 2012 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201207'> 2012 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201206'> 2012 年 六月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201205'> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

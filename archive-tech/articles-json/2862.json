@@ -1,0 +1,116 @@
+{
+  "post_id": 2862,
+  "title": "一個打十個 – 讓 Gaia 網頁應用（webapp）支援多重設備（二：螢幕大小）",
+  "date": "2013-10-30",
+  "year": 2013,
+  "month": 10,
+  "day": 30,
+  "categories": [
+    "CSS",
+    "Firefox OS(B2G)",
+    "Javascript"
+  ],
+  "tags": [
+    "CSS",
+    "Firefox OS(B2G)",
+    "Javascript"
+  ],
+  "author": "",
+  "page_type": "post",
+  "original_url": "https://tech.mozilla.com.tw/?p=2862",
+  "archive_url": "https://web.archive.org/web/20140728111041id_/https://tech.mozilla.com.tw/?p=2862",
+  "wayback_timestamp": "20140728111041",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<div style=\"width: 596px\" class=\"wp-caption aligncenter\"><a href=\"http://opensignal.com/reports/fragmentation.php\"><img alt=\"\" src=\"http://d2cpknllkuywe0.cloudfront.net/images/frag_android_screen_res_weighted.png\" width=\"586\" height=\"346\" /></a><p class=\"wp-caption-text\">各種常見的螢幕大小</p></div>\n<p>我們發現到：要讓網頁應用支援多種設備，開發者需要根據設備的「像素密度」（Pixel Density）與「螢幕大小」（Screen Size），處理相對應的「排版」與「圖片」問題。接續前一篇，本篇將闡述處理「螢幕大小」（Screen Size）的方式。</p>\n<p>（現在Gaia關於多重設備支援的工作正開始著手進行，以下建議都還有修改的可能性，歡迎大家提出自己的建議。想要直接參與 Firefox OS 前端開發的朋友，可以先看我整理的 <a href=\"http://www.slideshare.net/gasolin/steps-to-contribute-to-firefox-os-2\" target=\"_blank\">Steps to Contribute Gaia </a>簡報）</p>\n<h2><strong>「螢幕大小」（Screen Size）</strong></h2>\n<p>螢幕大小指的是整部機器「放大了」，在螢幕上的「像素」變多了，能同時顯示或操作更多的內容。從手機、平板、筆電、電視，我們可以看到各種不同大小、解析度的螢幕，並且都有各自慣用的使用界面和操作方式。</p>\n<p>「像素密度」要解決的，是在相同的使用界面下，各種排版與圖片的問題。而「螢幕大小」則需要解決如何因應不同螢幕大小來提供不同使用者界面，與在<strong>不盡相同的使用界面下</strong>，各種排版與圖片的問題。因為我們很有可能需要因應不同螢幕大小的操作習慣，而有不同的設計。</p>\n<p>要解決這些「螢幕大小」的問題，最主要的工具就是 CSS media query。</p>\n<h2><strong>因應不同螢幕大小來提供不同使用者界面 &#8211; 使用 MediaQuery</strong></h2>\n<p>Mozilla Developer 網站上有很清楚地關於 <a href=\"https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Media_queries\">CSS Media Queries </a>的使用與介紹。簡單地說 Media Query 的功用是讓開發者可以透過過濾網頁的寬、高等條件，來讓網頁套用不同的排版方式。也可以根據不同Media Query的結果，來套用不同大小的圖片。例如：</p>\n<blockquote><p>\n</p><!-- Crayon Syntax Highlighter v2.6.1 -->\r\n\r\n\t\t<div id=\"crayon-53be95d03eb23283645361\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n&lt;style&gt;\r\n@media (max-width: 600px) {\r\n  .facet_sidebar {\r\n    display: none;\r\n  }\r\n}\r\n&lt;/style&gt;\r\n</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-53be95d03eb23283645361-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53be95d03eb23283645361-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-53be95d03eb23283645361-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53be95d03eb23283645361-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-53be95d03eb23283645361-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53be95d03eb23283645361-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-53be95d03eb23283645361-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53be95d03eb23283645361-8\">8</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-line\" id=\"crayon-53be95d03eb23283645361-1\"><span class=\"crayon-ta\">&lt;style&gt;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53be95d03eb23283645361-2\"><span class=\"crayon-n\">@media (max-width: 600px) {</span></div><div class=\"crayon-line\" id=\"crayon-53be95d03eb23283645361-3\"><span class=\"crayon-n\">&nbsp;&nbsp;.facet_sidebar {</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53be95d03eb23283645361-4\"><span class=\"crayon-n\">&nbsp;&nbsp;&nbsp;&nbsp;display: none;</span></div><div class=\"crayon-line\" id=\"crayon-53be95d03eb23283645361-5\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53be95d03eb23283645361-6\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-53be95d03eb23283645361-7\"><span class=\"crayon-ta\">&lt;/style&gt;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53be95d03eb23283645361-8\">&nbsp;</div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0017 seconds] -->\r\n<p>\n</p></blockquote>\n<p>@media 是 Media Query 語法的標籤，「<code>max-width</code>」屬性設定表示要執行以下排版的條件，是螢幕的最大寬度必須小於「600px」。</p>\n<h2><strong>「螢幕大小」x 「排版」</strong></h2>\n<p>看起來美好，但實行起來還有很多細節需要注意。因為 Gaia 專案上同時間有近百位開發者在協作，每個人對於不同設備的認知莫衷一是：到底什麼樣的長、寬屬於手機？什麼樣的屬於平板？現在的大手機（Phone Tablet）又屬於什麼版型哩？</p>\n<p>於是我們要研究的排版問題就變成：</p>\n<ul>\n<li>應該用什麼版型作為預設值？</li>\n<li>如何選擇適當的分隔點/斷點（break point），來簡單區分不同大小的機種？</li>\n</ul>\n<p>這兩個問題其實都可以向外找到解答。我們參考了多家 UI framework 如 <a href=\"http://getbootstrap.com/\">Bootstrap</a>、<a href=\"http://foundation.zurb.com/\">Fundation</a>、<a href=\"http://tuktuk.tapquo.com/\">tuktuk</a> 等的做法，發現移動設備優先（Mobile First）已經是各家 UI Framework 的趨勢。而 Firefox OS 原本已有的就是手機的版型，想要擴展支援其他設備的版型，正好作為參考。</p>\n<p>再來的問題是如何區分不同大小的機種。進一步查看各家作為區分機種大小的斷點（break point）參數，發現每家用的參數與命名也都不盡相同。我認為更重要的是開發前選擇其中一種規則，並讓大家用相同的斷點參數，保持整個系統的一致性。最後我們選擇追隨 <a href=\"https://github.com/twbs/bootstrap/blob/3.0.0-wip/less/variables.less\">Bootstrap 3</a>  的規則，來區分不同螢幕大小的機種。</p>\n<p>因為現在的機種分界越來越模糊，單純使用「phone」「tablet」「desktop」這些名詞，反而可能造成誤解。可以把螢幕的大小當作T恤的Size來區分，搭配斷點來看，螢幕大小可以區分如下：</p>\n<ul>\n<li>Tiny  (&lt; 768)</li>\n<li>Small  (768~991)</li>\n<li>Medium  (992~1200)</li>\n<li>Large  (&gt; 1200)</li>\n</ul>\n<p>在現階段，我們將使用「768px」來分辨出相對手機螢幕的「大」設備（平板大小的螢幕）。</p>\n<p>&nbsp;</p>\n<p>如此這般，我們的基本指南就出來了：</p>\n<p>1. 在原本的手機排版外，針對不同螢幕大小，使用 Media Query 搭配斷點（768px）來加入不同機種的排版。</p>\n<p>2. 附加的 Media Query 排版只修改原排版中需改動的部分，不需全部複製。</p>\n<blockquote>\n<p dir=\"ltr\" id=\"docs-internal-guid-69ffb8c3-84ff-60ad-4dc4-a067213d8e8c\">/* general */</p>\n<p dir=\"ltr\"><strong>.apps ol &gt; li {</strong></p>\n<p dir=\"ltr\">position: relative;</p>\n<p dir=\"ltr\">width: 25%; /* 4 app in a line*/</p>\n<p dir=\"ltr\">display: inline-block;</p>\n<p dir=\"ltr\">float: left;</p>\n<p dir=\"ltr\">text-align: center;</p>\n<p dir=\"ltr\">}</p>\n<p dir=\"ltr\">/* large device */</p>\n<p dir=\"ltr\"><strong>@media (min-width: 768px) and () {</strong></p>\n<p dir=\"ltr\"><strong>.apps ol &gt; li {</strong></p>\n<p dir=\"ltr\">   width: 20%; /* five a line */</p>\n<p dir=\"ltr\">}</p>\n<p><strong>}</strong></p></blockquote>\n<p>另外，如果排版改動很大，在匯入CSS時也可以另外建立一個原檔案加上「_large」後綴的檔案。</p>\n<blockquote>\n<p dir=\"ltr\" id=\"docs-internal-guid-69ffb85e-8506-37e4-bfc5-403a748730b7\">&lt;!&#8211; normal style &#8211;&gt;</p>\n<p dir=\"ltr\">&lt;link rel=&#8221;stylesheet&#8221; href=&#8221;dock.css&#8221; /&gt;</p>\n<p>&lt;!&#8211; large specific style &#8211;&gt;</p>\n<p>&lt;link rel=&#8221;stylesheet&#8221; media=&#8221;(min-width: 768px)&#8221; href=&#8221;dock<strong>_large</strong>.css&#8221; /&gt;</p></blockquote>\n<p>&nbsp;</p>\n<p>同時，在Gaia專案中，我們也會提供一個共用的 shared/js/screen_layout.js 工具，可以在程式中呼叫 ScreenLayout.getScreenLayout() 來確認網頁應用當時的螢幕大小，在一般手機上會回傳「tiny」字串，在不同尺寸的平板上會回傳「medium」或「large」字串。</p>\n<h2><strong>「螢幕大小」x 「圖片」</strong></h2>\n<p dir=\"ltr\">因為不同螢幕大小機種的排版不同，所使用的圖片也可能完全不同。我們可以同樣使用 Media Query 來為不同機種提供圖片：</p>\n<blockquote id=\"docs-internal-guid-457bdcab-850c-1091-d643-ae13735d06f3\"><p>background-image: url(images/img.png&#8221;);</p>\n<p dir=\"ltr\">}</p>\n<p dir=\"ltr\">@media (min-width: 768px) {</p>\n<p dir=\"ltr\">background-image: url(images/img<strong>_large</strong>.png);</p>\n<p dir=\"ltr\">}</p>\n</blockquote>\n<h2><strong>螢幕比例 Aspect</strong></h2>\n<p>Media Query 還可以順便解決因螢幕長寬比例（如 4:3 和 16:9）不同，所造成一些圖片不滿版的問題</p>\n<blockquote>\n<p dir=\"ltr\" id=\"docs-internal-guid-69ffb826-8514-48cd-f173-5aac99c0e9ae\">@media (device-aspect-ratio: 16/9) {</p>\n<p dir=\"ltr\">}</p>\n<p>&nbsp;</p>\n<p dir=\"ltr\">@media (device-aspect-ratio: 4/3) {</p>\n<p dir=\"ltr\">}</p>\n<p>&nbsp;</p>\n<p dir=\"ltr\">@media (min-width: 768px) and (device-aspect-ratio: 16/9) {</p>\n<p dir=\"ltr\">}</p>\n<p>&nbsp;</p>\n<p dir=\"ltr\">@media (min-width: 768px) and (device-aspect-ratio: 4/3) {</p>\n<p dir=\"ltr\">}</p>\n</blockquote>\n<h2><strong>總結</strong></h2>\n<p>要支援不同螢幕大小的設備：</p>\n<ul>\n<li>善用MediaQuery</li>\n<li>提供對應的圖片與圖示</li>\n</ul>\n\t\t\t</div>",
+  "content_text": "各種常見的螢幕大小 我們發現到：要讓網頁應用支援多種設備，開發者需要根據設備的「像素密度」（Pixel Density）與「螢幕大小」（Screen Size），處理相對應的「排版」與「圖片」問題。接續前一篇，本篇將闡述處理「螢幕大小」（Screen Size）的方式。 （現在Gaia關於多重設備支援的工作正開始著手進行，以下建議都還有修改的可能性，歡迎大家提出自己的建議。想要直接參與 Firefox OS 前端開發的朋友，可以先看我整理的 Steps to Contribute Gaia 簡報） 「螢幕大小」（Screen Size） 螢幕大小指的是整部機器「放大了」，在螢幕上的「像素」變多了，能同時顯示或操作更多的內容。從手機、平板、筆電、電視，我們可以看到各種不同大小、解析度的螢幕，並且都有各自慣用的使用界面和操作方式。 「像素密度」要解決的，是在相同的使用界面下，各種排版與圖片的問題。而「螢幕大小」則需要解決如何因應不同螢幕大小來提供不同使用者界面，與在 不盡相同的使用界面下 ，各種排版與圖片的問題。因為我們很有可能需要因應不同螢幕大小的操作習慣，而有不同的設計。 要解決這些「螢幕大小」的問題，最主要的工具就是 CSS media query。 因應不同螢幕大小來提供不同使用者界面 – 使用 MediaQuery Mozilla Developer 網站上有很清楚地關於 CSS Media Queries 的使用與介紹。簡單地說 Media Query 的功用是讓開發者可以透過過濾網頁的寬、高等條件，來讓網頁套用不同的排版方式。也可以根據不同Media Query的結果，來套用不同大小的圖片。例如： <style> @media (max-width: 600px) { .facet_sidebar { display: none; } } </style> 1 2 3 4 5 6 7 8 <style> @media (max-width: 600px) { .facet_sidebar { display: none; } } </style> @media 是 Media Query 語法的標籤，「 max-width 」屬性設定表示要執行以下排版的條件，是螢幕的最大寬度必須小於「600px」。 「螢幕大小」x 「排版」 看起來美好，但實行起來還有很多細節需要注意。因為 Gaia 專案上同時間有近百位開發者在協作，每個人對於不同設備的認知莫衷一是：到底什麼樣的長、寬屬於手機？什麼樣的屬於平板？現在的大手機（Phone Tablet）又屬於什麼版型哩？ 於是我們要研究的排版問題就變成： 應該用什麼版型作為預設值？ 如何選擇適當的分隔點/斷點（break point），來簡單區分不同大小的機種？ 這兩個問題其實都可以向外找到解答。我們參考了多家 UI framework 如 Bootstrap 、 Fundation 、 tuktuk 等的做法，發現移動設備優先（Mobile First）已經是各家 UI Framework 的趨勢。而 Firefox OS 原本已有的就是手機的版型，想要擴展支援其他設備的版型，正好作為參考。 再來的問題是如何區分不同大小的機種。進一步查看各家作為區分機種大小的斷點（break point）參數，發現每家用的參數與命名也都不盡相同。我認為更重要的是開發前選擇其中一種規則，並讓大家用相同的斷點參數，保持整個系統的一致性。最後我們選擇追隨 Bootstrap 3 的規則，來區分不同螢幕大小的機種。 因為現在的機種分界越來越模糊，單純使用「phone」「tablet」「desktop」這些名詞，反而可能造成誤解。可以把螢幕的大小當作T恤的Size來區分，搭配斷點來看，螢幕大小可以區分如下： Tiny (< 768) Small (768~991) Medium (992~1200) Large (> 1200) 在現階段，我們將使用「768px」來分辨出相對手機螢幕的「大」設備（平板大小的螢幕）。 如此這般，我們的基本指南就出來了： 1. 在原本的手機排版外，針對不同螢幕大小，使用 Media Query 搭配斷點（768px）來加入不同機種的排版。 2. 附加的 Media Query 排版只修改原排版中需改動的部分，不需全部複製。 /* general */ .apps ol > li { position: relative; width: 25%; /* 4 app in a line*/ display: inline-block; float: left; text-align: center; } /* large device */ @media (min-width: 768px) and () { .apps ol > li { width: 20%; /* five a line */ } } 另外，如果排版改動很大，在匯入CSS時也可以另外建立一個原檔案加上「_large」後綴的檔案。 <!– normal style –> <link rel=”stylesheet” href=”dock.css” /> <!– large specific style –> <link rel=”stylesheet” media=”(min-width: 768px)” href=”dock _large .css” /> 同時，在Gaia專案中，我們也會提供一個共用的 shared/js/screen_layout.js 工具，可以在程式中呼叫 ScreenLayout.getScreenLayout() 來確認網頁應用當時的螢幕大小，在一般手機上會回傳「tiny」字串，在不同尺寸的平板上會回傳「medium」或「large」字串。 「螢幕大小」x 「圖片」 因為不同螢幕大小機種的排版不同，所使用的圖片也可能完全不同。我們可以同樣使用 Media Query 來為不同機種提供圖片： background-image: url(images/img.png”); } @media (min-width: 768px) { background-image: url(images/img _large .png); } 螢幕比例 Aspect Media Query 還可以順便解決因螢幕長寬比例（如 4:3 和 16:9）不同，所造成一些圖片不滿版的問題 @media (device-aspect-ratio: 16/9) { } @media (device-aspect-ratio: 4/3) { } @media (min-width: 768px) and (device-aspect-ratio: 16/9) { } @media (min-width: 768px) and (device-aspect-ratio: 4/3) { } 總結 要支援不同螢幕大小的設備： 善用MediaQuery 提供對應的圖片與圖示",
+  "images": [
+    {
+      "url": "https://d2cpknllkuywe0.cloudfront.net/images/frag_android_screen_res_weighted.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/2862/001-c1295f6e1aa6.png",
+      "markdown_path": "../assets/2862/001-c1295f6e1aa6.png",
+      "wayback_timestamp": "20140728111041",
+      "asset_archive_url": "https://web.archive.org/web/20140728111041id_/https://d2cpknllkuywe0.cloudfront.net/images/frag_android_screen_res_weighted.png",
+      "content_type": "image/png"
+    },
+    {
+      "post_id": 2862,
+      "page_type": "post",
+      "title": "一個打十個 – 讓 Gaia 網頁應用（webapp）支援多重設備（二：螢幕大小）",
+      "page_timestamp": "20140728111041",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/cedc6f55461aaf34f227e1dae653684f-bpthumb.jpg",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/cedc6f55461aaf34f227e1dae653684f-bpthumb.jpg",
+      "archive_path": "assets/2862/wp-content/uploads/avatars/60/cedc6f55461aaf34f227e1dae653684f-bpthumb.jpg",
+      "markdown_path": "../assets/2862/wp-content/uploads/avatars/60/cedc6f55461aaf34f227e1dae653684f-bpthumb.jpg",
+      "wayback_timestamp": "20131030110911",
+      "asset_archive_url": "https://web.archive.org/web/20131030110911id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/60/cedc6f55461aaf34f227e1dae653684f-bpthumb.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://d2cpknllkuywe0.cloudfront.net/images/frag_android_screen_res_weighted.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/2862/001-c1295f6e1aa6.png",
+      "markdown_path": "../assets/2862/001-c1295f6e1aa6.png",
+      "wayback_timestamp": "20140728111041",
+      "asset_archive_url": "https://web.archive.org/web/20140728111041id_/https://d2cpknllkuywe0.cloudfront.net/images/frag_android_screen_res_weighted.png",
+      "content_type": "image/png"
+    },
+    {
+      "post_id": 2862,
+      "page_type": "post",
+      "title": "一個打十個 – 讓 Gaia 網頁應用（webapp）支援多重設備（二：螢幕大小）",
+      "page_timestamp": "20140728111041",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/cedc6f55461aaf34f227e1dae653684f-bpthumb.jpg",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/cedc6f55461aaf34f227e1dae653684f-bpthumb.jpg",
+      "archive_path": "assets/2862/wp-content/uploads/avatars/60/cedc6f55461aaf34f227e1dae653684f-bpthumb.jpg",
+      "markdown_path": "../assets/2862/wp-content/uploads/avatars/60/cedc6f55461aaf34f227e1dae653684f-bpthumb.jpg",
+      "wayback_timestamp": "20131030110911",
+      "asset_archive_url": "https://web.archive.org/web/20131030110911id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/60/cedc6f55461aaf34f227e1dae653684f-bpthumb.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://opensignal.com/reports/fragmentation.php",
+      "text": ""
+    },
+    {
+      "url": "https://www.slideshare.net/gasolin/steps-to-contribute-to-firefox-os-2",
+      "text": "Steps to Contribute Gaia"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Media_queries",
+      "text": "CSS Media Queries"
+    },
+    {
+      "url": "https://getbootstrap.com/",
+      "text": "Bootstrap"
+    },
+    {
+      "url": "https://foundation.zurb.com/",
+      "text": "Fundation"
+    },
+    {
+      "url": "https://tuktuk.tapquo.com/",
+      "text": "tuktuk"
+    },
+    {
+      "url": "https://github.com/twbs/bootstrap/blob/3.0.0-wip/less/variables.less",
+      "text": "Bootstrap 3"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": []
+}

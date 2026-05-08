@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+FireFox OS (B2G) 菜鳥看 code  | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="https://tech.mozilla.com.tw/?p=905"/><meta property="og:image" content="https://mozilla.com.tw/assets/css/img/mozcomtw/channels-firefox.png" />
+
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css" /><!--<link rel="pingback" href="https://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="https://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://tech.mozilla.com.tw/","urlLoginRedirect":"https://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=bbf4b82746","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel='dns-prefetch' href='//s.w.org'>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo;" href="https://tech.mozilla.com.tw/?feed=rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 迴響" href="https://tech.mozilla.com.tw/?feed=comments-rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; FireFox OS (B2G) 菜鳥看 code 迴響" href="https://tech.mozilla.com.tw/?feed=rss2&#038;p=905" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='crayon-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='advanced-responsive-video-embedder-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0' type='text/css' media='all' />
+<link rel='stylesheet' id='persona-style-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46' type='text/css' media='all' />
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<link rel='https://api.w.org/' href='https://tech.mozilla.com.tw/?rest_route=/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='解決 wifi 無法開啟的問題 &#8211; 軟體啟動流程發生錯亂' href='https://tech.mozilla.com.tw/?p=555' />
+<link rel='next' title='Let a wireframe be an app in the iframe' href='https://tech.mozilla.com.tw/?p=942' />
+<meta name="generator" content="WordPress 4.6" />
+<link rel="canonical" href="https://tech.mozilla.com.tw/?p=905" />
+<link rel='shortlink' href='https://tech.mozilla.com.tw/?p=905' />
+<link rel="alternate" type="application/json+oembed" href="https://tech.mozilla.com.tw/?rest_route=%2Foembed%2F1.0%2Fembed&#038;url=https%3A%2F%2Ftech.mozilla.com.tw%2F%3Fp%3D905" />
+<link rel="stylesheet" href="https://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-905 single-format-standard sand">
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='//mozilla.com.tw/' class='home'>Home</a>
+            <b>&raquo;</b>
+            <a href='//mozilla.com.tw/news/'>訊息中心</a>
+            <b>&raquo;</b>
+                          <a href='//tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>
+              <span>FireFox OS (B2G) 菜鳥看 code</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="https://tech.mozilla.com.tw/?p=905" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="https://tech.mozilla.com.tw/?p=905"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=https://tech.mozilla.com.tw/?p=905&media=http://mozilla.com.tw/assets/css/img/mozcomtw/channels-firefox.png" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+	        <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">2</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://tech.mozilla.com.tw/?p=555"><div class="post-tip"><span class="meta-nav">解決 wifi 無法開啟的問題 - 軟體啟動流程發生錯亂</span></div></a></div>		
+							<div class="nav-next"><a href="https://tech.mozilla.com.tw/?p=942"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2012/10/v9-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="第三版 wireframe 的畫面" /><span class="meta-nav">Let a wireframe be an app in the iframe</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-905" class="post-905 post type-post status-publish format-standard hentry category-b2g">
+	 	<header class="entry-header">
+		<h1 class="entry-title">FireFox OS (B2G) 菜鳥看 code</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://tech.mozilla.com.tw/?m=201210" class="posted-month">10月</a>
+	        <span class="posted-date">16</span>
+	        <a title="See all posts from 2014" href="https://tech.mozilla.com.tw/?m=2012" class="posted-year">2012</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="35">
+		  	<a href="https://tech.mozilla.com.tw/?author=35">
+	          <img src="https://secure.gravatar.com/avatar/f394b3d54687a1fdeb241f11efd12db8?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=24" alt="" class="avatar user-35-avatar" width='24' height='24' /><!--
+	       --><div class="author-info">chaos</div><!--
+	       --><div class="author-title"></div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p align="LEFT">過去的工作一直都是跟 <span style="font-family: Times New Roman,serif;">broadband network </span>相關，整天看的都是網路封包 <span style="font-family: Times New Roman,serif;">(network package)，</span>檢查封包從 <span style="font-family: Times New Roman,serif;">network device </span>收進來的<span style="font-family: Times New Roman,serif;"> formate </span>對不對<span style="font-family: Times New Roman,serif;">? </span>封包被改得對不對<span style="font-family: Times New Roman,serif;">? Network package </span>走的路徑對不對<span style="font-family: Times New Roman,serif;">? Forwarding </span>的效率夠不夠好<span style="font-family: Times New Roman,serif;">? </span>封包有沒有掉了<span style="font-family: Times New Roman,serif;">(</span>掉包了<span style="font-family: Times New Roman,serif;">!!!) ? </span>掉到哪裡去了<span style="font-family: Times New Roman,serif;">? </span>很少有機會去看比較上層接近<span style="font-family: Times New Roman,serif;"> user interface (userspace) </span>相關的東西<span style="font-family: Times New Roman,serif;">，</span>有的話大概也是跟網路管理有關的部分。</p>
+<p align="LEFT">轉過來做<span style="font-family: Times New Roman,serif;"> Firefox OS，</span>似乎是轉很大<span style="font-family: Times New Roman,serif;">，</span>跟之前的領域完全很不一樣<span style="font-family: Times New Roman,serif;">，</span>就好像是剛畢業的菜鳥到處找資料<span style="font-family: Times New Roman,serif;">，</span>想瞭解什麼是<span style="font-family: Times New Roman,serif;"> Firefox OS，</span>架構是長什麼樣子<span style="font-family: Times New Roman,serif;">? </span>還好 <span style="font-family: Times New Roman,serif;">Mozilla </span>有很多前輩寫了很多資料可以參考<span style="font-family: Times New Roman,serif;">，</span>很快的<span style="font-family: Times New Roman,serif;">，</span>我知道 <span style="font-family: Times New Roman,serif;">Firefox OS </span>是由 <span style="font-family: Times New Roman,serif;">Gaia, Gecko </span>以及<span style="font-family: Times New Roman,serif;">Gonk </span>所組成<span style="font-family: Times New Roman,serif;">，</span>也知道</p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">Gaia: User interface of Firefox OS</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">Gecko: The “application runtime” of Firefox OS</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">Gecko: The lower-level “operating system” of Firefox OS</span></strong></p>
+<p align="LEFT">但是我沒有找到文章介紹如何將 <span style="font-family: Times New Roman,serif;">Gaia、Gecko</span> 跟<span style="font-family: Times New Roman,serif;"> Gonk </span>串起來<span style="font-family: Times New Roman,serif;">，</span>也就是我想知道整個程式執行<span style="font-family: Times New Roman,serif;"> (code flow) </span>怎樣從 <span style="font-family: Times New Roman,serif;">Gaia → Gecko → Gonk，</span>甚至到<span style="font-family: Times New Roman,serif;"> Kernel space?</span></p>
+<p align="LEFT">看來看去<span style="font-family: Times New Roman,serif;">，Vibration (</span>叫手機震動<span style="font-family: Times New Roman,serif;">)，</span>是一個還不錯的例子。</p>
+<p align="LEFT">它是很簡單<span style="font-family: Times New Roman,serif;">,</span>只是單方向由 <span style="font-family: Times New Roman,serif;">Gaia </span>應用程式 <span style="font-family: Times New Roman,serif;">(</span>例如<span style="font-family: Times New Roman,serif;">:</span>鬧鈴<span style="font-family: Times New Roman,serif;">、</span>簡訊<span style="font-family: Times New Roman,serif;">)</span> 呼叫一個 <span style="font-family: Times New Roman,serif;">DOM API</span> 去叫手機震動<span style="font-family: Times New Roman,serif;">，</span>不需要其他回呼<span style="font-family: Times New Roman,serif;"> (call back) </span>或是等待事件<span style="font-family: Times New Roman,serif;"> (event)</span>。</p>
+<p align="LEFT">我們就以鬧鈴程式裡的計時器為例<span style="font-family: Times New Roman,serif;">，</span>當倒數計時<span style="font-family: Times New Roman,serif;"> timeout, </span>它會呼叫<span style="font-family: Times New Roman,serif;"> DOM API，“navigator.vibrate()”， [200,200,200,200,200]</span> 參數是震動的方式。</p>
+<p align="LEFT"><span style="font-family: Times New Roman,serif;">gaia/apps/clock/js/timer.js</span></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">end: function ti_end() {</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  //TODO: ring too</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  if (&#8216;vibrate&#8217; in navigator) {</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">    navigator.vibrate([200, 200, 200, 200, 200]);</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  }</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  this.cancel();</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  this.chronoView.parentNode.classList.add(&#8216;ended&#8217;);</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">},</span></strong></p>
+<p align="LEFT"><span style="font-family: Times New Roman,serif;">DOM API “navigator.vibrate” </span>是被定義在<span style="font-family: Times New Roman,serif;"> IDL(Interface Description Language) file, “nsIDOMNavigator.idl”</span></p>
+<p align="LEFT"><span style="font-family: Times New Roman,serif;">gecko/dom/interfaces/base/nsIDOMNavigator.idl</span></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">interface nsIDOMNavigator : nsISupports</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">{</span></strong></p>
+<p align="LEFT"><strong>   …</strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">   [implicit_jscontext]</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">   void vibrate(in jsval aPattern);</span></strong></p>
+<p align="LEFT"><strong>   …</strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">}</span></strong></p>
+<p align="LEFT">在程式編譯時<span style="font-family: Times New Roman,serif;">，</span>會根據 “<span style="font-family: Times New Roman,serif;">nsIDOMNavigator.idl” </span>產生 <span style="font-family: Times New Roman,serif;">header file </span></p>
+<p align="LEFT">“<span style="font-family: Times New Roman,serif;">objdir-gecko/dom/interfaces/base/_xpidlgen/nsIDOMNavigator.h”，</span>裡面會定義</p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">NS_IMETHODIMP nsDOMNavigator::Vibrate(const JS::Value &amp; aPattern, JSContext* cx)</span></strong></p>
+<p align="LEFT">注意<span style="font-family: Times New Roman,serif;">! </span>這個地方都有 <span style="font-family: Times New Roman,serif;">API </span>命名的轉換<span style="font-family: Times New Roman,serif;">，</span>把第一個小寫字母換成大寫<span style="font-family: Times New Roman,serif;">，vibrate → Vibrate</span>。</p>
+<p align="LEFT">接著會呼叫</p>
+<p align="LEFT"><span style="font-family: Times New Roman,serif;">gecko/dom/base/Navigator.cpp</span></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">NS_IMETHODIMP</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">Navigator::Vibrate(const jsval&amp; aPattern, JSContext* cx) </span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">{</span></strong></p>
+<p align="LEFT"><strong>   …</strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">   hal::Vibrate(pattern, domWindow);</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">   return NS_OK;</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">}</span></strong></p>
+<p align="LEFT"><span style="font-family: Times New Roman,serif;">hal:Vibrate() </span>會呼叫到 <span style="font-family: Times New Roman,serif;">Gecko</span>的 <span style="font-family: Times New Roman,serif;">hal </span>層</p>
+<p align="LEFT"><span style="font-family: Times New Roman,serif;">gecko/hal/Hal.cpp</span></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">void</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">Vibrate(const nsTArray&lt;uint32_t&gt;&amp; pattern, const WindowIdentifier &amp;id)</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">{</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  &#8230;</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  hal_impl::Vibrate(pattern, WindowIdentifier());</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  &#8230;</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">}</span></strong></p>
+<p align="LEFT">然後接著呼叫 <span style="font-family: Times New Roman,serif;">hal</span> 層的 <span style="font-family: Times New Roman,serif;">implementation</span>。</p>
+<p align="LEFT"><span style="font-family: Times New Roman,serif;">gecko/hal/gonk/GonkHal.cpp</span></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">void</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">Vibrate(const nsTArray&lt;uint32_t&gt; &amp;pattern, const hal::WindowIdentifier &amp;)</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">{</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  MOZ_ASSERT(NS_IsMainThread());</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  if (VibratorRunnable::ShuttingDown()) {</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">    return;</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  }</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  EnsureVibratorThreadInitialized();</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  sVibratorRunnable-&gt;Vibrate(pattern);</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">}</span></strong></p>
+<p align="LEFT">創建 <span style="font-family: Times New Roman,serif;">vibrator </span>執行緒</p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">void</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">EnsureVibratorThreadInitialized()</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">{</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  if (sVibratorRunnable) {</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">    return;</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  }</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  sVibratorRunnable = new VibratorRunnable();</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  nsCOMPtr&lt;nsIThread&gt; thread;</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  NS_NewThread(getter_AddRefs(thread), sVibratorRunnable);</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">}</span></strong></p>
+<p align="LEFT">丟進 <span style="font-family: Times New Roman,serif;">vibrator </span>執行緒</p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">void</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">VibratorRunnable::Vibrate(const nsTArray&lt;uint32_t&gt; &amp;pattern)</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">{</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  MonitorAutoLock lock(mMonitor);</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  mPattern = pattern;</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  mIndex = 0;</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  mMonitor.Notify();</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">}</span></strong></p>
+<p align="LEFT">在執行緒裡執行 <span style="font-family: Times New Roman,serif;">vibrator_on()，</span>讓馬達震動</p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">NS_IMETHODIMP</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">VibratorRunnable::Run()</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">{</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  &#8230;</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  vibrator_on(duration);</span></strong></p>
+<p align="LEFT"><strong>  …</strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  return NS_OK;</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">}</span></strong></p>
+<p align="LEFT">這時候<span style="font-family: Times New Roman,serif;"> Gecko</span> 部分已經完成<span style="font-family: Times New Roman,serif;">，</span>程式要到 <span style="font-family: Times New Roman,serif;">Android HAL</span> 層</p>
+<p align="LEFT"><span style="font-family: Times New Roman,serif;">hardware/libhardware_legacy/vibrator/vibrator.cpp</span></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">int vibrator_on(int timeout_ms) </span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">{</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  /* constant on, up to maximum allowed time */</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  return sendit(timeout_ms);</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">}</span></strong></p>
+<p align="LEFT">這裡的 <span style="font-family: Times New Roman,serif;">sendit()，</span>會將馬達開啓的時間長度告訴<span style="font-family: Times New Roman,serif;"> Kernel driver.</span></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">static int sendit(int timeout_ms)</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">{</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  int nwr, ret, fd;</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  char value[20];</span></strong></p>
+<p align="LEFT"><strong>  …</strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  fd = open(THE_DEVICE, O_RDWR);</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  if(fd &lt; 0)</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">    return errno;</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  nwr = sprintf(value, &#8220;%d\n", timeout_ms);</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  ret = write(fd, value, nwr);</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  close(fd);</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">  return (ret == nwr) ? 0 : -1;</span></strong></p>
+<p align="LEFT"><strong><span style="font-family: Times New Roman,serif;">}</span></strong></p>
+<p align="LEFT">到這裡為止<span style="font-family: Times New Roman,serif;">，</span>手機震動的流程已經完成。</p>
+<p>&nbsp;</p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://tech.mozilla.com.tw/?cat=3" rel="category">Firefox OS(B2G)</a>      </div>
+    </footer> 
+    </article><!-- #post-905 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" 
+	              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+			<h3 id="comments-title">
+			共 2 則讀者回應
+		</h3>
+
+		
+		<ol class="commentlist">
+				<li class="comment even thread-even depth-1" id="li-comment-966">
+		<article id="comment-966" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img width="40" height="40" class="avatar avatar-40 photo" src="https://graph.facebook.com/1518020245/picture" alt="">										<cite class="fn"><a href='http://facebook.com/1518020245' rel='external nofollow' class='url'>黃嘉旭</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=905#comment-966"><time pubdate datetime="2012-10-18T17:42:27+00:00">
+					2012 年 10 月 18 日 下午 05:42					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>Gaia: User interface of Firefox OS</p>
+<p>Gecko: The “application runtime” of Firefox OS</p>
+<p>Gecko: The lower-level “operating system” of Firefox OS<br />
+第三個應該是Gonk吧~~~~</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=905&#038;replytocom=966#respond' onclick='return addComment.moveForm( "comment-966", "966", "respond", "905" )' aria-label='回覆 黃嘉旭'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	<ul class="children">
+	<li class="comment odd alt depth-2" id="li-comment-37686">
+		<article id="comment-37686" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/a06e2342cc0e0b562bbefc1087358c9b?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/a06e2342cc0e0b562bbefc1087358c9b?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn">Martin Duan</cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=905#comment-37686"><time pubdate datetime="2015-05-09T17:32:51+00:00">
+					2015 年 05 月 09 日 下午 05:32					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>第三个应该是Gonk</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=905&#038;replytocom=37686#respond' onclick='return addComment.moveForm( "comment-37686", "37686", "respond", "905" )' aria-label='回覆 Martin Duan'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+		</ol>
+
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/?p=905#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required='true' required='required' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required='true' required='required' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表" /> <input type='hidden' name='comment_post_ID' value='905' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="7e3e24c15c" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="216"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class='name-title'><a class="profile-link" href="https://tech.mozilla.com.tw/?author=35"><span class="gravatar left"><img src="https://secure.gravatar.com/avatar/f394b3d54687a1fdeb241f11efd12db8?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=48" alt="" class="avatar user-35-avatar" width='48' height='48' /></span><span class="name">chaos</span></a></span><p class='contact'></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="59" href="https://tech.mozilla.com.tw/?author=59"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg" alt="" class="avatar user-59-avatar" width='96' height='96' /></a><a data-author-id="61" href="https://tech.mozilla.com.tw/?author=61"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg" alt="" class="avatar user-61-avatar" width='96' height='96' /></a><a data-author-id="133" href="https://tech.mozilla.com.tw/?author=133"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg" alt="" class="avatar user-133-avatar" width='96' height='96' /></a><a data-author-id="90" href="https://tech.mozilla.com.tw/?author=90"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg" alt="" class="avatar user-90-avatar" width='96' height='96' /></a><a data-author-id="43" href="https://tech.mozilla.com.tw/?author=43"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg" alt="" class="avatar user-43-avatar" width='96' height='96' /></a><a data-author-id="60" href="https://tech.mozilla.com.tw/?author=60"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg" alt="" class="avatar user-60-avatar" width='96' height='96' /></a></div><a class="more" href="/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://tech.mozilla.com.tw/?cat=8" >CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://tech.mozilla.com.tw/?cat=4" >Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://tech.mozilla.com.tw/?cat=3" >Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://tech.mozilla.com.tw/?cat=30" >Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://tech.mozilla.com.tw/?cat=9" >Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://tech.mozilla.com.tw/?cat=42" >Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://tech.mozilla.com.tw/?cat=5" >Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://tech.mozilla.com.tw/?cat=7" >Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://tech.mozilla.com.tw/?cat=29" >UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">選擇月份</option>
+				<option value='https://tech.mozilla.com.tw/?m=201605'> 2016 年 五月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201602'> 2016 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201507'> 2015 年 七月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201506'> 2015 年 六月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201505'> 2015 年 五月 &nbsp;(2)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201504'> 2015 年 四月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201503'> 2015 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201502'> 2015 年 二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201501'> 2015 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201412'> 2014 年 十二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201411'> 2014 年 十一月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201410'> 2014 年 十月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201409'> 2014 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201408'> 2014 年 八月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201407'> 2014 年 七月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201405'> 2014 年 五月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201404'> 2014 年 四月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201403'> 2014 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201402'> 2014 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201401'> 2014 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201312'> 2013 年 十二月 &nbsp;(6)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201311'> 2013 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201310'> 2013 年 十月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201309'> 2013 年 九月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201308'> 2013 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201307'> 2013 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201306'> 2013 年 六月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201305'> 2013 年 五月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201304'> 2013 年 四月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201303'> 2013 年 三月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201302'> 2013 年 二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201301'> 2013 年 一月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201212'> 2012 年 十二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201211'> 2012 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201210'> 2012 年 十月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201209'> 2012 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201208'> 2012 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201207'> 2012 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201206'> 2012 年 六月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201205'> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

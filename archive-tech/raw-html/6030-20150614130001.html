@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+利用 adb 和 gdb 來 debug Firefox OS (B2G) | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="https://tech.mozilla.com.tw/posts/6030/%e5%88%a9%e7%94%a8-adb-%e5%92%8c-gdb-%e4%be%86-debug-firefox-os-b2g"/><meta property="og:image" content="https://tech.mozilla.com.tw/wp-content/uploads/2013/07/2013-05-10-16-42-06-1024x640.png" />
+
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css" /><!--<link rel="pingback" href="https://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="https://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://tech.mozilla.com.tw/","urlLoginRedirect":"https://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=8895ba07d8","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo;" href="https://tech.mozilla.com.tw/feed" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 迴響" href="https://tech.mozilla.com.tw/comments/feed" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 利用 adb 和 gdb 來 debug Firefox OS (B2G) 迴響" href="https://tech.mozilla.com.tw/posts/6030/%e5%88%a9%e7%94%a8-adb-%e5%92%8c-gdb-%e4%be%86-debug-firefox-os-b2g/feed" />
+<link rel='stylesheet' id='crayon-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=2.6.9' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-arduino-ide-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=2.6.9' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=2.6.9' type='text/css' media='all' />
+<link rel='stylesheet' id='arpw-style-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/advanced-random-posts-widget/assets/css/arpw-frontend.css' type='text/css' media='all' />
+<link rel='stylesheet' id='persona-style-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46' type='text/css' media='all' />
+<link rel='stylesheet' id='advanced-responsive-video-embedder-plugin-styles-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/assets/css/public.css?ver=5.1.1' type='text/css' media='all' />
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.11.1'></script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"2.6.9","is_admin":"0","ajaxurl":"https:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=2.6.9'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='使用 Github 開發我的第一個網頁應用程式 （Web App）' href='https://tech.mozilla.com.tw/posts/5987/%e4%bd%bf%e7%94%a8-github-%e9%96%8b%e7%99%bc%e6%88%91%e7%9a%84%e7%ac%ac%e4%b8%80%e5%80%8b%e7%b6%b2%e9%a0%81%e6%87%89%e7%94%a8%e7%a8%8b%e5%bc%8f-%ef%bc%88web-app%ef%bc%89' />
+<link rel='next' title='Where am I？－Part I－使用 Google Maps 地圖快速簡單查看你的位置' href='https://tech.mozilla.com.tw/posts/5762/where-am-i%ef%bc%9f%ef%bc%8dpart-i%ef%bc%8d%e4%bd%bf%e7%94%a8-google-maps-%e5%9c%b0%e5%9c%96%e5%bf%ab%e9%80%9f%e7%b0%a1%e5%96%ae%e6%9f%a5%e7%9c%8b%e4%bd%a0%e7%9a%84%e4%bd%8d%e7%bd%ae' />
+<meta name="generator" content="WordPress 4.1" />
+<link rel='canonical' href='https://tech.mozilla.com.tw/posts/6030/%e5%88%a9%e7%94%a8-adb-%e5%92%8c-gdb-%e4%be%86-debug-firefox-os-b2g' />
+<link rel='shortlink' href='https://tech.mozilla.com.tw/?p=6030' />
+<link rel="stylesheet" href="https://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" /><style type="text/css">.arve-thumb-wrapper { max-width: 300px; }.arve-normal-wrapper.alignleft, .arve-normal-wrapper.alignright, .arve-normal-wrapper.aligncenter { max-width: 400px; }</style>
+	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-6030 single-format-standard sand">
+    <div id="tabzilla-panel" class="close-nav" tabindex="-1">
+  <div id="tabzilla-contents">
+    <div id="tabzilla-promo">
+      <div id="tabzilla-promo-fxos" class="snippet">
+        <a href="//mozilla.com.tw/firefox/os/">
+          <h4>Firefox OS</h4>
+          <p>瞭解 Firefox OS</p>
+        </a>
+      </div>
+    </div>
+    <!-- end of tabzilla-promo -->
+    <div id="tabzilla-nav">
+      <ul>
+        <li class="sitemap">
+          <h2>Firefox</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="//mozilla.com.tw/firefox/download/" title="下載 Mozilla Firefox 中文桌面版" tabindex="-1">Firefox 免費下載</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/firefox/desktop/" title="下載 Mozilla Firefox 中文桌面版">Firefox 桌面版</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/firefox/mobile/" title="Mozilla Firefox 行動版">Firefox 行動版</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/firefox/channel/" title="Mozilla Firefox 未來發行版">Firefox 未來發行版</a>
+              </li>
+              <li>
+                <a href="https://addons.mozilla.org/zh-TW/firefox/" title="Firefox 附加元件">附加元件</a>
+              </li>
+              <li>
+                <a href="https://support.mozilla.com/zh-TW/home" title="Firefox 說明文件、支援中心">支援中心</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>Firefox OS</h2>
+          <div>
+            <ul>
+              <li>
+                <a title="Firefox OS 詳細介紹" href="//mozilla.com.tw/firefox/os/" tabindex="-1">詳細介紹</a>
+              </li>
+              <li>
+                <a title="Firefox OS 合作夥伴專區" href="//mozilla.com.tw/firefox/partners/" tabindex="-1">合作夥伴專區</a>
+              </li>
+              <li>
+                <a title="Firefox OS 支援中心" href="//support.mozilla.org/products/firefox-os" tabindex="-1">支援中心</a>
+              </li>
+              <li>
+                <a title="Firefox OS 常見問答集" href="//mozilla.com.tw/firefox/os/faq/" tabindex="-1">常見問答集</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>社群參與</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="http://firefox.club.tw/" title="Firefox 俱樂部">Firefox 設計品</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/community/student/" title="校園大使">校園大使</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/community/contribute/" title="社群專案">社群專案</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>訊息中心</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="//blog.mozilla.com.tw/main" title="部落格">部落格</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/news/press/" title="新聞室">新聞室</a>
+              </li>
+              <li>
+                <a href="//blog.mozilla.com.tw/events-list" title="活動訊息">活動訊息</a>
+              </li>
+              <li>
+                <a href="//tech.mozilla.com.tw/" title="謀智台客">謀智台客</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>關於我們</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="//mozilla.com.tw/about/manifesto/" title="Mozilla 宣言">Mozilla 宣言</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/about/space/" title="Mozilla Space">Mozilla Space</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/about/careers/" title="工作機會">工作機會</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/about/contact/" title="聯絡資訊">聯絡資訊</a>
+              </li>
+              <li>
+                <a href="//mozilla.org/en-US/" title="Mozilla (US)">Mozilla (US)</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <!-- end of sitemap -->
+      </ul>
+    </div>
+    <!-- end of tabzilla-nav -->
+  </div>
+  <!-- end of tabzilla-content -->
+</div>
+<!-- end of tabzilla-panel -->
+        <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+          <nav id="nav-main" role="navigation">
+  <span class="toggle" role="button" aria-controls="nav-main-menu" tabindex="0">{{_('Menu')}}</span>
+  <ul id="nav-main-menu" class="has-submenus" role="menubar">
+    <li id="nav-main-firefox" role="menuitem" class="topMenu first">
+      <a title="Mozilla Firefox" href="//mozilla.com.tw/firefox/" tabindex="0" aria-owns="nav-main-firefox-submenu" aria-haspopup="true">Firefox</a>
+      <ul id="nav-main-firefox-submenu" aria-expanded="false" class="submenu has-submenus">
+        <li class="first">
+          <a title="下載 Mozilla Firefox 中文桌面版" href="//mozilla.com.tw/firefox/download/" tabindex="-1">Firefox 免費下載</a>
+        </li>
+        <li id="nav-sub-firefox-desktop" role="menuitem" >
+          <a title="Mozilla Firefox 桌面版" href="//mozilla.com.tw/firefox/desktop/" tabindex="-1" aria-owns="nav-sub-firefox-desktop-submenu" aria-haspopup="true">Firefox 桌面版</a>
+          <ul id="nav-sub-firefox-desktop-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="下載 Mozilla Firefox 中文桌面版" href="//mozilla.com.tw/firefox/download/" tabindex="-1">下載</a>
+            </li>
+            <li>
+              <a title="Firefox 中文桌面版─自訂" href="//mozilla.com.tw/firefox/customize/" tabindex="-1">自訂</a>
+            </li>
+            <li>
+              <a title="Firefox 中文桌面版─效能" href="//mozilla.com.tw/firefox/performance/" tabindex="-1">效能</a>
+            </li>
+            <li>
+              <a title="Firefox 中文桌面版─技術" href="//mozilla.com.tw/firefox/technology/" tabindex="-1">技術</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 中文桌面版─安全" href="//mozilla.com.tw/firefox/security/" tabindex="-1">安全</a>
+            </li>
+          </ul>
+        </li>
+        <li id="nav-sub-firefox-mobile" role="menuitem">
+          <a title="Mozilla Firefox 行動版" href="//mozilla.com.tw/firefox/mobile/" tabindex="-1" aria-owns="nav-sub-firefox-mobile-submenu" aria-haspopup="true">Firefox 行動版</a>
+          <ul id="nav-sub-firefox-mobile-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="下載 Mozilla Firefox 行動版" href="//play.google.com/store/apps/details?id=org.mozilla.firefox" tabindex="-1">下載</a>
+            </li>
+            <li>
+              <a title="Firefox 行動版─功能特色" href="//mozilla.com.tw/firefox/mobile/features/" tabindex="-1">功能特色</a>
+            </li>
+            <li>
+              <a title="Firefox 行動版─支援平台" href="//mozilla.com.tw/firefox/mobile/platforms/" tabindex="-1">支援平台</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 行動版─常見問答集" href="//mozilla.com.tw/firefox/mobile/faq/" tabindex="-1">常見問答集</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a title="Mozilla Firefox 開發者版本" href="//mozilla.com.tw/firefox/developer/" tabindex="-1">Firefox 開發者版本</a>
+        </li>
+        <li>
+          <a title="Mozilla Firefox 未來發行版" href="//mozilla.com.tw/firefox/channel/" tabindex="-1">Firefox 未來發行版</a>
+        </li>
+        <li id="nav-sub-services" role="menuitem">
+          <a title="相關服務" href="javascript:void(0);" tabindex="-1" aria-owns="nav-sub-services-submenu" aria-haspopup="true">相關服務</a>
+          <ul id="nav-sub-services-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="Firefox Hello" href="/firefox/hello/" tabindex="-1">Hello</a>
+            </li>
+            <li class="last">
+              <a title="Firefox Sync" href="/firefox/sync/" tabindex="-1">Sync</a>
+            </li>
+          </ul>
+        </li>
+        <li id="nav-sub-firefox-addons" role="menuitem">
+          <a title="Firefox 附加元件" href="//addons.mozilla.org/zh-TW/firefox/" tabindex="-1" aria-owns="nav-sub-firefox-addons-submenu" aria-haspopup="true">附加元件</a>
+          <ul id="nav-sub-firefox-addons-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="Firefox 桌面版附加元件" href="//addons.mozilla.org/zh-TW/firefox/" tabindex="-1">桌面版</a>
+            </li>
+            <li>
+              <a title="Firefox 行動版附加元件" href="//addons.mozilla.org/zh-TW/android/" tabindex="-1">行動版</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 佈景主題" href="//addons.mozilla.org/zh-TW/firefox/themes/" tabindex="-1">佈景主題</a>
+            </li>
+          </ul>
+        </li>
+        <li id="nav-sub-firefox-support" role="menuitem" class="last">
+          <a title="Firefox 說明文件、支援中心" href="https://support.mozilla.com/zh-TW/home" tabindex="-1" aria-owns="nav-sub-firefox-support-submenu" aria-haspopup="true">支援中心</a>
+          <ul id="nav-sub-firefox-support-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="Firefox 桌面版支援中心" href="//support.mozilla.org/zh-TW/products/firefox" tabindex="-1">桌面版</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 行動版支援中心" href="//support.mozilla.org/zh-TW/products/mobile" tabindex="-1">行動版</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-firefoxos" role="menuitem" class="topMenu">
+      <a title="Firefox 行動作業系統" href="//mozilla.com.tw/firefox/os/" tabindex="0" aria-owns="nav-main-firefoxos-submenu" aria-haspopup="true">Firefox OS</a>
+      <ul id="nav-main-firefoxos-submenu" aria-expanded="false" class="submenu">
+        <li class="first">
+          <a title="Firefox OS 簡介" href="//mozilla.com.tw/firefox/os/" tabindex="-1">簡介</a>
+        </li>
+        <li>
+          <a title="Firefox OS 發佈機種" href="//mozilla.com.tw/firefox/os/devices/" tabindex="-1">發佈機種</a>
+        </li>
+        <li>
+          <a title="Firefox OS 合作夥伴專區" href="//mozilla.com.tw/firefox/partners/" tabindex="-1">合作夥伴專區</a>
+        </li>
+        <li>
+          <a title="Firefox OS 支援中心" href="//support.mozilla.org/products/firefox-os" tabindex="-1">支援中心</a>
+        </li>
+        <li class="last">
+          <a title="Firefox OS 常見問答集" href="//mozilla.com.tw/firefox/os/faq/" tabindex="-1">常見問答集</a>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-community" role="menuitem" class="topMenu">
+      <a title="社群參與" href="//mozilla.com.tw/community/" tabindex="0" aria-owns="nav-main-community-submenu" aria-haspopup="true">社群參與</a>
+      <ul id="nav-main-community-submenu" aria-expanded="false" class="submenu has-submenus">
+        <li class="first">
+          <a title="Firefox 活力軍" href="http://firefox.club.tw/" tabindex="-1">Firefox 設計品</a>
+        </li>
+        <li id="nav-sub-student" role="menuitem">
+          <a title="校園大使" href="//mozilla.com.tw/community/student/" tabindex="-1" aria-owns="nav-sub-student-submenu" aria-haspopup="true">校園大使</a>
+            <ul id="nav-sub-student-submenu" aria-expanded="false" class="submenu_lv2">
+              <li class="first">
+                <a title="Firefox 校園大使詳細辦法" href="//mozilla.com.tw/community/student/rules/" tabindex="-1">招募辦法</a>
+              </li>
+              <li>
+                <a title="Firefox 校園大使推廣任務和證書" href="//mozilla.com.tw/community/student/mission/" tabindex="-1">任務及證書</a>
+              </li>
+              <li>
+                <a title="Firefox 校園大使酷炫工具包" href="//mozilla.com.tw/community/student/package/" tabindex="-1">酷炫工具包</a>
+              </li>
+              <li>
+                <a title="Firefox 校園大使狐狐工作坊" href="//mozilla.com.tw/community/student/workshop/" tabindex="-1">狐狐工作坊</a>
+              </li>
+              <li class="last">
+                <a title="Firefox 校園大使線上申請" href="//mozilla.com.tw/contribute/universityambassadors/" tabindex="-1">線上申請</a>
+              </li>
+            </ul>
+        </li>
+        <li class="last">
+          <a title="社群專案" href="//mozilla.com.tw/community/contribute/" tabindex="-1">社群專案</a>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-blog" role="menuitem" class="topMenu">
+      <a title="訊息中心" href="//mozilla.com.tw/news/" tabindex="0" aria-owns="nav-main-blog-submenu" aria-haspopup="true">訊息中心</a>
+      <ul id="nav-main-blog-submenu" aria-expanded="false" class="submenu">
+        <li class="first">
+          <a title="部落格" href="//blog.mozilla.com.tw/main" tabindex="-1">部落格</a>
+        </li>
+        <li>
+          <a title="新聞室" href="//mozilla.com.tw/news/press/" tabindex="-1">新聞室</a>
+        </li>
+        <li>
+          <a title="活動訊息" href="//blog.mozilla.com.tw/events-list" tabindex="-1">活動訊息</a>
+        </li>
+        <li class="last">
+          <a title="謀智台客" href="//tech.mozilla.com.tw/" tabindex="-1">謀智台客</a>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-about" role="menuitem" class="topMenu last">
+      <a title="關於我們" href="//mozilla.com.tw/about/" tabindex="0" aria-owns="nav-main-about-submenu" aria-haspopup="true">關於我們</a>
+      <ul id="nav-main-about-submenu" aria-expanded="false" class="submenu">
+        <li class="first">
+          <a title="Mozilla 宣言" href="//mozilla.com.tw/about/manifesto/" tabindex="-1">Mozilla 宣言</a>
+        </li>
+        <li>
+          <a title="Mozilla Space" href="//mozilla.com.tw/about/space/" tabindex="-1">Mozilla Space</a>
+        </li>
+        <li>
+          <a title="工作機會" href="//mozilla.com.tw/about/careers/" tabindex="-1">工作機會</a>
+        </li>
+        <li>
+          <a title="聯絡資訊" href="//mozilla.com.tw/about/contact/" tabindex="-1">聯絡資訊</a>
+        </li>
+        <li class="last">
+          <a title="Mozilla (US)" href="//mozilla.org/en-US/" tabindex="-1">Mozilla (US)</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='//mozilla.com.tw/' class='home'>Home</a>
+            <b>&raquo;</b>
+            <a href='//mozilla.com.tw/news/'>訊息中心</a>
+            <b>&raquo;</b>
+                          <a href='//tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>
+              <span>利用 adb 和 gdb 來 debug Firefox OS (B2G)</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="https://tech.mozilla.com.tw/posts/6030/%e5%88%a9%e7%94%a8-adb-%e5%92%8c-gdb-%e4%be%86-debug-firefox-os-b2g" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="https://tech.mozilla.com.tw/posts/6030/%e5%88%a9%e7%94%a8-adb-%e5%92%8c-gdb-%e4%be%86-debug-firefox-os-b2g"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=https://tech.mozilla.com.tw/posts/6030/%e5%88%a9%e7%94%a8-adb-%e5%92%8c-gdb-%e4%be%86-debug-firefox-os-b2g&media=https://tech.mozilla.com.tw/wp-content/uploads/2013/07/2013-05-10-16-42-06-150x150.png" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+	        <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">0</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://tech.mozilla.com.tw/posts/5987/%e4%bd%bf%e7%94%a8-github-%e9%96%8b%e7%99%bc%e6%88%91%e7%9a%84%e7%ac%ac%e4%b8%80%e5%80%8b%e7%b6%b2%e9%a0%81%e6%87%89%e7%94%a8%e7%a8%8b%e5%bc%8f-%ef%bc%88web-app%ef%bc%89"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2015/01/2960047774_6e39a980dc_m-150x150.jpg" class="attachment-48x48 wp-post-image" alt="octocat" /><span class="meta-nav">使用 Github 開發我的第一個網頁應用程式 （Web App）</span></div></a></div>		
+							<div class="nav-next"><a href="https://tech.mozilla.com.tw/posts/5762/where-am-i%ef%bc%9f%ef%bc%8dpart-i%ef%bc%8d%e4%bd%bf%e7%94%a8-google-maps-%e5%9c%b0%e5%9c%96%e5%bf%ab%e9%80%9f%e7%b0%a1%e5%96%ae%e6%9f%a5%e7%9c%8b%e4%bd%a0%e7%9a%84%e4%bd%8d%e7%bd%ae"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR-150x150.png" class="attachment-48x48 wp-post-image" alt="05.EMULATOR" /><span class="meta-nav">Where am I？－Part I－使用 Google Maps 地圖快速簡單查看你的位置</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-6030" class="post-6030 post type-post status-publish format-standard has-post-thumbnail hentry category-b2g tag-b2g-2 tag-debug tag-firefox-os tag-gdb">
+	 	<header class="entry-header">
+		<h1 class="entry-title">利用 adb 和 gdb 來 debug Firefox OS (B2G)</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://tech.mozilla.com.tw/posts/date/2015/02" class="posted-month">2月</a>
+	        <span class="posted-date">02</span>
+	        <a title="See all posts from 2014" href="https://tech.mozilla.com.tw/posts/date/2015" class="posted-year">2015</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="143">
+		  	<a href="https://tech.mozilla.com.tw/posts/author/jhaomozilla-com">
+	          <img src="https://secure.gravatar.com/avatar/4bc7542d3061676e9f3ab7e87a084f98?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=24" alt="" class="avatar user-143-avatar" width='24' height='24' /><!--
+	       --><div class="author-info">Jonathan Hao</div><!--
+	       --><div class="author-title"></div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p>Debugging 絕對是每個 programmer 不得不面對的痛。有句俗話說</p>
+<blockquote><p>To err is human; to debug, divine.</p></blockquote>
+<p>當我們遇到一個 B2G 上的 bug，卻不清楚原因的時候，該怎麼辦呢？本文將介紹一些筆者日常工作中，對 B2G 的 Gecko C++ 部份常用的除錯方法。</p>
+<p><span id="more-6030"></span></p>
+<h2>adb logcat</h2>
+<p>如果你是個 C++ 開發者，不管是不是習慣使用先進的 debugger ，剛開始寫小程式時一定都有用過一招，俗稱「<code>printf</code> 大法」或「<code>cout</code> 大法」，說穿了就是把變數的值印到 stdout 上面，藉此找出程式運作不正常之處。但是當我們在開發機（例如 Flame）上面測試時，要如何看到印出來的 log 呢？</p>
+<p>因為 B2G 底層的 Gonk 其實是基於 Android Open Source Project (AOSP)，所以也適用 Android Debug Bridge (adb) 這個工具。在 B2G 的 C++ 程式碼中，只要在你想要印出 log 的地方呼叫這個函數即可：</p><!-- Crayon Syntax Highlighter v2.6.9 -->
+
+		<div id="crayon-5561d1ffa1641164156119" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+__android_log_print(ANDROID_LOG_INFO, "MyTag", "Variable: %d, String %s", var, str);</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5561d1ffa1641164156119-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5561d1ffa1641164156119-1"><span class="crayon-e">__android_log_print</span><span class="crayon-sy">(</span><span class="crayon-v">ANDROID_LOG_INFO</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">"MyTag"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">"Variable: %d, String %s"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-t">var</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">str</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0016 seconds] -->
+<p>其中第一個參數是 priority，可視情況從以下的值取一使用 [1]：</p><!-- Crayon Syntax Highlighter v2.6.9 -->
+
+		<div id="crayon-5561d1ffa1664085297924" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+/*
+ * Android log priority values, in ascending priority order.
+ */
+typedef enum android_LogPriority {
+    ANDROID_LOG_UNKNOWN = 0,
+    ANDROID_LOG_DEFAULT,    /* only for SetMinPriority() */
+    ANDROID_LOG_VERBOSE,
+    ANDROID_LOG_DEBUG,
+    ANDROID_LOG_INFO,
+    ANDROID_LOG_WARN,
+    ANDROID_LOG_ERROR,
+    ANDROID_LOG_FATAL,
+    ANDROID_LOG_SILENT,     /* only for SetMinPriority(); must be last */
+} android_LogPriority;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5561d1ffa1664085297924-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa1664085297924-2">2</div><div class="crayon-num" data-line="crayon-5561d1ffa1664085297924-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa1664085297924-4">4</div><div class="crayon-num" data-line="crayon-5561d1ffa1664085297924-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa1664085297924-6">6</div><div class="crayon-num" data-line="crayon-5561d1ffa1664085297924-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa1664085297924-8">8</div><div class="crayon-num" data-line="crayon-5561d1ffa1664085297924-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa1664085297924-10">10</div><div class="crayon-num" data-line="crayon-5561d1ffa1664085297924-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa1664085297924-12">12</div><div class="crayon-num" data-line="crayon-5561d1ffa1664085297924-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa1664085297924-14">14</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5561d1ffa1664085297924-1"><span class="crayon-c">/*</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa1664085297924-2"><span class="crayon-c"> * Android log priority values, in ascending priority order.</span></div><div class="crayon-line" id="crayon-5561d1ffa1664085297924-3"><span class="crayon-c"> */</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa1664085297924-4"><span class="crayon-r">typedef</span><span class="crayon-h"> </span><span class="crayon-t">enum</span><span class="crayon-h"> </span><span class="crayon-e">android_LogPriority</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5561d1ffa1664085297924-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">ANDROID_LOG_UNKNOWN</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa1664085297924-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">ANDROID_LOG_DEFAULT</span><span class="crayon-sy">,</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">/* only for SetMinPriority() */</span></div><div class="crayon-line" id="crayon-5561d1ffa1664085297924-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">ANDROID_LOG_VERBOSE</span><span class="crayon-sy">,</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa1664085297924-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">ANDROID_LOG_DEBUG</span><span class="crayon-sy">,</span></div><div class="crayon-line" id="crayon-5561d1ffa1664085297924-9"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">ANDROID_LOG_INFO</span><span class="crayon-sy">,</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa1664085297924-10"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">ANDROID_LOG_WARN</span><span class="crayon-sy">,</span></div><div class="crayon-line" id="crayon-5561d1ffa1664085297924-11"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">ANDROID_LOG_ERROR</span><span class="crayon-sy">,</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa1664085297924-12"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">ANDROID_LOG_FATAL</span><span class="crayon-sy">,</span></div><div class="crayon-line" id="crayon-5561d1ffa1664085297924-13"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">ANDROID_LOG_SILENT</span><span class="crayon-sy">,</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-c">/* only for SetMinPriority(); must be last */</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa1664085297924-14"><span class="crayon-sy">}</span><span class="crayon-h"> </span><span class="crayon-v">android_LogPriority</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0038 seconds] -->
+<p>第二個參數是 tag，可以自己設任何字串，之後用來篩選，第三個參數以後就跟 <code>printf</code> 的用法一樣。</p>
+<p>通常會定義成 macro 如</p><!-- Crayon Syntax Highlighter v2.6.9 -->
+
+		<div id="crayon-5561d1ffa1673864261917" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+#define MY_LOG(args...) __android_log_print(ANDROID_LOG_INFO, "MyTag", ##args)</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5561d1ffa1673864261917-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5561d1ffa1673864261917-1"><span class="crayon-p">#define MY_LOG(args...) __android_log_print(ANDROID_LOG_INFO, "MyTag", ##args)</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0009 seconds] -->
+<p></p>
+<p class="">或是呼叫 <code>printf_stderr(...)</code>，在手機上時，它的效果就相當於上面的 log，其中 priority 是 Info 而 tag 是 Gecko. [2]</p>
+<p>接著只要將手機用 USB 線接上電腦，再呼叫 <code>adb logcat</code> 就可以看到 log 從 stdout 不斷的跑出來</p><!-- Crayon Syntax Highlighter v2.6.9 -->
+
+		<div id="crayon-5561d1ffa1681956904597" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+$ adb logcat
+--------- beginning of /dev/log/main
+I/QCOM PowerHAL( 209): Got set_interactive hint
+D/qdhwcomposer( 209): hwc_blank: Unblanking display: 0
+I/qdhwcomposer( 209): handle_blank_event: dpy:0 panel power state: 1
+D/qdhwcomposer( 209): hwc_blank: Done unblanking display: 0
+E/Sensors ( 209): change G sensor state "0 -&gt; 1"
+I/Gecko (10252): ###################################### forms.js loaded
+I/Gecko (10252): ############################### browserElementPanning.js loaded
+I/Gecko (10252): ######################## BrowserElementChildPreload.js loaded</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5561d1ffa1681956904597-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa1681956904597-2">2</div><div class="crayon-num" data-line="crayon-5561d1ffa1681956904597-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa1681956904597-4">4</div><div class="crayon-num" data-line="crayon-5561d1ffa1681956904597-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa1681956904597-6">6</div><div class="crayon-num" data-line="crayon-5561d1ffa1681956904597-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa1681956904597-8">8</div><div class="crayon-num" data-line="crayon-5561d1ffa1681956904597-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa1681956904597-10">10</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5561d1ffa1681956904597-1"><span class="crayon-sy">$</span><span class="crayon-h"> </span><span class="crayon-e">adb </span><span class="crayon-v">logcat</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa1681956904597-2"><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-e">beginning </span><span class="crayon-v">of</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">dev</span><span class="crayon-o">/</span><span class="crayon-v">log</span><span class="crayon-o">/</span><span class="crayon-i">main</span></div><div class="crayon-line" id="crayon-5561d1ffa1681956904597-3"><span class="crayon-v">I</span><span class="crayon-o">/</span><span class="crayon-e">QCOM </span><span class="crayon-e">PowerHAL</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-cn">209</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-e">Got </span><span class="crayon-e">set_interactive </span><span class="crayon-i">hint</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa1681956904597-4"><span class="crayon-v">D</span><span class="crayon-o">/</span><span class="crayon-e">qdhwcomposer</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-cn">209</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">hwc_blank</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-e">Unblanking </span><span class="crayon-v">display</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-cn">0</span></div><div class="crayon-line" id="crayon-5561d1ffa1681956904597-5"><span class="crayon-v">I</span><span class="crayon-o">/</span><span class="crayon-e">qdhwcomposer</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-cn">209</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">handle_blank_event</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">dpy</span><span class="crayon-o">:</span><span class="crayon-cn">0</span><span class="crayon-h"> </span><span class="crayon-e">panel </span><span class="crayon-e">power </span><span class="crayon-v">state</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-cn">1</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa1681956904597-6"><span class="crayon-v">D</span><span class="crayon-o">/</span><span class="crayon-e">qdhwcomposer</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-cn">209</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">hwc_blank</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-e">Done </span><span class="crayon-e">unblanking </span><span class="crayon-v">display</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-cn">0</span></div><div class="crayon-line" id="crayon-5561d1ffa1681956904597-7"><span class="crayon-v">E</span><span class="crayon-o">/</span><span class="crayon-e">Sensors</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-cn">209</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-i">change</span><span class="crayon-h"> </span><span class="crayon-i">G</span><span class="crayon-h"> </span><span class="crayon-e">sensor </span><span class="crayon-i">state</span><span class="crayon-h"> </span><span class="crayon-s">"0 -&gt; 1"</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa1681956904597-8"><span class="crayon-v">I</span><span class="crayon-o">/</span><span class="crayon-e">Gecko</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-cn">10252</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-p">###################################### forms.js loaded</span></div><div class="crayon-line" id="crayon-5561d1ffa1681956904597-9"><span class="crayon-v">I</span><span class="crayon-o">/</span><span class="crayon-e">Gecko</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-cn">10252</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-p">############################### browserElementPanning.js loaded</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa1681956904597-10"><span class="crayon-v">I</span><span class="crayon-o">/</span><span class="crayon-e">Gecko</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-cn">10252</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-p">######################## BrowserElementChildPreload.js loaded</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0087 seconds] -->
+<p>每行開頭的 I, D, E 指的就是 priority 如 Info, Debug, Error。斜線後的字如 Gecko, Sensors 等是 tag，括號裡面則是 process ID。如果想要更多一點的資訊，可以加上 <code>-v threadtime</code>，讓它顯示出每行的 thread ID 和時間。如果要做篩選，則可以加上 -s &lt;tag&gt;[:&lt;priority&gt;]。例如若要顯示所有 tag 是 Gecko，且 prority 在 Info 以上的 log，就下這樣的指令。</p><!-- Crayon Syntax Highlighter v2.6.9 -->
+
+		<div id="crayon-5561d1ffa168f578879138" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+＄ adb logcat -v threadtime -s Gecko:i
+--------- beginning of /dev/log/main
+01-27 15:23:25.858 10252 10252 I Gecko   : ###################################### forms.js loaded
+01-27 15:23:25.888 10252 10252 I Gecko   : ############################### browserElementPanning.js loaded
+01-27 15:23:25.908 10252 10252 I Gecko   : ######################## BrowserElementChildPreload.js loaded</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5561d1ffa168f578879138-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa168f578879138-2">2</div><div class="crayon-num" data-line="crayon-5561d1ffa168f578879138-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa168f578879138-4">4</div><div class="crayon-num" data-line="crayon-5561d1ffa168f578879138-5">5</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5561d1ffa168f578879138-1">＄<span class="crayon-h"> </span><span class="crayon-e">adb </span><span class="crayon-v">logcat</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-i">v</span><span class="crayon-h"> </span><span class="crayon-v">threadtime</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-i">s</span><span class="crayon-h"> </span><span class="crayon-v">Gecko</span><span class="crayon-o">:</span><span class="crayon-v">i</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa168f578879138-2"><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-o">--</span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-e">beginning </span><span class="crayon-v">of</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">dev</span><span class="crayon-o">/</span><span class="crayon-v">log</span><span class="crayon-o">/</span><span class="crayon-i">main</span></div><div class="crayon-line" id="crayon-5561d1ffa168f578879138-3"><span class="crayon-cn">01</span><span class="crayon-o">-</span><span class="crayon-cn">27</span><span class="crayon-h"> </span><span class="crayon-cn">15</span><span class="crayon-o">:</span><span class="crayon-cn">23</span><span class="crayon-o">:</span><span class="crayon-cn">25.858</span><span class="crayon-h"> </span><span class="crayon-cn">10252</span><span class="crayon-h"> </span><span class="crayon-cn">10252</span><span class="crayon-h"> </span><span class="crayon-i">I</span><span class="crayon-h"> </span><span class="crayon-v">Gecko</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-p">###################################### forms.js loaded</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa168f578879138-4"><span class="crayon-cn">01</span><span class="crayon-o">-</span><span class="crayon-cn">27</span><span class="crayon-h"> </span><span class="crayon-cn">15</span><span class="crayon-o">:</span><span class="crayon-cn">23</span><span class="crayon-o">:</span><span class="crayon-cn">25.888</span><span class="crayon-h"> </span><span class="crayon-cn">10252</span><span class="crayon-h"> </span><span class="crayon-cn">10252</span><span class="crayon-h"> </span><span class="crayon-i">I</span><span class="crayon-h"> </span><span class="crayon-v">Gecko</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-p">############################### browserElementPanning.js loaded</span></div><div class="crayon-line" id="crayon-5561d1ffa168f578879138-5"><span class="crayon-cn">01</span><span class="crayon-o">-</span><span class="crayon-cn">27</span><span class="crayon-h"> </span><span class="crayon-cn">15</span><span class="crayon-o">:</span><span class="crayon-cn">23</span><span class="crayon-o">:</span><span class="crayon-cn">25.908</span><span class="crayon-h"> </span><span class="crayon-cn">10252</span><span class="crayon-h"> </span><span class="crayon-cn">10252</span><span class="crayon-h"> </span><span class="crayon-i">I</span><span class="crayon-h"> </span><span class="crayon-v">Gecko</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-p">######################## BrowserElementChildPreload.js loaded</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0066 seconds] -->
+<p>另外還有一些參數像 -d 是把累積的 log 一次 dump 出來之後就結束，-c 是把目前累積的 log 都清掉，詳細請見 <code>adb logcat --help</code>。</p>
+<h3>In Gecko&#8217;s JavaScript code</h3>
+<p>在 Gecko 的 JavaScript code 中，可以使用 dump(&#8220;&#8230;&#8221;)。印出來的 log 也會在 adb logcat 中，它的 tag 是 GeckoDump。</p>
+<h2>打開 NSPR 的 log</h2>
+<p>Gecko 本身也會有一些用 NSPR (Netscape Portable Runtime) 的 API 產生的 log，通常會透過 macro 定義如</p><!-- Crayon Syntax Highlighter v2.6.9 -->
+
+		<div id="crayon-5561d1ffa169d292446397" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+PRLogModuleInfo* gMediaDecoderLog;
+#define DECODER_LOG(x, ...) \
+  PR_LOG(gMediaDecoderLog, PR_LOG_DEBUG, ("Decoder=%p " x, this, ##__VA_ARGS__))</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5561d1ffa169d292446397-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa169d292446397-2">2</div><div class="crayon-num" data-line="crayon-5561d1ffa169d292446397-3">3</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5561d1ffa169d292446397-1"><span class="crayon-e ">PRLogModuleInfo*</span><span class="crayon-h"> </span><span class="crayon-v">gMediaDecoderLog</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa169d292446397-2"><span class="crayon-p">#define DECODER_LOG(x, ...) \</span></div><div class="crayon-line" id="crayon-5561d1ffa169d292446397-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">PR_LOG</span><span class="crayon-sy">(</span><span class="crayon-v">gMediaDecoderLog</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">PR_LOG_DEBUG</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-s">"Decoder=%p "</span><span class="crayon-h"> </span><span class="crayon-v">x</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-p">##__VA_ARGS__))</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0023 seconds] -->
+<p>然後在需要時呼叫 <code>DECODER_LOG(...)</code>。</p>
+<p>要怎麼看到這些 log 呢？首先你的 B2G 必須是 debug build。編譯前在你的 B2G 根目錄下的 <code>.userconfig</code> 要加入一行：</p><!-- Crayon Syntax Highlighter v2.6.9 -->
+
+		<div id="crayon-5561d1ffa16ab137856258" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+export B2G_DEBUG=1</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5561d1ffa16ab137856258-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5561d1ffa16ab137856258-1"><span class="crayon-e">export </span><span class="crayon-v">B2G_DEBUG</span><span class="crayon-o">=</span><span class="crayon-cn">1</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0009 seconds] -->
+<p></p>
+<p class="lang:default decode:true "> 編譯好並用 <code>adb shell</code> 直接對手機下指令</p>
+<p></p><!-- Crayon Syntax Highlighter v2.6.9 -->
+
+		<div id="crayon-5561d1ffa16b8292408154" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+＄ adb shell
+root@flame:/ # export NSPR_LOG_MODULES=MediaDecoder:5
+root@flame:/ # export NSPR_LOG_FILE=/data/local/tmp/myLogFile
+root@flame:/ # stop b2g
+root@flame:/ # /system/bin/b2g.sh</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5561d1ffa16b8292408154-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa16b8292408154-2">2</div><div class="crayon-num" data-line="crayon-5561d1ffa16b8292408154-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa16b8292408154-4">4</div><div class="crayon-num" data-line="crayon-5561d1ffa16b8292408154-5">5</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5561d1ffa16b8292408154-1">＄<span class="crayon-h"> </span><span class="crayon-e">adb </span><span class="crayon-e">shell</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa16b8292408154-2"><span class="crayon-v">root</span><span class="crayon-sy">@</span><span class="crayon-v">flame</span><span class="crayon-o">:</span><span class="crayon-o">/</span><span class="crayon-h"> </span><span class="crayon-p"># export NSPR_LOG_MODULES=MediaDecoder:5</span></div><div class="crayon-line" id="crayon-5561d1ffa16b8292408154-3"><span class="crayon-v">root</span><span class="crayon-sy">@</span><span class="crayon-v">flame</span><span class="crayon-o">:</span><span class="crayon-o">/</span><span class="crayon-h"> </span><span class="crayon-p"># export NSPR_LOG_FILE=/data/local/tmp/myLogFile</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa16b8292408154-4"><span class="crayon-v">root</span><span class="crayon-sy">@</span><span class="crayon-v">flame</span><span class="crayon-o">:</span><span class="crayon-o">/</span><span class="crayon-h"> </span><span class="crayon-p"># stop b2g</span></div><div class="crayon-line" id="crayon-5561d1ffa16b8292408154-5"><span class="crayon-v">root</span><span class="crayon-sy">@</span><span class="crayon-v">flame</span><span class="crayon-o">:</span><span class="crayon-o">/</span><span class="crayon-h"> </span><span class="crayon-p"># /system/bin/b2g.sh</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0015 seconds] -->
+<p>其中 <code>NSPR_LOG_MODULES</code> 這個環境變數是你要 log 的 module 名字。以上面的例子來說，<code>gMediaDecoderLog</code> 一定會在某處被定義，例如：</p><!-- Crayon Syntax Highlighter v2.6.9 -->
+
+		<div id="crayon-5561d1ffa16c6598942366" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+gMediaDecoderLog = PR_NewLogModule("MediaDecoder");</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5561d1ffa16c6598942366-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5561d1ffa16c6598942366-1"><span class="crayon-v">gMediaDecoderLog</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">PR_NewLogModule</span><span class="crayon-sy">(</span><span class="crayon-s">"MediaDecoder"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0011 seconds] -->
+<p>所以我們要找的 module 名字就是 <code>MediaDecoder</code>，冒號後面的 5 跟之前一樣是指定 priority。<code>NSPR_LOG_FILE</code> 這個環境變數則是 log 產生的位置。最後還要把 b2g process 先關掉再重開。接著就可以做你要做的測試，做完要把 log 取出時，下這個指令</p><!-- Crayon Syntax Highlighter v2.6.9 -->
+
+		<div id="crayon-5561d1ffa16d2636970952" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+$ adb pull /data/local/tmp/myLogFile &lt;path&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5561d1ffa16d2636970952-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5561d1ffa16d2636970952-1"><span class="crayon-sy">$</span><span class="crayon-h"> </span><span class="crayon-e">adb </span><span class="crayon-v">pull</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">data</span><span class="crayon-o">/</span><span class="crayon-v">local</span><span class="crayon-o">/</span><span class="crayon-v">tmp</span><span class="crayon-o">/</span><span class="crayon-v">myLogFile</span><span class="crayon-h"> </span><span class="crayon-o">&lt;</span><span class="crayon-v">path</span><span class="crayon-o">&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0016 seconds] -->
+<p>就可以拿到 log 囉！</p>
+<h2>gdb</h2>
+<p>有的時候印 log 可能還不足以解決問題，也許你想對程式設中斷點做進一步的檢查，或是看看程式到底是在哪裡 crash 的，gdb 就可以派上用場了。以下介紹如何將 gdb attach 到手機程式中。</p>
+<p>首先，你要先知道你想要設中斷點的地方是跑在哪個 process 裡。可以用這個指令看到手機裡有哪些 process，</p><!-- Crayon Syntax Highlighter v2.6.9 -->
+
+		<div id="crayon-5561d1ffa16e0770265145" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+$ adb shell b2g-ps
+APPLICATION    SEC USER     PID   PPID  VSIZE  RSS     WCHAN    PC         NAME
+b2g              0 root      209   1     255324 100848 ffffffff b6e49894 S /system/b2g/b2g
+(Nuwa)           0 root      462   209   65624  22600 ffffffff b6e49894 S /system/b2g/b2g
+Homescreen       2 u0_a936   936   462   89636  30392 ffffffff b6e49894 S /system/b2g/b2g
+Built-in Keyboa  2 u0_a1085  1085  209   82828  33940 ffffffff b6f38894 S /system/b2g/plugin-container
+Find My Device   2 u0_a1192  1192  462   72824  23636 ffffffff b6e49894 S /system/b2g/b2g
+Smart Collectio  2 u0_a1480  1480  462   74360  26124 ffffffff b6e49894 S /system/b2g/b2g
+Usage            2 u0_a1582  1582  462   75024  26120 ffffffff b6e49894 S /system/b2g/b2g
+Browser          2 u0_a11075 11075 462   93568  31248 ffffffff b6e49894 S /system/b2g/b2g
+(Preallocated a  2 u0_a14373 14373 462   71820  17532 ffffffff b6e49894 S /system/b2g/b2g</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5561d1ffa16e0770265145-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa16e0770265145-2">2</div><div class="crayon-num" data-line="crayon-5561d1ffa16e0770265145-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa16e0770265145-4">4</div><div class="crayon-num" data-line="crayon-5561d1ffa16e0770265145-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa16e0770265145-6">6</div><div class="crayon-num" data-line="crayon-5561d1ffa16e0770265145-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa16e0770265145-8">8</div><div class="crayon-num" data-line="crayon-5561d1ffa16e0770265145-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5561d1ffa16e0770265145-10">10</div><div class="crayon-num" data-line="crayon-5561d1ffa16e0770265145-11">11</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5561d1ffa16e0770265145-1"><span class="crayon-sy">$</span><span class="crayon-h"> </span><span class="crayon-e">adb </span><span class="crayon-e">shell </span><span class="crayon-v">b2g</span><span class="crayon-o">-</span><span class="crayon-e">ps</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa16e0770265145-2"><span class="crayon-i">APPLICATION</span>   <span class="crayon-h"> </span><span class="crayon-e">SEC </span><span class="crayon-i">USER</span>    <span class="crayon-h"> </span><span class="crayon-i">PID</span>  <span class="crayon-h"> </span><span class="crayon-i">PPID</span> <span class="crayon-h"> </span><span class="crayon-i">VSIZE</span> <span class="crayon-h"> </span><span class="crayon-i">RSS</span>    <span class="crayon-h"> </span><span class="crayon-i">WCHAN</span>   <span class="crayon-h"> </span><span class="crayon-i">PC</span>        <span class="crayon-h"> </span><span class="crayon-e">NAME</span></div><div class="crayon-line" id="crayon-5561d1ffa16e0770265145-3"><span class="crayon-i">b2g</span>             <span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-h"> </span><span class="crayon-i">root</span>     <span class="crayon-h"> </span><span class="crayon-cn">209</span>  <span class="crayon-h"> </span><span class="crayon-cn">1</span>    <span class="crayon-h"> </span><span class="crayon-cn">255324</span><span class="crayon-h"> </span><span class="crayon-cn">100848</span><span class="crayon-h"> </span><span class="crayon-e">ffffffff </span><span class="crayon-i">b6e49894</span><span class="crayon-h"> </span><span class="crayon-v">S</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-e">b2g</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa16e0770265145-4"><span class="crayon-sy">(</span><span class="crayon-v">Nuwa</span><span class="crayon-sy">)</span>          <span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-h"> </span><span class="crayon-i">root</span>     <span class="crayon-h"> </span><span class="crayon-cn">462</span>  <span class="crayon-h"> </span><span class="crayon-cn">209</span>  <span class="crayon-h"> </span><span class="crayon-cn">65624</span> <span class="crayon-h"> </span><span class="crayon-cn">22600</span><span class="crayon-h"> </span><span class="crayon-e">ffffffff </span><span class="crayon-i">b6e49894</span><span class="crayon-h"> </span><span class="crayon-v">S</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-e">b2g</span></div><div class="crayon-line" id="crayon-5561d1ffa16e0770265145-5"><span class="crayon-i">Homescreen</span>      <span class="crayon-h"> </span><span class="crayon-cn">2</span><span class="crayon-h"> </span><span class="crayon-v">u0</span><span class="crayon-sy">_</span>a936  <span class="crayon-h"> </span><span class="crayon-cn">936</span>  <span class="crayon-h"> </span><span class="crayon-cn">462</span>  <span class="crayon-h"> </span><span class="crayon-cn">89636</span> <span class="crayon-h"> </span><span class="crayon-cn">30392</span><span class="crayon-h"> </span><span class="crayon-e">ffffffff </span><span class="crayon-i">b6e49894</span><span class="crayon-h"> </span><span class="crayon-v">S</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-e">b2g</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa16e0770265145-6"><span class="crayon-v">Built</span><span class="crayon-o">-</span><span class="crayon-st">in</span><span class="crayon-h"> </span><span class="crayon-i">Keyboa</span> <span class="crayon-h"> </span><span class="crayon-cn">2</span><span class="crayon-h"> </span><span class="crayon-v">u0</span><span class="crayon-sy">_</span>a1085 <span class="crayon-h"> </span><span class="crayon-cn">1085</span> <span class="crayon-h"> </span><span class="crayon-cn">209</span>  <span class="crayon-h"> </span><span class="crayon-cn">82828</span> <span class="crayon-h"> </span><span class="crayon-cn">33940</span><span class="crayon-h"> </span><span class="crayon-e">ffffffff </span><span class="crayon-i">b6f38894</span><span class="crayon-h"> </span><span class="crayon-v">S</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-v">plugin</span><span class="crayon-o">-</span><span class="crayon-e">container</span></div><div class="crayon-line" id="crayon-5561d1ffa16e0770265145-7"><span class="crayon-e">Find </span><span class="crayon-e">My </span><span class="crayon-i">Device</span>  <span class="crayon-h"> </span><span class="crayon-cn">2</span><span class="crayon-h"> </span><span class="crayon-v">u0</span><span class="crayon-sy">_</span>a1192 <span class="crayon-h"> </span><span class="crayon-cn">1192</span> <span class="crayon-h"> </span><span class="crayon-cn">462</span>  <span class="crayon-h"> </span><span class="crayon-cn">72824</span> <span class="crayon-h"> </span><span class="crayon-cn">23636</span><span class="crayon-h"> </span><span class="crayon-e">ffffffff </span><span class="crayon-i">b6e49894</span><span class="crayon-h"> </span><span class="crayon-v">S</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-e">b2g</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa16e0770265145-8"><span class="crayon-e">Smart </span><span class="crayon-i">Collectio</span> <span class="crayon-h"> </span><span class="crayon-cn">2</span><span class="crayon-h"> </span><span class="crayon-v">u0</span><span class="crayon-sy">_</span>a1480 <span class="crayon-h"> </span><span class="crayon-cn">1480</span> <span class="crayon-h"> </span><span class="crayon-cn">462</span>  <span class="crayon-h"> </span><span class="crayon-cn">74360</span> <span class="crayon-h"> </span><span class="crayon-cn">26124</span><span class="crayon-h"> </span><span class="crayon-e">ffffffff </span><span class="crayon-i">b6e49894</span><span class="crayon-h"> </span><span class="crayon-v">S</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-e">b2g</span></div><div class="crayon-line" id="crayon-5561d1ffa16e0770265145-9"><span class="crayon-i">Usage</span>           <span class="crayon-h"> </span><span class="crayon-cn">2</span><span class="crayon-h"> </span><span class="crayon-v">u0</span><span class="crayon-sy">_</span>a1582 <span class="crayon-h"> </span><span class="crayon-cn">1582</span> <span class="crayon-h"> </span><span class="crayon-cn">462</span>  <span class="crayon-h"> </span><span class="crayon-cn">75024</span> <span class="crayon-h"> </span><span class="crayon-cn">26120</span><span class="crayon-h"> </span><span class="crayon-e">ffffffff </span><span class="crayon-i">b6e49894</span><span class="crayon-h"> </span><span class="crayon-v">S</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-e">b2g</span></div><div class="crayon-line crayon-striped-line" id="crayon-5561d1ffa16e0770265145-10"><span class="crayon-i">Browser</span>         <span class="crayon-h"> </span><span class="crayon-cn">2</span><span class="crayon-h"> </span><span class="crayon-v">u0</span><span class="crayon-sy">_</span>a11075<span class="crayon-h"> </span><span class="crayon-cn">11075</span><span class="crayon-h"> </span><span class="crayon-cn">462</span>  <span class="crayon-h"> </span><span class="crayon-cn">93568</span> <span class="crayon-h"> </span><span class="crayon-cn">31248</span><span class="crayon-h"> </span><span class="crayon-e">ffffffff </span><span class="crayon-i">b6e49894</span><span class="crayon-h"> </span><span class="crayon-v">S</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-i">b2g</span></div><div class="crayon-line" id="crayon-5561d1ffa16e0770265145-11"><span class="crayon-sy">(</span><span class="crayon-i">Preallocated</span><span class="crayon-h"> </span><span class="crayon-i">a</span> <span class="crayon-h"> </span><span class="crayon-cn">2</span><span class="crayon-h"> </span><span class="crayon-v">u0</span><span class="crayon-sy">_</span>a14373<span class="crayon-h"> </span><span class="crayon-cn">14373</span><span class="crayon-h"> </span><span class="crayon-cn">462</span>  <span class="crayon-h"> </span><span class="crayon-cn">71820</span> <span class="crayon-h"> </span><span class="crayon-cn">17532</span><span class="crayon-h"> </span><span class="crayon-e">ffffffff </span><span class="crayon-i">b6e49894</span><span class="crayon-h"> </span><span class="crayon-v">S</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0196 seconds] -->
+<p></p>
+<p class="">假設想要中斷的程式是執行在 Browser app 裡面，它的 process ID 是 11075，那就在 B2G 的根目錄裡面執行</p>
+<p></p><!-- Crayon Syntax Highlighter v2.6.9 -->
+
+		<div id="crayon-5561d1ffa16ed908875240" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+./run-gdb.sh attach 11075</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5561d1ffa16ed908875240-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5561d1ffa16ed908875240-1"><span class="crayon-sy">.</span><span class="crayon-o">/</span><span class="crayon-v">run</span><span class="crayon-o">-</span><span class="crayon-v">gdb</span><span class="crayon-sy">.</span><span class="crayon-e">sh </span><span class="crayon-i">attach</span><span class="crayon-h"> </span><span class="crayon-cn">11075</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0013 seconds] -->
+<p></p>
+<p class="">或是如果你覺得</p>
+<p class="">要注意的是，即使某段程式碼看起來是運行在某個 app 之中，但有可能它為了用到某些 privilege，其實是運行在 b2g process  之中的。例如 <a title="Web app 如何操作硬體功能（Firefox OS 的內部溝通 － 藍牙篇）" href="http://tech.mozilla.com.tw/posts/5232/web-app-%e5%a6%82%e4%bd%95%e6%93%8d%e4%bd%9c%e7%a1%ac%e9%ab%94%e5%8a%9f%e8%83%bd%ef%bc%88firefox-os-%e7%9a%84%e5%85%a7%e9%83%a8%e6%ba%9d%e9%80%9a-%e8%97%8d%e7%89%99%e7%af%87%ef%bc%89" target="_blank">Web app 如何操作硬體功能（Firefox OS 的內部溝通 － 藍牙篇）</a>一文中提到的，藍牙的 code 可能有一部份在 content process，有一部份在 chrome process。以上述的 case 為例，如果要 debug 的程式碼是在 b2g process 之中，你要 attach 的 ID 就變成 209。</p>
+<p class="">然後就可以設中斷點啦！假設要設一個中斷點在 <code>MediaDecoder::Pause()</code>，先看一下 <code>MediaDecoder.h</code>，原來 <code>MediaDecoder</code> 這個 class 是被包在 <code>mozilla</code> 這個 namespace 裡，所以要做的事就是</p>
+<p></p><!-- Crayon Syntax Highlighter v2.6.9 -->
+
+		<div id="crayon-5561d1ffa16fc303024871" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+(gdb) b mozilla::MediaDecoder::Pause()</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5561d1ffa16fc303024871-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5561d1ffa16fc303024871-1"><span class="crayon-sy">(</span><span class="crayon-v">gdb</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-i">b</span><span class="crayon-h"> </span><span class="crayon-v">mozilla</span><span class="crayon-o">::</span><span class="crayon-v">MediaDecoder</span><span class="crayon-o">::</span><span class="crayon-e">Pause</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0012 seconds] -->
+<p></p>
+<p class="">或是也可以設在某個檔案的某一行，像</p>
+<p></p><!-- Crayon Syntax Highlighter v2.6.9 -->
+
+		<div id="crayon-5561d1ffa1709118687412" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+(gdb) b MediaDecoder.cpp:174</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5561d1ffa1709118687412-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5561d1ffa1709118687412-1"><span class="crayon-sy">(</span><span class="crayon-v">gdb</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-i">b</span><span class="crayon-h"> </span><span class="crayon-v">MediaDecoder</span><span class="crayon-sy">.</span><span class="crayon-v">cpp</span><span class="crayon-o">:</span><span class="crayon-cn">174</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0009 seconds] -->
+<p></p>
+<p class="">然後再下指令 <code>c(ontinue)</code> 繼續執行就可以囉！其餘關於 gdb 的一些用法請參照<a title="只要出問題，C4炸藥 gdb 都能搞定" href="http://tech.mozilla.com.tw/posts/407/%e5%8f%aa%e8%a6%81%e5%87%ba%e5%95%8f%e9%a1%8c%ef%bc%8cc4%e7%82%b8%e8%97%a5-gdb-%e9%83%bd%e8%83%bd%e6%90%9e%e5%ae%9a" target="_blank">要出問題，C4炸藥 gdb 都能搞定</a>。</p>
+<p>如果你覺得純命令列方式的 gdb 用起來不順手，可以參考看看<a title="CGDB – 更好用的 GDB" href="http://tech.mozilla.com.tw/posts/3826/cgdb-%e6%9b%b4%e5%a5%bd%e7%94%a8%e7%9a%84-gdb" target="_blank">CGDB – 更好用的 GDB</a>。或是也可以使用圖形化介面的 <a href="http://www.gnu.org/software/ddd/">DDD</a>，只要改用 <code>./run-ddd.sh</code> 即可。</p>
+<p>[1] <a href="http://androidxref.com/5.0.0_r2/xref/system/core/include/android/log.h">http://androidxref.com/5.0.0_r2/xref/system/core/include/android/log.h</a></p>
+<p>[2] <a href="https://dxr.mozilla.org/mozilla-central/source/xpcom/glue/nsCRTGlue.cpp#398">https://dxr.mozilla.org/mozilla-central/source/xpcom/glue/nsCRTGlue.cpp#398</a></p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://tech.mozilla.com.tw/posts/category/b2g" rel="category tag">Firefox OS(B2G)</a>      </div>
+    </footer> 
+    </article><!-- #post-6030 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" 
+	              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div class="related-posts-scope"><a class="post-all-random" data-type="random" data-ratio="0" href="https://tech.mozilla.com.tw/posts/4493/%e6%b7%ba%e8%ab%87-mobile-message-sms-%e8%88%87-mms-%e6%96%bc-firefox-os-%e4%b9%8b%e5%af%a6%e4%bd%9c" target="_blank"><div class="related-block"><div class="related-thumbnail"><img width="150" height="150" src="https://tech.mozilla.com.tw/wp-content/uploads/2014/04/Messaging-150x150.png" class="attachment-thumbnail wp-post-image" alt="Messaging Screenshot" 淺談_Mobile_Message_–_SMS_與_MMS_於_Firefox_OS_之實作="" /></div><div class="related-item"><p>淺談 Mobile Message – SMS 與 MMS 於 Firefox OS 之實作</p></div></div></a><a class="post-all-random" data-type="random" data-ratio="0" href="https://tech.mozilla.com.tw/posts/2115/%e7%ac%ac%e4%b8%80%e6%ac%a1%ef%bc%8cw3c-system-applications-working-group-%e9%a6%96%e6%ac%a1%e6%9c%83%e8%ad%b0%e7%99%bb%e5%a0%b4%ef%bc%81" target="_blank"><div class="related-block"><div class="related-thumbnail"><img width="150" height="150" src="https://tech.mozilla.com.tw/wp-content/uploads/2013/05/20090717CR-zEmGzk3HR9-150x150.jpg" class="attachment-thumbnail wp-post-image" alt="20090717CR-zEmGzk3HR9" 第一次，W3C_Sysapps_Working_Group_會議初登場！="" /></div><div class="related-item"><p>第一次，W3C Sysapps Working Group 會議初登場！</p></div></div></a><a class="post-all-random" data-type="random" data-ratio="0" href="https://tech.mozilla.com.tw/posts/2360/%e4%bc%b8%e7%b8%ae%e8%87%aa%e5%a6%82-gaia-%e7%9a%84%e5%a4%9a%e8%a7%a3%e6%9e%90%e5%ba%a6%e6%94%af%e6%8f%b4" target="_blank"><div class="related-block"><div class="related-thumbnail"><img width="150" height="150" src="https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-150x150.jpg" class="attachment-thumbnail wp-post-image" alt="Firefox OS on Galaxy SII, WVGA, 480x800" 伸縮自如_="" #8211;_Gaia_的多解析度支援="" /></div><div class="related-item"><p>伸縮自如 &#8211; Gaia 的多解析度支援</p></div></div></a><a class="post_category-random" data-type="random" data-ratio="0" href="https://tech.mozilla.com.tw/posts/4116/%e6%88%91%e4%b9%9f%e6%83%b3%e6%88%90%e7%82%ba-mozillian%ef%bc%81%e6%95%99%e4%bd%a0%e5%a6%82%e4%bd%95%e8%b2%a2%e7%8d%bb%e5%88%b0-mozilla-code-base" target="_blank"><div class="related-block"><div class="related-thumbnail"><img width="150" height="150" src="https://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian-150x150.png" class="attachment-thumbnail wp-post-image" alt="mozillian" 我也想成為_mozillian！教你如何貢獻到_mozilla_code_base="" /></div><div class="related-item"><p>我也想成為 mozillian！教你如何貢獻到 mozilla code base</p></div></div></a></div>			
+				<div id="comments">
+		
+	
+										<div id="respond" class="comment-respond">
+				<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/posts/6030/%e5%88%a9%e7%94%a8-adb-%e5%92%8c-gdb-%e4%be%86-debug-firefox-os-b2g#respond" style="display:none;">取消回覆</a></small></h3>
+									<form action="https://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+																			<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" aria-describedby="email-notes" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" aria-describedby="form-allowed-tags" aria-required="true"></textarea></p>												<p class="form-submit">
+							<input name="submit" type="submit" id="submit" class="submit" value="發表" />
+							<input type='hidden' name='comment_post_ID' value='6030' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="f10151b445" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="224"/></p>					</form>
+							</div><!-- #respond -->
+				
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class='name-title'><a class="profile-link" href="https://tech.mozilla.com.tw/posts/author/jhaomozilla-com"><span class="gravatar left"><img src="https://secure.gravatar.com/avatar/4bc7542d3061676e9f3ab7e87a084f98?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=48" alt="" class="avatar user-143-avatar" width='48' height='48' /></span><span class="name">Jonathan Hao</span></a></span><p class='contact'></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="41" href="https://tech.mozilla.com.tw/posts/author/rlinmozilla-com"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpfull.jpg" alt="" class="avatar user-41-avatar" width='96' height='96' /></a><a data-author-id="43" href="https://tech.mozilla.com.tw/posts/author/atsaimozilla-com"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpfull.jpg" alt="" class="avatar user-43-avatar" width='96' height='96' /></a><a data-author-id="133" href="https://tech.mozilla.com.tw/posts/author/ofengmozilla-com"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpfull.jpg" alt="" class="avatar user-133-avatar" width='96' height='96' /></a><a data-author-id="61" href="https://tech.mozilla.com.tw/posts/author/elinmozilla-com"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpfull.jpg" alt="" class="avatar user-61-avatar" width='96' height='96' /></a><a data-author-id="59" href="https://tech.mozilla.com.tw/posts/author/pyangmozilla-com"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpfull.jpg" alt="" class="avatar user-59-avatar" width='96' height='96' /></a><a data-author-id="70" href="https://tech.mozilla.com.tw/posts/author/szchenmozilla-com"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpfull.jpg" alt="" class="avatar user-70-avatar" width='96' height='96' /></a></div><a class="more" href="/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="facebook_widget-2" class="widget widget_facebook_widget"><h1 class="widget-title">加入粉絲團</h1><div id="fb-root"></div>
+        <div class="fb-like-box" data-href="http://www.facebook.com/MozillaTaiwan" data-width="200" data-height="270" data-colorscheme="light" data-show-faces="1" data-header="0" data-stream="0" data-show-border="No" style=""></div></aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="text-5" class="widget widget_text"><h1 class="widget-title">熱門文章</h1>			<div class="textwidget"><div class="fb-recommendations" data-site="tech.mozilla.com.tw" data-action="likes, recommends" data-width="200" data-height="420" data-colorscheme="light" data-header="false"  data-max-age="180"></div></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://tech.mozilla.com.tw/posts/category/css" >CSS</a> (15)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://tech.mozilla.com.tw/posts/category/firefox" >Firefox</a> (20)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://tech.mozilla.com.tw/posts/category/b2g" >Firefox OS(B2G)</a> (104)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://tech.mozilla.com.tw/posts/category/interaction-design" >Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://tech.mozilla.com.tw/posts/category/javascript" >Javascript</a> (45)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://tech.mozilla.com.tw/posts/category/life-at-mozilla" >Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://tech.mozilla.com.tw/posts/category/mozilla" >Mozilla</a> (15)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://tech.mozilla.com.tw/posts/category/open-source" >Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://tech.mozilla.com.tw/posts/category/ux" >UX/UE</a> (2)
+</li>
+	<li class="cat-item cat-item-1"><a href="https://tech.mozilla.com.tw/posts/category/%e6%9c%aa%e5%88%86%e9%a1%9e" >未分類</a> (1)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<select name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			<option value="">選擇月份</option>
+
+				<option value='https://tech.mozilla.com.tw/posts/date/2015/05'> 2015 年 五月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2015/04'> 2015 年 四月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2015/03'> 2015 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2015/02'> 2015 年 二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2015/01'> 2015 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2014/12'> 2014 年 十二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2014/11'> 2014 年 十一月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2014/10'> 2014 年 十月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2014/09'> 2014 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2014/08'> 2014 年 八月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2014/07'> 2014 年 七月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2014/05'> 2014 年 五月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2014/04'> 2014 年 四月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2014/03'> 2014 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2014/02'> 2014 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2014/01'> 2014 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2013/12'> 2013 年 十二月 &nbsp;(6)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2013/11'> 2013 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2013/10'> 2013 年 十月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2013/09'> 2013 年 九月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2013/08'> 2013 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2013/07'> 2013 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2013/06'> 2013 年 六月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2013/05'> 2013 年 五月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2013/04'> 2013 年 四月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2013/03'> 2013 年 三月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2013/02'> 2013 年 二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2013/01'> 2013 年 一月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2012/12'> 2012 年 十二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2012/11'> 2012 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2012/10'> 2012 年 十月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2012/09'> 2012 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2012/08'> 2012 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2012/07'> 2012 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2012/06'> 2012 年 六月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/posts/date/2012/05'> 2012 年 五月 &nbsp;(3)</option>
+		</select>
+</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+    <footer id="footer">
+  <div id="footer-wrapper">
+    <div id="footer-logo" class="footer-content">
+      <a href="//mozilla.org/en-US/" target="_blank">
+        <img style="border:0px;" alt="mozilla" src="/media/img/sandstone/footer-mozilla.png">
+      </a>
+    </div>
+    <div id="sub-footer" class="footer-content">
+      <div id="sub-footer-contents">
+        <strong>與我們為友</strong>
+        <ul>
+          <li id="footer-Facebook">
+            <a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+          </li>
+          <li id="footer-Youtube">
+            <a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+          </li>
+          <li id="footer-Flickr">
+            <a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+          </li>
+          <li id="footer-電子報">
+            <a href="http://mozilla.com.tw/join_us/">電子報</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!--end sub-footer-->
+    <div id="copyright" class="footer-content">
+      <ul>
+        <li><a href="//www.mozilla.org/zh-TW/privacy-policy.html">隱私資料政策</a>&nbsp;|</li>
+        <li><a href="//www.mozilla.org/zh-TW/about/legal.html">法律資訊</a>&nbsp;|</li>
+        <li><a href="//www.mozilla.org/zh-TW/legal/fraud-report/index.html">回報商標濫用</a>&nbsp;|</li>
+        <li><a href="//mozilla.com.tw/join_us/un_subscribe/">取消訂閱電子報</a>&nbsp;|</li>
+      </ul>
+      <p>除另有<a href="//www.mozilla.org/zh-TW/about/legal.html#site">註明</a>外，本站內容皆採用<br>
+        <a href="http://creativecommons.org/licenses/by-sa/3.0/">創用 CC 姓名標示—相同方式分享條款 3.0 </a>或更新版本授權大眾使用。</p>
+    </div>
+    <!-- end copyright-->
+  </div>
+  <!-- end of footer-wrapper -->
+</footer>
+<!-- end of footer -->    <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+    $(".toggle").click(function(){if($(".slided-it").size()==0){$(".slide-x").addClass("slided-it");$("#body-wrapper").removeClass("body-wrapper-default").addClass("body-wrapper-lock")}else{$(".slide-x").removeClass("slided-it");$("#body-wrapper").removeClass("body-wrapper-lock").addClass("body-wrapper-default")}});$(document).ready(function(){if($("#nav-main-menu").length===0){return}var a=$('#nav-main-menu [tabindex="0"]');var f,e,b,d,c;$("#nav-main > .has-submenus > li > .submenu.has-submenus > li").bind("mouseover focusin",function(g){d=$(this);if(!e||e.attr("id")!==d.attr("id")){d.addClass("hover").find('[aria-expanded="false"]').attr("aria-expanded","true");if(e){e.dequeue("sub")}}else{e.clearQueue("sub")}}).bind("mouseout focusout",function(g){e=$(this);var h=g.toElement||g.relatedTarget;h=h?h.parentNode.parentNode:h;e.delay(100,"sub").queue("sub",function(){if(e&&(g.type=="focusout"||h==this.parentNode)){e.clearQueue("sub");e.removeClass("hover").find('[aria-expanded="true"]').attr("aria-expanded","false");e=null;if(c){c.get(0).blur()}}}).dequeue("sub")});$("#nav-main > .has-submenus > li").bind("mouseover focusin",function(g){b=$(this);if(!f||f.attr("id")!==b.attr("id")){b.addClass("hover").find('[aria-expanded="false"]').attr("aria-expanded","true");if(f){f.dequeue()}}else{f.clearQueue()}}).bind("mouseout focusout",function(g){f=$(this);f.delay(100).queue(function(){if(f){f.clearQueue();f.find(".hover").removeClass("hover");f.removeClass("hover").find('[aria-expanded="true"]').attr("aria-expanded","false");f=null;e=null;if(c){c.get(0).blur()}}})}).each(function(g){var h=$(this).find("a");h.mouseover(function(i){this.focus()}).focus(function(){c=$(this)}).each(function(i){$(this).keydown(function(j){var k;if(j.altKey||j.ctrlKey||j.metaKey||j.shiftKey){return true}switch(j.keyCode){case 33:case 36:k=h.first();break;case 34:case 35:k=h.last();break;case 38:k=(i>0)?h.eq(i-1):h.last();break;case 40:k=(i<h.length-1)?h.eq(i+1):h.first();break;case 37:k=(g>0)?a.eq(g-1):a.last();break;case 39:k=(g<a.length-1)?a.eq(g+1):a.first();break}if(k){k.get(0).focus();return false}return true})})});$("#footer-menu").attr("role","presentation")});var Tabzilla=(function(b){var h="1.7.1";var m;var j;var C;var d;var x=false;var w=("matchMedia" in window);var p=(document.documentMode===9);var A=(typeof console=="object");var n="wide";var q="-1";var i=null;var l;var y=function(){var D=c();if(n!==D){n=D;u()}};var c=function(){if(w&&matchMedia("(max-width: 719px)").matches){return"compact"}return"wide"};var u=function(){if(n==="wide"){e()}else{g()}};var e=function(){f();a();m.focus()};var g=function(){k();r()};var k=function(){j.find(">ul").attr("role","presentation");C.each(function(D){i(this).attr({id:"tab-"+D,"aria-controls":"panel-"+D,tabindex:q,role:"tab","aria-expanded":false})});if(!j.find("h2[tabindex=0]").length){j.find("h2:first").attr("tabindex",0)}j.find("div").each(function(D){i(this).attr({id:"panel-"+D,"aria-labeledby":"tab-"+D,role:"tabpanel"}).css("display","none")})};var f=function(){j.find(">ul").removeAttr("role");C.removeAttr("id aria-controls tabindex role aria-expanded");j.find("div").removeAttr("id aria-labeledby role style")};var r=function(){j.on("click.submenu","h2",function(D){D.preventDefault();var E=i(D.target).next("div");i(D.target).attr("aria-expanded",E.is(":hidden"));E.toggle()});j.on("keydown.submenu",function(D){var F=D.which;var E=i(D.target);if(F===13||F===32){D.preventDefault();E.trigger("click")}if(F===37||F===38){D.preventDefault();C.each(function(G){if(G>0&&i(this).attr("tabindex")===0){i(this).attr("tabindex",q);i(C[G-1]).attr("tabindex",0).focus();return false}})}if(F===40||F===39){D.preventDefault();C.each(function(G){if(G<(C.length-1)&&i(this).attr("tabindex")===0){i(this).attr("tabindex",q);i(C[G+1]).attr("tabindex",0).focus();return false}})}if(F===27&&E.is("a")){D.preventDefault();D.stopPropagation();E.parents("div").prev("h2").trigger("click").focus()}})};var a=function(){j.off(".submenu")};b.open=function(){x=true;m.toggleClass("open");var D=i("#tabzilla-contents").height();m.animate({height:D},200,function(){m.css("height","auto")});d.attr({"aria-expanded":"true"}).addClass("tabzilla-opened").removeClass("tabzilla-closed");m.focus();return m};b.close=function(){x=false;m.animate({height:0},200,function(){m.toggleClass("open")});d.attr({"aria-expanded":"false"}).addClass("tabzilla-closed").removeClass("tabzilla-opened");return d};b.opened=function(){if(A){console.warn("This call is soon going to be deprecated, please replace it with Tabzilla.open() instead.")}return b.open()};b.closed=function(){if(A){console.warn("This call is soon going to be deprecated, please replace it with Tabzilla.close() instead.")}return b.close()};var z=function(){i.extend(i.easing,{easeInOut:function(E,F,D,H,G){if((F/=G/2)<1){return H/2*F*F+D}return -H/2*((--F)*(F-2)-1)+D}})};var o=function(){window.matchMedia=window.matchMedia||(function(H,I){var F;var D=H.documentElement;var E=D.firstElementChild||D.firstChild;var G=H.createElement("body");var J=H.createElement("div");J.id="mq-test-1";J.style.cssText="position:absolute;top:-100em";G.style.background="none";G.appendChild(J);return function(K){J.innerHTML='&shy;<style media="'+K+'"> #mq-test-1 { width: 42px; }</style>';D.insertBefore(G,E);F=J.offsetWidth===42;D.removeChild(G);return{matches:F,media:K}}}(document))};var t=function(){if(0==i("#tabzilla-panel").length){i("body").prepend(s)}d=i("#tabzilla");m=i("#tabzilla-panel");j=i("#tabzilla-nav");C=j.find("h2");if(p&&!w){o();w=true}z();y();i(window).on("resize",function(){y()});m.on("keydown",function(D){if(D.which===27){D.preventDefault();close()}});d.attr("aria-label","Mozilla links");d.on("click",function(D){D.preventDefault();if(x){b.close()}else{b.open()}})};var B=function(F){var E=function(){l=window.jQuery.noConflict(true);i=l;F.call()};var D=document.createElement("script");if(D.readyState){D.onreadystatechange=function(){if(D.readyState==="loaded"||D.readyState==="complete"){D.onreadystatechange=null;E.call()}}}else{D.onload=E}D.src="//mozorg.cdn.mozilla.net/media/js/libs/jquery-"+h+".min.js";document.getElementsByTagName("head")[0].appendChild(D)};var v=function(E,D){E=(""+E).split(".");D=(""+D).split(".");while(E.length<D.length){E.push("0")}while(D.length<E.length){D.push("0")}for(var F=0;F<E.length;F++){if(E[F]>D[F]){return 1}if(E[F]<D[F]){return -1}}return 0};(function(){if(window.jQuery!==undefined&&v(window.jQuery.fn.jquery,h)!==-1){l=window.jQuery;i=l;i(document).ready(t)}else{B(t)}})();var s='<div id="tabzilla-panel" class="close-nav" tabindex="-1">  <div id="tabzilla-contents">    <div id="tabzilla-promo">    <div id="tabzilla-promo-webwewant" class="snippet">      <a href="https://webwewant.mozilla.org/?icn=tabz">        <h4>你想要什麼樣的網路？</h4>        <p>分享你的觀點</p>      </a>    </div><!-- end of promo-name -->    </div>    <!-- end of tabzilla-promo -->    <div id="tabzilla-nav">      <ul>        <li class="sitemap">          <h2>Firefox</h2>          <div>            <ul>              <li>                <a href="//mozilla.com.tw/firefox/download/" title="下載 Mozilla Firefox 中文桌面版" tabindex="-1">Firefox 免費下載</a>              </li>              <li>                <a href="//mozilla.com.tw/firefox/desktop/" title="下載 Mozilla Firefox 中文桌面版">Firefox 桌面版</a>              </li>              <li>                <a href="//mozilla.com.tw/firefox/mobile/" title="Mozilla Firefox 行動版">Firefox 行動版</a>              </li>              <li>                <a href="//mozilla.com.tw/firefox/channel/" title="Mozilla Firefox 未來發行版">Firefox 未來發行版</a>              </li>              <li>                <a href="https://addons.mozilla.org/zh-TW/firefox/" title="Firefox 附加元件">附加元件</a>              </li>              <li>                <a href="https://support.mozilla.com/zh-TW/home" title="Firefox 說明文件、支援中心">支援中心</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>Firefox OS</h2>          <div>            <ul>              <li>                <a title="Firefox OS 詳細介紹" href="//mozilla.com.tw/firefox/os/" tabindex="-1">詳細介紹</a>              </li>              <li>                <a title="Firefox OS 合作夥伴專區" href="//mozilla.com.tw/firefox/partners/" tabindex="-1">合作夥伴專區</a>              </li>              <li>                <a title="Firefox OS 支援中心" href="//support.mozilla.org/products/firefox-os" tabindex="-1">支援中心</a>              </li>              <li>                <a title="Firefox OS 常見問答集" href="//mozilla.com.tw/firefox/os/faq/" tabindex="-1">常見問答集</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>社群參與</h2>          <div>            <ul>              <li>                <a href="http://firefox.club.tw/" title="Firefox 活力軍">Firefox 設計品</a>              </li>              <li>                <a href="//mozilla.com.tw/community/student/" title="校園大使">校園大使</a>              </li>              <li>                <a href="//mozilla.com.tw/community/contribute/" title="社群專案">社群專案</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>訊息中心</h2>          <div>            <ul>              <li>                <a href="//blog.mozilla.com.tw/main" title="部落格">部落格</a>              </li>              <li>                <a href="//mozilla.com.tw/news/press/" title="新聞室">新聞室</a>              </li>              <li>                <a href="//blog.mozilla.com.tw/events-list" title="活動訊息">活動訊息</a>              </li>              <li>                <a href="//tech.mozilla.com.tw/" title="謀智台客">謀智台客</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>關於我們</h2>          <div>            <ul>              <li>                <a href="//mozilla.com.tw/about/manifesto/" title="Mozilla 宣言">Mozilla 宣言</a>              </li>              <li>                <a href="//mozilla.com.tw/about/space/" title="Mozilla Space">Mozilla Space</a>              </li>              <li>                <a href="//mozilla.com.tw/about/careers/" title="工作機會">工作機會</a>              </li>              <li>                <a href="//mozilla.com.tw/about/intern/" title="工作機會">實習機會</a>              </li>              <li>                <a href="//mozilla.com.tw/about/contact/" title="聯絡資訊">聯絡資訊</a>              </li>              <li>                <a href="//mozilla.org/en-US/" title="Mozilla (US)">Mozilla (US)</a>              </li>            </ul>          </div>        </li>        <!-- end of sitemap -->      </ul>    </div>    <!-- end of tabzilla-nav -->  </div>  <!-- end of tabzilla-content --></div><!-- end of tabzilla-panel -->';return b})(Tabzilla||{});    </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

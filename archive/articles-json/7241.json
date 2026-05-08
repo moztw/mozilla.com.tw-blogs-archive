@@ -1,0 +1,87 @@
+{
+  "post_id": 7241,
+  "title": "asm.js 在多家瀏覽器上的效能均有斬獲 (上)",
+  "date": "2015-03-24",
+  "year": 2015,
+  "month": 3,
+  "day": 24,
+  "categories": [
+    "Firefox",
+    "Mozilla",
+    "Web App"
+  ],
+  "tags": [
+    "Firefox",
+    "Mozilla",
+    "Web App"
+  ],
+  "author": "",
+  "original_url": "https://blog.mozilla.com.tw/?p=7241",
+  "archive_url": "https://web.archive.org/web/20190825011841id_/https://blog.mozilla.com.tw/?p=7241",
+  "wayback_timestamp": "20190825011841",
+  "content_html": "<div class=\"entry-content close\">\n    <p><a href=\"http://asmjs.org/\">asm.js</a> 是可輕鬆最佳化的 JavaScript 子集，且不需外掛程式就能在所有瀏覽器中執行，也是移植 C/C++ 程式碼的絕佳工具。如「<a href=\"http://blogs.unity3d.com/2014/04/29/on-the-future-of-web-publishing-in-unity/\">Unity 3D</a>」與「<a href=\"https://www.unrealengine.com/blog/unreal-engine-47-released\">Unreal Engine</a>」等遊戲引擎，即透過 asm.js 進行移植。</p>\n<p><img class=\"aligncenter wp-image-7254\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/DT2-1024x642.png\" alt=\"DT2\" width=\"590\" height=\"370\" /></p>\n<p>想當然耳，如果遊戲開發者要使用 asm.js 移植遊戲，也就是想能橫跨所有瀏覽器執行遊戲。但因為各款瀏覽器具備不同的 JavaScript 引擎、不同的繪圖建構實作，所以其效能特性皆不相同。本文將重點說明 JavaScript 的執行速度，以及目前 asm.js 跨瀏覽器所能大幅提升的執行速度。現在先針對 4 款主要瀏覽器說明。</p>\n<h4>Chrome</h4>\n<p>Google 已於 2013 年<a href=\"http://blog.chromium.org/2013/11/announcing-octane-20.html\">釋出 Octane 2.0</a>，即是其主要 JavaScript 效能基準套件的新版本，內含新的 asm.js 效能基準 ─「zlib」。效能基準可定義該款瀏覽器最佳化的程度。效能基準均已涵蓋可能影響效能的重要部分，接著就看各家瀏覽器競爭所達到的最佳效能分數。Google 將 asm.js 效能基準加入 Octane，也就代表 Google 同樣認為 asm.js 內容的最佳化甚為重要。</p>\n<p>為了進行更深入的開發作業，Google 最近剛<a href=\"https://groups.google.com/forum/#%21msg/v8-dev/ab8V5Z58_70/5-05DvysCt8J\"><b>釋出「</b><b>TurboFan</b><b>」</b></a>，就是針對 Chrome 的 JavaScript 引擎 <b>v8 </b>所開發的最佳化編譯器。TurboFan 具備「Sea of nodes」的編譯架構 (為 JavaScript 空間的新架構，已可成功用於其他地方，如 Java 伺服器的 VM 中)，並要能超越 CrankShaft (即 v8 的第一代最佳化編譯器) 的速度。</p>\n<p>雖然 TurboFan 尚未準備好能用於所有 JavaScript 的內容之上，<a href=\"https://code.google.com/p/v8/issues/detail?id=2599#c77\">但 Chrome 41 已經啟用了 asm.js</a>。從 TurboFan 透過 asm.js 所獲得的優點來看，Chrome 團隊已經無法忽略 asm.js 最佳化的重要性。舉例來說，TurboFan 能加速<a href=\"http://emscripten.org/\"> Emscripten</a> 的 zlib 效能效能基準達 <b>13%</b>；而 fasta 效能基準則提高 <b>24%</b> 的速度。</p>\n<h4>Safari</h4>\n<p>Safari 的 JavaScript 引擎「<b>JavaScriptCore</b>」，剛於去年<a href=\"https://www.webkit.org/blog/3362/introducing-the-webkit-ftl-jit/\"><b>導入新的</b><b> JIT (</b><b>即</b><b> Just In Time </b><b>編譯器</b><b>)</b><b>，稱為「</b><b>FTL</b><b>」</b></a>。FTL 即代表「<a href=\"http://blog.llvm.org/2014/07/ftl-webkits-llvm-based-jit.html\">Fourth Tier LLVM</a>」，就是在既有的前三層最佳化作業上再加上第四層；並以強大的開放源碼編譯器架構 <a href=\"http://llvm.org/\">LLVM</a> 為基礎。讓人開心的是：LLVM 是最上層的一般編譯器，已擁有多年的最佳化成果，而且 Safari 也重新利用了所有效能。如同上方連結的文章所說，FTL 所提升的速度亦甚為顯著。</p>\n<p>今年由 Apple 進行的另一項有趣開發，就是導入了新的 JavaScript 效能基準「<a href=\"http://browserbench.org/JetStream/\"><b>JetStream</b></a>」，其內包含多項 asm.js 效能基準。其實有人發現：正當 Google 將 asm.js 效能基準加入 Octane 的同時，Apple 也將 asm.js 內容視為最佳化的重點。</p>\n<p>&nbsp;</p>\n<hr />\n<p>看到這裡，你應該又對 Mozilla 重點開發的「asm.js」有更深一層的認識了吧？請繼續閱讀《<a href=\"http://blog.mozilla.com.tw/posts/7243/asm-js-2\" target=\"_blank\">asm.js 在多家瀏覽器上的效能均有斬獲 (下)</a>》，了解另外兩款瀏覽器對 asm.js 的開發進度。</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a title=\"Permanent link to “asm.js Speedups Everywhere”\" href=\"https://hacks.mozilla.org/2015/03/asm-speedups-everywhere/\" rel=\"bookmark\">asm.js Speedups Everywhere </a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
+  "content_text": "asm.js 是可輕鬆最佳化的 JavaScript 子集，且不需外掛程式就能在所有瀏覽器中執行，也是移植 C/C++ 程式碼的絕佳工具。如「 Unity 3D 」與「 Unreal Engine 」等遊戲引擎，即透過 asm.js 進行移植。 想當然耳，如果遊戲開發者要使用 asm.js 移植遊戲，也就是想能橫跨所有瀏覽器執行遊戲。但因為各款瀏覽器具備不同的 JavaScript 引擎、不同的繪圖建構實作，所以其效能特性皆不相同。本文將重點說明 JavaScript 的執行速度，以及目前 asm.js 跨瀏覽器所能大幅提升的執行速度。現在先針對 4 款主要瀏覽器說明。 Chrome Google 已於 2013 年 釋出 Octane 2.0 ，即是其主要 JavaScript 效能基準套件的新版本，內含新的 asm.js 效能基準 ─「zlib」。效能基準可定義該款瀏覽器最佳化的程度。效能基準均已涵蓋可能影響效能的重要部分，接著就看各家瀏覽器競爭所達到的最佳效能分數。Google 將 asm.js 效能基準加入 Octane，也就代表 Google 同樣認為 asm.js 內容的最佳化甚為重要。 為了進行更深入的開發作業，Google 最近剛 釋出「 TurboFan 」 ，就是針對 Chrome 的 JavaScript 引擎 v8 所開發的最佳化編譯器。TurboFan 具備「Sea of nodes」的編譯架構 (為 JavaScript 空間的新架構，已可成功用於其他地方，如 Java 伺服器的 VM 中)，並要能超越 CrankShaft (即 v8 的第一代最佳化編譯器) 的速度。 雖然 TurboFan 尚未準備好能用於所有 JavaScript 的內容之上， 但 Chrome 41 已經啟用了 asm.js 。從 TurboFan 透過 asm.js 所獲得的優點來看，Chrome 團隊已經無法忽略 asm.js 最佳化的重要性。舉例來說，TurboFan 能加速 Emscripten 的 zlib 效能效能基準達 13% ；而 fasta 效能基準則提高 24% 的速度。 Safari Safari 的 JavaScript 引擎「 JavaScriptCore 」，剛於去年 導入新的 JIT ( 即 Just In Time 編譯器 ) ，稱為「 FTL 」 。FTL 即代表「 Fourth Tier LLVM 」，就是在既有的前三層最佳化作業上再加上第四層；並以強大的開放源碼編譯器架構 LLVM 為基礎。讓人開心的是：LLVM 是最上層的一般編譯器，已擁有多年的最佳化成果，而且 Safari 也重新利用了所有效能。如同上方連結的文章所說，FTL 所提升的速度亦甚為顯著。 今年由 Apple 進行的另一項有趣開發，就是導入了新的 JavaScript 效能基準「 JetStream 」，其內包含多項 asm.js 效能基準。其實有人發現：正當 Google 將 asm.js 效能基準加入 Octane 的同時，Apple 也將 asm.js 內容視為最佳化的重點。 看到這裡，你應該又對 Mozilla 重點開發的「asm.js」有更深一層的認識了吧？請繼續閱讀《 asm.js 在多家瀏覽器上的效能均有斬獲 (下) 》，了解另外兩款瀏覽器對 asm.js 的開發進度。 原文連結： asm.js Speedups Everywhere",
+  "images": [
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/DT2-1024x642.png",
+      "alt": "DT2"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://asmjs.org/",
+      "text": "asm.js"
+    },
+    {
+      "url": "https://blogs.unity3d.com/2014/04/29/on-the-future-of-web-publishing-in-unity/",
+      "text": "Unity 3D"
+    },
+    {
+      "url": "https://www.unrealengine.com/blog/unreal-engine-47-released",
+      "text": "Unreal Engine"
+    },
+    {
+      "url": "https://blog.chromium.org/2013/11/announcing-octane-20.html",
+      "text": "釋出 Octane 2.0"
+    },
+    {
+      "url": "https://groups.google.com/forum/#%21msg/v8-dev/ab8V5Z58_70/5-05DvysCt8J",
+      "text": "釋出「 TurboFan 」"
+    },
+    {
+      "url": "https://code.google.com/p/v8/issues/detail?id=2599#c77",
+      "text": "但 Chrome 41 已經啟用了 asm.js"
+    },
+    {
+      "url": "https://emscripten.org/",
+      "text": "Emscripten"
+    },
+    {
+      "url": "https://www.webkit.org/blog/3362/introducing-the-webkit-ftl-jit/",
+      "text": "導入新的 JIT ( 即 Just In Time 編譯器 ) ，稱為「 FTL 」"
+    },
+    {
+      "url": "https://blog.llvm.org/2014/07/ftl-webkits-llvm-based-jit.html",
+      "text": "Fourth Tier LLVM"
+    },
+    {
+      "url": "https://llvm.org/",
+      "text": "LLVM"
+    },
+    {
+      "url": "https://browserbench.org/JetStream/",
+      "text": "JetStream"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/posts/7243/asm-js-2",
+      "text": "asm.js 在多家瀏覽器上的效能均有斬獲 (下)"
+    },
+    {
+      "url": "https://hacks.mozilla.org/2015/03/asm-speedups-everywhere/",
+      "text": "asm.js Speedups Everywhere"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": []
+}

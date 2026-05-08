@@ -1,0 +1,95 @@
+{
+  "post_id": 5565,
+  "title": "Firefox Sync 的新安全模式",
+  "date": "2014-05-13",
+  "year": 2014,
+  "month": 5,
+  "day": 13,
+  "categories": [
+    "Firefox"
+  ],
+  "tags": [
+    "Firefox"
+  ],
+  "author": "",
+  "original_url": "https://blog.mozilla.com.tw/?p=5565",
+  "archive_url": "https://web.archive.org/web/20201231235959id_/https://blog.mozilla.com.tw/?p=5565",
+  "wayback_timestamp": "20201231235959",
+  "content_html": "<div class=\"entry-content close\">\n    <p><a href=\"https://blog.mozilla.org/press/2014/04/mozilla-introduces-the-most-customizable-firefox-ever-with-an-elegant-new-design/\">Firefox 29</a> 提供<a href=\"https://blog.mozilla.org/services/2014/02/07/a-better-firefox-sync/\">全新的 Firefox Sync 同步功能經驗</a>。除了更簡單易用之外，更保留了 Mozilla 既有的高標準安全性與開放性。</p>\n<p>所以新舊 Sync 功能有何差異呢？讓我們繼續看下去！</p>\n<p><img class=\"aligncenter wp-image-4907\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/welcome-to-sync-1024x772.png\" alt=\"welcome-to-sync\" width=\"560\" height=\"423\" /></p>\n<h4><strong>Sync 1.0</strong></h4>\n<p>從 2010 年在 Firefox 4 首次登場以來，「Firefox Sync」同步功能就使用了無密碼的獨特加密機制，以專屬的金鑰進行所有資料的加/解密。若要取得相關資料，唯一方式就是必須知道此金鑰。即使是儲存資料的 Mozilla 伺服器，也無法對這些內容解密。</p>\n<p>在設定新裝置時，正常都是透過所謂的「配對 (Pairing)」方式，所以使用者 (幾乎) 不會看到此專屬金鑰 (即所謂的「恢復金鑰」)。當你設定新裝置時，就會看到只使用一次的 12 字元「配對碼 (Pairing code)」，讓你稍後能鍵入其他裝置。而透過某些<a href=\"https://en.wikipedia.org/wiki/Password_Authenticated_Key_Exchange_by_Juggling\">加密機制</a>，只要是用來設定 Sync 所必須的恢復金鑰，以及其他一切資訊，都會安全複製到新裝置之中，確保所有裝置已獲得安全金鑰，並進一步傳送書籤與其他資料。</p>\n<h4><strong>Sync</strong><strong> </strong><strong>的問題</strong></h4>\n<p>其實最近四年來發現不少問題，其中最主要就是：因為要至少兩組 (或以上) 裝置才能進行「配對」，如果使用者只有一部裝置，Sync 似乎就無法發揮太大效果。而且只要把僅有的一部裝置也遺失了，就等於一起丟了安全金鑰的唯一備份。沒了金鑰，也就沒辦法恢復自己的 Sync 資料了。</p>\n<p>「配對」作業也有點使用上的問題。使用者必須就近操作兩部裝置才能設定 Sync 功能。另外，許多人將配對碼誤認為是電腦產生的密碼而試著要牢記起來。</p>\n<h4><strong>新的</strong><strong> </strong><strong>Firefox Sync</strong><strong> </strong><strong>同步功能</strong></h4>\n<p>Mozilla 服務開發團隊在今年所發表的新「Firefox Accounts」，就使用了傳統的電子郵件與密碼；即和大家所熟悉的許多帳戶系統相同。</p>\n<p>新 Firefox Sync 是第一個使用 Firefox Accounts 的功能，而對安全的要求也毫不妥協。除了使用嚴密的隨機金鑰之外，Mozilla 伺服器同樣無法解密任何資料。相較於之前的配對機制，新的 Firefox Sync 則是透過使用者的密碼，將金鑰包裝 (Wrapped) 起來並儲存在 Firefox Account 中。也就是說，<strong>即便一口氣丟掉了所有裝置，也還是可以恢復所有資料。</strong>只要輸入 Firefox Account 的電子郵件與密碼，就能設定新的裝置。</p>\n<p>這對舊版的 Firefox Sync 是一大變化。<strong>使用者資料的安全就託付在使用者自己的密碼上。</strong>如果你的密碼很好猜，就可能被他人連上你的帳號並解密資料。所以最好能隨機產生自己的密碼。</p>\n<p>為了強調密碼的重要性，我們是以「<strong>Mozilla</strong><strong> </strong><strong>相關服務永遠無法解讀你密碼的明碼</strong><strong> </strong><strong>(Clear text)</strong><strong>」的概念來設計</strong> Firefox Accounts<strong>。</strong>反之，Firefox 會先透過 <a href=\"https://en.wikipedia.org/wiki/PBKDF2\">PBKDF2</a> 進行「Client-side stretching」以強化密碼，再以 <a href=\"https://en.wikipedia.org/wiki/HKDF\">HKDF</a> 取得多組特定用途的金鑰。不論是你自己的密碼，或是取得的「未包裝」金鑰，都不會傳送到 Mozilla 端。可參閱 <a href=\"https://github.com/mozilla/fxa-auth-server/wiki/onepw-protocol\">GitHub 上的技術說明</a>以進一步了解此協定。</p>\n<p>Mozilla 希望你會喜歡，也贊成 Sync 的新發展方向。<a href=\"https://www.mozilla.org/firefox/\">立刻體驗</a>並提供意見給我們！</p>\n<p>特別鳴謝 <em>Brian Warner</em> 撰寫本文。</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://blog.mozilla.org/services/2014/04/30/firefox-syncs-new-security-model/\" target=\"_blank\">Firefox Sync’s New Security Model</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
+  "content_text": "Firefox 29 提供 全新的 Firefox Sync 同步功能經驗 。除了更簡單易用之外，更保留了 Mozilla 既有的高標準安全性與開放性。 所以新舊 Sync 功能有何差異呢？讓我們繼續看下去！ Sync 1.0 從 2010 年在 Firefox 4 首次登場以來，「Firefox Sync」同步功能就使用了無密碼的獨特加密機制，以專屬的金鑰進行所有資料的加/解密。若要取得相關資料，唯一方式就是必須知道此金鑰。即使是儲存資料的 Mozilla 伺服器，也無法對這些內容解密。 在設定新裝置時，正常都是透過所謂的「配對 (Pairing)」方式，所以使用者 (幾乎) 不會看到此專屬金鑰 (即所謂的「恢復金鑰」)。當你設定新裝置時，就會看到只使用一次的 12 字元「配對碼 (Pairing code)」，讓你稍後能鍵入其他裝置。而透過某些 加密機制 ，只要是用來設定 Sync 所必須的恢復金鑰，以及其他一切資訊，都會安全複製到新裝置之中，確保所有裝置已獲得安全金鑰，並進一步傳送書籤與其他資料。 Sync 的問題 其實最近四年來發現不少問題，其中最主要就是：因為要至少兩組 (或以上) 裝置才能進行「配對」，如果使用者只有一部裝置，Sync 似乎就無法發揮太大效果。而且只要把僅有的一部裝置也遺失了，就等於一起丟了安全金鑰的唯一備份。沒了金鑰，也就沒辦法恢復自己的 Sync 資料了。 「配對」作業也有點使用上的問題。使用者必須就近操作兩部裝置才能設定 Sync 功能。另外，許多人將配對碼誤認為是電腦產生的密碼而試著要牢記起來。 新的 Firefox Sync 同步功能 Mozilla 服務開發團隊在今年所發表的新「Firefox Accounts」，就使用了傳統的電子郵件與密碼；即和大家所熟悉的許多帳戶系統相同。 新 Firefox Sync 是第一個使用 Firefox Accounts 的功能，而對安全的要求也毫不妥協。除了使用嚴密的隨機金鑰之外，Mozilla 伺服器同樣無法解密任何資料。相較於之前的配對機制，新的 Firefox Sync 則是透過使用者的密碼，將金鑰包裝 (Wrapped) 起來並儲存在 Firefox Account 中。也就是說， 即便一口氣丟掉了所有裝置，也還是可以恢復所有資料。 只要輸入 Firefox Account 的電子郵件與密碼，就能設定新的裝置。 這對舊版的 Firefox Sync 是一大變化。 使用者資料的安全就託付在使用者自己的密碼上。 如果你的密碼很好猜，就可能被他人連上你的帳號並解密資料。所以最好能隨機產生自己的密碼。 為了強調密碼的重要性，我們是以「 Mozilla 相關服務永遠無法解讀你密碼的明碼 (Clear text) 」的概念來設計 Firefox Accounts 。 反之，Firefox 會先透過 PBKDF2 進行「Client-side stretching」以強化密碼，再以 HKDF 取得多組特定用途的金鑰。不論是你自己的密碼，或是取得的「未包裝」金鑰，都不會傳送到 Mozilla 端。可參閱 GitHub 上的技術說明 以進一步了解此協定。 Mozilla 希望你會喜歡，也贊成 Sync 的新發展方向。 立刻體驗 並提供意見給我們！ 特別鳴謝 Brian Warner 撰寫本文。 原文連結： Firefox Sync’s New Security Model",
+  "images": [
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/welcome-to-sync-1024x772.png",
+      "alt": "welcome-to-sync",
+      "post_id": 5565,
+      "page_type": "other",
+      "title": "Firefox Sync 的新安全模式",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/welcome-to-sync-1024x772.png",
+      "archive_path": "assets/5565/wp-content/uploads/welcome-to-sync-1024x772.png",
+      "markdown_path": "../assets/5565/wp-content/uploads/welcome-to-sync-1024x772.png",
+      "wayback_timestamp": "20150907160901",
+      "asset_archive_url": "https://web.archive.org/web/20150907160901id_/http://blog.mozilla.com.tw/wp-content/uploads/welcome-to-sync-1024x772.png",
+      "content_type": "image/png"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://blog.mozilla.org/press/2014/04/mozilla-introduces-the-most-customizable-firefox-ever-with-an-elegant-new-design/",
+      "text": "Firefox 29"
+    },
+    {
+      "url": "https://blog.mozilla.org/services/2014/02/07/a-better-firefox-sync/",
+      "text": "全新的 Firefox Sync 同步功能經驗"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Password_Authenticated_Key_Exchange_by_Juggling",
+      "text": "加密機制"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/PBKDF2",
+      "text": "PBKDF2"
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/HKDF",
+      "text": "HKDF"
+    },
+    {
+      "url": "https://github.com/mozilla/fxa-auth-server/wiki/onepw-protocol",
+      "text": "GitHub 上的技術說明"
+    },
+    {
+      "url": "https://www.mozilla.org/firefox/",
+      "text": "立刻體驗"
+    },
+    {
+      "url": "https://blog.mozilla.org/services/2014/04/30/firefox-syncs-new-security-model/",
+      "text": "Firefox Sync’s New Security Model"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": [],
+  "media": [
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/welcome-to-sync-1024x772.png",
+      "alt": "welcome-to-sync",
+      "post_id": 5565,
+      "page_type": "other",
+      "title": "Firefox Sync 的新安全模式",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/welcome-to-sync-1024x772.png",
+      "archive_path": "assets/5565/wp-content/uploads/welcome-to-sync-1024x772.png",
+      "markdown_path": "../assets/5565/wp-content/uploads/welcome-to-sync-1024x772.png",
+      "wayback_timestamp": "20150907160901",
+      "asset_archive_url": "https://web.archive.org/web/20150907160901id_/http://blog.mozilla.com.tw/wp-content/uploads/welcome-to-sync-1024x772.png",
+      "content_type": "image/png"
+    }
+  ]
+}

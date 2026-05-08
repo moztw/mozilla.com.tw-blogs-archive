@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+第一次使用 IndexedDB 存取資料就上手 | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="https://tech.mozilla.com.tw/?p=631"/><meta property="og:image" content="https://tech.mozilla.com.tw/wp-content/uploads/2012/07/cookie1-1024x709.jpg" />
+
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css" /><!--<link rel="pingback" href="https://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="https://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://tech.mozilla.com.tw/","urlLoginRedirect":"https://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=810fe5d143","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel='dns-prefetch' href='//s.w.org'>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo;" href="https://tech.mozilla.com.tw/?feed=rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 迴響" href="https://tech.mozilla.com.tw/?feed=comments-rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 第一次使用 IndexedDB 存取資料就上手 迴響" href="https://tech.mozilla.com.tw/?feed=rss2&#038;p=631" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='crayon-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-arduino-ide-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='advanced-responsive-video-embedder-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0' type='text/css' media='all' />
+<link rel='stylesheet' id='persona-style-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46' type='text/css' media='all' />
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<link rel='https://api.w.org/' href='https://tech.mozilla.com.tw/?rest_route=/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Firefox OS Marionette Test on Emulator' href='https://tech.mozilla.com.tw/?p=563' />
+<link rel='next' title='十年一覺程式夢' href='https://tech.mozilla.com.tw/?p=796' />
+<meta name="generator" content="WordPress 4.6" />
+<link rel="canonical" href="https://tech.mozilla.com.tw/?p=631" />
+<link rel='shortlink' href='https://tech.mozilla.com.tw/?p=631' />
+<link rel="alternate" type="application/json+oembed" href="https://tech.mozilla.com.tw/?rest_route=%2Foembed%2F1.0%2Fembed&#038;url=https%3A%2F%2Ftech.mozilla.com.tw%2F%3Fp%3D631" />
+<link rel="stylesheet" href="https://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-631 single-format-standard sand">
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='//mozilla.com.tw/' class='home'>Home</a>
+            <b>&raquo;</b>
+            <a href='//mozilla.com.tw/news/'>訊息中心</a>
+            <b>&raquo;</b>
+                          <a href='//tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>
+              <span>第一次使用 IndexedDB 存取資料就上手</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="https://tech.mozilla.com.tw/?p=631" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="https://tech.mozilla.com.tw/?p=631"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=https://tech.mozilla.com.tw/?p=631&media=https://tech.mozilla.com.tw/wp-content/uploads/2012/07/cookie1-150x150.jpg" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+	        <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">8</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://tech.mozilla.com.tw/?p=563"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2012/07/B2G-Marionette-150x150.jpg" class="attachment-48x48 size-48x48 wp-post-image" alt="B2G Marionette" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2012/07/B2G-Marionette-150x150.jpg 150w, https://tech.mozilla.com.tw/wp-content/uploads/2012/07/B2G-Marionette-300x300.jpg 300w, https://tech.mozilla.com.tw/wp-content/uploads/2012/07/B2G-Marionette-1024x1024.jpg 1024w" sizes="(max-width: 48px) 100vw, 48px" /><span class="meta-nav">Firefox OS Marionette Test on Emulator</span></div></a></div>		
+							<div class="nav-next"><a href="https://tech.mozilla.com.tw/?p=796"><div class="post-tip"><span class="meta-nav">十年一覺程式夢</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-631" class="post-631 post type-post status-publish format-standard has-post-thumbnail hentry category-b2g category-javascript tag-feature tag-hot tag-news tag-press">
+	 	<header class="entry-header">
+		<h1 class="entry-title">第一次使用 IndexedDB 存取資料就上手</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://tech.mozilla.com.tw/?m=201209" class="posted-month">9月</a>
+	        <span class="posted-date">10</span>
+	        <a title="See all posts from 2014" href="https://tech.mozilla.com.tw/?m=2012" class="posted-year">2012</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="26">
+		  	<a href="https://tech.mozilla.com.tw/?author=26">
+	          <img src="https://secure.gravatar.com/avatar/0e719389c6f6e17e5693819fc9a5722a?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=24" alt="" class="avatar user-26-avatar" width='24' height='24' /><!--
+	       --><div class="author-info">steveck</div><!--
+	       --><div class="author-title"></div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p>在 HTML framework 技術突飛猛進的今日，我們嘗試著用新的 HTML5/CSS3/JavaScript 來完成更多的事情。Chrome Web Store 裡就有各式各樣的 Web application 來告訴你目前 HTML framework 的能耐。除了視聽娛樂輕鬆實現的應用外，一般人最常用到的軟體多半就是紀錄大小事的應用軟體了。不管是日常筆記、記帳、行事曆…等等，我們常常需要把生活周遭的事情記錄下來，如果能有效的查詢或管理就更棒了。問題是目前 HTML5 所提供的資料的存取及查詢的功能是否能滿足開發者，讓他們能在開發 web application 的過程中輕鬆實現?</p>
+<p>在古早的年代，想要達成這件事還真的限制重重。在原生的 framework 中，一般若不是將輕鬆實現資料存放置遠端伺服器，就是以 cookie 的形式存在客戶端。但是前者需要登入的動作，為了一些小功能還要註冊等等的步驟實在是很費工，也讓使用者很掃興；而後者的資料保存實在太不保險了，使用者很容易不知不覺中就將 cookie 清除掉，而且容量也僅有 4KB 的限制。新時代自然有新的解決方案，讓我們趕快介紹今日的主角 – IndexedDB。</p>
+<div id="attachment_480" style="width: 310px" class="wp-caption aligncenter"><a href="http://tech.mozilla.com.tw/wp-content/uploads/2012/07/cookie1.jpg"><img class="alignnone size-medium wp-image-765" src="http://tech.mozilla.com.tw/wp-content/uploads/2012/07/cookie1-300x207.jpg" alt="" width="300" height="207" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2012/07/cookie1-300x207.jpg 300w, https://tech.mozilla.com.tw/wp-content/uploads/2012/07/cookie1-1024x709.jpg 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2012/07/cookie1.jpg 1280w" sizes="(max-width: 300px) 100vw, 300px" /></a><p class="wp-caption-text">還在用成堆的餅乾來<del datetime="2012-07-31T10:46:22+00:00">囤積熱量</del>儲存資料嗎？</p></div>
+<p>其實在原生的 HTML5 中本來還有 localStorage 和 Web SQL Database 兩個選項，雖然 localStorage 的支援度最廣，使用上也最簡單，但是不適合儲存或操作比較複雜的資料，而 Web SQL Database 也已經被 W3C 在 2010年十一月的會議中所捨棄，因此 IndexedDB 自然而然的成為 Firefox OS 最適合的人選（Mozilla 也有對 Database API 的取捨上提出<a href="http://hacks.mozilla.org/2010/06/beyond-html5-database-apis-and-the-road-to-indexeddb/">一些看法</a>）。但因為 IndexedDB 仍是 working draft，整體而言在各平台的支援度並不高。<a href="http://caniuse.com/#search=indexedDB">這網頁</a>有各家瀏覽器對 indexedDB 的支援。所以在 Firefox OS 以外的地方使用 IndexedDB 可要先睜大眼睛檢查該平台是否支援嘍。</p>
+<p><strong>萬丈高樓平地起 &#8211; 建立及開啟 IndexedDB</strong></p>
+<p>想要使用 IndexedDB 的第一件事…當然是先建立它…喔，還有確定瀏覽器有支援它。這裡以筆者最常用的記帳系統來作個小範例：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5df123d0bd708015325586" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+//先確定瀏覽器是否支援indexedDB
+var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
+var accountData = [
+    { title: "Food", price: "500", date:"2012/07/29", notes:"朋友聚餐吃太好..."},
+    { title: "Transportation", price: "30", date:"2012/7/20"}
+];
+
+var request = indexedDB.open("accountDB", 1);  
+request.onsuccess = function (evt) {
+    // 將db暫存起來供以後操作
+    db = request.result;                                                            
+};
+
+request.onerror = function (evt) {
+    console.log("IndexedDB error: " + evt.target.errorCode);
+};
+
+request.onupgradeneeded = function (evt) {                   
+    var objectStore = evt.currentTarget.result.createObjectStore("account", { keyPath: "id", autoIncrement: true });
+
+    objectStore.createIndex("title", "title", { unique: false });
+    objectStore.createIndex("price", "price", { unique: false });
+    objectStore.createIndex("date", "date", { unique: false });
+
+    accountData.forEach(objectStore.add);
+};</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5df123d0bd708015325586-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd708015325586-2">2</div><div class="crayon-num" data-line="crayon-5df123d0bd708015325586-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd708015325586-4">4</div><div class="crayon-num" data-line="crayon-5df123d0bd708015325586-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd708015325586-6">6</div><div class="crayon-num" data-line="crayon-5df123d0bd708015325586-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd708015325586-8">8</div><div class="crayon-num" data-line="crayon-5df123d0bd708015325586-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd708015325586-10">10</div><div class="crayon-num" data-line="crayon-5df123d0bd708015325586-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd708015325586-12">12</div><div class="crayon-num" data-line="crayon-5df123d0bd708015325586-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd708015325586-14">14</div><div class="crayon-num" data-line="crayon-5df123d0bd708015325586-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd708015325586-16">16</div><div class="crayon-num" data-line="crayon-5df123d0bd708015325586-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd708015325586-18">18</div><div class="crayon-num" data-line="crayon-5df123d0bd708015325586-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd708015325586-20">20</div><div class="crayon-num" data-line="crayon-5df123d0bd708015325586-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd708015325586-22">22</div><div class="crayon-num" data-line="crayon-5df123d0bd708015325586-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd708015325586-24">24</div><div class="crayon-num" data-line="crayon-5df123d0bd708015325586-25">25</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd708015325586-26">26</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5df123d0bd708015325586-1"><span class="crayon-c">//先確定瀏覽器是否支援indexedDB</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd708015325586-2"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">indexedDB</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">window</span><span class="crayon-sy">.</span><span class="crayon-v">indexedDB</span><span class="crayon-h"> </span><span class="crayon-o">||</span><span class="crayon-h"> </span><span class="crayon-v">window</span><span class="crayon-sy">.</span><span class="crayon-v">webkitIndexedDB</span><span class="crayon-h"> </span><span class="crayon-o">||</span><span class="crayon-h"> </span><span class="crayon-v">window</span><span class="crayon-sy">.</span><span class="crayon-v">mozIndexedDB</span><span class="crayon-h"> </span><span class="crayon-o">||</span><span class="crayon-h"> </span><span class="crayon-v">window</span><span class="crayon-sy">.</span><span class="crayon-v">msIndexedDB</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5df123d0bd708015325586-3"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">accountData</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-sy">[</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd708015325586-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-v">title</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">"Food"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">price</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">"500"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">date</span><span class="crayon-o">:</span><span class="crayon-s">"2012/07/29"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">notes</span><span class="crayon-o">:</span><span class="crayon-s">"朋友聚餐吃太好..."</span><span class="crayon-sy">}</span><span class="crayon-sy">,</span></div><div class="crayon-line" id="crayon-5df123d0bd708015325586-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-v">title</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">"Transportation"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">price</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">"30"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">date</span><span class="crayon-o">:</span><span class="crayon-s">"2012/7/20"</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd708015325586-6"><span class="crayon-sy">]</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5df123d0bd708015325586-7">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd708015325586-8"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">request</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">indexedDB</span><span class="crayon-sy">.</span><span class="crayon-e">open</span><span class="crayon-sy">(</span><span class="crayon-s">"accountDB"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">1</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;</span></div><div class="crayon-line" id="crayon-5df123d0bd708015325586-9"><span class="crayon-v">request</span><span class="crayon-sy">.</span><span class="crayon-v">onsuccess</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">evt</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd708015325586-10"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// 將db暫存起來供以後操作</span></div><div class="crayon-line" id="crayon-5df123d0bd708015325586-11"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">db</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">request</span><span class="crayon-sy">.</span><span class="crayon-v">result</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd708015325586-12"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5df123d0bd708015325586-13">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd708015325586-14"><span class="crayon-v">request</span><span class="crayon-sy">.</span><span class="crayon-v">onerror</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">evt</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5df123d0bd708015325586-15"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">console</span><span class="crayon-sy">.</span><span class="crayon-e">log</span><span class="crayon-sy">(</span><span class="crayon-s">"IndexedDB error: "</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">evt</span><span class="crayon-sy">.</span><span class="crayon-v">target</span><span class="crayon-sy">.</span><span class="crayon-v">errorCode</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd708015325586-16"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5df123d0bd708015325586-17">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd708015325586-18"><span class="crayon-v">request</span><span class="crayon-sy">.</span><span class="crayon-v">onupgradeneeded</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">evt</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></div><div class="crayon-line" id="crayon-5df123d0bd708015325586-19"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">objectStore</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">evt</span><span class="crayon-sy">.</span><span class="crayon-v">currentTarget</span><span class="crayon-sy">.</span><span class="crayon-v">result</span><span class="crayon-sy">.</span><span class="crayon-e">createObjectStore</span><span class="crayon-sy">(</span><span class="crayon-s">"account"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-v">keyPath</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">"id"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">autoIncrement</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-t">true</span><span class="crayon-h"> </span><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd708015325586-20">&nbsp;</div><div class="crayon-line" id="crayon-5df123d0bd708015325586-21"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">objectStore</span><span class="crayon-sy">.</span><span class="crayon-e">createIndex</span><span class="crayon-sy">(</span><span class="crayon-s">"title"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">"title"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-v">unique</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-t">false</span><span class="crayon-h"> </span><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd708015325586-22"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">objectStore</span><span class="crayon-sy">.</span><span class="crayon-e">createIndex</span><span class="crayon-sy">(</span><span class="crayon-s">"price"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">"price"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-v">unique</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-t">false</span><span class="crayon-h"> </span><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5df123d0bd708015325586-23"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">objectStore</span><span class="crayon-sy">.</span><span class="crayon-e">createIndex</span><span class="crayon-sy">(</span><span class="crayon-s">"date"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">"date"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-v">unique</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-t">false</span><span class="crayon-h"> </span><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd708015325586-24">&nbsp;</div><div class="crayon-line" id="crayon-5df123d0bd708015325586-25"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">accountData</span><span class="crayon-sy">.</span><span class="crayon-st">forEach</span><span class="crayon-sy">(</span><span class="crayon-v">objectStore</span><span class="crayon-sy">.</span><span class="crayon-v">add</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd708015325586-26"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0013 seconds] -->
+<p>這裡簡單描述流程：我們先呼叫 indexedDB.open 來開啟一個名稱為 &#8220;accountDB"，版本編號為"1&#8243;的資料庫。若是資料庫未曾建立過，則會先執行 onupgradeneeded 的 callback ，再來才會執行 onsuccess。因此我們可以利用 onupgradeneeded 先做資料庫的初始化，以 createObjectStore 方法建立 account objectStore 來儲存我們需要的資料。針對 account 我們指定 id 這個 index為 keyPath。keyPath 不一定得是資料儲存前必須先設定的 index，這裡我們指定了 autoIncrement: true 表示 id 會隨著資料的增加而自動遞增。另外我們也指定了三個非唯一值的 index：title, price 和 data。如果今天我們拿不可能重複的統一發票作為 index，這裡的 unique 便為 true。要注意的是目前範例中所有 IndexedDB API 都是非同步運作 (Asynchronous mode)，也就是取得開啟資料庫的 request 之後，開啟的工作會排到另外一個執行緒而不影響原來執行緒的運算，結束後request result 才會由指定的 callback function 給使用者完成之後的處理。聽起來似乎是有點複雜，而且 W3C 文件上好像也有同步模式的 API (synchronous mode) 不是嗎？文件中雖有定義同步模式，但可惜的是目前所有瀏覽器平台都尚未支援。至少看在效率的份上，目前還是乖乖使用非同步模式的 API 吧。</p>
+<p><strong>聚散榮枯自有時 &#8211; 資料的讀寫刪除與更新</strong></p>
+<p>有了資料庫以後理所當然的對資料有讀寫和刪除更新的需求。當我們需要對資料庫下任何要求，必須先從 IDBDatabase 得到 transaction 後再取得 objectStore。先看一段新增資料的範例：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5df123d0bd717701286860" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+var transaction = db.transaction("account", IDBTransaction.READ_WRITE);
+var objectStore = transaction.objectStore("account");                    
+var request = objectStore.add({ title: "beverage", price: "30", date:"2012/12/21" });
+request.onsuccess = function (evt) {
+    // 資料儲存成功！                          
+};</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5df123d0bd717701286860-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd717701286860-2">2</div><div class="crayon-num" data-line="crayon-5df123d0bd717701286860-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd717701286860-4">4</div><div class="crayon-num" data-line="crayon-5df123d0bd717701286860-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd717701286860-6">6</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5df123d0bd717701286860-1"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">transaction</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">db</span><span class="crayon-sy">.</span><span class="crayon-e">transaction</span><span class="crayon-sy">(</span><span class="crayon-s">"account"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">IDBTransaction</span><span class="crayon-sy">.</span><span class="crayon-v">READ_WRITE</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd717701286860-2"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">objectStore</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">transaction</span><span class="crayon-sy">.</span><span class="crayon-e">objectStore</span><span class="crayon-sy">(</span><span class="crayon-s">"account"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div><div class="crayon-line" id="crayon-5df123d0bd717701286860-3"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">request</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">objectStore</span><span class="crayon-sy">.</span><span class="crayon-e">add</span><span class="crayon-sy">(</span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-v">title</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">"beverage"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">price</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">"30"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">date</span><span class="crayon-o">:</span><span class="crayon-s">"2012/12/21"</span><span class="crayon-h"> </span><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd717701286860-4"><span class="crayon-v">request</span><span class="crayon-sy">.</span><span class="crayon-v">onsuccess</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">evt</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5df123d0bd717701286860-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// 資料儲存成功！&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd717701286860-6"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0004 seconds] -->
+<p>transaction 的兩個參數分別為資料表名稱和資料操作權限。資料操作權限有三種：IDBTransaction.READ_ONLY, IDBTransaction.READ_WRITE和IDBTransaction.VERSION_UPDATE，通常只有前兩種操作會用到。而權限參數也可不下，預設為 READ_ONLY。除了 add，基本的 get 和 delete 方法自然也不可少：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5df123d0bd71c360729117" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+var transaction = db.transaction("account", IDBTransaction.READ_WRITE);
+var objectStore = transaction.objectStore("account");
+var getRequest = objectStore.get(1);
+getRequest.onsuccess = function(evt) {  
+  alert("Title of ID =1 :" + getRequest.result.title) ;
+};
+var deleteRequest = objectStore.delete(2);
+deleteRequest.onsuccess = function(evt) {  
+  // ID =2 的資料已經被刪除
+};</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5df123d0bd71c360729117-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd71c360729117-2">2</div><div class="crayon-num" data-line="crayon-5df123d0bd71c360729117-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd71c360729117-4">4</div><div class="crayon-num" data-line="crayon-5df123d0bd71c360729117-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd71c360729117-6">6</div><div class="crayon-num" data-line="crayon-5df123d0bd71c360729117-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd71c360729117-8">8</div><div class="crayon-num" data-line="crayon-5df123d0bd71c360729117-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd71c360729117-10">10</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5df123d0bd71c360729117-1"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">transaction</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">db</span><span class="crayon-sy">.</span><span class="crayon-e">transaction</span><span class="crayon-sy">(</span><span class="crayon-s">"account"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">IDBTransaction</span><span class="crayon-sy">.</span><span class="crayon-v">READ_WRITE</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd71c360729117-2"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">objectStore</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">transaction</span><span class="crayon-sy">.</span><span class="crayon-e">objectStore</span><span class="crayon-sy">(</span><span class="crayon-s">"account"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5df123d0bd71c360729117-3"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">getRequest</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">objectStore</span><span class="crayon-sy">.</span><span class="crayon-e">get</span><span class="crayon-sy">(</span><span class="crayon-cn">1</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd71c360729117-4"><span class="crayon-v">getRequest</span><span class="crayon-sy">.</span><span class="crayon-v">onsuccess</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-sy">(</span><span class="crayon-v">evt</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h">&nbsp;&nbsp;</span></div><div class="crayon-line" id="crayon-5df123d0bd71c360729117-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">alert</span><span class="crayon-sy">(</span><span class="crayon-s">"Title of ID =1 :"</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">getRequest</span><span class="crayon-sy">.</span><span class="crayon-v">result</span><span class="crayon-sy">.</span><span class="crayon-v">title</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd71c360729117-6"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5df123d0bd71c360729117-7"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">deleteRequest</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">objectStore</span><span class="crayon-sy">.</span><span class="crayon-e">delete</span><span class="crayon-sy">(</span><span class="crayon-cn">2</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd71c360729117-8"><span class="crayon-v">deleteRequest</span><span class="crayon-sy">.</span><span class="crayon-v">onsuccess</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-sy">(</span><span class="crayon-v">evt</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h">&nbsp;&nbsp;</span></div><div class="crayon-line" id="crayon-5df123d0bd71c360729117-9"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-c">// ID =2 的資料已經被刪除</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd71c360729117-10"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0005 seconds] -->
+<p>這個範例中我們以 id 擷取以及刪除資料，但是等等…我們只能用 account objectStore 的 key 來做操作？這似乎不是一件太有效率的事情，特別是我們常常需要知道花了多少錢喝飲料，或是這個月目前為止花了多少錢，難不成我們沒有 id 就無法完成其他的工作？別擔心，接下來就要介紹 objectStore 所提供的其他進階的方法來獲得我們想要的資料。</p>
+<p><strong>眾裡尋她千百回 &#8211; 如何有效的找到你想要得資料</strong><br />
+就如同前述的例子，我們是否能用更直覺的方法調出 objectStore 中符合的資料呢？其實 objectStore 還有提供 coursor 來查詢的資料。假設我們想要得到所有 7/20 那天的花費：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5df123d0bd71f433764781" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+var transaction = db.transaction("account", IDBTransaction.READ_WRITE);
+var objectStore = transaction.objectStore("account");
+objectStore = objectStore.index("date");
+
+var request = objectStore.openCursor(IDBKeyRange.only("2012/07/20"),
+                                     IDBCursor.NEXT);
+request.onsuccess = function(evt) {  
+    var cursor = evt.target.result;  
+    if (cursor) {  
+        console.log("title : " + cursor.value.title + " ,price : " + cursor.value.price);
+        cursor.continue();  
+    }  
+    else {  
+        //查詢結束  
+    }  
+};</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5df123d0bd71f433764781-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd71f433764781-2">2</div><div class="crayon-num" data-line="crayon-5df123d0bd71f433764781-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd71f433764781-4">4</div><div class="crayon-num" data-line="crayon-5df123d0bd71f433764781-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd71f433764781-6">6</div><div class="crayon-num" data-line="crayon-5df123d0bd71f433764781-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd71f433764781-8">8</div><div class="crayon-num" data-line="crayon-5df123d0bd71f433764781-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd71f433764781-10">10</div><div class="crayon-num" data-line="crayon-5df123d0bd71f433764781-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd71f433764781-12">12</div><div class="crayon-num" data-line="crayon-5df123d0bd71f433764781-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd71f433764781-14">14</div><div class="crayon-num" data-line="crayon-5df123d0bd71f433764781-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd71f433764781-16">16</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5df123d0bd71f433764781-1"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">transaction</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">db</span><span class="crayon-sy">.</span><span class="crayon-e">transaction</span><span class="crayon-sy">(</span><span class="crayon-s">"account"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">IDBTransaction</span><span class="crayon-sy">.</span><span class="crayon-v">READ_WRITE</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd71f433764781-2"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">objectStore</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">transaction</span><span class="crayon-sy">.</span><span class="crayon-e">objectStore</span><span class="crayon-sy">(</span><span class="crayon-s">"account"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5df123d0bd71f433764781-3"><span class="crayon-v">objectStore</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">objectStore</span><span class="crayon-sy">.</span><span class="crayon-e">index</span><span class="crayon-sy">(</span><span class="crayon-s">"date"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd71f433764781-4">&nbsp;</div><div class="crayon-line" id="crayon-5df123d0bd71f433764781-5"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">request</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">objectStore</span><span class="crayon-sy">.</span><span class="crayon-e">openCursor</span><span class="crayon-sy">(</span><span class="crayon-v">IDBKeyRange</span><span class="crayon-sy">.</span><span class="crayon-e">only</span><span class="crayon-sy">(</span><span class="crayon-s">"2012/07/20"</span><span class="crayon-sy">)</span><span class="crayon-sy">,</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd71f433764781-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-v">IDBCursor</span><span class="crayon-sy">.</span><span class="crayon-v">NEXT</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5df123d0bd71f433764781-7"><span class="crayon-v">request</span><span class="crayon-sy">.</span><span class="crayon-v">onsuccess</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-sy">(</span><span class="crayon-v">evt</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h">&nbsp;&nbsp;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd71f433764781-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">cursor</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">evt</span><span class="crayon-sy">.</span><span class="crayon-v">target</span><span class="crayon-sy">.</span><span class="crayon-v">result</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;</span></div><div class="crayon-line" id="crayon-5df123d0bd71f433764781-9"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">cursor</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h">&nbsp;&nbsp;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd71f433764781-10"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">console</span><span class="crayon-sy">.</span><span class="crayon-e">log</span><span class="crayon-sy">(</span><span class="crayon-s">"title : "</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">cursor</span><span class="crayon-sy">.</span><span class="crayon-v">value</span><span class="crayon-sy">.</span><span class="crayon-v">title</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-s">" ,price : "</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">cursor</span><span class="crayon-sy">.</span><span class="crayon-v">value</span><span class="crayon-sy">.</span><span class="crayon-v">price</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5df123d0bd71f433764781-11"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">cursor</span><span class="crayon-sy">.</span><span class="crayon-st">continue</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd71f433764781-12"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-h">&nbsp;&nbsp;</span></div><div class="crayon-line" id="crayon-5df123d0bd71f433764781-13"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">else</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h">&nbsp;&nbsp;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd71f433764781-14"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">//查詢結束&nbsp;&nbsp;</span></div><div class="crayon-line" id="crayon-5df123d0bd71f433764781-15"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-h">&nbsp;&nbsp;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd71f433764781-16"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0007 seconds] -->
+<p>openCursor 會回傳 cursor，其中帶有一筆資料，並非一次回傳所有資料。如果要調取其他符合的資料，可以用 continue 這個方法取得下一筆資料，成功後的 callback 依然是 request.onsuccess，如果資料已經全部取得，則 cursor 即為 null。openCursor 有兩個參數可設定，分別是用來提供查詢範圍的 IDBKeyRange 以及控制資料庫瀏覽方向的 IDBCursor。<br />
+如果當你想要查詢的日期不是只有7/20限定，IDBKeyRange 也有其他更彈性的設定。以下是 IDBKeyRange 所提供的其他條件：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5df123d0bd722441526549" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+// 取得大於但不包括2012/07/20的所有資料：
+IDBKeyRange.lowerBound("2012/07/20", true);  
+
+// 取得小於且包括2012/07/20的所有資料：
+IDBKeyRange.upperBound("2012/07/20", false);  
+
+// 取得2012/06/20 ～ 2012/07/20，包括2012/06/20，但不包括2012/07/20的資料：
+IDBKeyRange.bound("2012/06/20", "2012/07/20", false, true);</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5df123d0bd722441526549-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd722441526549-2">2</div><div class="crayon-num" data-line="crayon-5df123d0bd722441526549-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd722441526549-4">4</div><div class="crayon-num" data-line="crayon-5df123d0bd722441526549-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd722441526549-6">6</div><div class="crayon-num" data-line="crayon-5df123d0bd722441526549-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5df123d0bd722441526549-8">8</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5df123d0bd722441526549-1"><span class="crayon-c">// 取得大於但不包括2012/07/20的所有資料：</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd722441526549-2"><span class="crayon-v">IDBKeyRange</span><span class="crayon-sy">.</span><span class="crayon-e">lowerBound</span><span class="crayon-sy">(</span><span class="crayon-s">"2012/07/20"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-t">true</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;</span></div><div class="crayon-line" id="crayon-5df123d0bd722441526549-3">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd722441526549-4"><span class="crayon-c">// 取得小於且包括2012/07/20的所有資料：</span></div><div class="crayon-line" id="crayon-5df123d0bd722441526549-5"><span class="crayon-v">IDBKeyRange</span><span class="crayon-sy">.</span><span class="crayon-e">upperBound</span><span class="crayon-sy">(</span><span class="crayon-s">"2012/07/20"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-t">false</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd722441526549-6">&nbsp;</div><div class="crayon-line" id="crayon-5df123d0bd722441526549-7"><span class="crayon-c">// 取得2012/06/20 ～ 2012/07/20，包括2012/06/20，但不包括2012/07/20的資料：</span></div><div class="crayon-line crayon-striped-line" id="crayon-5df123d0bd722441526549-8"><span class="crayon-v">IDBKeyRange</span><span class="crayon-sy">.</span><span class="crayon-e">bound</span><span class="crayon-sy">(</span><span class="crayon-s">"2012/06/20"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">"2012/07/20"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-t">false</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-t">true</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>我們也可不設定 IDBKeyRange 參數，這樣則會回傳可以瀏覽所有的資料的 cursor。<br />
+另外資料讀取的方向除了 IDBCursor.NEXT（順序），還有 IDBCursor.NEXT_NO_DUPLICATE（顺序不重複）、IDBCursor.PREV（倒序）、IDBCursor.PREV_NO_DUPLICATE（顺序不重複）三種，端看使用者是否需要按照順序回傳需要的資料。</p>
+<p><strong>小結</strong><br />
+有這簡單的三步驟教學，相信各位 web app 的開發者對於 IndexedDB 應該都有一些初步的了解和基本操作的能力，如果對想要對 IndexedDB 有更進一步的了解，相信 <a title="MDN" href="https://developer.mozilla.org/en/IndexedDB">MDN </a>上會有更多的文件可供參考，希望大家能夠擺脫以往 HTML framework 對於資料存取的限制，進而開發出更多更棒的應用喔。</p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://tech.mozilla.com.tw/?cat=3" rel="category">Firefox OS(B2G)</a>、<a href="https://tech.mozilla.com.tw/?cat=9" rel="category">Javascript</a>      </div>
+    </footer> 
+    </article><!-- #post-631 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" 
+	              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+			<h3 id="comments-title">
+			共 8 則讀者回應
+		</h3>
+
+		
+		<ol class="commentlist">
+				<li class="comment even thread-even depth-1" id="li-comment-967">
+		<article id="comment-967" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img width="40" height="40" class="avatar avatar-40 photo" src="https://graph.facebook.com/100000421544079/picture" alt="">										<cite class="fn"><a href='http://facebook.com/100000421544079' rel='external nofollow' class='url'>許忠勝</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=631#comment-967"><time pubdate datetime="2013-06-06T09:33:25+00:00">
+					2013 年 06 月 06 日 上午 09:33					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>精譬的解說，搭配清楚的示例，受益不少，感謝了</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=631&#038;replytocom=967#respond' onclick='return addComment.moveForm( "comment-967", "967", "respond", "631" )' aria-label='回覆 許忠勝'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	<ul class="children">
+	<li class="comment odd alt depth-2" id="li-comment-27419">
+		<article id="comment-27419" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/30183849090c592a96686e092d4e1c9b?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/30183849090c592a96686e092d4e1c9b?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn"><a href='http://www.facebook.com/profile.php?id=100003469758147' rel='external nofollow' class='url'>Chit</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=631#comment-27419"><time pubdate datetime="2015-03-03T22:58:48+00:00">
+					2015 年 03 月 03 日 下午 10:58					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>Articles like these put the consumer in the driver seat-very impttrano.</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=631&#038;replytocom=27419#respond' onclick='return addComment.moveForm( "comment-27419", "27419", "respond", "631" )' aria-label='回覆 Chit'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even depth-2" id="li-comment-33157">
+		<article id="comment-33157" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/0713e24838d9cc1cf057af8ca807254c?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/0713e24838d9cc1cf057af8ca807254c?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn"><a href='http://lifeinsurancequotesusa.xyz' rel='external nofollow' class='url'>life insurance quotes</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=631#comment-33157"><time pubdate datetime="2015-04-15T03:03:57+00:00">
+					2015 年 04 月 15 日 上午 03:03					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>That&#8217;s a slick answer to a challenging question</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=631&#038;replytocom=33157#respond' onclick='return addComment.moveForm( "comment-33157", "33157", "respond", "631" )' aria-label='回覆 life insurance quotes'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt depth-2" id="li-comment-65122">
+		<article id="comment-65122" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/2d8c9042c4d1d4c32b62c3cb6d9ed968?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/2d8c9042c4d1d4c32b62c3cb6d9ed968?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn"><a href='http://www.crispwisp.com/nonownercarinsuranceinva.php' rel='external nofollow' class='url'>http://www.crispwisp.com/nonownercarinsuranceinva.php</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=631#comment-65122"><time pubdate datetime="2015-10-04T21:23:11+00:00">
+					2015 年 10 月 04 日 下午 09:23					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>That&#8217;s a posting full of insight!</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=631&#038;replytocom=65122#respond' onclick='return addComment.moveForm( "comment-65122", "65122", "respond", "631" )' aria-label='回覆 http://www.crispwisp.com/nonownercarinsuranceinva.php'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even depth-2" id="li-comment-66212">
+		<article id="comment-66212" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/4c319a71a47d2db211b7da3724a48ab4?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/4c319a71a47d2db211b7da3724a48ab4?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn"><a href='http://carinsurancepin.info/insuranceasanameddriver.php' rel='external nofollow' class='url'>http://carinsurancepin.info/insuranceasanameddriver.php</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=631#comment-66212"><time pubdate datetime="2015-10-11T02:10:36+00:00">
+					2015 年 10 月 11 日 上午 02:10					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>I&#8217;m not worthy to be in the same forum. ROTFL</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=631&#038;replytocom=66212#respond' onclick='return addComment.moveForm( "comment-66212", "66212", "respond", "631" )' aria-label='回覆 http://carinsurancepin.info/insuranceasanameddriver.php'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-249">
+		<article id="comment-249" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/c5fac199e837ff06a6df4e59eeae64c2?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/c5fac199e837ff06a6df4e59eeae64c2?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn">wang</cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=631#comment-249"><time pubdate datetime="2013-09-15T22:35:19+00:00">
+					2013 年 09 月 15 日 下午 10:35					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>如果要在一个transaction中put进10000条或更多record，如何保证transaction仍然保持活跃？W3和MDN网站上都没有确切的描述。</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=631&#038;replytocom=249#respond' onclick='return addComment.moveForm( "comment-249", "249", "respond", "631" )' aria-label='回覆 wang'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1" id="li-comment-250">
+		<article id="comment-250" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/c5fac199e837ff06a6df4e59eeae64c2?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/c5fac199e837ff06a6df4e59eeae64c2?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn">wang</cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=631#comment-250"><time pubdate datetime="2013-09-15T22:43:55+00:00">
+					2013 年 09 月 15 日 下午 10:43					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>mdn和w3的文档里都这样写：如果要保持transaction活跃，就必须要不断的request。可是，这些文档里都没提到在多长的时间范围内必须得有请求。在异步模式下(且没有commit语句)的情况下，要准确控制transaction的commit，似乎很不好把握。</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=631&#038;replytocom=250#respond' onclick='return addComment.moveForm( "comment-250", "250", "respond", "631" )' aria-label='回覆 wang'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-12019">
+		<article id="comment-12019" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/c712f50d1b0ee33dfb400800a6999060?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/c712f50d1b0ee33dfb400800a6999060?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn"><a href='http://vpnforgame.net' rel='external nofollow' class='url'>Jacky</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=631#comment-12019"><time pubdate datetime="2014-10-13T13:05:16+00:00">
+					2014 年 10 月 13 日 下午 01:05					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>剛接觸 IndexedDB 不久 , 我在想 , 是不是 真正所謂的 transation 還是需要透過 Server Side 來做會比較好 !? (如 MySQL or MS SQL Server .. 等等的資料庫)</p>
+<p>大量資料適合用 IndexedDB 來做嗎 ??</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=631&#038;replytocom=12019#respond' onclick='return addComment.moveForm( "comment-12019", "12019", "respond", "631" )' aria-label='回覆 Jacky'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+		</ol>
+
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/?p=631#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required='true' required='required' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required='true' required='required' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表" /> <input type='hidden' name='comment_post_ID' value='631' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="9f541ea663" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="117"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class='name-title'><a class="profile-link" href="https://tech.mozilla.com.tw/?author=26"><span class="gravatar left"><img src="https://secure.gravatar.com/avatar/0e719389c6f6e17e5693819fc9a5722a?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=48" alt="" class="avatar user-26-avatar" width='48' height='48' /></span><span class="name">steveck</span></a></span><p class='contact'></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="60" href="https://tech.mozilla.com.tw/?author=60"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg" alt="" class="avatar user-60-avatar" width='96' height='96' /></a><a data-author-id="18" href="https://tech.mozilla.com.tw/?author=18"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg" alt="" class="avatar user-18-avatar" width='96' height='96' /></a><a data-author-id="43" href="https://tech.mozilla.com.tw/?author=43"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg" alt="" class="avatar user-43-avatar" width='96' height='96' /></a><a data-author-id="41" href="https://tech.mozilla.com.tw/?author=41"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg" alt="" class="avatar user-41-avatar" width='96' height='96' /></a><a data-author-id="90" href="https://tech.mozilla.com.tw/?author=90"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg" alt="" class="avatar user-90-avatar" width='96' height='96' /></a><a data-author-id="133" href="https://tech.mozilla.com.tw/?author=133"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg" alt="" class="avatar user-133-avatar" width='96' height='96' /></a></div><a class="more" href="/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://tech.mozilla.com.tw/?cat=8" >CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://tech.mozilla.com.tw/?cat=4" >Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://tech.mozilla.com.tw/?cat=3" >Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://tech.mozilla.com.tw/?cat=30" >Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://tech.mozilla.com.tw/?cat=9" >Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://tech.mozilla.com.tw/?cat=42" >Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://tech.mozilla.com.tw/?cat=5" >Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://tech.mozilla.com.tw/?cat=7" >Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://tech.mozilla.com.tw/?cat=29" >UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">選擇月份</option>
+				<option value='https://tech.mozilla.com.tw/?m=201605'> 2016 年 五月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201602'> 2016 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201507'> 2015 年 七月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201506'> 2015 年 六月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201505'> 2015 年 五月 &nbsp;(2)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201504'> 2015 年 四月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201503'> 2015 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201502'> 2015 年 二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201501'> 2015 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201412'> 2014 年 十二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201411'> 2014 年 十一月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201410'> 2014 年 十月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201409'> 2014 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201408'> 2014 年 八月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201407'> 2014 年 七月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201405'> 2014 年 五月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201404'> 2014 年 四月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201403'> 2014 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201402'> 2014 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201401'> 2014 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201312'> 2013 年 十二月 &nbsp;(6)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201311'> 2013 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201310'> 2013 年 十月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201309'> 2013 年 九月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201308'> 2013 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201307'> 2013 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201306'> 2013 年 六月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201305'> 2013 年 五月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201304'> 2013 年 四月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201303'> 2013 年 三月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201302'> 2013 年 二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201301'> 2013 年 一月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201212'> 2012 年 十二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201211'> 2012 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201210'> 2012 年 十月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201209'> 2012 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201208'> 2012 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201207'> 2012 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201206'> 2012 年 六月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201205'> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

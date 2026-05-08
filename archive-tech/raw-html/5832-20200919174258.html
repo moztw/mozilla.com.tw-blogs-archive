@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件 | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="https://tech.mozilla.com.tw/?p=5832"/><meta property="og:image" content="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-1024x890.png" />
+
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css" /><!--<link rel="pingback" href="https://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="https://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://tech.mozilla.com.tw/","urlLoginRedirect":"https://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=bbf4b82746","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel='dns-prefetch' href='//s.w.org'>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo;" href="https://tech.mozilla.com.tw/?feed=rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 迴響" href="https://tech.mozilla.com.tw/?feed=comments-rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件 迴響" href="https://tech.mozilla.com.tw/?feed=rss2&#038;p=5832" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='crayon-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-arduino-ide-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='advanced-responsive-video-embedder-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0' type='text/css' media='all' />
+<link rel='stylesheet' id='persona-style-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46' type='text/css' media='all' />
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<link rel='https://api.w.org/' href='https://tech.mozilla.com.tw/?rest_route=/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='淺談 System Message' href='https://tech.mozilla.com.tw/?p=5750' />
+<link rel='next' title='使用 Github 開發我的第一個網頁應用程式 （Web App）' href='https://tech.mozilla.com.tw/?p=5987' />
+<meta name="generator" content="WordPress 4.6" />
+<link rel="canonical" href="https://tech.mozilla.com.tw/?p=5832" />
+<link rel='shortlink' href='https://tech.mozilla.com.tw/?p=5832' />
+<link rel="alternate" type="application/json+oembed" href="https://tech.mozilla.com.tw/?rest_route=%2Foembed%2F1.0%2Fembed&#038;url=https%3A%2F%2Ftech.mozilla.com.tw%2F%3Fp%3D5832" />
+<link rel="stylesheet" href="https://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-5832 single-format-standard sand">
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='//mozilla.com.tw/' class='home'>Home</a>
+            <b>&raquo;</b>
+            <a href='//mozilla.com.tw/news/'>訊息中心</a>
+            <b>&raquo;</b>
+                          <a href='//tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>
+              <span>自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="https://tech.mozilla.com.tw/?p=5832" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="https://tech.mozilla.com.tw/?p=5832"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=https://tech.mozilla.com.tw/?p=5832&media=https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-150x150.png" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+	        <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">2</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://tech.mozilla.com.tw/?p=5750"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-50x50.png" class="attachment-48x48 size-48x48 wp-post-image" alt="SystemMessage_SendMessage" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-50x50.png 50w, https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-150x150.png 150w" sizes="(max-width: 48px) 100vw, 48px" /><span class="meta-nav">淺談 System Message</span></div></a></div>		
+							<div class="nav-next"><a href="https://tech.mozilla.com.tw/?p=5987"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2015/01/2960047774_6e39a980dc_m-50x50.jpg" class="attachment-48x48 size-48x48 wp-post-image" alt="octocat" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2015/01/2960047774_6e39a980dc_m-50x50.jpg 50w, https://tech.mozilla.com.tw/wp-content/uploads/2015/01/2960047774_6e39a980dc_m-150x150.jpg 150w" sizes="(max-width: 48px) 100vw, 48px" /><span class="meta-nav">使用 Github 開發我的第一個網頁應用程式 （Web App）</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-5832" class="post-5832 post type-post status-publish format-standard has-post-thumbnail hentry category-firefox category-javascript category-open-source tag-addon">
+	 	<header class="entry-header">
+		<h1 class="entry-title">自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://tech.mozilla.com.tw/?m=201501" class="posted-month">1月</a>
+	        <span class="posted-date">19</span>
+	        <a title="See all posts from 2014" href="https://tech.mozilla.com.tw/?m=2015" class="posted-year">2015</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="138">
+		  	<a href="https://tech.mozilla.com.tw/?author=138">
+	          <img src="https://secure.gravatar.com/avatar/0e7579b74017d264788862f926eac67d?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=24" alt="" class="avatar user-138-avatar" width='24' height='24' /><!--
+	       --><div class="author-info">Lyu Shing</div><!--
+	       --><div class="author-title">&nbsp;- 初等碼農</div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p>Firefox 最受歡迎的特色之一就是量多而且質精的附加元件 (Add-on)，在 Firefox Add-ons 網站 <a href="#ref-1">[1]</a> 您可以找到各式各樣的附加元件滿足您的各種上網需求。在這篇文章中我們將會介紹如何利用 Firefox Add-on SDK <a href="#ref-2">[2]</a> 來撰寫簡單的附加元件。我們會教您如何利用附加元件來改變網頁的外觀與行為，即使不是自己架設的網站，我們也能隨心所欲的改善它們的使用經驗。</p>
+<h2>準備工作</h2>
+<p>為了減輕開發者的負擔，Mozilla 推出了 Add-on SDK <a href="#ref-2">[2]</a> 來取代原來基於 XUL 技術 <a href="#ref-3">[3]</a> 的附加元件框架。相較於傳統的 XUL， Add-on SDK 提供了更多簡單易用的 API 來簡化開發流程，另外也提供了許多新的使用者介面元素來配合新版的 Firefox 介面。</p>
+<p>為了能夠使用最新的 API，建議您先更新Firefox到最新版 <a href="#ref-4">[4]</a> 。</p>
+<p>您還需要安裝最新版的 Add-on SDK <a href="#ref-5">[5]</a>，以下將以 Linux 平台作為教學範例 ( OS X 也適用 )，若是使用 Windows 請參考 <a href="#ref-5">[5]</a>。<br />
+首先下載最新版的 <a href="https://ftp.mozilla.org/pub/mozilla.org/labs/jetpack/jetpack-sdk-latest.zip">Add-on SDK</a>，解壓縮以後執行裡面的 <code>activate 指令：<br />
+</code></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f664321968dd333513404" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+source bin/activate #如果你用 bash
+bash bin/activate   #如果你用其他的 shell</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f664321968dd333513404-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664321968dd333513404-2">2</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f664321968dd333513404-1"><span class="crayon-e">source </span><span class="crayon-v">bin</span><span class="crayon-o">/</span><span class="crayon-v">activate</span><span class="crayon-h"> </span><span class="crayon-c">#如果你用 bash</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664321968dd333513404-2"><span class="crayon-r">bash</span><span class="crayon-h"> </span><span class="crayon-v">bin</span><span class="crayon-o">/</span><span class="crayon-v">activate</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-c">#如果你用其他的 shell</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0009 seconds] -->
+<p>此時您會注意到您的 shell prompt 前面會出現以下字串：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f664321968e5709523975" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+(Add-on-sdk-1.17) $    #版本號可能不同</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f664321968e5709523975-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f664321968e5709523975-1"><span class="crayon-sy">(</span><span class="crayon-v">Add</span><span class="crayon-o">-</span><span class="crayon-v">on</span><span class="crayon-o">-</span><span class="crayon-v">sdk</span><span class="crayon-o">-</span><span class="crayon-cn">1.17</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">$</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-p">#版本號可能不同</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>這樣表示您已經在 Add-on SDK 的環境下了，您會得到一個新的指令 &#8212; <code>cfx</code>，我們將會仔細介紹它的用法。（註：當您關閉 shell 以後就會自動退出 Add-on SDK，當您下次要繼續使用時必須重新執行 <code>bin/activate。</code>）</p>
+<h2>初始化一個新的專案</h2>
+<p>Web 工程師都知道要學習 HTML, JavaScrprt, CSS 最好的資源就是 Mozilla Developer Network <a href="#ref-6">[6]</a>。我們就試著用 Firefox Add-on 來把 MDN <del datetime="2014-12-22T08:27:50+00:00">調教</del>改造成我們想要的樣子。我們會先示範如何插入 JavaScript 來改變 MDN的背景顏色，接著我們再示範如何在 MDN 的首頁上插入自己的按鈕，並且可以讓按鈕執行我們自己定義的 JavaScript。</p>
+<div id="attachment_5916" style="width: 650px" class="wp-caption aligncenter"><a href="http://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png"><img class="wp-image-5916 size-large" src="http://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-1024x769.png" alt="Original MDN" width="640" height="480" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-1024x769.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-300x225.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png 1080w" sizes="(max-width: 640px) 100vw, 640px" /></a><p class="wp-caption-text">套用 Add-on 之前的 MDN 網站</p></div>
+<p>假設我們把這個新的專案叫作 mdn-mod ，第一步我們先讓 Add-on SDK 幫我們生成必要的檔案與目錄結構：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f664321968e9479906346" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+mkdir mdn-mod
+cd mdn-mod
+cfx init</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f664321968e9479906346-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664321968e9479906346-2">2</div><div class="crayon-num" data-line="crayon-5f664321968e9479906346-3">3</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f664321968e9479906346-1"><span class="crayon-e">mkdir </span><span class="crayon-v">mdn</span><span class="crayon-o">-</span><span class="crayon-e">mod</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664321968e9479906346-2"><span class="crayon-e">cd </span><span class="crayon-v">mdn</span><span class="crayon-o">-</span><span class="crayon-e">mod</span></div><div class="crayon-line" id="crayon-5f664321968e9479906346-3"><span class="crayon-e">cfx </span><span class="crayon-v">init</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>當執行完 <code>cfx init</code>之後，我們的 <code> mdn-mod</code> 資料夾就會出現以下的檔案：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f664321968ec558020951" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+.
+├── data   // Add-on 需要的資源檔案
+├── lib    // Add-on 主要的 JavaScript 程式碼
+│   └── main.js    // 程式的進入點
+├── package.json   // 定義這個 Add-on 的 metadata
+└── test   // 測試檔案，之後再介紹
+    └── test-main.js</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f664321968ec558020951-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664321968ec558020951-2">2</div><div class="crayon-num" data-line="crayon-5f664321968ec558020951-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664321968ec558020951-4">4</div><div class="crayon-num" data-line="crayon-5f664321968ec558020951-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664321968ec558020951-6">6</div><div class="crayon-num" data-line="crayon-5f664321968ec558020951-7">7</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f664321968ec558020951-1"><span class="crayon-sy">.</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664321968ec558020951-2">├──<span class="crayon-h"> </span><span class="crayon-v">data</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-c">// Add-on 需要的資源檔案</span></div><div class="crayon-line" id="crayon-5f664321968ec558020951-3">├──<span class="crayon-h"> </span><span class="crayon-v">lib</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// Add-on 主要的 JavaScript 程式碼</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664321968ec558020951-4">│<span class="crayon-h">&nbsp;&nbsp; </span>└──<span class="crayon-h"> </span><span class="crayon-v">main</span><span class="crayon-sy">.</span><span class="crayon-v">js</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// 程式的進入點</span></div><div class="crayon-line" id="crayon-5f664321968ec558020951-5">├──<span class="crayon-h"> </span><span class="crayon-t">package</span><span class="crayon-sy">.</span><span class="crayon-v">json</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-c">// 定義這個 Add-on 的 metadata</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664321968ec558020951-6">└──<span class="crayon-h"> </span><span class="crayon-v">test</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-c">// 測試檔案，之後再介紹</span></div><div class="crayon-line" id="crayon-5f664321968ec558020951-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span>└──<span class="crayon-h"> </span><span class="crayon-v">test</span><span class="crayon-o">-</span><span class="crayon-v">main</span><span class="crayon-sy">.</span><span class="crayon-v">js</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>首先我們需要打開 <code>package.json</code> 填寫程式名稱、版本號、作者、授權條款等等資料，只要照著自動生成的欄位填入即可，若是有不清楚的可以參考這篇文件 <a href="#ref-7">[7]</a>。</p>
+<h2>用 page-mod 插入 JavaScript 到指定網站</h2>
+<p>Add-on SDK 提供的一個實用 API 叫作 page-mod <a href="#ref-8">[8]</a>，其用途是當 Firefox 開到指定的網站時，就插入一段自己的 JavaScript 到頁面上，因此可以改變特定網站的行為。</p>
+<p>首先我們打開 <code>lib/main.js</code>，加入以下幾行程式碼：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f664321968ef785896867" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+var pageMod = require("sdk/page-mod");
+var data = require("sdk/self").data;
+
+pageMod.PageMod({
+    include: "*.mozilla.org",
+    contentScriptFile: data.url("my-script.js")
+});</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f664321968ef785896867-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664321968ef785896867-2">2</div><div class="crayon-num" data-line="crayon-5f664321968ef785896867-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664321968ef785896867-4">4</div><div class="crayon-num" data-line="crayon-5f664321968ef785896867-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664321968ef785896867-6">6</div><div class="crayon-num" data-line="crayon-5f664321968ef785896867-7">7</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f664321968ef785896867-1"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">pageMod</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">require</span><span class="crayon-sy">(</span><span class="crayon-s">"sdk/page-mod"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664321968ef785896867-2"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">data</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">require</span><span class="crayon-sy">(</span><span class="crayon-s">"sdk/self"</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-v">data</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f664321968ef785896867-3">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f664321968ef785896867-4"><span class="crayon-v">pageMod</span><span class="crayon-sy">.</span><span class="crayon-e">PageMod</span><span class="crayon-sy">(</span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f664321968ef785896867-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">include</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">"*.mozilla.org"</span><span class="crayon-sy">,</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664321968ef785896867-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">contentScriptFile</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">data</span><span class="crayon-sy">.</span><span class="crayon-e">url</span><span class="crayon-sy">(</span><span class="crayon-s">"my-script.js"</span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-5f664321968ef785896867-7"><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p>第五行的 <code>include: "*.mozilla.org"</code> 就是我們希望套用的網址（"*" 代表萬用字元），只要 Firefox 開啟的網址是 <code>mozilla.org</code> 結尾的，就會被插入 <code>contentScriptFile</code> 指定的 JavaScript 檔案。在這裡我們使用了 <code>data.url("my-script.js")</code>，意思是放在 <code>data/</code> 資料夾下的 <code> my-script.js </code> 檔案。</p>
+<h2>改變 MDN 背景顏色</h2>
+<p>但是目前為止我們還沒真的定義 <code>my-script.js</code> 要執行什麼，所以我們馬上新增一個檔案 <code>data/my-script.js</code>，插入以下一行簡單的程式碼：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f664321968f2359376853" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+document.body.style.background="red";</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f664321968f2359376853-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f664321968f2359376853-1"><span class="crayon-v">document</span><span class="crayon-sy">.</span><span class="crayon-v">body</span><span class="crayon-sy">.</span><span class="crayon-v">style</span><span class="crayon-sy">.</span><span class="crayon-v">background</span><span class="crayon-o">=</span><span class="crayon-s">"red"</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>這行代碼把 body tag 的背景設成紅色，等同於以下這段 CSS 的效果：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f664321968f4159381492" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+body {
+   background-color: red;
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f664321968f4159381492-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664321968f4159381492-2">2</div><div class="crayon-num" data-line="crayon-5f664321968f4159381492-3">3</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f664321968f4159381492-1"><span class="crayon-e">body</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664321968f4159381492-2"><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-v">background</span><span class="crayon-o">-</span><span class="crayon-v">color</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">red</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f664321968f4159381492-3"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p></p>
+<h2>使用乾淨的瀏覽器進行測試</h2>
+<p>完成上述步驟以後，我們的 Add-on 已經可以準備測試了。但是我們日常使用的 Firefox 可能有很多個人設定，或是安裝了很多其他 Add-on，會干擾我們的測試。此時我們只要執行</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f664321968f6122479282" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+cfx run</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f664321968f6122479282-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f664321968f6122479282-1"><span class="crayon-e">cfx </span><span class="crayon-v">run</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>Add-on SDK 就會幫我們開啟一個完全乾淨的 Firefox profile，讓我們可以在近乎出廠設定的 Firefox 底下測試我們的 Add-on。</p>
+<div id="attachment_5918" style="width: 650px" class="wp-caption aligncenter"><a href="http://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png"><img class="wp-image-5918 size-large" src="http://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-1024x890.png" alt="乾淨的 Firefox Profile " width="640" height="556" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-1024x890.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-300x261.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png 1077w" sizes="(max-width: 640px) 100vw, 640px" /></a><p class="wp-caption-text">乾淨的 Firefox Profile</p></div>
+<p>當我們在新開的 Firefox 裡面開啟 <a href="http://developer.mozilla.org/">http://developer.mozilla.org/</a>，毫不意外的 MDN 的背景就變成紅色了！</p>
+<div id="attachment_5917" style="width: 650px" class="wp-caption aligncenter"><a href="http://tech.mozilla.com.tw/wp-content/uploads/2014/12/color.png"><img class="wp-image-5917 size-large" src="http://tech.mozilla.com.tw/wp-content/uploads/2014/12/color-1024x766.png" alt="color" width="640" height="478" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color-1024x766.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color-300x224.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color.png 1084w" sizes="(max-width: 640px) 100vw, 640px" /></a><p class="wp-caption-text">MDN 的背景已經被改成紅色</p></div>
+<h2>添加新按鈕</h2>
+<p>除了改變現有的頁面以外，我們也可以自由的插入任何自己想要的元件。讓我們再次打開<code>data/my-script.js</code>，加入以下程式碼：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f664321968f9921817922" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+var button = "&lt;button onClick='alert(\"Hi!\")'&gt;CLICK ME&lt;/button&gt;";
+document.body.innerHTML = button + document.body.innerHTML;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f664321968f9921817922-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f664321968f9921817922-2">2</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f664321968f9921817922-1"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">button</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-s">"&lt;button onClick='alert(\"Hi!\")'&gt;CLICK ME&lt;/button&gt;"</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f664321968f9921817922-2"><span class="crayon-v">document</span><span class="crayon-sy">.</span><span class="crayon-v">body</span><span class="crayon-sy">.</span><span class="crayon-v">innerHTML</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">button</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">document</span><span class="crayon-sy">.</span><span class="crayon-v">body</span><span class="crayon-sy">.</span><span class="crayon-v">innerHTML</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>再這段程式碼裡面，我們定義了一個 html5 的按鈕，並且讓它被按下 (觸發 <code>onClick</code> 事件) 時會跳出一個訊息框說「Hi!」 ( <code>alert("Hi!")</code> )。<br />
+下一行緊接著就把這個按鈕插入到 body tag 的最前面，於是當我們再次執行 <code> cfx run</code> 來瀏覽 MDN 時，就會看到畫面最上方出現了一個按鈕。</p>
+<div id="attachment_5919" style="width: 356px" class="wp-caption aligncenter"><a href="http://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png"><img class="wp-image-5919 size-full" src="http://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png" alt="button" width="346" height="227" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png 346w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/button-300x196.png 300w" sizes="(max-width: 346px) 100vw, 346px" /></a><p class="wp-caption-text">出現了 CLICK ME 按鈕</p></div>
+<p>按下按鈕馬上跳出寫著「Hi!」的訊息框。</p>
+<div id="attachment_5920" style="width: 650px" class="wp-caption aligncenter"><a href="http://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert.png"><img class="wp-image-5920 size-large" src="http://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert-1024x609.png" alt="alert" width="640" height="380" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert-1024x609.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert-300x178.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert.png 1084w" sizes="(max-width: 640px) 100vw, 640px" /></a><p class="wp-caption-text">跳出了寫著「Hi!」的訊息框</p></div>
+<h2>打包出貨</h2>
+<p>如此一來我們的 Add-on 就大功告成了！如果要把這個 Add-on 包裝成可以分享的 xpi <a href="#ref-9">[9]</a> 格式，只要執行</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f664321968fc491985201" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+cfx xpi</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f664321968fc491985201-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f664321968fc491985201-1"><span class="crayon-e">cfx </span><span class="crayon-v">xpi</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>即可。Add-on SDK 會生成一個副檔名為 <code>.xpi</code> 的安裝檔，不論是要直接傳給親朋好友或是拿去 Firefox 官方的附加元件商城 <a href="#ref-1">[1]</a> 上架都可以！</p>
+<p>以上就是一個簡單的 Add-on 教學，在後續的文章中我們還會介紹如何讓您的附加元件可以有自己的設定頁面，以及如何增加工具列按鈕、右鍵選單等等更進階的技巧，下回分曉！</p>
+<p>&nbsp;</p>
+<h2>References</h2>
+<p id="ref-1">[1] Firefox Add-on Gallery <a href="https://Add-ons.mozilla.org">https://Add-ons.mozilla.org</a></p>
+<p id="ref-2">[2] Firefox Add-on SDK (MDN) <a href="https://developer.mozilla.org/en-US/Add-ons/SDK">https://developer.mozilla.org/en-US/Add-ons/SDK</a></p>
+<p id="ref-3">[3] Overlay Extension using XUL <a href="https://developer.mozilla.org/en-US/Add-ons/Overlay_Extensions">https://developer.mozilla.org/en-US/Add-ons/Overlay_Extensions</a></p>
+<p id="ref-4">[4] Get Firefox <a href="http://moztw.org/firefox/">http://moztw.org/firefox/</a></p>
+<p id="ref-5">[5] Install the Add-on SDK <a href="https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Installation">https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Installation</a></p>
+<p id="ref-6">[6] MDN 中文版 <a href="https://developer.mozilla.org/zh-TW/">https://developer.mozilla.org/zh-TW/</a></p>
+<p id="ref-7">[7] package.json 格式說明 <a href="https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/package_json">https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/package_json</a></p>
+<p id="ref-8">[8] page-mod <a href="https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/page-mod">https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/page-mod</a></p>
+<p id="ref-9">[9] cfx xpi <a href="https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/cfx#cfx_xpi">https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/cfx#cfx_xpi</a></p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://tech.mozilla.com.tw/?cat=4" rel="category">Firefox</a>、<a href="https://tech.mozilla.com.tw/?cat=9" rel="category">Javascript</a>、<a href="https://tech.mozilla.com.tw/?cat=7" rel="category">Open Source</a>      </div>
+    </footer> 
+    </article><!-- #post-5832 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" 
+	              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+			<h3 id="comments-title">
+			共 2 則讀者回應
+		</h3>
+
+		
+		<ol class="commentlist">
+				<li class="comment even thread-even depth-1" id="li-comment-70385">
+		<article id="comment-70385" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/7ec48bce5f510378e5142ed028c625e3?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/7ec48bce5f510378e5142ed028c625e3?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn">annie</cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=5832#comment-70385"><time pubdate datetime="2015-11-13T17:26:03+00:00">
+					2015 年 11 月 13 日 下午 05:26					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>您好，請問圖四 (<a href="http://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png" rel="nofollow">http://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png</a>) 中，tab 後面的＋是裝哪個addon？謝謝..^^</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=5832&#038;replytocom=70385#respond' onclick='return addComment.moveForm( "comment-70385", "70385", "respond", "5832" )' aria-label='回覆 annie'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	<ul class="children">
+	<li class="comment odd alt depth-2" id="li-comment-70394">
+		<article id="comment-70394" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/7ec48bce5f510378e5142ed028c625e3?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/7ec48bce5f510378e5142ed028c625e3?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn">annie</cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=5832#comment-70394"><time pubdate datetime="2015-11-13T21:18:54+00:00">
+					2015 年 11 月 13 日 下午 09:18					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>不好意思，＋已經順利出現了！<br />
+可能是我裝太多 addons，整理一下、刪除和更新之後，＋就出來了 ^^!!</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=5832&#038;replytocom=70394#respond' onclick='return addComment.moveForm( "comment-70394", "70394", "respond", "5832" )' aria-label='回覆 annie'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+		</ol>
+
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/?p=5832#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required='true' required='required' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required='true' required='required' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表" /> <input type='hidden' name='comment_post_ID' value='5832' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="a479ff7d87" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="140"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class='name-title'><a class="profile-link" href="https://tech.mozilla.com.tw/?author=138"><span class="gravatar left"><img src="https://secure.gravatar.com/avatar/0e7579b74017d264788862f926eac67d?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=48" alt="" class="avatar user-138-avatar" width='48' height='48' /></span><span class="name">Lyu Shing</span></a></span><p class='contact'><span class="web"><strong>網站：</strong><a href="http://shinglyu.github.io">http://shinglyu.github.io</a></span></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="14" href="https://tech.mozilla.com.tw/?author=14"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg" alt="" class="avatar user-14-avatar" width='96' height='96' /></a><a data-author-id="33" href="https://tech.mozilla.com.tw/?author=33"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg" alt="" class="avatar user-33-avatar" width='96' height='96' /></a><a data-author-id="59" href="https://tech.mozilla.com.tw/?author=59"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg" alt="" class="avatar user-59-avatar" width='96' height='96' /></a><a data-author-id="70" href="https://tech.mozilla.com.tw/?author=70"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg" alt="" class="avatar user-70-avatar" width='96' height='96' /></a><a data-author-id="103" href="https://tech.mozilla.com.tw/?author=103"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg" alt="" class="avatar user-103-avatar" width='96' height='96' /></a><a data-author-id="43" href="https://tech.mozilla.com.tw/?author=43"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg" alt="" class="avatar user-43-avatar" width='96' height='96' /></a></div><a class="more" href="/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://tech.mozilla.com.tw/?cat=8" >CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://tech.mozilla.com.tw/?cat=4" >Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://tech.mozilla.com.tw/?cat=3" >Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://tech.mozilla.com.tw/?cat=30" >Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://tech.mozilla.com.tw/?cat=9" >Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://tech.mozilla.com.tw/?cat=42" >Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://tech.mozilla.com.tw/?cat=5" >Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://tech.mozilla.com.tw/?cat=7" >Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://tech.mozilla.com.tw/?cat=29" >UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">選擇月份</option>
+				<option value='https://tech.mozilla.com.tw/?m=201605'> 2016 年 五月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201602'> 2016 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201507'> 2015 年 七月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201506'> 2015 年 六月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201505'> 2015 年 五月 &nbsp;(2)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201504'> 2015 年 四月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201503'> 2015 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201502'> 2015 年 二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201501'> 2015 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201412'> 2014 年 十二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201411'> 2014 年 十一月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201410'> 2014 年 十月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201409'> 2014 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201408'> 2014 年 八月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201407'> 2014 年 七月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201405'> 2014 年 五月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201404'> 2014 年 四月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201403'> 2014 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201402'> 2014 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201401'> 2014 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201312'> 2013 年 十二月 &nbsp;(6)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201311'> 2013 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201310'> 2013 年 十月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201309'> 2013 年 九月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201308'> 2013 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201307'> 2013 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201306'> 2013 年 六月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201305'> 2013 年 五月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201304'> 2013 年 四月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201303'> 2013 年 三月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201302'> 2013 年 二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201301'> 2013 年 一月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201212'> 2012 年 十二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201211'> 2012 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201210'> 2012 年 十月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201209'> 2012 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201208'> 2012 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201207'> 2012 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201206'> 2012 年 六月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201205'> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

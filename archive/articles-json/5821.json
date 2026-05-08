@@ -1,0 +1,511 @@
+{
+  "post_id": 5821,
+  "title": "淺談 Firefox 32 開發者工具",
+  "date": "2014-06-23",
+  "year": 2014,
+  "month": 6,
+  "day": 23,
+  "categories": [
+    "Firefox"
+  ],
+  "tags": [
+    "Firefox"
+  ],
+  "author": "",
+  "original_url": "https://blog.mozilla.com.tw/?p=5821",
+  "archive_url": "https://web.archive.org/web/20201231235959id_/https://blog.mozilla.com.tw/?p=5821",
+  "wayback_timestamp": "20201231235959",
+  "content_html": "<div class=\"entry-content close\">\n    <h3 style=\"text-align: center;\"><strong>強化工具箱、檢測器、程式碼速記本</strong></h3>\n<p>Firefox 32 現已進入<a href=\"https://www.mozilla.org/en-US/firefox/aurora/\">曙光版 (Aurora) 釋放頻道</a>，先看看此版本的開發者工具發生哪些重要變動。</p>\n<p>首先必須感謝此版本開發者工具的 41 位貢獻者。另可參閱 Firefox 32 開發者工具的<a href=\"http://mzl.la/1kFlu0C\">錯誤修正清單</a>。</p>\n<h4>工具箱 (Toolbox)</h4>\n<p>我們先從目前<a href=\"https://hacks.mozilla.org/2014/05/launching-feedback-channels-let-us-know-your-ideas-for-firefox-developer-tools/\">處於測試階段</a>的「<a href=\"http://mzl.la/devtools\">UserVoice feedback channel</a>」新平台，其上所提及的數項功能開始。</p>\n<p>Box model 的資訊列現可一併顯示節點尺寸。就如同其他工具所帶來的方便性，現在開發者能直接從資訊列上輕鬆得知該節點的尺寸。(可參閱<a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=718250\">開發討論記錄</a>與<a href=\"https://ffdevtools.uservoice.com/forums/246087-firefox-developer-tools-ideas/suggestions/5894689-show-dimensions-when-hovering-over-an-element-in-i\">他人在 UserVoice 上提出的需求</a>)</p>\n<p><img class=\"aligncenter size-full wp-image-5822\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/infobar-dimensions.png\" alt=\"infobar-dimensions\" width=\"245\" height=\"107\" /></p>\n<p>「挑選頁面中的元素 (Pick an element from the page)」按鈕現在更靠近檢測器 (Inspector) 分頁，能更快切換此兩項功能。而且現在也能透過「Ctrl+Shift+C」或「Cmd+Opt+C」<a href=\"https://developer.mozilla.org/en-US/docs/Tools/Keyboard_shortcuts\">快捷鍵</a>達到相同效果。(可參閱<a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=991810\">開發討論記錄</a>與<a href=\"https://ffdevtools.uservoice.com/forums/246087-firefox-developer-tools-ideas/suggestions/5714267-inspector-icon-on-the-left\">他人在 UserVoice 上提出的需求</a>)</p>\n<p><img class=\"aligncenter wp-image-5823\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/inspect-element-left.png\" alt=\"inspect-element-left\" width=\"590\" height=\"173\" /></p>\n<p>現在提供「完整頁面擷圖 (Full page screenshot)」<a href=\"https://developer.mozilla.org/en-US/docs/Tools/Tools_Toolbox#Extra_tools\">按鈕</a>。在啟用並按下此按鈕之後，就會將擷圖傳送到你設定的下載資料夾中。(可參閱<a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=991045\">開發討論記錄</a>)</p>\n<p><img class=\"aligncenter wp-image-5824\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/full-page-screenshot.png\" alt=\"full-page-screenshot\" width=\"590\" height=\"240\" /></p>\n<p>下方 gif 動畫即展現該擷圖功能：</p>\n<p><img class=\"aligncenter wp-image-5825\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/devtools-take-screenshot.gif\" alt=\"devtools-take-screenshot\" width=\"590\" height=\"385\" /></p>\n<p>開發者工具的使用者介面 (UI) 現已套用新的圖像，可支援高像素螢幕的顯示功能 (HiDPI)，讓 UI 能在這些裝置上更清晰。特別感謝 Tim Nguyen 的努力成果！(可參閱<a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=837188\">開發討論記錄</a>)</p>\n<h4>Web Audio 編輯器 (Editor)</h4>\n<p>除了「著色器編輯器 (Shader Editor)」與「Canvas 除錯器 (Canvas Debugger)」之外，新的媒體工具「Web Audio 編輯器 (Web Audio Editor)」也從 Firefox 32 開始加入強大的工具行列了。在選項面板中啟動此功能之後，即可檢測 AudioContext 圖形並修改 AudioNodes 的屬性。另可參閱<a href=\"https://hacks.mozilla.org/2014/06/introducing-the-web-audio-editor-in-firefox-developer-tools/\">本篇 Hacks 文章</a>以進一步了解。</p>\n<p><img class=\"aligncenter wp-image-5826\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/webaudio-tool-overview-1024x390.png\" alt=\"webaudio-tool-overview\" width=\"590\" height=\"225\" /></p>\n<h4>檢測器 (Inspector)</h4>\n<p>檢測器現可顯示瀏覽器預設樣式 (User agent style)。由於這些預設樣式均可能影響你的網頁樣式，因此能方便開發者進行檢視。同樣可透過選項面板啟動此功能，另可參閱<a href=\"https://developer.mozilla.org/en-US/docs/Tools/Page_Inspector#Rules_view\">MDN 上的說明文件</a>以進一步了解。(可參閱<a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=935803\">開發討論記錄</a>與<a href=\"https://ffdevtools.uservoice.com/forums/246087-firefox-developer-tools-ideas/suggestions/5908197-show-user-agent-css-as-in-firebug\">他人在 UserVoice 上提出的需求</a>)</p>\n<p><img class=\"aligncenter wp-image-5827\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/user-agent-styles-usage-1024x380.png\" alt=\"user-agent-styles-usage\" width=\"590\" height=\"219\" /></p>\n<p><img class=\"aligncenter wp-image-5828\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/user-agent-styles-option-1024x375.gif\" alt=\"user-agent-styles-option\" width=\"590\" height=\"217\" /></p>\n<p>針對隱藏節點與可見節點，標記檢視 (Markup view) 模式的顯示方式將有所區別。(可參閱<a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=911209\">開發討論記錄</a>與<a href=\"https://ffdevtools.uservoice.com/forums/246087-firefox-developer-tools-ideas/suggestions/5871316-show-nodes-that-are-display-none-differently\">他人在 UserVoice 上提出的需求</a>)</p>\n<p><img class=\"aligncenter wp-image-5829\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/inspector-hidden-nodes.png\" alt=\"inspector-hidden-nodes\" width=\"590\" height=\"387\" /></p>\n<p>字型檢測器中的提示文字，現可供預覽網路字型。只要將滑鼠游標停在字型堆疊之上，即可在提示文字中看到目前套用的字型 (包含任何網路字型)。(可參閱<a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=987797\">開發討論記錄</a>)</p>\n<p><img class=\"aligncenter size-full wp-image-5830\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/font-tooltip-webfont.png\" alt=\"font-tooltip-webfont\" width=\"523\" height=\"176\" /></p>\n<p>標記檢視模式現另針對節點，在右鍵選單中提供「貼上外部 HTML (Paste Outer HTML)」選項。(可參閱<a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=993416\">開發討論記錄</a>與<a href=\"https://ffdevtools.uservoice.com/forums/246087-firefox-developer-tools-ideas/suggestions/5871356-context-menu-to-paste-html-in-a-node\">他人在 UserVoice 上提出的需求</a>)</p>\n<h4>程式碼速記本 (Scratchpad)</h4>\n<p><a href=\"https://developer.mozilla.org/en-US/docs/Tools/Scratchpad\">程式碼速記本</a>現針對 JavaScript，提供型別推斷 (Type-inference) 架構的程式碼自動補完 (Code completion) 功能。按下「Ctrl+Space」即可在目前的游標位置上開啟建議清單，另按下「Shift+Space」就會出現目前的型別資訊。我們目前透過<a href=\"http://ternjs.net/\">「Tern」程式碼分析引擎</a>提供此功能。(可參閱<a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=968896\">開發討論記錄</a>)</p>\n<p><img class=\"aligncenter wp-image-5832\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/scratchpad-autocompletion.png\" alt=\"scratchpad-autocompletion\" width=\"590\" height=\"330\" /></p>\n<p><img class=\"aligncenter size-full wp-image-5833\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/stratchpad-type-information.png\" alt=\"stratchpad-type-information\" width=\"582\" height=\"81\" /></p>\n<p>你有任何問題或意見、想提報錯誤，或想建議任何功能嗎？同樣可<a href=\"http://mzl.la/devtools\">到 UserVoice 提出自己的想法或投票選擇</a>，亦可透過 Twitter 上的<a href=\"https://twitter.com/FirefoxDevTools\">@FirefoxDevTools</a>聯絡我們。</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2014/06/toolbox-inspector-scratchpad-improvements-firefox-developer-tools-episode-32/\" target=\"_blank\">Toolbox, Inspector &amp; Scratchpad improvements – Firefox Developer Tools Episode 32</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
+  "content_text": "強化工具箱、檢測器、程式碼速記本 Firefox 32 現已進入 曙光版 (Aurora) 釋放頻道 ，先看看此版本的開發者工具發生哪些重要變動。 首先必須感謝此版本開發者工具的 41 位貢獻者。另可參閱 Firefox 32 開發者工具的 錯誤修正清單 。 工具箱 (Toolbox) 我們先從目前 處於測試階段 的「 UserVoice feedback channel 」新平台，其上所提及的數項功能開始。 Box model 的資訊列現可一併顯示節點尺寸。就如同其他工具所帶來的方便性，現在開發者能直接從資訊列上輕鬆得知該節點的尺寸。(可參閱 開發討論記錄 與 他人在 UserVoice 上提出的需求 ) 「挑選頁面中的元素 (Pick an element from the page)」按鈕現在更靠近檢測器 (Inspector) 分頁，能更快切換此兩項功能。而且現在也能透過「Ctrl+Shift+C」或「Cmd+Opt+C」 快捷鍵 達到相同效果。(可參閱 開發討論記錄 與 他人在 UserVoice 上提出的需求 ) 現在提供「完整頁面擷圖 (Full page screenshot)」 按鈕 。在啟用並按下此按鈕之後，就會將擷圖傳送到你設定的下載資料夾中。(可參閱 開發討論記錄 ) 下方 gif 動畫即展現該擷圖功能： 開發者工具的使用者介面 (UI) 現已套用新的圖像，可支援高像素螢幕的顯示功能 (HiDPI)，讓 UI 能在這些裝置上更清晰。特別感謝 Tim Nguyen 的努力成果！(可參閱 開發討論記錄 ) Web Audio 編輯器 (Editor) 除了「著色器編輯器 (Shader Editor)」與「Canvas 除錯器 (Canvas Debugger)」之外，新的媒體工具「Web Audio 編輯器 (Web Audio Editor)」也從 Firefox 32 開始加入強大的工具行列了。在選項面板中啟動此功能之後，即可檢測 AudioContext 圖形並修改 AudioNodes 的屬性。另可參閱 本篇 Hacks 文章 以進一步了解。 檢測器 (Inspector) 檢測器現可顯示瀏覽器預設樣式 (User agent style)。由於這些預設樣式均可能影響你的網頁樣式，因此能方便開發者進行檢視。同樣可透過選項面板啟動此功能，另可參閱 MDN 上的說明文件 以進一步了解。(可參閱 開發討論記錄 與 他人在 UserVoice 上提出的需求 ) 針對隱藏節點與可見節點，標記檢視 (Markup view) 模式的顯示方式將有所區別。(可參閱 開發討論記錄 與 他人在 UserVoice 上提出的需求 ) 字型檢測器中的提示文字，現可供預覽網路字型。只要將滑鼠游標停在字型堆疊之上，即可在提示文字中看到目前套用的字型 (包含任何網路字型)。(可參閱 開發討論記錄 ) 標記檢視模式現另針對節點，在右鍵選單中提供「貼上外部 HTML (Paste Outer HTML)」選項。(可參閱 開發討論記錄 與 他人在 UserVoice 上提出的需求 ) 程式碼速記本 (Scratchpad) 程式碼速記本 現針對 JavaScript，提供型別推斷 (Type-inference) 架構的程式碼自動補完 (Code completion) 功能。按下「Ctrl+Space」即可在目前的游標位置上開啟建議清單，另按下「Shift+Space」就會出現目前的型別資訊。我們目前透過 「Tern」程式碼分析引擎 提供此功能。(可參閱 開發討論記錄 ) 你有任何問題或意見、想提報錯誤，或想建議任何功能嗎？同樣可 到 UserVoice 提出自己的想法或投票選擇 ，亦可透過 Twitter 上的 @FirefoxDevTools 聯絡我們。 原文連結： Toolbox, Inspector & Scratchpad improvements – Firefox Developer Tools Episode 32",
+  "images": [
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/infobar-dimensions.png",
+      "alt": "infobar-dimensions",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/infobar-dimensions.png",
+      "archive_path": "assets/5821/wp-content/uploads/infobar-dimensions.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/infobar-dimensions.png",
+      "wayback_timestamp": "20140626061713",
+      "asset_archive_url": "https://web.archive.org/web/20140626061713id_/http://blog.mozilla.com.tw/wp-content/uploads/infobar-dimensions.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/inspect-element-left.png",
+      "alt": "inspect-element-left",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 1,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/inspect-element-left.png",
+      "archive_path": "assets/5821/wp-content/uploads/inspect-element-left.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/inspect-element-left.png",
+      "wayback_timestamp": "20140626041153",
+      "asset_archive_url": "https://web.archive.org/web/20140626041153id_/http://blog.mozilla.com.tw/wp-content/uploads/inspect-element-left.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/full-page-screenshot.png",
+      "alt": "full-page-screenshot",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 2,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/full-page-screenshot.png",
+      "archive_path": "assets/5821/wp-content/uploads/full-page-screenshot.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/full-page-screenshot.png",
+      "wayback_timestamp": "20140626040225",
+      "asset_archive_url": "https://web.archive.org/web/20140626040225id_/http://blog.mozilla.com.tw/wp-content/uploads/full-page-screenshot.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/devtools-take-screenshot.gif",
+      "alt": "devtools-take-screenshot",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 3,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/devtools-take-screenshot.gif",
+      "archive_path": "assets/5821/wp-content/uploads/devtools-take-screenshot.gif",
+      "markdown_path": "../assets/5821/wp-content/uploads/devtools-take-screenshot.gif",
+      "wayback_timestamp": "20140626050343",
+      "asset_archive_url": "https://web.archive.org/web/20140626050343id_/http://blog.mozilla.com.tw/wp-content/uploads/devtools-take-screenshot.gif",
+      "content_type": "image/gif"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/webaudio-tool-overview-1024x390.png",
+      "alt": "webaudio-tool-overview",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 4,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/webaudio-tool-overview-1024x390.png",
+      "archive_path": "assets/5821/wp-content/uploads/webaudio-tool-overview-1024x390.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/webaudio-tool-overview-1024x390.png",
+      "wayback_timestamp": "20140626055401",
+      "asset_archive_url": "https://web.archive.org/web/20140626055401id_/http://blog.mozilla.com.tw/wp-content/uploads/webaudio-tool-overview-1024x390.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/user-agent-styles-usage-1024x380.png",
+      "alt": "user-agent-styles-usage",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 5,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/user-agent-styles-usage-1024x380.png",
+      "archive_path": "assets/5821/wp-content/uploads/user-agent-styles-usage-1024x380.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/user-agent-styles-usage-1024x380.png",
+      "wayback_timestamp": "20140626061104",
+      "asset_archive_url": "https://web.archive.org/web/20140626061104id_/http://blog.mozilla.com.tw/wp-content/uploads/user-agent-styles-usage-1024x380.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/user-agent-styles-option-1024x375.gif",
+      "alt": "user-agent-styles-option",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 6,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/user-agent-styles-option-1024x375.gif",
+      "archive_path": "assets/5821/wp-content/uploads/user-agent-styles-option-1024x375.gif",
+      "markdown_path": "../assets/5821/wp-content/uploads/user-agent-styles-option-1024x375.gif",
+      "wayback_timestamp": "20140626043800",
+      "asset_archive_url": "https://web.archive.org/web/20140626043800id_/http://blog.mozilla.com.tw/wp-content/uploads/user-agent-styles-option-1024x375.gif",
+      "content_type": "image/gif"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/inspector-hidden-nodes.png",
+      "alt": "inspector-hidden-nodes",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 7,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/inspector-hidden-nodes.png",
+      "archive_path": "assets/5821/wp-content/uploads/inspector-hidden-nodes.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/inspector-hidden-nodes.png",
+      "wayback_timestamp": "20140626042119",
+      "asset_archive_url": "https://web.archive.org/web/20140626042119id_/http://blog.mozilla.com.tw/wp-content/uploads/inspector-hidden-nodes.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/font-tooltip-webfont.png",
+      "alt": "font-tooltip-webfont",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 8,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/font-tooltip-webfont.png",
+      "archive_path": "assets/5821/wp-content/uploads/font-tooltip-webfont.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/font-tooltip-webfont.png",
+      "wayback_timestamp": "20140626065139",
+      "asset_archive_url": "https://web.archive.org/web/20140626065139id_/http://blog.mozilla.com.tw/wp-content/uploads/font-tooltip-webfont.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/scratchpad-autocompletion.png",
+      "alt": "scratchpad-autocompletion",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 9,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/scratchpad-autocompletion.png",
+      "archive_path": "assets/5821/wp-content/uploads/scratchpad-autocompletion.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/scratchpad-autocompletion.png",
+      "wayback_timestamp": "20140626065309",
+      "asset_archive_url": "https://web.archive.org/web/20140626065309id_/http://blog.mozilla.com.tw/wp-content/uploads/scratchpad-autocompletion.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/stratchpad-type-information.png",
+      "alt": "stratchpad-type-information",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 10,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/stratchpad-type-information.png",
+      "archive_path": "assets/5821/wp-content/uploads/stratchpad-type-information.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/stratchpad-type-information.png",
+      "wayback_timestamp": "20140626042509",
+      "asset_archive_url": "https://web.archive.org/web/20140626042509id_/http://blog.mozilla.com.tw/wp-content/uploads/stratchpad-type-information.png",
+      "content_type": "image/png"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://www.mozilla.org/en-US/firefox/aurora/",
+      "text": "曙光版 (Aurora) 釋放頻道"
+    },
+    {
+      "url": "https://mzl.la/1kFlu0C",
+      "text": "錯誤修正清單"
+    },
+    {
+      "url": "https://hacks.mozilla.org/2014/05/launching-feedback-channels-let-us-know-your-ideas-for-firefox-developer-tools/",
+      "text": "處於測試階段"
+    },
+    {
+      "url": "https://mzl.la/devtools",
+      "text": "UserVoice feedback channel"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=718250",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://ffdevtools.uservoice.com/forums/246087-firefox-developer-tools-ideas/suggestions/5894689-show-dimensions-when-hovering-over-an-element-in-i",
+      "text": "他人在 UserVoice 上提出的需求"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Tools/Keyboard_shortcuts",
+      "text": "快捷鍵"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=991810",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://ffdevtools.uservoice.com/forums/246087-firefox-developer-tools-ideas/suggestions/5714267-inspector-icon-on-the-left",
+      "text": "他人在 UserVoice 上提出的需求"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Tools/Tools_Toolbox#Extra_tools",
+      "text": "按鈕"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=991045",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=837188",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://hacks.mozilla.org/2014/06/introducing-the-web-audio-editor-in-firefox-developer-tools/",
+      "text": "本篇 Hacks 文章"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Tools/Page_Inspector#Rules_view",
+      "text": "MDN 上的說明文件"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=935803",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://ffdevtools.uservoice.com/forums/246087-firefox-developer-tools-ideas/suggestions/5908197-show-user-agent-css-as-in-firebug",
+      "text": "他人在 UserVoice 上提出的需求"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=911209",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://ffdevtools.uservoice.com/forums/246087-firefox-developer-tools-ideas/suggestions/5871316-show-nodes-that-are-display-none-differently",
+      "text": "他人在 UserVoice 上提出的需求"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=987797",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=993416",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://ffdevtools.uservoice.com/forums/246087-firefox-developer-tools-ideas/suggestions/5871356-context-menu-to-paste-html-in-a-node",
+      "text": "他人在 UserVoice 上提出的需求"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Tools/Scratchpad",
+      "text": "程式碼速記本"
+    },
+    {
+      "url": "https://ternjs.net/",
+      "text": "「Tern」程式碼分析引擎"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=968896",
+      "text": "開發討論記錄"
+    },
+    {
+      "url": "https://mzl.la/devtools",
+      "text": "到 UserVoice 提出自己的想法或投票選擇"
+    },
+    {
+      "url": "https://twitter.com/FirefoxDevTools",
+      "text": "@FirefoxDevTools"
+    },
+    {
+      "url": "https://hacks.mozilla.org/2014/06/toolbox-inspector-scratchpad-improvements-firefox-developer-tools-episode-32/",
+      "text": "Toolbox, Inspector & Scratchpad improvements – Firefox Developer Tools Episode 32"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": [],
+  "media": [
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/infobar-dimensions.png",
+      "alt": "infobar-dimensions",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/infobar-dimensions.png",
+      "archive_path": "assets/5821/wp-content/uploads/infobar-dimensions.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/infobar-dimensions.png",
+      "wayback_timestamp": "20140626061713",
+      "asset_archive_url": "https://web.archive.org/web/20140626061713id_/http://blog.mozilla.com.tw/wp-content/uploads/infobar-dimensions.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/inspect-element-left.png",
+      "alt": "inspect-element-left",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 1,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/inspect-element-left.png",
+      "archive_path": "assets/5821/wp-content/uploads/inspect-element-left.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/inspect-element-left.png",
+      "wayback_timestamp": "20140626041153",
+      "asset_archive_url": "https://web.archive.org/web/20140626041153id_/http://blog.mozilla.com.tw/wp-content/uploads/inspect-element-left.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/full-page-screenshot.png",
+      "alt": "full-page-screenshot",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 2,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/full-page-screenshot.png",
+      "archive_path": "assets/5821/wp-content/uploads/full-page-screenshot.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/full-page-screenshot.png",
+      "wayback_timestamp": "20140626040225",
+      "asset_archive_url": "https://web.archive.org/web/20140626040225id_/http://blog.mozilla.com.tw/wp-content/uploads/full-page-screenshot.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/devtools-take-screenshot.gif",
+      "alt": "devtools-take-screenshot",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 3,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/devtools-take-screenshot.gif",
+      "archive_path": "assets/5821/wp-content/uploads/devtools-take-screenshot.gif",
+      "markdown_path": "../assets/5821/wp-content/uploads/devtools-take-screenshot.gif",
+      "wayback_timestamp": "20140626050343",
+      "asset_archive_url": "https://web.archive.org/web/20140626050343id_/http://blog.mozilla.com.tw/wp-content/uploads/devtools-take-screenshot.gif",
+      "content_type": "image/gif"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/webaudio-tool-overview-1024x390.png",
+      "alt": "webaudio-tool-overview",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 4,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/webaudio-tool-overview-1024x390.png",
+      "archive_path": "assets/5821/wp-content/uploads/webaudio-tool-overview-1024x390.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/webaudio-tool-overview-1024x390.png",
+      "wayback_timestamp": "20140626055401",
+      "asset_archive_url": "https://web.archive.org/web/20140626055401id_/http://blog.mozilla.com.tw/wp-content/uploads/webaudio-tool-overview-1024x390.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/user-agent-styles-usage-1024x380.png",
+      "alt": "user-agent-styles-usage",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 5,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/user-agent-styles-usage-1024x380.png",
+      "archive_path": "assets/5821/wp-content/uploads/user-agent-styles-usage-1024x380.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/user-agent-styles-usage-1024x380.png",
+      "wayback_timestamp": "20140626061104",
+      "asset_archive_url": "https://web.archive.org/web/20140626061104id_/http://blog.mozilla.com.tw/wp-content/uploads/user-agent-styles-usage-1024x380.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/user-agent-styles-option-1024x375.gif",
+      "alt": "user-agent-styles-option",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 6,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/user-agent-styles-option-1024x375.gif",
+      "archive_path": "assets/5821/wp-content/uploads/user-agent-styles-option-1024x375.gif",
+      "markdown_path": "../assets/5821/wp-content/uploads/user-agent-styles-option-1024x375.gif",
+      "wayback_timestamp": "20140626043800",
+      "asset_archive_url": "https://web.archive.org/web/20140626043800id_/http://blog.mozilla.com.tw/wp-content/uploads/user-agent-styles-option-1024x375.gif",
+      "content_type": "image/gif"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/inspector-hidden-nodes.png",
+      "alt": "inspector-hidden-nodes",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 7,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/inspector-hidden-nodes.png",
+      "archive_path": "assets/5821/wp-content/uploads/inspector-hidden-nodes.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/inspector-hidden-nodes.png",
+      "wayback_timestamp": "20140626042119",
+      "asset_archive_url": "https://web.archive.org/web/20140626042119id_/http://blog.mozilla.com.tw/wp-content/uploads/inspector-hidden-nodes.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/font-tooltip-webfont.png",
+      "alt": "font-tooltip-webfont",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 8,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/font-tooltip-webfont.png",
+      "archive_path": "assets/5821/wp-content/uploads/font-tooltip-webfont.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/font-tooltip-webfont.png",
+      "wayback_timestamp": "20140626065139",
+      "asset_archive_url": "https://web.archive.org/web/20140626065139id_/http://blog.mozilla.com.tw/wp-content/uploads/font-tooltip-webfont.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/scratchpad-autocompletion.png",
+      "alt": "scratchpad-autocompletion",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 9,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/scratchpad-autocompletion.png",
+      "archive_path": "assets/5821/wp-content/uploads/scratchpad-autocompletion.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/scratchpad-autocompletion.png",
+      "wayback_timestamp": "20140626065309",
+      "asset_archive_url": "https://web.archive.org/web/20140626065309id_/http://blog.mozilla.com.tw/wp-content/uploads/scratchpad-autocompletion.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/stratchpad-type-information.png",
+      "alt": "stratchpad-type-information",
+      "post_id": 5821,
+      "page_type": "other",
+      "title": "淺談 Firefox 32 開發者工具",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 10,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/stratchpad-type-information.png",
+      "archive_path": "assets/5821/wp-content/uploads/stratchpad-type-information.png",
+      "markdown_path": "../assets/5821/wp-content/uploads/stratchpad-type-information.png",
+      "wayback_timestamp": "20140626042509",
+      "asset_archive_url": "https://web.archive.org/web/20140626042509id_/http://blog.mozilla.com.tw/wp-content/uploads/stratchpad-type-information.png",
+      "content_type": "image/png"
+    }
+  ]
+}

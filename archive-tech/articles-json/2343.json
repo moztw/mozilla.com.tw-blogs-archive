@@ -1,0 +1,64 @@
+{
+  "post_id": 2343,
+  "title": "ECMAScript 6 Features in Firefox",
+  "date": "",
+  "year": null,
+  "month": null,
+  "day": null,
+  "categories": [],
+  "tags": [],
+  "author": "",
+  "page_type": "post",
+  "original_url": "https://tech.mozilla.com.tw/?p=2343",
+  "archive_url": "https://web.archive.org/web/20130705134635id_/https://tech.mozilla.com.tw/?p=2343",
+  "wayback_timestamp": "20130705134635",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>所謂的 ECMAScript，其實就是我們日常在用的 Javascript，只是當初因為商標的問題，所以後來把這個語言的規範改叫作 ECMAScript。目前市面上的瀏覽器已經支援到 ECMAScript 5，也就是 ECMAScript 262 5th Edition了。但 ECMAScript 的下一個版本，ECMAScript 6，已經早在 2008 年就開始在討論和實作中了，並且有個 codename 叫 ECMAScript Harmony，所以當你在一些其他地方看到 ECMAScript 6 或 ECMAScript Harmony，其實它們都是指同一個東西。而 ECMAScript 6 除了加了很多新的語法跟功能之外，另一個很大的優點是，它完全跟現在的 ECMAScript 5 相容，也就是你現在所學的 Javascript 的功能，未來在 ECMAScript 6 都一樣可以執行。在 Javascript 愈來愈成熟的情況下，提倡著 &#8220;The Web is the Platform\" 的 Mozilla， 更是不留餘力的在 ECMAScript 6 的設計跟實作上投入大量的資源，所以今天這篇文章，就是要來介紹 Javascript 的 Pioneer， Mozilla 已經在 Firefox 上面實作完成，並且被大量使用的 ECMAScript 6 Feature。</p>\n<p>首先要介紹的就是 <code>let</code> 這個 keyword ，Javascript 原本用來宣告變數的 keyword 是 <code>var</code> ，但 <code>var</code> 的不方便地方在於它是 Function scope ，而不是我們常用的 Block scope 。 例如:</p>\n<pre>function foo() {\r\n\r\n  for (var i = 0; i &lt;= 10; i++) {\r\n    ...\r\n  }\r\n\r\n  console.log(i); // print 10\r\n}</pre>\n<p>對一般 C/C++ 的開發者，看到上面這個常見的迴圈，會很直覺的以為變數 i 的週期只有在 for loop 裡，但實際上， i 的 scope 不只在 for loop 裡，反而是在整個 function foo 裡面。如果想要讓 i 的 scope 只留在 for loop 裡的話，就只要把 <code>var</code> 換成 <code>let</code> 就好了，也就是:</p>\n<pre>function foo() {\r\n\r\n  for (let i = 0; i &lt;= 10; i++) {\r\n    ...\r\n  }\r\n\r\n  console.log(i); // print 'undefined'\r\n}</pre>\n<p><code>let</code> 還有另一個優點，就是如果一個變數重覆宣告的話，它會產生 TypeError 出來。</p>\n<pre> if (x) {\r\n  let foo;\r\n  let foo;  // TypeError will be thrown\r\n}</pre>\n<p>第二個常見的 Feature 就是 <code>for of</code> ，</p>\n<p>它有點像 <code>for in</code> ，只是 <code>for in</code> 是針對 object 的 <span style=\"text-decoration: underline;\">property name</span>  ，而 <code>for of</code> 是針對 Array 的<span style=\"text-decoration: underline;\"> property value</span> 。</p>\n<p>例如:</p>\n<pre>let arr = [ 3, 5, 7 ];\r\narr.foo = \"hello\";\r\n\r\nfor (let i in arr) {\r\n   console.log(i); // logs \"0\", \"1\", \"2\", \"foo\"\r\n}\r\n\r\nfor (let i of arr) {\r\n   console.log(i); // logs \"3\", \"5\", \"7\"\r\n}</pre>\n<p>第三個 Feature 是跟 String 有關，像是常見的 <code>startsWith</code>， <code>endsWith</code>，這些 method 主要是用來檢查某些 String 的開頭或結尾是不是由某些字元或字串組成的，雖然這在其他語言是很常見的功能，但在 Javascript 上，它可是等到  ECMAScript 6 才變成規範的呢!</p>\n<p>最後一個，同時也是最複雜的一個，就是 <em>Destructuring Assigment</em></p>\n<p>首先來個簡單的例子</p>\n<pre>let a = 1; \r\nlet b = 2;\r\n[a, b] = [b, a];</pre>\n<p>在第三行執行完後，a 與 b 的內容就會互換了，也就是 a = 2 , b = 1 。</p>\n<p>看起來蠻簡單的呀，怎麼會複雜呢~~~</p>\n<p>但其實這個功能的用法有更複雜的，而且在 Firefox 的 codebase 裡，幾乎每個用 Javascript 寫的 module 都會在一開始就用到這個功能。</p>\n<p>最常見的例子就是</p>\n<pre>const {classes: Cc, interfaces: Ci, utils: Cu, results: Cr} = Components;</pre>\n<p>如果讀者不知道有 <em>Destructuring Assigment</em> 這個 syntax 的話，一定會想，這行 code 到底是怎麼跑得過呀 !!??</p>\n<p>等號的左邊怎麼沒有變數名稱?</p>\n<p>大括號裡面的 Cc, Ci, Cu 跟 Cr 又是從哪來的?</p>\n<p>Components 這 object 又是如何 assign 給左邊的 object ?</p>\n<p>左邊的大括號裡面的 name: value 又是要作什麼的 ?</p>\n<p>筆者一開始看到這語法時也是腦袋一大堆問號&#8230;&#8230;&#8230;&#8230;.</p>\n<p>但其實這行，就等於下面的程式碼</p>\n<pre>const Cc = Components.classes;\r\nconst Ci = Components.interfaces;\r\nconst Cu = Components.utils;\r\nconst Cr = Components.results;</pre>\n<p>再回頭看看原本那行程式，這語法還真的複雜許多了!!</p>\n<p>&nbsp;</p>\n<p>以上就是目前在 Firefox 裡常用的 ECMAScript 6 的 Feature 。如果讀者還是想多了解 Firefox 裡其他 ECMAScript 6 Feature 的話，可以看 Mozilla 的 <a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=harmony\">Bug 694100</a> 。</p>\n<p>或者是想了解各家瀏覽器對 ECMAScript 6 支援程度的話，可以看下面這個 URL</p>\n<p><a href=\"http://kangax.github.io/es5-compat-table/es6/\">http://kangax.github.io/es5-compat-table/es6/</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
+  "content_text": "所謂的 ECMAScript，其實就是我們日常在用的 Javascript，只是當初因為商標的問題，所以後來把這個語言的規範改叫作 ECMAScript。目前市面上的瀏覽器已經支援到 ECMAScript 5，也就是 ECMAScript 262 5th Edition了。但 ECMAScript 的下一個版本，ECMAScript 6，已經早在 2008 年就開始在討論和實作中了，並且有個 codename 叫 ECMAScript Harmony，所以當你在一些其他地方看到 ECMAScript 6 或 ECMAScript Harmony，其實它們都是指同一個東西。而 ECMAScript 6 除了加了很多新的語法跟功能之外，另一個很大的優點是，它完全跟現在的 ECMAScript 5 相容，也就是你現在所學的 Javascript 的功能，未來在 ECMAScript 6 都一樣可以執行。在 Javascript 愈來愈成熟的情況下，提倡著 “The Web is the Platform\" 的 Mozilla， 更是不留餘力的在 ECMAScript 6 的設計跟實作上投入大量的資源，所以今天這篇文章，就是要來介紹 Javascript 的 Pioneer， Mozilla 已經在 Firefox 上面實作完成，並且被大量使用的 ECMAScript 6 Feature。 首先要介紹的就是 let 這個 keyword ，Javascript 原本用來宣告變數的 keyword 是 var ，但 var 的不方便地方在於它是 Function scope ，而不是我們常用的 Block scope 。 例如: function foo() { for (var i = 0; i <= 10; i++) { ... } console.log(i); // print 10 } 對一般 C/C++ 的開發者，看到上面這個常見的迴圈，會很直覺的以為變數 i 的週期只有在 for loop 裡，但實際上， i 的 scope 不只在 for loop 裡，反而是在整個 function foo 裡面。如果想要讓 i 的 scope 只留在 for loop 裡的話，就只要把 var 換成 let 就好了，也就是: function foo() { for (let i = 0; i <= 10; i++) { ... } console.log(i); // print 'undefined' } let 還有另一個優點，就是如果一個變數重覆宣告的話，它會產生 TypeError 出來。 if (x) { let foo; let foo; // TypeError will be thrown } 第二個常見的 Feature 就是 for of ， 它有點像 for in ，只是 for in 是針對 object 的 property name ，而 for of 是針對 Array 的 property value 。 例如: let arr = [ 3, 5, 7 ]; arr.foo = \"hello\"; for (let i in arr) { console.log(i); // logs \"0\", \"1\", \"2\", \"foo\" } for (let i of arr) { console.log(i); // logs \"3\", \"5\", \"7\" } 第三個 Feature 是跟 String 有關，像是常見的 startsWith ， endsWith ，這些 method 主要是用來檢查某些 String 的開頭或結尾是不是由某些字元或字串組成的，雖然這在其他語言是很常見的功能，但在 Javascript 上，它可是等到 ECMAScript 6 才變成規範的呢! 最後一個，同時也是最複雜的一個，就是 Destructuring Assigment 首先來個簡單的例子 let a = 1; let b = 2; [a, b] = [b, a]; 在第三行執行完後，a 與 b 的內容就會互換了，也就是 a = 2 , b = 1 。 看起來蠻簡單的呀，怎麼會複雜呢~~~ 但其實這個功能的用法有更複雜的，而且在 Firefox 的 codebase 裡，幾乎每個用 Javascript 寫的 module 都會在一開始就用到這個功能。 最常見的例子就是 const {classes: Cc, interfaces: Ci, utils: Cu, results: Cr} = Components; 如果讀者不知道有 Destructuring Assigment 這個 syntax 的話，一定會想，這行 code 到底是怎麼跑得過呀 !!?? 等號的左邊怎麼沒有變數名稱? 大括號裡面的 Cc, Ci, Cu 跟 Cr 又是從哪來的? Components 這 object 又是如何 assign 給左邊的 object ? 左邊的大括號裡面的 name: value 又是要作什麼的 ? 筆者一開始看到這語法時也是腦袋一大堆問號…………. 但其實這行，就等於下面的程式碼 const Cc = Components.classes; const Ci = Components.interfaces; const Cu = Components.utils; const Cr = Components.results; 再回頭看看原本那行程式，這語法還真的複雜許多了!! 以上就是目前在 Firefox 裡常用的 ECMAScript 6 的 Feature 。如果讀者還是想多了解 Firefox 裡其他 ECMAScript 6 Feature 的話，可以看 Mozilla 的 Bug 694100 。 或者是想了解各家瀏覽器對 ECMAScript 6 支援程度的話，可以看下面這個 URL http://kangax.github.io/es5-compat-table/es6/",
+  "images": [
+    {
+      "post_id": 2343,
+      "page_type": "post",
+      "title": "ECMAScript 6 Features in Firefox",
+      "page_timestamp": "20130705134635",
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "archive_path": "assets/2343/001-8b909b0ca962.png",
+      "markdown_path": "../assets/2343/001-8b909b0ca962.png",
+      "direct_source_url": "https://assets.pinterest.com/images/PinExt.png",
+      "content_type": "image/png",
+      "recovered_from": "direct_external_source"
+    }
+  ],
+  "media": [
+    {
+      "post_id": 2343,
+      "page_type": "post",
+      "title": "ECMAScript 6 Features in Firefox",
+      "page_timestamp": "20130705134635",
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "archive_path": "assets/2343/001-8b909b0ca962.png",
+      "markdown_path": "../assets/2343/001-8b909b0ca962.png",
+      "direct_source_url": "https://assets.pinterest.com/images/PinExt.png",
+      "content_type": "image/png",
+      "recovered_from": "direct_external_source"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=harmony",
+      "text": "Bug 694100"
+    },
+    {
+      "url": "https://kangax.github.io/es5-compat-table/es6/",
+      "text": "http://kangax.github.io/es5-compat-table/es6/"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": []
+}

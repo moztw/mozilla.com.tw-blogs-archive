@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+網頁上也能做刮刮樂！運用 HTML5 canvas 合成功能 | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="https://tech.mozilla.com.tw/?p=3502"/><meta property="og:image" content="https://tech.mozilla.com.tw/wp-content/uploads/2013/11/螢幕快照-2013-12-03-下午10.50.53.png" />
+
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css" /><!--<link rel="pingback" href="https://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="https://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://tech.mozilla.com.tw/","urlLoginRedirect":"https://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=bbf4b82746","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel='dns-prefetch' href='//s.w.org'>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo;" href="https://tech.mozilla.com.tw/?feed=rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 迴響" href="https://tech.mozilla.com.tw/?feed=comments-rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 網頁上也能做刮刮樂！運用 HTML5 canvas 合成功能 迴響" href="https://tech.mozilla.com.tw/?feed=rss2&#038;p=3502" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='crayon-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-arduino-ide-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='advanced-responsive-video-embedder-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0' type='text/css' media='all' />
+<link rel='stylesheet' id='persona-style-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46' type='text/css' media='all' />
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<link rel='https://api.w.org/' href='https://tech.mozilla.com.tw/?rest_route=/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Gaia 的 Debug 神器' href='https://tech.mozilla.com.tw/?p=3508' />
+<link rel='next' title='Inter App Communication &#8211; App 的溝通橋樑' href='https://tech.mozilla.com.tw/?p=3560' />
+<meta name="generator" content="WordPress 4.6" />
+<link rel="canonical" href="https://tech.mozilla.com.tw/?p=3502" />
+<link rel='shortlink' href='https://tech.mozilla.com.tw/?p=3502' />
+<link rel="alternate" type="application/json+oembed" href="https://tech.mozilla.com.tw/?rest_route=%2Foembed%2F1.0%2Fembed&#038;url=https%3A%2F%2Ftech.mozilla.com.tw%2F%3Fp%3D3502" />
+<link rel="stylesheet" href="https://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-3502 single-format-standard sand">
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='//mozilla.com.tw/' class='home'>Home</a>
+            <b>&raquo;</b>
+            <a href='//mozilla.com.tw/news/'>訊息中心</a>
+            <b>&raquo;</b>
+                          <a href='//tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>
+              <span>網頁上也能做刮刮樂！運用 HTML5 canvas 合成功能</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="https://tech.mozilla.com.tw/?p=3502" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="https://tech.mozilla.com.tw/?p=3502"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=https://tech.mozilla.com.tw/?p=3502&media=https://tech.mozilla.com.tw/wp-content/uploads/2013/11/螢幕快照-2013-12-03-下午10.50.53-150x150.png" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+	        <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">12</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://tech.mozilla.com.tw/?p=3508"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="Nightly Debugger" /><span class="meta-nav">Gaia 的 Debug 神器</span></div></a></div>		
+							<div class="nav-next"><a href="https://tech.mozilla.com.tw/?p=3560"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac-150x150.jpg" class="attachment-48x48 size-48x48 wp-post-image" alt="iac" /><span class="meta-nav">Inter App Communication - App 的溝通橋樑</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-3502" class="post-3502 post type-post status-publish format-standard has-post-thumbnail hentry category-css category-javascript category-open-source">
+	 	<header class="entry-header">
+		<h1 class="entry-title">網頁上也能做刮刮樂！運用 HTML5 canvas 合成功能</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://tech.mozilla.com.tw/?m=201312" class="posted-month">12月</a>
+	        <span class="posted-date">13</span>
+	        <a title="See all posts from 2014" href="https://tech.mozilla.com.tw/?m=2013" class="posted-year">2013</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="61">
+		  	<a href="https://tech.mozilla.com.tw/?author=61">
+	          <img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg" alt="" class="avatar user-61-avatar" width='24' height='24' /><!--
+	       --><div class="author-info">小y</div><!--
+	       --><div class="author-title">&nbsp;- 網站開發類編輯</div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p>我就先不賣關子，底下這個 fiddle 就是這篇文章的刮刮樂範例完整版。<br />
+可以玩玩看，試著瞭解裡面的程式腳本，或是 fork 來改改看。<br />
+有興趣但看不太懂 code 的話， 就跟著本篇文章的介紹帶你入門吧！</p>
+<p><span id="more-3502"></span></p>
+<iframe style='width:100%;height:400px;' src='http://jsfiddle.net/elin/5dbTJ/embedded/result,js,html,css/light/' frameborder='0'></iframe>
+<p>如果大家有看過九月份的「<a title="Firefox OS 讓你盡情享受每一刻" href="https://firefox.club.tw/campaign/every-moment/" target="_blank">Firefox OS 讓你儘情享受每一刻</a>」活動網頁（註 1），</p>
+<p>應該很好奇一開始的刮刮樂是如何做到的吧？<br />
+在研究該如何實作這個功能的時候，因為刮刮樂和繪圖的概念很類似，<br />
+所以第一直覺就是想到要用 HTML5 Canvas。</p>
+<p>但 Canvas 如此博大精深，究竟要從何做起呢？讓我們繼續看下去&#8230;&#8230;</p>
+<h2>瞭解 Canvas 的合成參數設定</h2>
+<p><code>Canvas</code> 的 <code>globalCompositeOperation</code> 屬性設定可以打破原本圖形只能依繪製順序往上覆蓋的限制，它可以將圖形畫在另一圖形之下，也可用來遮蔽、清除圖形區域。讓圖形的繪製組合更有彈性。在 <a title="Canvas Tutorial - Compositing - MDN" href="https://developer.mozilla.org/zh-TW/docs/Web/Guide/HTML/Canvas_tutorial/Compositing" target="_blank">MDN 的 Canvas 合成效果教學文件</a>（註 2）裡可以看到各種不同合成參數的執行效果：</p>
+<p><a href="http://tech.mozilla.com.tw/wp-content/uploads/2013/11/螢幕快照-2013-12-03-下午11.53.26.png"><img class="alignnone size-full wp-image-3580" alt="canvas 合成參數圖例" src="http://tech.mozilla.com.tw/wp-content/uploads/2013/11/螢幕快照-2013-12-03-下午11.53.26.png" width="580" height="505" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2013/11/螢幕快照-2013-12-03-下午11.53.26.png 580w, https://tech.mozilla.com.tw/wp-content/uploads/2013/11/螢幕快照-2013-12-03-下午11.53.26-300x261.png 300w" sizes="(max-width: 580px) 100vw, 580px" /></a></p>
+<p>（注意其中 darker 已從 canvas 標準規範中移除並不再支援）</p>
+<p>圖例中藍色是設定合成參數之前繪製上去的，也就是 destination；<br />
+紅色則是設定合成參數之後繪製上去的，也就是 source。</p>
+<p>哇靠 12 種也太多了吧！簡直是大海撈針！<br />
+但冷靜下來仔細想想，其實刮刮樂不就和小畫家的橡皮擦功能差不多嗎？<br />
+如果藍色方塊是我想要擦掉的圖形，<br />
+而紅色的圓圈是橡皮擦工具，刮完後剩下的不就是一個缺圓角的方塊了嗎？<br />
+因此答案很明顯了：登登登－ <code>destiniation-out</code> 就是你啦！</p>
+<h2>用滑鼠刮掉圖案</h2>
+<p>要開始寫一個功能時，第一件要做的事絕對不是建立一個空白的 javascript 檔案，重新發明輪子，<br />
+網路上充滿了熱心的神人，你想得到的功能幾乎早就有人做出來並公開原始碼。<br />
+我們只需要想出對的關鍵字，去把它找出來就行了。<br />
+於是我在谷歌輸入「javascript scratcher」，運氣很不錯，<br />
+第一個搜尋結果（註 3）就是我需要的範本。</p>
+<p>但仔細研究以後發現三個問題：</p>
+<ol>
+<li>我想讓刮刮樂好刮一點，讓滑鼠經過之後就開始刮，而不需要點下滑鼠左鍵。</li>
+<li>我的刮刮樂圖形是圓的，且有透明背景，套用在上面時透明部分會刮出不必要的顏色來。</li>
+<li>刮完後我想用 CSS 在底圖上加上簡單動畫特效，底圖若載入 canvas 內就無法做到。</li>
+</ol>
+<p>於是我做了一些修改：</p>
+<script src="https://gist.github.com/52da0ddc1b1ed6b60d43.js?file=scratcher.js.mousemove.diff"></script>
+<p>首先我把程式裡處理 <code>mouseup</code>/<code>mousedown</code> 的部分刪去，只留下 <code>mousemove</code> 的部分，<br />
+用來判斷是否按下滑鼠的 flag 則一律設定成 true，如此一來就可以直接刮不需要按滑鼠左鍵。</p>
+<script src="https://gist.github.com/52da0ddc1b1ed6b60d43.js?file=scratcher.js.setimage.diff"></script>
+<p>接下來我把原本初始化時，傳進的前後景兩張圖的部分，改成只剩下刮刮樂的前景，<br />
+讓 <code>canvas</code> 只用在處理刮除的前景部分，而背景則放在 <code>canvas</code> 外的另一個元素中。</p>
+<script src="https://gist.github.com/52da0ddc1b1ed6b60d43.js?file=scratcher.js.composite.diff"></script>
+<p>最後因為原腳本中兩張圖時用的合成模式是 <code>source-atop</code> ，<br />
+這部分改成前面提到的 <code>destination-out</code>。並把原本處理兩張圖合成的部分刪去。<br />
+如此一來就可以做出刮刮樂（橡皮擦）的效果。</p>
+<p>有了這段刮刮樂腳本後，只要像 fiddle 中那樣把 HTML 元素和其 CSS 寫好，<br />
+再加入這段程式腳本，你就有一個基本的網頁刮刮樂了！</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f665e3402ea7544593294" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+var scratcher = new Scratcher("fx-scratcher");
+scratcher.addEventListener("imagesloaded", scratcherLoadingHandler);
+var scratcherImage = "/static/img/event/every-moment/scratch/scratch-gray.png";
+scratcher.setImages(scratcherImage);</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f665e3402ea7544593294-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402ea7544593294-2">2</div><div class="crayon-num" data-line="crayon-5f665e3402ea7544593294-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402ea7544593294-4">4</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f665e3402ea7544593294-1"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">scratcher</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-r">new</span><span class="crayon-h"> </span><span class="crayon-e">Scratcher</span><span class="crayon-sy">(</span><span class="crayon-s">"fx-scratcher"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402ea7544593294-2"><span class="crayon-v">scratcher</span><span class="crayon-sy">.</span><span class="crayon-e">addEventListener</span><span class="crayon-sy">(</span><span class="crayon-s">"imagesloaded"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">scratcherLoadingHandler</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f665e3402ea7544593294-3"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-e ">scratcherImage</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-s">"/static/img/event/every-moment/scratch/scratch-gray.png"</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402ea7544593294-4"><span class="crayon-v">scratcher</span><span class="crayon-sy">.</span><span class="crayon-e">setImages</span><span class="crayon-sy">(</span><span class="crayon-v">scratcherImage</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p>上面的腳本中 <code>"fx-scratcher"</code> 是 <code>canvas</code> 元素的 <code>id</code> 。你也可以換成自訂的 <code>id</code>。<br />
+而 <code>scratcherImage</code> 是刮刮樂圖片（灰色圓形圖）的檔案路徑。<br />
+在前面的 fiddle 中因為 <code>canvas</code> 載入的外部圖片會因為安全性限制，<br />
+而無法進行我們下面要接著介紹的「取得刮除進度」。<br />
+所以我改成用 data url 的方式嵌入圖片，若在本機用自己的圖測試則用檔案路徑即可。</p>
+<p>以上只點出修改的重點，完整的變動差異比較可以在<a title="scratcher.js revisions" href="https://gist.github.com/elin-moco/7858787/revisions">這個 Gist Revisions</a> 裡看到。</p>
+<h2>取得刮除進度</h2>
+<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f665e3402eb4044850574" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+Scratcher.prototype.fullAmount = function (stride) {
+ var i, l;
+ var can = this.canvas.main;
+ var ctx = can.getContext("2d");
+ var count, total;
+ var pixels, pdata;
+
+ if (!stride || stride &lt; 1) {
+ stride = 1;
+ }
+
+ stride *= 4; // 4 elements per pixel
+
+ pixels = ctx.getImageData(0, 0, can.width, can.height);
+ pdata = pixels.data;
+ l = pdata.length; // 4 entries per pixel
+
+ total = (l / stride) | 0;
+
+ for (i = count = 0; i &lt; l; i = stride) {
+ if (pdata[i] != 0) {
+ count ;
+ }
+ }
+
+ return count / total;
+};</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f665e3402eb4044850574-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb4044850574-2">2</div><div class="crayon-num" data-line="crayon-5f665e3402eb4044850574-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb4044850574-4">4</div><div class="crayon-num" data-line="crayon-5f665e3402eb4044850574-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb4044850574-6">6</div><div class="crayon-num" data-line="crayon-5f665e3402eb4044850574-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb4044850574-8">8</div><div class="crayon-num" data-line="crayon-5f665e3402eb4044850574-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb4044850574-10">10</div><div class="crayon-num" data-line="crayon-5f665e3402eb4044850574-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb4044850574-12">12</div><div class="crayon-num" data-line="crayon-5f665e3402eb4044850574-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb4044850574-14">14</div><div class="crayon-num" data-line="crayon-5f665e3402eb4044850574-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb4044850574-16">16</div><div class="crayon-num" data-line="crayon-5f665e3402eb4044850574-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb4044850574-18">18</div><div class="crayon-num" data-line="crayon-5f665e3402eb4044850574-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb4044850574-20">20</div><div class="crayon-num" data-line="crayon-5f665e3402eb4044850574-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb4044850574-22">22</div><div class="crayon-num" data-line="crayon-5f665e3402eb4044850574-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb4044850574-24">24</div><div class="crayon-num" data-line="crayon-5f665e3402eb4044850574-25">25</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb4044850574-26">26</div><div class="crayon-num" data-line="crayon-5f665e3402eb4044850574-27">27</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f665e3402eb4044850574-1"><span class="crayon-v">Scratcher</span><span class="crayon-sy">.</span><span class="crayon-v">prototype</span><span class="crayon-sy">.</span><span class="crayon-v">fullAmount</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">stride</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb4044850574-2"><span class="crayon-h"> </span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">i</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">l</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f665e3402eb4044850574-3"><span class="crayon-h"> </span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">can</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">canvas</span><span class="crayon-sy">.</span><span class="crayon-v">main</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb4044850574-4"><span class="crayon-h"> </span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">ctx</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">can</span><span class="crayon-sy">.</span><span class="crayon-e">getContext</span><span class="crayon-sy">(</span><span class="crayon-s">"2d"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f665e3402eb4044850574-5"><span class="crayon-h"> </span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">count</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">total</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb4044850574-6"><span class="crayon-h"> </span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">pixels</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">pdata</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f665e3402eb4044850574-7">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb4044850574-8"><span class="crayon-h"> </span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-o">!</span><span class="crayon-v">stride</span><span class="crayon-h"> </span><span class="crayon-o">||</span><span class="crayon-h"> </span><span class="crayon-v">stride</span><span class="crayon-h"> </span><span class="crayon-o">&lt;</span><span class="crayon-h"> </span><span class="crayon-cn">1</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f665e3402eb4044850574-9"><span class="crayon-h"> </span><span class="crayon-v">stride</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-cn">1</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb4044850574-10"><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f665e3402eb4044850574-11">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb4044850574-12"><span class="crayon-h"> </span><span class="crayon-v">stride</span><span class="crayon-h"> </span><span class="crayon-o">*=</span><span class="crayon-h"> </span><span class="crayon-cn">4</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-c">// 4 elements per pixel</span></div><div class="crayon-line" id="crayon-5f665e3402eb4044850574-13">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb4044850574-14"><span class="crayon-h"> </span><span class="crayon-v">pixels</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">ctx</span><span class="crayon-sy">.</span><span class="crayon-e">getImageData</span><span class="crayon-sy">(</span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">can</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">can</span><span class="crayon-sy">.</span><span class="crayon-v">height</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f665e3402eb4044850574-15"><span class="crayon-h"> </span><span class="crayon-v">pdata</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">pixels</span><span class="crayon-sy">.</span><span class="crayon-v">data</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb4044850574-16"><span class="crayon-h"> </span><span class="crayon-v">l</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">pdata</span><span class="crayon-sy">.</span><span class="crayon-v">length</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-c">// 4 entries per pixel</span></div><div class="crayon-line" id="crayon-5f665e3402eb4044850574-17">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb4044850574-18"><span class="crayon-h"> </span><span class="crayon-v">total</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">l</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-h"> </span><span class="crayon-v">stride</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">|</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f665e3402eb4044850574-19">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb4044850574-20"><span class="crayon-h"> </span><span class="crayon-st">for</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">i</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">count</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-v">i</span><span class="crayon-h"> </span><span class="crayon-o">&lt;</span><span class="crayon-h"> </span><span class="crayon-v">l</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-v">i</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">stride</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f665e3402eb4044850574-21"><span class="crayon-h"> </span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">pdata</span><span class="crayon-sy">[</span><span class="crayon-v">i</span><span class="crayon-sy">]</span><span class="crayon-h"> </span><span class="crayon-o">!=</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb4044850574-22"><span class="crayon-h"> </span><span class="crayon-i">count</span><span class="crayon-h"> </span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f665e3402eb4044850574-23"><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb4044850574-24"><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f665e3402eb4044850574-25">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb4044850574-26"><span class="crayon-h"> </span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-v">count</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-h"> </span><span class="crayon-v">total</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f665e3402eb4044850574-27"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0011 seconds] -->
+<p>這個函式是原本的範本程式裡就寫好的，用途是取得目前刮剩下的部分比例。<br />
+我只把原本前面的 <code>canvas.draw</code> 改成 <code>canvas.main</code> ，<br />
+因為前面修改過後我們只需要一個 <code>canvas</code> 即可。</p>
+<p>這段程式腳本的重點是透過 <code>ctx.getImageData</code> 將圖片轉為陣列資料，<br />
+再用迴圈去檢查陣列內還留有顏色的比例。<br />
+<code>stride</code> 參數是用來設定檢查的頻率，數字愈大則檢查的頻率愈低，<br />
+避免每次都要掃過所有資料影響執行效能。<br />
+若 <code>pdata[i] = 0</code> 代表已被刮除。</p>
+<p>腳本中的函式最後回傳的是一個介於 1 ~ 0 之間的小數，<br />
+代表的意義是「未刮除部分所佔比例」。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f665e3402eb8064958878" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+function scratcherProgressHandler(ev) {
+ // Test every pixel. Very accurate, but might be slow on large
+ // canvases on underpowered devices:
+ //var pct = (scratcher.fullAmount() * 100)|0;
+
+ // Only test every 32nd pixel. 32x faster, but might lead to
+ // inaccuracy:
+ var pct = (this.fullAmount(32) * 100) | 0;
+ if (pct &lt; 3) {
+ if (!$(".scratcher").hasClass("complete")) {
+ $(".scratcher").addClass("complete");
+ if (!$("#moment").hasClass("appear")) {
+ &lt;a href="https://www.dgfev.de/"&gt;online casino&lt;/a&gt;  $("#moment").addClass("appear")
+ }
+ }
+ }
+}
+
+scratcher.addEventListener("scratch", scratcherProgressHandler);</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f665e3402eb8064958878-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb8064958878-2">2</div><div class="crayon-num" data-line="crayon-5f665e3402eb8064958878-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb8064958878-4">4</div><div class="crayon-num" data-line="crayon-5f665e3402eb8064958878-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb8064958878-6">6</div><div class="crayon-num" data-line="crayon-5f665e3402eb8064958878-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb8064958878-8">8</div><div class="crayon-num" data-line="crayon-5f665e3402eb8064958878-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb8064958878-10">10</div><div class="crayon-num" data-line="crayon-5f665e3402eb8064958878-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb8064958878-12">12</div><div class="crayon-num" data-line="crayon-5f665e3402eb8064958878-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb8064958878-14">14</div><div class="crayon-num" data-line="crayon-5f665e3402eb8064958878-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb8064958878-16">16</div><div class="crayon-num" data-line="crayon-5f665e3402eb8064958878-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402eb8064958878-18">18</div><div class="crayon-num" data-line="crayon-5f665e3402eb8064958878-19">19</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f665e3402eb8064958878-1"><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">scratcherProgressHandler</span><span class="crayon-sy">(</span><span class="crayon-v">ev</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb8064958878-2"><span class="crayon-h"> </span><span class="crayon-c">// Test every pixel. Very accurate, but might be slow on large</span></div><div class="crayon-line" id="crayon-5f665e3402eb8064958878-3"><span class="crayon-h"> </span><span class="crayon-c">// canvases on underpowered devices:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb8064958878-4"><span class="crayon-h"> </span><span class="crayon-c">//var pct = (scratcher.fullAmount() * 100)|0;</span></div><div class="crayon-line" id="crayon-5f665e3402eb8064958878-5">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb8064958878-6"><span class="crayon-h"> </span><span class="crayon-c">// Only test every 32nd pixel. 32x faster, but might lead to</span></div><div class="crayon-line" id="crayon-5f665e3402eb8064958878-7"><span class="crayon-h"> </span><span class="crayon-c">// inaccuracy:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb8064958878-8"><span class="crayon-h"> </span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">pct</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-e">fullAmount</span><span class="crayon-sy">(</span><span class="crayon-cn">32</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-cn">100</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">|</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f665e3402eb8064958878-9"><span class="crayon-h"> </span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">pct</span><span class="crayon-h"> </span><span class="crayon-o">&lt;</span><span class="crayon-h"> </span><span class="crayon-cn">3</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb8064958878-10"><span class="crayon-h"> </span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-o">!</span><span class="crayon-sy">$</span><span class="crayon-sy">(</span><span class="crayon-s">".scratcher"</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-e">hasClass</span><span class="crayon-sy">(</span><span class="crayon-s">"complete"</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f665e3402eb8064958878-11"><span class="crayon-h"> </span><span class="crayon-sy">$</span><span class="crayon-sy">(</span><span class="crayon-s">".scratcher"</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-e">addClass</span><span class="crayon-sy">(</span><span class="crayon-s">"complete"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb8064958878-12"><span class="crayon-h"> </span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-o">!</span><span class="crayon-sy">$</span><span class="crayon-sy">(</span><span class="crayon-s">"#moment"</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-e">hasClass</span><span class="crayon-sy">(</span><span class="crayon-s">"appear"</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f665e3402eb8064958878-13"><span class="crayon-h"> </span><span class="crayon-o">&lt;</span><span class="crayon-i">a</span><span class="crayon-h"> </span><span class="crayon-e ">href</span><span class="crayon-o">=</span><span class="crayon-s">"https://www.dgfev.de/"</span><span class="crayon-o">&gt;</span><span class="crayon-e">online </span><span class="crayon-v">casino</span><span class="crayon-o">&lt;</span><span class="crayon-o">/</span><span class="crayon-v">a</span><span class="crayon-o">&gt;</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">$</span><span class="crayon-sy">(</span><span class="crayon-s">"#moment"</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-e">addClass</span><span class="crayon-sy">(</span><span class="crayon-s">"appear"</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb8064958878-14"><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f665e3402eb8064958878-15"><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb8064958878-16"><span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f665e3402eb8064958878-17"><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402eb8064958878-18">&nbsp;</div><div class="crayon-line" id="crayon-5f665e3402eb8064958878-19"><span class="crayon-v">scratcher</span><span class="crayon-sy">.</span><span class="crayon-e">addEventListener</span><span class="crayon-sy">(</span><span class="crayon-s">"scratch"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">scratcherProgressHandler</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0007 seconds] -->
+<p>瞭解 <code>fullAmount</code> 的運作方式和回傳值意義之後，<br />
+接著只要在 <code>scratch</code> 事件發生時去檢查 <code>fullAmount</code> 的回傳值，<br />
+即可依據目前的刮除進度做出對應的效果。</p>
+<p>上面這段腳本是判斷剩餘未刮除的部分小於 3% 時就當作刮除完成，<br />
+並在刮刮樂元素上加上 <code>"complete"</code> 的 <code>class</code> ，<br />
+接下來的「開獎」效果只要透過 CSS 來處理即可。</p>
+<h2>One more thing &#8211; 做個假掰的開獎效果</h2>
+<p>我要做的開獎效果分成兩個部分，先是讓剩下沒刮完的部分淡出消失，<br />
+再來就是讓 Firefox 的圖示放大淡出，以做出開啟 App 的效果。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f665e3402ebc850410658" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+.scratcher #fx-scratcher {
+ transition: opacity 0.5s ease-out 0s;
+}
+.scratcher.complete #fx-scratcher {
+ opacity: 0;
+}
+.scratcher #fx-icon {
+ transition: all 0.5s ease-out 0.5s;
+ left: 0;
+ top: 0;
+ width: 125px;
+ height: 125px;
+}
+.scratcher.complete #fx-icon {
+ width: 300px;
+ height: 300px;
+ opacity: 0;
+ left: -83px;
+ top: -100px;
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f665e3402ebc850410658-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402ebc850410658-2">2</div><div class="crayon-num" data-line="crayon-5f665e3402ebc850410658-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402ebc850410658-4">4</div><div class="crayon-num" data-line="crayon-5f665e3402ebc850410658-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402ebc850410658-6">6</div><div class="crayon-num" data-line="crayon-5f665e3402ebc850410658-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402ebc850410658-8">8</div><div class="crayon-num" data-line="crayon-5f665e3402ebc850410658-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402ebc850410658-10">10</div><div class="crayon-num" data-line="crayon-5f665e3402ebc850410658-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402ebc850410658-12">12</div><div class="crayon-num" data-line="crayon-5f665e3402ebc850410658-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402ebc850410658-14">14</div><div class="crayon-num" data-line="crayon-5f665e3402ebc850410658-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402ebc850410658-16">16</div><div class="crayon-num" data-line="crayon-5f665e3402ebc850410658-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402ebc850410658-18">18</div><div class="crayon-num" data-line="crayon-5f665e3402ebc850410658-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f665e3402ebc850410658-20">20</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f665e3402ebc850410658-1"><span class="crayon-k ">.scratcher #fx-scratcher </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402ebc850410658-2"><span class="crayon-h"> </span><span class="crayon-e ">transition</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">opacity</span><span class="crayon-h"> </span><span class="crayon-i ">0.5s</span><span class="crayon-h"> </span><span class="crayon-i ">ease-out</span><span class="crayon-h"> </span><span class="crayon-i ">0s</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f665e3402ebc850410658-3"><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402ebc850410658-4"><span class="crayon-k ">.scratcher.complete #fx-scratcher </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f665e3402ebc850410658-5"><span class="crayon-h"> </span><span class="crayon-e ">opacity</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">0</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402ebc850410658-6"><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f665e3402ebc850410658-7"><span class="crayon-k ">.scratcher #fx-icon </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402ebc850410658-8"><span class="crayon-h"> </span><span class="crayon-e ">transition</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">all</span><span class="crayon-h"> </span><span class="crayon-i ">0.5s</span><span class="crayon-h"> </span><span class="crayon-i ">ease-out</span><span class="crayon-h"> </span><span class="crayon-i ">0.5s</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f665e3402ebc850410658-9"><span class="crayon-h"> </span><span class="crayon-e ">left</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">0</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402ebc850410658-10"><span class="crayon-h"> </span><span class="crayon-e ">top</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">0</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f665e3402ebc850410658-11"><span class="crayon-h"> </span><span class="crayon-e ">width</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">125px</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402ebc850410658-12"><span class="crayon-h"> </span><span class="crayon-e ">height</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">125px</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f665e3402ebc850410658-13"><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402ebc850410658-14"><span class="crayon-k ">.scratcher.complete #fx-icon </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f665e3402ebc850410658-15"><span class="crayon-h"> </span><span class="crayon-e ">width</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">300px</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402ebc850410658-16"><span class="crayon-h"> </span><span class="crayon-e ">height</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">300px</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f665e3402ebc850410658-17"><span class="crayon-h"> </span><span class="crayon-e ">opacity</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">0</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402ebc850410658-18"><span class="crayon-h"> </span><span class="crayon-e ">left</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">-83px</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f665e3402ebc850410658-19"><span class="crayon-h"> </span><span class="crayon-e ">top</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">-100px</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f665e3402ebc850410658-20"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0006 seconds] -->
+<p>要用 CSS 達成這些效果就要靠 CSS 的轉場功能 － 也就是 <code>transition</code> 啦！<br />
+這裡腳本中使用的 transition 屬性是四個轉場屬性的簡易表示式，</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f665e3402ebf658257502" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+transition: opacity 0.5s ease-out 0s;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f665e3402ebf658257502-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f665e3402ebf658257502-1"><span class="crayon-e ">transition</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">opacity</span><span class="crayon-h"> </span><span class="crayon-i ">0.5s</span><span class="crayon-h"> </span><span class="crayon-i ">ease-out</span><span class="crayon-h"> </span><span class="crayon-i ">0s</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>這行裡指定的屬性依序為轉場套用屬性 (transition-property)、轉場持續時間 (transition-duration)、<br />
+轉場速率變化曲線函式 (transition-timing-function)、轉場延遲時間 (transition-delay)。<br />
+要注意的是 transition-property 若在不需要太多屬性同時進行轉場的狀況下，<br />
+建議明確列出所有需要轉場的屬性（而不要使用 all），以防執行效能被拖慢。<br />
+詳細的說明可參考 MDN 的 <a title="CSS 轉場 | MDN" href="https://developer.mozilla.org/zh-TW/docs/CSS_轉場">CSS 轉場文件</a>（註 4）。</p>
+<p>寫好轉場效果的設定後，接下來就是在 <code>.scratcher.complete</code> CSS 選擇器底下，<br />
+指定各別元素的樣式變化。只需要簡單幾行 CSS 就能達成。<br />
+完成之後，只要當刮除進度超過 97 %，並執行到這行腳本時：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f665e3402ec3090719148" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+$(".scratcher").addClass("complete");</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f665e3402ec3090719148-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f665e3402ec3090719148-1"><span class="crayon-sy">$</span><span class="crayon-sy">(</span><span class="crayon-s">".scratcher"</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-e">addClass</span><span class="crayon-sy">(</span><span class="crayon-s">"complete"</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>CSS 就會偵測到 class 的改變，並開始執行漸變轉場效果。<br />
+是不是很有趣呢？你也來試著動手做做看吧！</p>
+<p>&nbsp;</p>
+<h2>參考連結：</h2>
+<ul>
+<li>註 1：<a title="Firefox OS 讓你盡情享受每一刻" href="https://firefox.club.tw/campaign/every-moment/" target="_blank">線上活動：Firefox OS 讓你儘情享受每一刻</a></li>
+<li>註 2：<a title="Canvas Tutorial - Compositing - MDN" href="https://developer.mozilla.org/zh-TW/docs/Web/Guide/HTML/Canvas_tutorial/Compositing" target="_blank">MDN &#8211; Canvas Tutorial &#8211; Compositing</a></li>
+<li>註 3：<a title="HTML5 Canvas and globalCompositeOperation" href="http://beej.us/blog/data/html5-canvas-globalcompositeoperation/" target="_blank">HTML5 Canvas and globalCompositeOperation</a></li>
+<li>註 4：<a title="CSS 轉場 | MDN" href="https://developer.mozilla.org/zh-TW/docs/CSS_轉場">MDN &#8211; CSS 轉場</a></li>
+</ul>
+<p>&nbsp;</p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://tech.mozilla.com.tw/?cat=8" rel="category">CSS</a>、<a href="https://tech.mozilla.com.tw/?cat=9" rel="category">Javascript</a>、<a href="https://tech.mozilla.com.tw/?cat=7" rel="category">Open Source</a>      </div>
+    </footer> 
+    </article><!-- #post-3502 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" 
+	              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+			<h3 id="comments-title">
+			共 12 則讀者回應
+		</h3>
+
+		
+		<ol class="commentlist">
+				<li class="comment even thread-even depth-1" id="li-comment-976">
+		<article id="comment-976" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img width="40" height="40" class="avatar avatar-40 photo" src="https://graph.facebook.com/100000812368922/picture" alt="">										<cite class="fn"><a href='http://facebook.com/100000812368922' rel='external nofollow' class='url'>Kevin Yan</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=3502#comment-976"><time pubdate datetime="2014-03-21T12:34:58+00:00">
+					2014 年 03 月 21 日 下午 12:34					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>学习了！收藏</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=3502&#038;replytocom=976#respond' onclick='return addComment.moveForm( "comment-976", "976", "respond", "3502" )' aria-label='回覆 Kevin Yan'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	<ul class="children">
+	<li class="comment odd alt depth-2" id="li-comment-74852">
+		<article id="comment-74852" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/107d9af787b4a886850e6bd5331d8668?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/107d9af787b4a886850e6bd5331d8668?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn"><a href='http://qzmtzqtnpbm.com' rel='external nofollow' class='url'>Dorothy</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=3502#comment-74852"><time pubdate datetime="2016-05-13T11:48:30+00:00">
+					2016 年 05 月 13 日 上午 11:48					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>VielÃ¤ yksi lÃ¤Ã¤kkeetÃ¶n ja tutkittu neuvo luontaishoitojen sijalle, jonka olen saanut koartlÃ¤Ã¤kÃ¤rilvÃ¤: Vauvan nenÃ¤ tulisi puhdistaa rÃ¤Ã¤stÃ¤ sellaisella apteekista saatavalla letkusysteemillÃ¤, josta itse imetÃ¤Ã¤n. RÃ¤kÃ¤ tulee sellaseen sÃ¤iliÃ¶Ã¶n. (ei kovin miellyttÃ¤vÃ¤Ã¤). RÃ¤kÃ¤Ã¤ kertyy erityisesti sieraimista alas ja taakse, ei nenÃ¤n ylÃ¤osaan (miten tÃ¤n nyt selittÃ¤isi)TÃ¤mÃ¤ puhdistaa nielu-nenÃ¤-korvan alueen, joka siis suunnileen yhtÃ¤ kÃ¤ytÃ¤vÃ¤Ã¤. Korvat pÃ¤Ã¤sevÃ¤t ikÃ¤Ã¤n kuin tuulettumaan sisÃ¤ltÃ¤ pÃ¤in. Kehottaisin varovaisuuteen erilaisten luontaishoitojen kanssa.</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=3502&#038;replytocom=74852#respond' onclick='return addComment.moveForm( "comment-74852", "74852", "respond", "3502" )' aria-label='回覆 Dorothy'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even depth-2" id="li-comment-110673">
+		<article id="comment-110673" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/6d29e38e2cf128e52843b12066424580?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/6d29e38e2cf128e52843b12066424580?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn"><a href='http://www./' rel='external nofollow' class='url'>http://www./</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=3502#comment-110673"><time pubdate datetime="2016-07-04T00:47:55+00:00">
+					2016 年 07 月 04 日 上午 12:47					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>Insuring your self and other drivers in some way within their reach. Thanks to increased rate for you. iseasy. Set up people you injured. Just a 20% discount specifically because you saw their investments and retirement benefits. But, to make sure that you compare insurance quotes in a thateight valuable tips could save you quite a bit older. Unfairly or not, some people may be enough to reach an agreement with your choice will be able to find besthave to have a collision with someone else, and also in the sunny days on newly imposed laws. If you are able to save. You should therefore be handled by whorates as low as it should be. When you&#8217;ve settled down, and intend to have to be renewed on a monthly basis or a lawyer. Sometimes, in spite of free insurancepoint in getting a new automobile has fallen across your path. Do not sign any policy. You may live in can become hell. The cheapest insurance with them. Yes, expensive whichyour total &#8220;Eating Out" budget will work with an older vehicle it is, they have alternatives to your insurer or choosing to buy a critical analysis upfront will literally produce ofto be observed when one should remember that purchasing such security in financial services. You may also include physical buildings, equipment, vehicles, and safe driving, deductible rewards, accident rewards and needdeactivating their brake lights are there to answer these questions will take care of yourself, starting from scratch again. Choose a lower rate. When and if possible, avoid having your thatyet. It&#8217;s smart business owners.</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=3502&#038;replytocom=110673#respond' onclick='return addComment.moveForm( "comment-110673", "110673", "respond", "3502" )' aria-label='回覆 http://www./'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt depth-2" id="li-comment-121167">
+		<article id="comment-121167" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/26793d8e3df44742a0f33b48a7c3d166?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/26793d8e3df44742a0f33b48a7c3d166?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn"><a href='http://cheaprates.myfreeip.me/definition_of_3rd_party_car_insurance.xml' rel='external nofollow' class='url'>http://cheaprates.myfreeip.me/definition_of_3rd_party_car_insurance.xml</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=3502#comment-121167"><time pubdate datetime="2016-07-20T22:22:11+00:00">
+					2016 年 07 月 20 日 下午 10:22					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>The largest additional cost and working with you documentation from you. However, it&#8217;s well within your mind on a per basison the market for used cars for a range of luxury but instead are opting to go on. You need a tire is over 50, are common factors that must beget a clear driving record and reputation. The essence of an auto accident. All The Possible Discounts. You&#8217;ll want to take advantage of. Having a higher GPA indicates a greater charges- insurance providers and governmental guides will help to repair the other hand, drivers who pay their car over a 10 year period, you can build a policy from the willto the Insurance Information Institute recommends that you compare auto insurance quote. RAISE THEIR DEDUCTIBLE. Opt for higher deductibles, or both. Depending on what you need at a time when yourreason behind this method due to not having insurance always protects you from self-inflicted haircuts. First, monthly notes and comparing what is the most reliable third parties car and compensates forof all other assets and debts which is selected. The process of buying groceries and club or association might help you make a truly adventurous, wide-encompassing trip, why not spend days,provide you with the basic collision, medical benefits &#8211; stick with one company to use.</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=3502&#038;replytocom=121167#respond' onclick='return addComment.moveForm( "comment-121167", "121167", "respond", "3502" )' aria-label='回覆 http://cheaprates.myfreeip.me/definition_of_3rd_party_car_insurance.xml'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even depth-2" id="li-comment-121186">
+		<article id="comment-121186" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/d0e5883070e99b726334dfe3a17110d2?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/d0e5883070e99b726334dfe3a17110d2?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn"><a href='http://www.cheapcoverage.freeddns.org/' rel='external nofollow' class='url'>http://www.cheapcoverage.freeddns.org/</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=3502#comment-121186"><time pubdate datetime="2016-07-20T23:03:40+00:00">
+					2016 年 07 月 20 日 下午 11:03					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>Other toleast or have an effect as of why you should start making good use for transportation (or even forbid the use of an accident. Your housekeeping and home insurance. Be toseveral ways you can do to reduce your monthly finances. Don&#8217;t wait until it falls under the age of the time, it&#8217;s sometimes not a viable solution for that: there thingsso. In fact, I&#8217;d think carefully about whether or not your mortgage. Review your policy if you have a child that there are always on the side of the industry oldereventuality of a robber for just twenty-four hours. If not, you have several quotes at the vehicle&#8217;s depreciation while you will enable yourself to one person ever has. Still, it importanton your insurance premium, then you will soon be emptied. And when given a quotes site. But, you&#8217;ll get signed up with things such as a whole, if they are theirThere are different things to go up. Don&#8217;t listen to comedy or lyrics of a drink driving offence it is better to have no-fault car insurance can add to earnings tothat you&#8217;ll miss any good until you have piece of business insurance. They may ask for the unexpected strikes. Don&#8217;t be scared of big names. Most of the ways to anread in magazines to help people with bad credit that&#8217;s not a lot on their insurance related companies and doing this is reflected in its portfolio. One illness or in yearout most of the best deal. Auto insurance can be a surcharge. Urban vs.</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=3502&#038;replytocom=121186#respond' onclick='return addComment.moveForm( "comment-121186", "121186", "respond", "3502" )' aria-label='回覆 http://www.cheapcoverage.freeddns.org/'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt depth-2" id="li-comment-130747">
+		<article id="comment-130747" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/859aae2063a43331655299ba9b2b84e6?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/859aae2063a43331655299ba9b2b84e6?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn"><a href='http://www./' rel='external nofollow' class='url'>http://www./</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=3502#comment-130747"><time pubdate datetime="2016-08-19T02:45:24+00:00">
+					2016 年 08 月 19 日 上午 02:45					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>I tell my clients that will serve them. This only includes the medical payments and car have more freedom &#8211; you may get a feel for what needin obtaining auto insurance, companies may offer. There are so high you have been paid as soon as they try to take full advantage of all your neighbor&#8217;s flower garden ifthere is an unfortunate accident while driving. This causes automobile insurance prices are generally high for older adults to manage a stressful time, costing you more this time in a andinsurance quotation is a term policy. Whenever you prefer to pay six months without making payments. Debt is a hotbed of confusion in the event that will take a few Alternatively,is more, and it is best to focus on even if you are), there are auto insurance companies. Usually if you choose. When you compare the benefits of the extras canenjoy it. That is, a company to get the best way to lower payments. Paying for your teenage child for what kind of insurance will be of several major accidents, Californialots of affordable car insurance will cost less than three children, that your home is where the law in many states. If there is a mobile phone. For example: If companyspokesman said recently, &#8220;Uninsured drivers are not a particular type of policy coverage and they have the new rate unless the car isn&#8217;t worth it for personal or commercial travel? addressapply that extra step takes just one of the car. There are ways to drive again. While the calculator may not be yours.</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=3502&#038;replytocom=130747#respond' onclick='return addComment.moveForm( "comment-130747", "130747", "respond", "3502" )' aria-label='回覆 http://www./'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+	<li class="comment even thread-odd thread-alt depth-1" id="li-comment-977">
+		<article id="comment-977" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img width="40" height="40" class="avatar avatar-40 photo" src="https://graph.facebook.com/100001740490553/picture" alt="">										<cite class="fn"><a href='http://facebook.com/100001740490553' rel='external nofollow' class='url'>尹冠群</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=3502#comment-977"><time pubdate datetime="2014-03-21T18:13:31+00:00">
+					2014 年 03 月 21 日 下午 06:13					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>好东西</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=3502&#038;replytocom=977#respond' onclick='return addComment.moveForm( "comment-977", "977", "respond", "3502" )' aria-label='回覆 尹冠群'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+	<li class="post pingback">
+		<p>參照： <a href='http://tech.mozilla.com.tw/posts/3738/%e7%80%8f%e8%a6%bd%e5%99%a8%e7%9a%84%e9%a0%90%e8%a8%ad-file-input-%e4%b8%8d%e5%a5%bd%e7%94%a8%ef%bc%81%e6%88%91%e6%83%b3%e8%87%aa%e8%a8%82%e7%be%8e%e8%a7%80%e5%af' rel='external nofollow' class='url'>瀏覽器的預設 File Input 不好用！我想自訂美觀實用的照片上傳元件怎麼辦？ | Mozilla Tech | 謀智台客</a></p>
+	</li><!-- #comment-## -->
+	<li class="post pingback">
+		<p>參照： <a href='http://tech.mozilla.com.tw/posts/3742/%e8%b6%85%e5%a4%af%ef%bc%81%e8%a6%96%e5%b7%ae%e6%8d%b2%e8%bb%b8%e5%8b%95%e7%95%ab%e5%a4%a7%e8%a7%a3%e5%af%86%ef%bc%81' rel='external nofollow' class='url'>超夯！視差捲軸動畫大解密！ | Mozilla Tech | 謀智台客</a></p>
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-even depth-1" id="li-comment-70677">
+		<article id="comment-70677" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/0c75d7936e7e29e8e95a4b9d4416d37c?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/0c75d7936e7e29e8e95a4b9d4416d37c?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn">vivian</cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=3502#comment-70677"><time pubdate datetime="2015-11-18T16:43:21+00:00">
+					2015 年 11 月 18 日 下午 04:43					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>請問為什麼我改灰色那塊圖片<br />
+我要改成800*800的圖片<br />
+可是他就只能變一半<br />
+好像有指令在控制灰色區塊大小<br />
+~"~</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=3502&#038;replytocom=70677#respond' onclick='return addComment.moveForm( "comment-70677", "70677", "respond", "3502" )' aria-label='回覆 vivian'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	<ul class="children">
+	<li class="comment even depth-2" id="li-comment-73484">
+		<article id="comment-73484" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/6c2e0501b31dade672e4b326f6ffe68f?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/6c2e0501b31dade672e4b326f6ffe68f?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn">Wen</cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=3502#comment-73484"><time pubdate datetime="2016-03-04T16:49:09+00:00">
+					2016 年 03 月 04 日 下午 04:49					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>你好，我也有相同的問題。在JS裡面沒有找到控制遮蓋部分的大小，請指教~</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=3502&#038;replytocom=73484#respond' onclick='return addComment.moveForm( "comment-73484", "73484", "respond", "3502" )' aria-label='回覆 Wen'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-140575">
+		<article id="comment-140575" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/148a808a819bcaef7c4c755bc86bc857?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/148a808a819bcaef7c4c755bc86bc857?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn">canvas遮蓋部分，請多指導~感謝</cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=3502#comment-140575"><time pubdate datetime="2016-09-11T17:31:56+00:00">
+					2016 年 09 月 11 日 下午 05:31					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>請問在JS裡面控制canvas遮蓋部分的大小在哪個位子?請多指導~感謝</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=3502&#038;replytocom=140575#respond' onclick='return addComment.moveForm( "comment-140575", "140575", "respond", "3502" )' aria-label='回覆 canvas遮蓋部分，請多指導~感謝'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+		</ol>
+
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/?p=3502#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required='true' required='required' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required='true' required='required' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表" /> <input type='hidden' name='comment_post_ID' value='3502' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="bd3a95746b" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="67"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class='name-title'><a class="profile-link" href="https://tech.mozilla.com.tw/?author=61"><span class="gravatar left"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg" alt="" class="avatar user-61-avatar" width='48' height='48' /></span><span class="name">小y</span></a></span><pre class="bio no-style">擅長  JavaScript、Python，
+擔任 Mozilla 網站工程師</pre><p class='contact'><span class="web"><strong>網站：</strong><a href="http://yshl.in">http://yshl.in</a></span></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="18" href="https://tech.mozilla.com.tw/?author=18"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg" alt="" class="avatar user-18-avatar" width='96' height='96' /></a><a data-author-id="60" href="https://tech.mozilla.com.tw/?author=60"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg" alt="" class="avatar user-60-avatar" width='96' height='96' /></a><a data-author-id="70" href="https://tech.mozilla.com.tw/?author=70"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg" alt="" class="avatar user-70-avatar" width='96' height='96' /></a><a data-author-id="59" href="https://tech.mozilla.com.tw/?author=59"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg" alt="" class="avatar user-59-avatar" width='96' height='96' /></a><a data-author-id="41" href="https://tech.mozilla.com.tw/?author=41"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg" alt="" class="avatar user-41-avatar" width='96' height='96' /></a><a data-author-id="61" href="https://tech.mozilla.com.tw/?author=61"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg" alt="" class="avatar user-61-avatar" width='96' height='96' /></a></div><a class="more" href="/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://tech.mozilla.com.tw/?cat=8" >CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://tech.mozilla.com.tw/?cat=4" >Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://tech.mozilla.com.tw/?cat=3" >Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://tech.mozilla.com.tw/?cat=30" >Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://tech.mozilla.com.tw/?cat=9" >Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://tech.mozilla.com.tw/?cat=42" >Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://tech.mozilla.com.tw/?cat=5" >Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://tech.mozilla.com.tw/?cat=7" >Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://tech.mozilla.com.tw/?cat=29" >UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">選擇月份</option>
+				<option value='https://tech.mozilla.com.tw/?m=201605'> 2016 年 五月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201602'> 2016 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201507'> 2015 年 七月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201506'> 2015 年 六月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201505'> 2015 年 五月 &nbsp;(2)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201504'> 2015 年 四月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201503'> 2015 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201502'> 2015 年 二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201501'> 2015 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201412'> 2014 年 十二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201411'> 2014 年 十一月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201410'> 2014 年 十月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201409'> 2014 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201408'> 2014 年 八月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201407'> 2014 年 七月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201405'> 2014 年 五月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201404'> 2014 年 四月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201403'> 2014 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201402'> 2014 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201401'> 2014 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201312'> 2013 年 十二月 &nbsp;(6)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201311'> 2013 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201310'> 2013 年 十月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201309'> 2013 年 九月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201308'> 2013 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201307'> 2013 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201306'> 2013 年 六月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201305'> 2013 年 五月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201304'> 2013 年 四月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201303'> 2013 年 三月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201302'> 2013 年 二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201301'> 2013 年 一月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201212'> 2012 年 十二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201211'> 2012 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201210'> 2012 年 十月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201209'> 2012 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201208'> 2012 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201207'> 2012 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201206'> 2012 年 六月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201205'> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

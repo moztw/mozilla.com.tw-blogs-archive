@@ -1,0 +1,145 @@
+{
+  "post_id": 2296,
+  "title": "快來幫忙找，IPDL 在哪裡？",
+  "date": "2013-07-01",
+  "year": 2013,
+  "month": 7,
+  "day": 1,
+  "categories": [
+    "Firefox OS(B2G)"
+  ],
+  "tags": [],
+  "author": "巧克力",
+  "page_type": "post",
+  "original_url": "https://tech.mozilla.com.tw/?p=2296",
+  "archive_url": "https://web.archive.org/web/20200803150451id_/https://tech.mozilla.com.tw/?p=2296",
+  "wayback_timestamp": "20200803150451",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>截止目前為止，<a href=\"http://tech.mozilla.com.tw/posts/1950\">Mozilla 的 IPC</a> 在我心目中依然是個仰之彌高，鑽之彌堅，瞻之在前，忽焉在後[1]的神秘技術，雖然簡單地說，它就只是 Content Process 和 Chrome Process 溝通橋樑&#8230;而已（心虛）。</p>\n<p>有了 IPC 這座橋，接下來是讓程式設計師知道如何利用 IPC 這座橋，就如同專供定義 XPCOM/DOM 物件的 IDL/WebIDL 一樣，IPDL 便是用來定義 IPC 的語言（IPC Protocol Definition Language），也一樣會在編譯期自動產生對應的物件型別定義，再由程式設計師將功能實作出來；但與 IDL/WebIDL 不同的是，因為 IPDL 定義的是 Gecko 核心的功能，因此一定要用 C 實作。</p>\n<p>在開發 Firefox OS 的 Web API 過程中，IPDL 是一個<del>讓人避之唯恐不及</del>知易行難的元素，因為定義與實作必需遵循一套命名規則，但是<a href=\"http://wiki.mozilla.org/IPDL\">可供參考的文件</a>相對不多，又實作 IPDL 的程式碼容易混淆且與應用相關，即使是參考現有程式仍然會有不小的學習曲線。</p>\n<p>不過它很重要，所以我們要跟它做朋友、接近它、靠近它、了解它、把它的底摸得清清楚楚[2]－雖然我現在跟它並不太熟。</p>\n<p>回到正題，IPDL 在哪裡？</p>\n<p>若把 IPDL 當成一個定義 IPC 的工具語言，這是個沒有意義的問題（雖然它本來就是）；不過更多時候，我們所謂的 IPDL 指的是 IPDL 所定義出來的 IPC 架構，以此而言，IPDL 就在 Content Process 和 Chrome Process 之間&#8230;嗯，你知道，我知道，獨眼龍也知道[3]，但是當我處理 <a href=\"http://bugzilla.mozilla.org/show_bug.cgi?id=859215\">Bug 859215</a> 的時候，第一次看到活生生的 IPDL，還是沒辦法<del>具現化</del>想像它所定義出來的各個物件，在整個流程中所在的位置和呼叫順序。</p>\n<p><a href=\"http://bugzilla.mozilla.org/show_bug.cgi?id=859215\">Bug 859215</a> 要處理的是新增一組讀寫 <a href=\"http://www.svenskkasinon.com/\">casino online</a>  SIM 卡裡 SMSC Address 的 API，在<del>複製貼上</del>嘗試實作的過程中，所以我畫了張圖當作筆記，一眼就能看 IPDL 的整個架構和各個物件在流程中扮演的角色，而且比<a href=\"http://whereswaldo.com/index.html#findwaldo/map4\" target=\"_blank\">威利在哪裡</a>簡單得多（先看完這一篇再去玩吧）。</p>\n<div id=\"attachment_2311\" style=\"width: 1119px\" class=\"wp-caption alignnone\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/06/All.png\"><img class=\"size-full wp-image-2311\" alt=\"Bug 859215程式流程簡圖\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/06/All.png\" width=\"1109\" height=\"473\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/06/All.png 1109w, https://tech.mozilla.com.tw/wp-content/uploads/2013/06/All-300x127.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2013/06/All-1024x436.png 1024w\" sizes=\"(max-width: 1109px) 100vw, 1109px\" /></a><p class=\"wp-caption-text\">Bug 859215程式流程簡圖（點小圖看大圖）</p></div>\n<p>上圖是取得 SMSC Address 的 API &#8211; getSmscAddress()，從呼叫到取得結果的完整執行流程，又由於這張圖是針對 Mobile Message DOM 做的，還是需要讀者對 Mobile Message DOM 有一點瞭解，並參考對應的 <a href=\"http://bugzilla.mozilla.org/page.cgi?id=splinter.html&amp;bug=859215&amp;attachment=754717\">IPDL patch</a></p>\n<p>如前所述，在 IPC 的大架構之下，IPDL 的定義及實作方式與使用場合的相關性很大，例如圖中 Content Process 往 Chrome Process 的 IPC，Client 的角色便不是由標準說明上的 SmsRequestChild 擔任，而是由 SmsIPCService 擔任。因此本文呈現的只是 IPDL 的其中一種樣子，換個位置可能也就換了<del>腦袋</del>樣子，但若能在 trace code 的同時畫出 IPDL 的流程，相信能有效地提高掌握度（而且忘記了也好查）。</p>\n<p>最後補充一些小細節：</p>\n<ol>\n<li>為什麼 Content Process 的 SmsService 能呼叫到 SmsIPCService<br />\n參考<a href=\"http://mxr.mozilla.org/mozilla-central/source/dom/mobilemessage/src/SmsServicesFactory.cpp#24\">程式碼</a>，要在 Content Process 取得 SmsService ，實際上會拿到 SmsIPCService；相對地在 Chrome Process 中則會拿到 SmsService。<br />\n因此 SmsIPCService 必需支援所有 SmsService 的介面，並將之轉成 IPC 往 Chorme Process 送。</li>\n<li>pSMS.ipdl 和 pSmsRequest.ipdl 的關係<br />\npSMS.ipdl 定義了整個 IPC 的訊息架構，包含 SmsIPCService 往 smsRequestParent 和 smsRequestParent 往 smsRequestClient 兩個方向的介面，以及圖中 SmsIPCService 往 smsRequestParent 方向的訊息格式。<br />\n而 pSmsRequest.ipdl 定義的是圖中 smsRequestParent 送往 smsRequestChild 的訊息格式。</li>\n</ol>\n<p>[1] 出自論語，顏回說的<br />\n[2] 出自小孩不笨，李老師說的<del>前幾段是為了提起各位的興趣來著，絕對不是騙稿費</del><br />\n[3] 出自賭俠，<del>劉德華</del>賭俠說的</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
+  "content_text": "截止目前為止， Mozilla 的 IPC 在我心目中依然是個仰之彌高，鑽之彌堅，瞻之在前，忽焉在後[1]的神秘技術，雖然簡單地說，它就只是 Content Process 和 Chrome Process 溝通橋樑…而已（心虛）。 有了 IPC 這座橋，接下來是讓程式設計師知道如何利用 IPC 這座橋，就如同專供定義 XPCOM/DOM 物件的 IDL/WebIDL 一樣，IPDL 便是用來定義 IPC 的語言（IPC Protocol Definition Language），也一樣會在編譯期自動產生對應的物件型別定義，再由程式設計師將功能實作出來；但與 IDL/WebIDL 不同的是，因為 IPDL 定義的是 Gecko 核心的功能，因此一定要用 C 實作。 在開發 Firefox OS 的 Web API 過程中，IPDL 是一個 讓人避之唯恐不及 知易行難的元素，因為定義與實作必需遵循一套命名規則，但是 可供參考的文件 相對不多，又實作 IPDL 的程式碼容易混淆且與應用相關，即使是參考現有程式仍然會有不小的學習曲線。 不過它很重要，所以我們要跟它做朋友、接近它、靠近它、了解它、把它的底摸得清清楚楚[2]－雖然我現在跟它並不太熟。 回到正題，IPDL 在哪裡？ 若把 IPDL 當成一個定義 IPC 的工具語言，這是個沒有意義的問題（雖然它本來就是）；不過更多時候，我們所謂的 IPDL 指的是 IPDL 所定義出來的 IPC 架構，以此而言，IPDL 就在 Content Process 和 Chrome Process 之間…嗯，你知道，我知道，獨眼龍也知道[3]，但是當我處理 Bug 859215 的時候，第一次看到活生生的 IPDL，還是沒辦法 具現化 想像它所定義出來的各個物件，在整個流程中所在的位置和呼叫順序。 Bug 859215 要處理的是新增一組讀寫 casino online SIM 卡裡 SMSC Address 的 API，在 複製貼上 嘗試實作的過程中，所以我畫了張圖當作筆記，一眼就能看 IPDL 的整個架構和各個物件在流程中扮演的角色，而且比 威利在哪裡 簡單得多（先看完這一篇再去玩吧）。 Bug 859215程式流程簡圖（點小圖看大圖） 上圖是取得 SMSC Address 的 API – getSmscAddress()，從呼叫到取得結果的完整執行流程，又由於這張圖是針對 Mobile Message DOM 做的，還是需要讀者對 Mobile Message DOM 有一點瞭解，並參考對應的 IPDL patch 如前所述，在 IPC 的大架構之下，IPDL 的定義及實作方式與使用場合的相關性很大，例如圖中 Content Process 往 Chrome Process 的 IPC，Client 的角色便不是由標準說明上的 SmsRequestChild 擔任，而是由 SmsIPCService 擔任。因此本文呈現的只是 IPDL 的其中一種樣子，換個位置可能也就換了 腦袋 樣子，但若能在 trace code 的同時畫出 IPDL 的流程，相信能有效地提高掌握度（而且忘記了也好查）。 最後補充一些小細節： 為什麼 Content Process 的 SmsService 能呼叫到 SmsIPCService 參考 程式碼 ，要在 Content Process 取得 SmsService ，實際上會拿到 SmsIPCService；相對地在 Chrome Process 中則會拿到 SmsService。 因此 SmsIPCService 必需支援所有 SmsService 的介面，並將之轉成 IPC 往 Chorme Process 送。 pSMS.ipdl 和 pSmsRequest.ipdl 的關係 pSMS.ipdl 定義了整個 IPC 的訊息架構，包含 SmsIPCService 往 smsRequestParent 和 smsRequestParent 往 smsRequestClient 兩個方向的介面，以及圖中 SmsIPCService 往 smsRequestParent 方向的訊息格式。 而 pSmsRequest.ipdl 定義的是圖中 smsRequestParent 送往 smsRequestChild 的訊息格式。 [1] 出自論語，顏回說的 [2] 出自小孩不笨，李老師說的 前幾段是為了提起各位的興趣來著，絕對不是騙稿費 [3] 出自賭俠， 劉德華 賭俠說的",
+  "images": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/All.png",
+      "alt": "Bug 859215程式流程簡圖",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/All-300x127.png",
+      "alt": "Bug 859215程式流程簡圖",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/All-1024x436.png",
+      "alt": "Bug 859215程式流程簡圖",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "post_id": 2296,
+      "page_type": "post",
+      "title": "快來幫忙找，IPDL 在哪裡？",
+      "page_timestamp": "20200803150451",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/47/dd6bd553efb8c6c6855429345031d273-bpthumb.jpg",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/47/dd6bd553efb8c6c6855429345031d273-bpthumb.jpg",
+      "archive_path": "assets/2296/wp-content/uploads/avatars/47/dd6bd553efb8c6c6855429345031d273-bpthumb.jpg",
+      "markdown_path": "../assets/2296/wp-content/uploads/avatars/47/dd6bd553efb8c6c6855429345031d273-bpthumb.jpg",
+      "wayback_timestamp": "20180325163349",
+      "asset_archive_url": "https://web.archive.org/web/20180325163349id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/47/dd6bd553efb8c6c6855429345031d273-bpthumb.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/All.png",
+      "alt": "Bug 859215程式流程簡圖",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/All-300x127.png",
+      "alt": "Bug 859215程式流程簡圖",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/All-1024x436.png",
+      "alt": "Bug 859215程式流程簡圖",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "post_id": 2296,
+      "page_type": "post",
+      "title": "快來幫忙找，IPDL 在哪裡？",
+      "page_timestamp": "20200803150451",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/47/dd6bd553efb8c6c6855429345031d273-bpthumb.jpg",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/47/dd6bd553efb8c6c6855429345031d273-bpthumb.jpg",
+      "archive_path": "assets/2296/wp-content/uploads/avatars/47/dd6bd553efb8c6c6855429345031d273-bpthumb.jpg",
+      "markdown_path": "../assets/2296/wp-content/uploads/avatars/47/dd6bd553efb8c6c6855429345031d273-bpthumb.jpg",
+      "wayback_timestamp": "20180325163349",
+      "asset_archive_url": "https://web.archive.org/web/20180325163349id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/47/dd6bd553efb8c6c6855429345031d273-bpthumb.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://tech.mozilla.com.tw/posts/1950",
+      "text": "Mozilla 的 IPC"
+    },
+    {
+      "url": "https://wiki.mozilla.org/IPDL",
+      "text": "可供參考的文件"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=859215",
+      "text": "Bug 859215"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/show_bug.cgi?id=859215",
+      "text": "Bug 859215"
+    },
+    {
+      "url": "https://www.svenskkasinon.com/",
+      "text": "casino online"
+    },
+    {
+      "url": "https://whereswaldo.com/index.html#findwaldo/map4",
+      "text": "威利在哪裡"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/All.png",
+      "text": ""
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/page.cgi?id=splinter.html&bug=859215&attachment=754717",
+      "text": "IPDL patch"
+    },
+    {
+      "url": "https://mxr.mozilla.org/mozilla-central/source/dom/mobilemessage/src/SmsServicesFactory.cpp#24",
+      "text": "程式碼"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "partial_assets_failed",
+  "asset_errors": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/All.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/All-300x127.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/All-1024x436.png",
+      "reason": "article_media_missing"
+    }
+  ]
+}

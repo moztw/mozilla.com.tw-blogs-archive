@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+打造專屬於你的 Git 工作流程 &#8212; Alias、Commands、Hooks | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="https://tech.mozilla.com.tw/?p=5306"/><meta property="og:image" content="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/Krita-building_for-cats_010-git-update_by-deevad.jpg" />
+
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css" /><!--<link rel="pingback" href="https://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="https://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://tech.mozilla.com.tw/","urlLoginRedirect":"https://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=ac18a18476","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel='dns-prefetch' href='//s.w.org'>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo;" href="https://tech.mozilla.com.tw/?feed=rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 迴響" href="https://tech.mozilla.com.tw/?feed=comments-rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 打造專屬於你的 Git 工作流程 &#8212; Alias、Commands、Hooks 迴響" href="https://tech.mozilla.com.tw/?feed=rss2&#038;p=5306" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='crayon-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-arduino-ide-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='advanced-responsive-video-embedder-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0' type='text/css' media='all' />
+<link rel='stylesheet' id='persona-style-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46' type='text/css' media='all' />
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<link rel='https://api.w.org/' href='https://tech.mozilla.com.tw/?rest_route=/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='專注在該費心的工作上，用 CI 來提昇程式品質' href='https://tech.mozilla.com.tw/?p=5175' />
+<link rel='next' title='在 Firefox OS 取圖片色彩平均值之二三事' href='https://tech.mozilla.com.tw/?p=5355' />
+<meta name="generator" content="WordPress 4.6" />
+<link rel="canonical" href="https://tech.mozilla.com.tw/?p=5306" />
+<link rel='shortlink' href='https://tech.mozilla.com.tw/?p=5306' />
+<link rel="alternate" type="application/json+oembed" href="https://tech.mozilla.com.tw/?rest_route=%2Foembed%2F1.0%2Fembed&#038;url=https%3A%2F%2Ftech.mozilla.com.tw%2F%3Fp%3D5306" />
+<link rel="stylesheet" href="https://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-5306 single-format-standard sand">
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='//mozilla.com.tw/' class='home'>Home</a>
+            <b>&raquo;</b>
+            <a href='//mozilla.com.tw/news/'>訊息中心</a>
+            <b>&raquo;</b>
+                          <a href='//tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>
+              <span>打造專屬於你的 Git 工作流程 &#8212; Alias、Commands、Hooks</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="https://tech.mozilla.com.tw/?p=5306" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="https://tech.mozilla.com.tw/?p=5306"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=https://tech.mozilla.com.tw/?p=5306&media=https://tech.mozilla.com.tw/wp-content/uploads/2014/09/Krita-building_for-cats_010-git-update_by-deevad-150x150.jpg" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+	        <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">1</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://tech.mozilla.com.tw/?p=5175"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/螢幕快照-2014-09-16-上午10.51.21-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="TBPL" /><span class="meta-nav">專注在該費心的工作上，用 CI 來提昇程式品質</span></div></a></div>		
+							<div class="nav-next"><a href="https://tech.mozilla.com.tw/?p=5355"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/NewLockscreenWithNotification-50x50.png" class="attachment-48x48 size-48x48 wp-post-image" alt="NewLockscreenWithNotification" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/NewLockscreenWithNotification-50x50.png 50w, https://tech.mozilla.com.tw/wp-content/uploads/2014/09/NewLockscreenWithNotification-150x150.png 150w" sizes="(max-width: 48px) 100vw, 48px" /><span class="meta-nav">在 Firefox OS 取圖片色彩平均值之二三事</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-5306" class="post-5306 post type-post status-publish format-standard has-post-thumbnail hentry category-open-source tag-git tag-productivity tag-tool">
+	 	<header class="entry-header">
+		<h1 class="entry-title">打造專屬於你的 Git 工作流程 &#8212; Alias、Commands、Hooks</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://tech.mozilla.com.tw/?m=201409" class="posted-month">9月</a>
+	        <span class="posted-date">29</span>
+	        <a title="See all posts from 2014" href="https://tech.mozilla.com.tw/?m=2014" class="posted-year">2014</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="70">
+		  	<a href="https://tech.mozilla.com.tw/?author=70">
+	          <img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg" alt="" class="avatar user-70-avatar" width='24' height='24' /><!--
+	       --><div class="author-info">aknow</div><!--
+	       --><div class="author-title">&nbsp;- Network Team 編輯</div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<div style="width: 586px" class="wp-caption aligncenter"><img src="http://openhatch.org/blog/wp-content/uploads/2013/11/Krita-building_for-cats_010-git-update_by-deevad.jpg" alt="" width="576" height="292" /><p class="wp-caption-text">(Ref: http://blog.openhatch.org/tag/newsletter/)</p></div>
+<p>Larry Wall（Perl 之父）曾說過，程式設計師有<a href="http://threevirtues.com/" target="_blank" rel="nofollow">三大美德</a>： 「懶惰」、「不耐煩」、以及「傲慢」。所以如果你想要成為偉大的程式設計師，你一定要懂得「偷懶」！在每天的軟體開發中，版本控制系統（Version control systems ）是必備的工具（如：Git、Mercurial），想想，若是我們可以省下跟那些工具打交道的時間，就可以擁有更多時間來寫 code，就更有可能改變世界。因此，本文將以 Git 為例，教你如何讓 Git 操作起來更簡潔，讓你可以更懶。</p>
+<p>&nbsp;</p>
+<h2>觀念</h2>
+<p>通常改善工作流程，可以有幾個技巧：<strong>減少重複、加速、自動化</strong>。</p>
+<h3>減少重複</h3>
+<p>首先，你必須檢視自己使用 Git 的流程，試著執行</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dd2a3bb8d269358151190" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+history | grep git</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dd2a3bb8d269358151190-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dd2a3bb8d269358151190-1"><span class="crayon-v">history</span><span class="crayon-h"> </span><span class="crayon-o">|</span><span class="crayon-h"> </span><span class="crayon-e">grep </span><span class="crayon-v">git</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>看看你都下了哪些 Git 指令，其中是否有重複的工作，是不是經常執行一系列的指令來達到某個目的，如果是的話，那你就可以考慮創建一個巨集指令，一次完成所有工作，就像寫程式一樣，發現有重複的 code，你可以使用 Extract Method 的重構技巧，將他們抽出成一個單獨的方法，下次就可以直接呼叫。</p>
+<h3>加速</h3>
+<p>同樣做一件事，但想辦法讓他更快，用最少的敲擊鍵盤數來完成同樣的指令，例如某些指令你常常打，那麼就可以創建一些 alias 讓指令變短，就像 <a href="http://en.wikipedia.org/wiki/Huffman_coding" target="_blank" rel="nofollow">huffman coding</a> 一樣，使用頻率越高的指令應該要越短。</p>
+<h3>自動化</h3>
+<p>有些事不一定要手動去做，Git 可以設定 hook，當某些事件發生時，自動去做一些事，除了省事也更可靠，你不用擔心自己忘記執行。</p>
+<p>&nbsp;</p>
+<h2>具體的作法</h2>
+<p>接下來，我會介紹一些具體方法及實例來說明。</p>
+<h3>0. RTFM (Read The F***ing Manual)</h3>
+<p>每一個 Git command 都有一堆參數可以設定，讀一下 help 看看這個 command 本身可以作到哪些事情，搞不好會發現以往的作法其實是繞路，有更直接的作法只是你不知道而已。同樣的，做任何事情都一樣，看看有沒有現成的東西可以使用，重複打造輪子並不是笨蛋，至少你會學會如何打造輪子，但這浪費了時間，那些原本可以拿去做更偉大事情的時間。</p>
+<p>如果你會用到 github 的話，可以裝一下 <a href="https://github.com/github/hub" target="_blank" rel="nofollow">hub</a>，他延伸了原本的 Git command，讓 github 的操作更簡單。</p>
+<h3>1. Alias（加速）</h3>
+<p>這招最簡單，如果你常常打一些指令，考慮弄個 alias 吧。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dd2a3bb8d278432112263" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+$ git config --global alias.co checkout
+$ git config --global alias.br branch
+$ git config --global alias.ci commit
+$ git config --global alias.st status</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dd2a3bb8d278432112263-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d278432112263-2">2</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d278432112263-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d278432112263-4">4</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dd2a3bb8d278432112263-1"><span class="crayon-sy">$</span><span class="crayon-h"> </span><span class="crayon-e">git </span><span class="crayon-v">config</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-m">global</span><span class="crayon-h"> </span><span class="crayon-v">alias</span><span class="crayon-sy">.</span><span class="crayon-e">co </span><span class="crayon-i">checkout</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d278432112263-2"><span class="crayon-sy">$</span><span class="crayon-h"> </span><span class="crayon-e">git </span><span class="crayon-v">config</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-m">global</span><span class="crayon-h"> </span><span class="crayon-v">alias</span><span class="crayon-sy">.</span><span class="crayon-e">br </span><span class="crayon-i">branch</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d278432112263-3"><span class="crayon-sy">$</span><span class="crayon-h"> </span><span class="crayon-e">git </span><span class="crayon-v">config</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-m">global</span><span class="crayon-h"> </span><span class="crayon-v">alias</span><span class="crayon-sy">.</span><span class="crayon-e">ci </span><span class="crayon-i">commit</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d278432112263-4"><span class="crayon-sy">$</span><span class="crayon-h"> </span><span class="crayon-e">git </span><span class="crayon-v">config</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-m">global</span><span class="crayon-h"> </span><span class="crayon-v">alias</span><span class="crayon-sy">.</span><span class="crayon-e">st </span><span class="crayon-v">status</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p>這相當於直接在 <code>.gitconfig</code> 裡加入：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dd2a3bb8d27c443266729" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+[alias]
+  co = checkout
+  br = branch
+  ci = commit
+  st = status</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dd2a3bb8d27c443266729-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d27c443266729-2">2</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d27c443266729-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d27c443266729-4">4</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d27c443266729-5">5</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dd2a3bb8d27c443266729-1"><span class="crayon-sy">[</span><span class="crayon-v">alias</span><span class="crayon-sy">]</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d27c443266729-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">co</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">checkout</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d27c443266729-3"><span class="crayon-e">&nbsp;&nbsp;</span><span class="crayon-v">br</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">branch</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d27c443266729-4"><span class="crayon-e">&nbsp;&nbsp;</span><span class="crayon-v">ci</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">commit</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d27c443266729-5"><span class="crayon-e">&nbsp;&nbsp;</span><span class="crayon-v">st</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">status</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>設定之後，你就可以用 <code>git co</code> 來取代 <code>git checkout</code>，有沒有，一下就省了很多個鍵。再來你可以把參數一起放進去，像是：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dd2a3bb8d27f490125622" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+[alias]
+  lo = log --oneline</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dd2a3bb8d27f490125622-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d27f490125622-2">2</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dd2a3bb8d27f490125622-1"><span class="crayon-sy">[</span><span class="crayon-v">alias</span><span class="crayon-sy">]</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d27f490125622-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">lo</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">log</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-v">oneline</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p>我個人覺得 <code>git log</code> 很佔空間，就會用 <code>git lo</code> 讓他顯示一行版本的 log。</p>
+<p>再來更進階的，你可以把 command alias 成某個 shell function，如此一來除了更 powerful，還可以利用 positional parameters，例如以下，我就可以用 <code>git files &lt;SHA&gt;</code> 得到某個 commit 中修改了哪些檔案。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dd2a3bb8d282480245117" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+[alias]
+  files = "!f() { git diff --name-status $1^ $1; }; f"</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dd2a3bb8d282480245117-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d282480245117-2">2</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dd2a3bb8d282480245117-1"><span class="crayon-sy">[</span><span class="crayon-v">alias</span><span class="crayon-sy">]</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d282480245117-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">files</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-s">"!f() { git diff --name-status $1^ $1; }; f"</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>如果你是 alias 的愛好者，而你使用的 shell 也支援 alias （ex：bash），我看過更懶的人在他們的 shell 中設了像這樣的東西：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dd2a3bb8d284910047859" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+alias gs='git status'
+alias ga='git add'
+alias gb='git branch'
+alias gc='git commit'
+alias gd='git diff'
+alias go='git checkout'</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dd2a3bb8d284910047859-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d284910047859-2">2</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d284910047859-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d284910047859-4">4</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d284910047859-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d284910047859-6">6</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dd2a3bb8d284910047859-1"><span class="crayon-e">alias </span><span class="crayon-v">gs</span><span class="crayon-o">=</span><span class="crayon-s">'git status'</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d284910047859-2"><span class="crayon-e">alias </span><span class="crayon-v">ga</span><span class="crayon-o">=</span><span class="crayon-s">'git add'</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d284910047859-3"><span class="crayon-e">alias </span><span class="crayon-v">gb</span><span class="crayon-o">=</span><span class="crayon-s">'git branch'</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d284910047859-4"><span class="crayon-e">alias </span><span class="crayon-v">gc</span><span class="crayon-o">=</span><span class="crayon-s">'git commit'</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d284910047859-5"><span class="crayon-e">alias </span><span class="crayon-v">gd</span><span class="crayon-o">=</span><span class="crayon-s">'git diff'</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d284910047859-6"><span class="crayon-e">alias </span><span class="crayon-v">go</span><span class="crayon-o">=</span><span class="crayon-s">'git checkout'</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>以及打錯字的修正…</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dd2a3bb8d28a865120729" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+alias got='git'
+alias get='git'</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dd2a3bb8d28a865120729-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d28a865120729-2">2</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dd2a3bb8d28a865120729-1"><span class="crayon-e">alias </span><span class="crayon-v">got</span><span class="crayon-o">=</span><span class="crayon-s">'git'</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d28a865120729-2"><span class="crayon-e">alias </span><span class="crayon-v">get</span><span class="crayon-o">=</span><span class="crayon-s">'git'</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p></p>
+<h3> 2. Custom Commands（減少重複）</h3>
+<p>在 Git 中你可以創造自己的 command，之後就可以透過以下方式執行：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dd2a3bb8d28c015830313" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+$ git my-command</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dd2a3bb8d28c015830313-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dd2a3bb8d28c015830313-1"><span class="crayon-sy">$</span><span class="crayon-h"> </span><span class="crayon-e">git </span><span class="crayon-v">my</span><span class="crayon-o">-</span><span class="crayon-v">command</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>新增一個自訂 command 十分地簡單，只需要：</p>
+<ol>
+<li>建立一個新檔案，並取名為 <code>git-my-command</code>，也就是你想要的指令名稱加上 <code>git-</code> 字首，注意沒有副檔名。</li>
+<li>你可以用任何語言寫，Bash、Python、Ruby、…都可以，然後把檔案設為可執行。</li>
+<li>確認檔案的位置有在 <code>$PATH</code> 中。</li>
+</ol>
+<p>如此，你幾乎可以寫一個 Git command，做任何你想要的事情。接下來，我們來做一個很小的東西。</p>
+<h4>需求</h4>
+<p>當我們開發新功能時，根據 Git 的特性，大部分的人會開一個新 branch 出來，然後開始一系列的編輯與 commit，假設這時我們想整個瀏覽一下在 local 端我們增加了哪些 commit，可以下 <code>git log</code>，但是 <code>git log</code> 的結果會是一長串的 commit，很多是本來就在 upstream 上的，是不是可以跳過那些，只顯示我們在這 branch 上新增的 commit 呢？</p>
+<p>PS：首先你的 branch 必須要設好 upstream，可以用 <code>git branch -u &lt;upstream&gt;</code> 設定，不過這不是重點，細節部份請自己查一下。</p>
+<h4>解法</h4>
+<p>我們打算建立一個 custom command：<code>git mylog [&lt;branch&gt;]</code> 來達到這個目的，大致作法如下：</p>
+<ol>
+<li>取出 <code>&lt;branch&gt;</code> 的 upstream。</li>
+<li>計算 <code>&lt;branch&gt;</code> 與 upstream 的 common ancestor。</li>
+<li>列出 <code>&lt;branch&gt;</code> 上在 common ancestor 之後到 HEAD 的所有 commit。</li>
+</ol>
+<p>動工，以 bash 實作如下：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dd2a3bb8d290946310272" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+#!/bin/bash
+
+if [ "$1" == "" ]; then
+  branch=HEAD
+else
+  branch=$1
+fi
+       
+upstream=`git rev-parse --symbolic-full-name ${branch}@{u}`
+ancestor=`git merge-base ${upstream} ${branch}`
+git log --oneline ${ancestor}..${branch}
+echo "..The following are the commits on upstream.."</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dd2a3bb8d290946310272-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d290946310272-2">2</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d290946310272-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d290946310272-4">4</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d290946310272-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d290946310272-6">6</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d290946310272-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d290946310272-8">8</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d290946310272-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d290946310272-10">10</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d290946310272-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d290946310272-12">12</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dd2a3bb8d290946310272-1"><span class="crayon-p">#!/bin/bash</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d290946310272-2">&nbsp;</div><div class="crayon-line" id="crayon-5dd2a3bb8d290946310272-3"><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">[</span><span class="crayon-h"> </span><span class="crayon-s">"$1"</span><span class="crayon-h"> </span><span class="crayon-o">==</span><span class="crayon-h"> </span><span class="crayon-s">""</span><span class="crayon-h"> </span><span class="crayon-sy">]</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-st">then</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d290946310272-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">branch</span><span class="crayon-o">=</span><span class="crayon-e">HEAD</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d290946310272-5"><span class="crayon-st">else</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d290946310272-6"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">branch</span><span class="crayon-o">=</span><span class="crayon-sy">$</span><span class="crayon-cn">1</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d290946310272-7"><span class="crayon-e">fi</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d290946310272-8"><span class="crayon-e">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></div><div class="crayon-line" id="crayon-5dd2a3bb8d290946310272-9"><span class="crayon-v">upstream</span><span class="crayon-o">=</span><span class="crayon-sy">`</span><span class="crayon-e">git</span><span class="crayon-h"> </span><span class="crayon-e">rev</span><span class="crayon-o">-</span><span class="crayon-e">parse</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-e">symbolic</span><span class="crayon-o">-</span><span class="crayon-e">full</span><span class="crayon-o">-</span><span class="crayon-e">name</span><span class="crayon-h"> </span><span class="crayon-sy">$</span><span class="crayon-sy">{</span><span class="crayon-v">branch</span><span class="crayon-sy">}</span><span class="crayon-sy">@</span><span class="crayon-sy">{</span><span class="crayon-v">u</span><span class="crayon-sy">}</span><span class="crayon-sy">`</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d290946310272-10"><span class="crayon-v">ancestor</span><span class="crayon-o">=</span><span class="crayon-sy">`</span><span class="crayon-e">git</span><span class="crayon-h"> </span><span class="crayon-e">merge</span><span class="crayon-o">-</span><span class="crayon-e">base</span><span class="crayon-h"> </span><span class="crayon-sy">$</span><span class="crayon-sy">{</span><span class="crayon-v">upstream</span><span class="crayon-sy">}</span><span class="crayon-h"> </span><span class="crayon-sy">$</span><span class="crayon-sy">{</span><span class="crayon-v">branch</span><span class="crayon-sy">}</span><span class="crayon-sy">`</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d290946310272-11"><span class="crayon-e">git</span><span class="crayon-h"> </span><span class="crayon-e">log</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-e">oneline</span><span class="crayon-h"> </span><span class="crayon-sy">$</span><span class="crayon-sy">{</span><span class="crayon-v">ancestor</span><span class="crayon-sy">}</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">$</span><span class="crayon-sy">{</span><span class="crayon-v">branch</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d290946310272-12"><span class="crayon-i">echo</span><span class="crayon-h"> </span><span class="crayon-s">"..The following are the commits on upstream.."</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0005 seconds] -->
+<p>以上只是一個簡單的例子，可以參考看看大家都做了哪些 custom commands：</p>
+<ul>
+<li><a href="https://github.com/visionmedia/git-extras" target="_blank" rel="nofollow">git-extras</a></li>
+<li><a href="https://github.com/nvie/gitflow" target="_blank" rel="nofollow">gitflow</a></li>
+<li><a href="https://github.com/mozilla/moz-git-tools" target="_blank" rel="nofollow">moz-git-tools</a></li>
+</ul>
+<h3>3. Hooks（自動化）</h3>
+<p>Git 和其他版本控制系統一樣，可以在某些重要事件發生時，自動觸發自訂腳本。他分為用戶端和伺服器端，這邊我們會說明如何使用用戶端 hooks 來自動化工作流程。</p>
+<p>在每個 Git repository 中都有一個 <code>.git/hooks</code> 目錄，裡面的內容大概像這樣：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dd2a3bb8d293017303520" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+applypatch-msg.sample  pre-applypatch.sample      pre-push.sample
+commit-msg.sample      pre-commit.sample          pre-rebase.sample
+post-update.sample     prepare-commit-msg.sample  update.sample</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dd2a3bb8d293017303520-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d293017303520-2">2</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d293017303520-3">3</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dd2a3bb8d293017303520-1"><span class="crayon-v">applypatch</span><span class="crayon-o">-</span><span class="crayon-v">msg</span><span class="crayon-sy">.</span><span class="crayon-e">sample&nbsp;&nbsp;</span><span class="crayon-v">pre</span><span class="crayon-o">-</span><span class="crayon-v">applypatch</span><span class="crayon-sy">.</span><span class="crayon-e">sample&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">pre</span><span class="crayon-o">-</span><span class="crayon-v">push</span><span class="crayon-sy">.</span><span class="crayon-e">sample</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d293017303520-2"><span class="crayon-v">commit</span><span class="crayon-o">-</span><span class="crayon-v">msg</span><span class="crayon-sy">.</span><span class="crayon-e">sample&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">pre</span><span class="crayon-o">-</span><span class="crayon-v">commit</span><span class="crayon-sy">.</span><span class="crayon-e">sample&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">pre</span><span class="crayon-o">-</span><span class="crayon-v">rebase</span><span class="crayon-sy">.</span><span class="crayon-e">sample</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d293017303520-3"><span class="crayon-v">post</span><span class="crayon-o">-</span><span class="crayon-v">update</span><span class="crayon-sy">.</span><span class="crayon-e">sample&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-v">prepare</span><span class="crayon-o">-</span><span class="crayon-v">commit</span><span class="crayon-o">-</span><span class="crayon-v">msg</span><span class="crayon-sy">.</span><span class="crayon-e">sample&nbsp;&nbsp;</span><span class="crayon-v">update</span><span class="crayon-sy">.</span><span class="crayon-v">sample</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p>這是 Git 提供給我們的 sample script，讓我們參考用的，script 的檔名就是對應的事件，這邊有一份<a href="http://githooks.com/" target="_blank" rel="nofollow">完整可以使用的事件 list</a>。</p>
+<p>如果我們想要安裝一個 hook，在每次 commit 前讓他自動執行某個腳本，就在這個目錄中，新增一個名為 <code>pre-commit</code> 的 script file（注意沒有副檔名，檔案要設為可執行），這樣在 commit 前就會自動執行這個腳本。</p>
+<p>pre-commit 大概是最多人使用的 hook，他可以讓我們在 commit 前對我們的修正做些檢查，例如用 linting tool （ex：jshint）掃過，以便確保程式的品質。可以參考看看大家都怎麼使用 hooks：</p>
+<ul>
+<li><a href="http://githooks.com/" target="_blank" rel="nofollow">Git Hooks</a>：Projects</li>
+<li><a href="https://github.com/jish/pre-commit" target="_blank" rel="nofollow">pre-commit</a></li>
+</ul>
+<p>再來做一個小玩具吧。</p>
+<h4>需求</h4>
+<p>在 gecko 中，<a href="https://github.com/mozilla/gecko-dev/blob/a9c70dde1fcb322932c142a9ca490897b12813d8/dom/telephony/nsITelephonyService.idl#L206" target="_blank" rel="nofollow">每個 interface（寫在 .idl 中）都會有一個編號 uuid</a>，這可以當作該 interface 的版本號或是 signature，當 uuid 一樣時，我們就認為 interface 是沒有改變的，這提供一個機制確保 interface 與其 user 是 binary compatible 的，因此當我們修改 interface 的內容時，修改對應的 uuid 就很重要，但是有時候我們會忘記，所以是不是能有一個自動的檢查，在每次 commit 時都幫我們看看，如果 interface 有改，uuid 是不是也有跟著改。</p>
+<h4>解法</h4>
+<p>考量到 idl 的 parsing 是很複雜的，所以在這個例子中，我們在只做粗略的檢查：如果 idl file 有修改，那麼這個檔案裡的 uuid 必須也有修改。實際上每個 <code>.idl</code> 中可能有多個 interface，我們要確定有改動的 interface 其對應的 uuid 是有改的，甚至其他受影響的也要。不過我們先弄個簡單版，幫助我們抓出粗心忘記改的錯誤，步驟如下：</p>
+<ol>
+<li>檢查此次 commit 的所有檔名，看其中是否有 <code>.idl</code>。</li>
+<li>若有，取得此檔案的 HEAD version （此次 commit 前版本）與 staged version（此次 commit 後版本）。</li>
+<li>取出此兩版中的所有 uuid 形成兩個 sets。</li>
+<li>比較這兩個 set 是否一致，若一致，就表示 uuid 沒改，這是錯誤的，return non-zero 中斷 commit。</li>
+</ol>
+<p>這次用 python 來寫，大致如下：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5dd2a3bb8d298893326834" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+#!/usr/bin/env python
+
+import re
+import subprocess
+import sys
+
+def system(*args, **kwargs):
+    kwargs.setdefault('stdout', subprocess.PIPE)
+    proc = subprocess.Popen(args, **kwargs)
+    out, err = proc.communicate()
+    return out
+
+def getModifiedFiles():
+    result = system('git', 'diff', '--cached', '--diff-filter=M', '--name-status')
+    # M       file1
+    # M       file2
+    # ....
+
+    files = map(lambda x: x.split()[1], result.splitlines())
+    return files
+
+def getModifiedIDL():
+    return filter(lambda x: x.endswith('.idl'), getModifiedFiles())
+
+def getFileContent(version, path):
+    return system('git', 'cat-file', '-p', version + ":" + path)
+
+def getUUIDSet(content):
+    # 38a51e14-1e1e-40e8-860a-92f03c501842
+    pattern = re.compile('uuid\((\w{8}-\w{4}-\w{4}-\w{4}-\w{12})\)')
+    return pattern.findall(content)
+
+def main():
+    for idl in getModifiedIDL():
+        oldUUIDs = getUUIDSet(getFileContent("HEAD", idl))
+        newUUIDs = getUUIDSet(getFileContent("", idl))
+        if set(oldUUIDs) == set(newUUIDs):
+            print "uuid in %s is not changed" % idl
+            sys.exit(1)
+
+if __name__ == '__main__':
+    main()</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-2">2</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-4">4</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-6">6</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-8">8</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-10">10</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-12">12</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-14">14</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-16">16</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-18">18</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-20">20</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-22">22</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-24">24</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-25">25</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-26">26</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-27">27</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-28">28</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-29">29</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-30">30</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-31">31</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-32">32</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-33">33</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-34">34</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-35">35</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-36">36</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-37">37</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-38">38</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-39">39</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-40">40</div><div class="crayon-num" data-line="crayon-5dd2a3bb8d298893326834-41">41</div><div class="crayon-num crayon-striped-num" data-line="crayon-5dd2a3bb8d298893326834-42">42</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-1"><span class="crayon-p">#!/usr/bin/env python</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-2">&nbsp;</div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-3"><span class="crayon-e">import </span><span class="crayon-e">re</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-4"><span class="crayon-e">import </span><span class="crayon-e">subprocess</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-5"><span class="crayon-e">import </span><span class="crayon-e">sys</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-6">&nbsp;</div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-7"><span class="crayon-e">def </span><span class="crayon-e">system</span><span class="crayon-sy">(</span><span class="crayon-o">*</span><span class="crayon-v">args</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-o">*</span><span class="crayon-v">kwargs</span><span class="crayon-sy">)</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">kwargs</span><span class="crayon-sy">.</span><span class="crayon-e">setdefault</span><span class="crayon-sy">(</span><span class="crayon-s">'stdout'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">subprocess</span><span class="crayon-sy">.</span><span class="crayon-v">PIPE</span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-9"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">proc</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">subprocess</span><span class="crayon-sy">.</span><span class="crayon-e">Popen</span><span class="crayon-sy">(</span><span class="crayon-v">args</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-o">*</span><span class="crayon-v">kwargs</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-10"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">out</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">err</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">proc</span><span class="crayon-sy">.</span><span class="crayon-e">communicate</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-11"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-e">out</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-12">&nbsp;</div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-13"><span class="crayon-e">def </span><span class="crayon-e">getModifiedFiles</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-14"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">result</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">system</span><span class="crayon-sy">(</span><span class="crayon-s">'git'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">'diff'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">'--cached'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">'--diff-filter=M'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">'--name-status'</span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-15"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-p"># M&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; file1</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-16"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-p"># M&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; file2</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-17"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-p"># ....</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-18">&nbsp;</div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-19"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">files</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">map</span><span class="crayon-sy">(</span><span class="crayon-i">lambda</span><span class="crayon-h"> </span><span class="crayon-v">x</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">x</span><span class="crayon-sy">.</span><span class="crayon-e">split</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">[</span><span class="crayon-cn">1</span><span class="crayon-sy">]</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">result</span><span class="crayon-sy">.</span><span class="crayon-e">splitlines</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-20"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-e">files</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-21">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-22"><span class="crayon-e">def </span><span class="crayon-e">getModifiedIDL</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-o">:</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-23"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-e">filter</span><span class="crayon-sy">(</span><span class="crayon-i">lambda</span><span class="crayon-h"> </span><span class="crayon-v">x</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">x</span><span class="crayon-sy">.</span><span class="crayon-e">endswith</span><span class="crayon-sy">(</span><span class="crayon-s">'.idl'</span><span class="crayon-sy">)</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-e">getModifiedFiles</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-24">&nbsp;</div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-25"><span class="crayon-e">def </span><span class="crayon-e">getFileContent</span><span class="crayon-sy">(</span><span class="crayon-v">version</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">path</span><span class="crayon-sy">)</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-26"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-e">system</span><span class="crayon-sy">(</span><span class="crayon-s">'git'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">'cat-file'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">'-p'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">version</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-s">":"</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">path</span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-27">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-28"><span class="crayon-e">def </span><span class="crayon-e">getUUIDSet</span><span class="crayon-sy">(</span><span class="crayon-v">content</span><span class="crayon-sy">)</span><span class="crayon-o">:</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-29"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-p"># 38a51e14-1e1e-40e8-860a-92f03c501842</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-30"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">pattern</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">re</span><span class="crayon-sy">.</span><span class="crayon-e">compile</span><span class="crayon-sy">(</span><span class="crayon-s">'uuid<span class="crayon-sy">\</span><span class="crayon-sy">(</span><span class="crayon-sy">(</span><span class="crayon-sy">\</span><span class="crayon-e">w</span><span class="crayon-sy">{</span><span class="crayon-cn">8</span><span class="crayon-sy">}</span><span class="crayon-o">-</span><span class="crayon-sy">\</span><span class="crayon-e">w</span><span class="crayon-sy">{</span><span class="crayon-cn">4</span><span class="crayon-sy">}</span><span class="crayon-o">-</span><span class="crayon-sy">\</span><span class="crayon-e">w</span><span class="crayon-sy">{</span><span class="crayon-cn">4</span><span class="crayon-sy">}</span><span class="crayon-o">-</span><span class="crayon-sy">\</span><span class="crayon-e">w</span><span class="crayon-sy">{</span><span class="crayon-cn">4</span><span class="crayon-sy">}</span><span class="crayon-o">-</span><span class="crayon-sy">\</span><span class="crayon-e">w</span><span class="crayon-sy">{</span><span class="crayon-cn">12</span><span class="crayon-sy">}</span><span class="crayon-sy">)</span>\)'</span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-31"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-v">pattern</span><span class="crayon-sy">.</span><span class="crayon-e">findall</span><span class="crayon-sy">(</span><span class="crayon-v">content</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-32">&nbsp;</div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-33"><span class="crayon-e">def </span><span class="crayon-e">main</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-34"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">for</span><span class="crayon-h"> </span><span class="crayon-e">idl </span><span class="crayon-st">in</span><span class="crayon-h"> </span><span class="crayon-e">getModifiedIDL</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-o">:</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-35"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">oldUUIDs</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">getUUIDSet</span><span class="crayon-sy">(</span><span class="crayon-e">getFileContent</span><span class="crayon-sy">(</span><span class="crayon-s">"HEAD"</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">idl</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-36"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">newUUIDs</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">getUUIDSet</span><span class="crayon-sy">(</span><span class="crayon-e">getFileContent</span><span class="crayon-sy">(</span><span class="crayon-s">""</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">idl</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-37"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-e">set</span><span class="crayon-sy">(</span><span class="crayon-v">oldUUIDs</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">==</span><span class="crayon-h"> </span><span class="crayon-e">set</span><span class="crayon-sy">(</span><span class="crayon-v">newUUIDs</span><span class="crayon-sy">)</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-38"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-i">print</span><span class="crayon-h"> </span><span class="crayon-s">"uuid in %s is not changed"</span><span class="crayon-h"> </span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-e">idl</span></div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-39"><span class="crayon-e">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">sys</span><span class="crayon-sy">.</span><span class="crayon-e">exit</span><span class="crayon-sy">(</span><span class="crayon-cn">1</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-40">&nbsp;</div><div class="crayon-line" id="crayon-5dd2a3bb8d298893326834-41"><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-v">__name__</span><span class="crayon-h"> </span><span class="crayon-o">==</span><span class="crayon-h"> </span><span class="crayon-s">'__main__'</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5dd2a3bb8d298893326834-42"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-e">main</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0056 seconds] -->
+<p>&nbsp;</p>
+<h2>結論</h2>
+<p>程式設計師最酷的地方就是，他可以透過寫程式，來提昇自己下次寫程式的速度，很多我們平常習以為常的地方，都有著改善加速的機會。在本文中，我們透過 Git alias、以及撰寫 Git custom commands、Git hooks，讓軟體開發的流程更順暢、更有生產力。</p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://tech.mozilla.com.tw/?cat=7" rel="category">Open Source</a>      </div>
+    </footer> 
+    </article><!-- #post-5306 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" 
+	              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+			<h3 id="comments-title">
+			共 1 則讀者回應
+		</h3>
+
+		
+		<ol class="commentlist">
+				<li class="comment even thread-even depth-1" id="li-comment-107098">
+		<article id="comment-107098" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/3181e5b8bc041593b6f481f137e461ad?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/3181e5b8bc041593b6f481f137e461ad?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn"><a href='http://zx1986.github.io' rel='external nofollow' class='url'>張旭</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=5306#comment-107098"><time pubdate datetime="2016-06-28T17:32:24+00:00">
+					2016 年 06 月 28 日 下午 05:32					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>您好，想請問 git my-command 的腳本應該是放到哪個目錄？</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=5306&#038;replytocom=107098#respond' onclick='return addComment.moveForm( "comment-107098", "107098", "respond", "5306" )' aria-label='回覆 張旭'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+		</ol>
+
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/?p=5306#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required='true' required='required' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required='true' required='required' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表" /> <input type='hidden' name='comment_post_ID' value='5306' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="20f2013a8a" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="214"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class='name-title'><a class="profile-link" href="https://tech.mozilla.com.tw/?author=70"><span class="gravatar left"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg" alt="" class="avatar user-70-avatar" width='48' height='48' /></span><span class="name">aknow</span></a></span><pre class="bio no-style">擅長 C++ ，負責 Firefox OS 中 
+Telephony (打電話) 的功能</pre><p class='contact'></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="33" href="https://tech.mozilla.com.tw/?author=33"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg" alt="" class="avatar user-33-avatar" width='96' height='96' /></a><a data-author-id="60" href="https://tech.mozilla.com.tw/?author=60"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg" alt="" class="avatar user-60-avatar" width='96' height='96' /></a><a data-author-id="18" href="https://tech.mozilla.com.tw/?author=18"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg" alt="" class="avatar user-18-avatar" width='96' height='96' /></a><a data-author-id="14" href="https://tech.mozilla.com.tw/?author=14"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg" alt="" class="avatar user-14-avatar" width='96' height='96' /></a><a data-author-id="52" href="https://tech.mozilla.com.tw/?author=52"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg" alt="" class="avatar user-52-avatar" width='96' height='96' /></a><a data-author-id="59" href="https://tech.mozilla.com.tw/?author=59"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg" alt="" class="avatar user-59-avatar" width='96' height='96' /></a></div><a class="more" href="/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://tech.mozilla.com.tw/?cat=8" >CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://tech.mozilla.com.tw/?cat=4" >Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://tech.mozilla.com.tw/?cat=3" >Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://tech.mozilla.com.tw/?cat=30" >Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://tech.mozilla.com.tw/?cat=9" >Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://tech.mozilla.com.tw/?cat=42" >Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://tech.mozilla.com.tw/?cat=5" >Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://tech.mozilla.com.tw/?cat=7" >Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://tech.mozilla.com.tw/?cat=29" >UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">選擇月份</option>
+				<option value='https://tech.mozilla.com.tw/?m=201605'> 2016 年 五月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201602'> 2016 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201507'> 2015 年 七月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201506'> 2015 年 六月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201505'> 2015 年 五月 &nbsp;(2)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201504'> 2015 年 四月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201503'> 2015 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201502'> 2015 年 二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201501'> 2015 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201412'> 2014 年 十二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201411'> 2014 年 十一月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201410'> 2014 年 十月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201409'> 2014 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201408'> 2014 年 八月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201407'> 2014 年 七月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201405'> 2014 年 五月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201404'> 2014 年 四月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201403'> 2014 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201402'> 2014 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201401'> 2014 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201312'> 2013 年 十二月 &nbsp;(6)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201311'> 2013 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201310'> 2013 年 十月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201309'> 2013 年 九月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201308'> 2013 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201307'> 2013 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201306'> 2013 年 六月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201305'> 2013 年 五月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201304'> 2013 年 四月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201303'> 2013 年 三月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201302'> 2013 年 二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201301'> 2013 年 一月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201212'> 2012 年 十二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201211'> 2012 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201210'> 2012 年 十月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201209'> 2012 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201208'> 2012 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201207'> 2012 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201206'> 2012 年 六月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201205'> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

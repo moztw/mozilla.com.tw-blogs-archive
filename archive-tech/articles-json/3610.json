@@ -1,0 +1,214 @@
+{
+  "post_id": 3610,
+  "title": "打造你的第一支 NFC 程式 – Hello，NFC！",
+  "date": "2013-12-30",
+  "year": 2013,
+  "month": 12,
+  "day": 30,
+  "categories": [
+    "Firefox OS(B2G)"
+  ],
+  "tags": [],
+  "author": "Dimi",
+  "page_type": "post",
+  "original_url": "https://tech.mozilla.com.tw/?p=3610",
+  "archive_url": "https://web.archive.org/web/20200919192659id_/https://tech.mozilla.com.tw/?p=3610",
+  "wayback_timestamp": "20200919192659",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/nfc-promo.jpg\"><img class=\"aligncenter size-medium wp-image-3644\" alt=\"nfc-promo\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/nfc-promo-300x165.jpg\" width=\"300\" height=\"165\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/12/nfc-promo-300x165.jpg 300w, https://tech.mozilla.com.tw/wp-content/uploads/2013/12/nfc-promo.jpg 400w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a></p>\n<p dir=\"ltr\" style=\"text-align: center\">（圖片來源：<a href=\"http://www.android-apk.com/wp-content/uploads/2013/05/sony-nfc-promo.jpg\">http://www.android-apk.com/wp-content/uploads/2013/05/sony-nfc-promo.jpg</a>）</p>\n<p>想像有一天，看到朋友們拿著手機熱烈的討論著某位正妹的照片，你不用擠破頭跟大家搶手機來看，你只需要將兩隻手機輕輕一碰，正妹的照片咻一下的就傳了過來。回家要搭捷運，再也不需要在人擠人的捷運站匆忙的找著悠遊卡，只要拿出手機，感應一下就可通過，達到卡機合一的境界。晚上要睡覺前，輕輕感應床頭邊的貼紙，手機立刻就調成靜音模式並且設定好隔日的鬧鐘。<br />\n如此輕鬆方便的生活，NFC 都可以為您做到！</p>\n<h2>那 NFC 到底是什麼呢？</h2>\n<p>NFC (Near Field Communication) 中文稱為近場通訊，是由 Nokia，Philips 和 SONY 共同研發的一種短距離通訊技術，允許兩件設備在20公分內進行非接觸式的資料傳輸[1]。<br />\nNFC 這項技術在近幾年來是越來越熱門，新出的 Android 手機大都支援 NFC，也因此衍生出越來越多的應用和產品，像是利用 NFC 在手機間分享資料，NFC 付款等等。也有比較特別的像 NFC 印表機，NFC 冰箱等新奇的產品。<br />\n不過要成為一位專業的 NFC 玩家，並不是一定要購買市面上五花八門的產品，其實我們也可以客製化自己的 NFC，以下就來介紹如何利用 Firefox OS 來撰寫自己的第一支 NFC 程式！</p>\n<h2>打造我的 Hello, NFC !</h2>\n<p>首先要準備以下材料:<br />\n1. 一隻支援 NFC 的手機 (目前支援 NFC 的 Firefox OS 手機是 Nexus4)。<br />\n2. 一張可讀寫的 NFC Tag。<br />\n3. B2G 開發環境。</p>\n<p>就只要這樣，接下來就可以開始 Coding 囉 ~<br />\n我們的目標是要來撰寫一支當手機感應到 NFC Tag 時，可以印出 Hello, NFC! 的程式。而第一件事就是要告訴系統當感應到 NFC Tag 時，必須要通知我們。<br />\n而在 Firefox OS 裡，是利用 Web Activities [2] 來通知應用程式有關 NFC 的訊息，因此首先我們先在 webapp.manifest 增加下列屬性</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f665b83519b4479364767\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n\"activities\": {\r\n  \"nfc-ndef-discovered\": {\r\n  }\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f665b83519b4479364767-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b83519b4479364767-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f665b83519b4479364767-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b83519b4479364767-4\">4</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f665b83519b4479364767-1\"><span class=\"crayon-s\">\"activities\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b83519b4479364767-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-s\">\"nfc-ndef-discovered\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f665b83519b4479364767-3\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b83519b4479364767-4\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p>看到這裡，相信各位一定有個疑問，什麼是 NDEF ?<br />\n這裡的 NDEF (NFC Data Exchange Format) [3]指的是 NFC Tag 裡儲存的資料格式，是 NFC Forum 用來統一不同 NFC 裝置傳輸的界面，簡而言之，就是一種公定的資料格式，而在稍候的文章會有更進一步的介紹。</p>\n<p>而除了 manifest 外，在 js code 中，也要新增處理 activity 的程式碼</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f665b83519be306709664\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nnavigator.mozSetMessageHandler('activity', activityHandler);\r\n\r\nfunction activityHandler(activity) {\r\n  var activityName = activity.source.name;\r\n  var data = activity.source.data;\r\n\r\n  switch (activityName) {\r\n    case 'nfc-ndef-discovered':\r\n      console.log('Hello, NFC!');\r\n      handleNDEF(data);\r\n      break;\r\n  }\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f665b83519be306709664-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b83519be306709664-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f665b83519be306709664-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b83519be306709664-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f665b83519be306709664-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b83519be306709664-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f665b83519be306709664-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b83519be306709664-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f665b83519be306709664-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b83519be306709664-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5f665b83519be306709664-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b83519be306709664-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-5f665b83519be306709664-13\">13</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f665b83519be306709664-1\"><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">mozSetMessageHandler</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'activity'</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">activityHandler</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b83519be306709664-2\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5f665b83519be306709664-3\"><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">activityHandler</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">activity</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b83519be306709664-4\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">activityName</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">activity</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">source</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">name</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f665b83519be306709664-5\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">data</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">activity</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">source</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">data</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b83519be306709664-6\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5f665b83519be306709664-7\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-st\">switch</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">activityName</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b83519be306709664-8\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-st\">case</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">'nfc-ndef-discovered'</span><span class=\"crayon-o\">:</span></div><div class=\"crayon-line\" id=\"crayon-5f665b83519be306709664-9\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">console</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">log</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'Hello, NFC!'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b83519be306709664-10\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">handleNDEF</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">data</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f665b83519be306709664-11\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-st\">break</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b83519be306709664-12\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5f665b83519be306709664-13\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0004 seconds] -->\r\n<p>寫到這裡，其實已經大功告成了，各位可以拿出手機去感應一下手邊的 NFC Tag，相信就可以從 log 上看到令人感動的 Hello, NFC! 了。如果沒有看到的話，請記得去設定頁面將 NFC 打開。<br />\n不過相信這短短的10行 code 是沒有辦法滿足大家的，因此我們可以再更進一步將 Tag 的內容讀出，而要讀取 Tag 裡的資料，就需要跟 NDEF message 打交道，不過在處理 NDEF 之前，讓我們先來了解一下 NDEF 的格式。</p>\n<p>從圖一可以看出一個 NDEF Message 是由許多個 NDEF Record 所組成。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/Ndef-Format-Overview.png\"><img class=\"aligncenter size-medium wp-image-3648\" alt=\"NFC Ndef Format\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/Ndef-Format-Overview-300x160.png\" width=\"300\" height=\"160\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Ndef-Format-Overview-300x160.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Ndef-Format-Overview.png 962w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a></p>\n<p style=\"text-align: center\">圖一、NDEF 格式</p>\n<p>而在 NDEF Record 中的 TNF (Type Name Format) 欄位則定義了這些 Record 的內容。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/TNF.png\"><img class=\"aligncenter size-medium wp-image-3647\" alt=\"NFC TNF\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/TNF-300x165.png\" width=\"300\" height=\"165\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/12/TNF-300x165.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2013/12/TNF.png 582w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a></p>\n<p style=\"text-align: center\">圖二、TNF</p>\n<p>從圖二可以看到除了 RFC 所定義的標準格式外，還有 NFC Forum 自己定義的 RTD (Record Type Definition)[4]，因此當我們要判斷 NDEF 裡的內容時，首先要先檢查 TNF ，如果是 RTD type 的話就要再檢查是哪一種 RTD 。</p>\n<p>假設今天我們想要得到 NFC Tag 裡文字的內容，利用下列程式碼就可以判斷感應到的 Tag 是否儲存文字並將資料讀出。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f665b83519c3463082068\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nfunction handleNDEF(data) {\r\n  if (data.records[0].tnf == 1 &amp;&amp; data.records[0].type == 'T') {\r\n    // Assume there is only one record for simplicity.\r\n    let textPayload = data.records[0].payload;\r\n  } else {\r\n    // Not Text Data\r\n  }\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f665b83519c3463082068-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b83519c3463082068-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f665b83519c3463082068-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b83519c3463082068-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f665b83519c3463082068-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b83519c3463082068-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f665b83519c3463082068-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b83519c3463082068-8\">8</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f665b83519c3463082068-1\"><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">handleNDEF</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">data</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b83519c3463082068-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">data</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">records</span><span class=\"crayon-sy\">[</span><span class=\"crayon-cn\">0</span><span class=\"crayon-sy\">]</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">tnf</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">==</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">1</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&amp;&amp;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">data</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">records</span><span class=\"crayon-sy\">[</span><span class=\"crayon-cn\">0</span><span class=\"crayon-sy\">]</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">type</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">==</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">'T'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f665b83519c3463082068-3\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// Assume there is only one record for simplicity.</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b83519c3463082068-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">let </span><span class=\"crayon-v\">textPayload</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">data</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">records</span><span class=\"crayon-sy\">[</span><span class=\"crayon-cn\">0</span><span class=\"crayon-sy\">]</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">payload</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f665b83519c3463082068-5\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span><span class=\"crayon-h\"> </span><span class=\"crayon-st\">else</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b83519c3463082068-6\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// Not Text Data</span></div><div class=\"crayon-line\" id=\"crayon-5f665b83519c3463082068-7\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b83519c3463082068-8\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0003 seconds] -->\r\n<p>程式碼中的 textPayload 就儲存了文字的內容，而這樣我們也就完成了一支可以讀取 NFC Tag 的程式了，是不是非常容易！<br />\n當然除了讀寫 NFC Tag 以外，NFC 也支援所謂的點對點 (P2P) 模式，我們可以在兩隻支援 NFC 的手機間互相傳送資料，像是照片，音樂，聯絡人資訊 &#8230; 等等。<br />\n而 Firefox OS 當然也支援大家來共同開發這樣的應用程式，不過由於<del datetime=\"2013-12-09T04:04:26+00:00\">筆者懶惰</del>篇幅有限，就不在此贅述了。<br />\n有興趣的人可以加入我們或參考Wiki[5]，相信一定很快就可以寫出更厲害的 NFC App！</p>\n<p>參考資料：<br />\n[1] <a title=\"http://en.wikipedia.org/wiki/Near_field_communication\" href=\"http://en.wikipedia.org/wiki/Near_field_communication\">http://en.wikipedia.org/wiki/Near_field_communication</a><br />\n[2] <a title=\"https://developer.mozilla.org/zh-TW/docs/WebAPI/Web_Activities\" href=\"https://developer.mozilla.org/zh-TW/docs/WebAPI/Web_Activities\">https://developer.mozilla.org/zh-TW/docs/WebAPI/Web_Activities</a><br />\n[3] <a title=\"http://developer.nokia.com/Community/Wiki/Understanding_NFC_Data_Exchange_Format_%28NDEF%29_messages\" href=\"http://developer.nokia.com/Community/Wiki/Understanding_NFC_Data_Exchange_Format_%28NDEF%29_messages\">http://developer.nokia.com/Community/Wiki/Understanding_NFC_Data_Exchange_Format_%28NDEF%29_messages</a><br />\n[4] NFC Record Type Definition (RTD) Technical Specification<br />\n[5] <a title=\"https://wiki.mozilla.org/WebAPI/WebNFC\" href=\"https://wiki.mozilla.org/WebAPI/WebNFC\">https://wiki.mozilla.org/WebAPI/WebNFC</a></p>\n\t\t\t</div>",
+  "content_text": "（圖片來源： http://www.android-apk.com/wp-content/uploads/2013/05/sony-nfc-promo.jpg ） 想像有一天，看到朋友們拿著手機熱烈的討論著某位正妹的照片，你不用擠破頭跟大家搶手機來看，你只需要將兩隻手機輕輕一碰，正妹的照片咻一下的就傳了過來。回家要搭捷運，再也不需要在人擠人的捷運站匆忙的找著悠遊卡，只要拿出手機，感應一下就可通過，達到卡機合一的境界。晚上要睡覺前，輕輕感應床頭邊的貼紙，手機立刻就調成靜音模式並且設定好隔日的鬧鐘。 如此輕鬆方便的生活，NFC 都可以為您做到！ 那 NFC 到底是什麼呢？ NFC (Near Field Communication) 中文稱為近場通訊，是由 Nokia，Philips 和 SONY 共同研發的一種短距離通訊技術，允許兩件設備在20公分內進行非接觸式的資料傳輸[1]。 NFC 這項技術在近幾年來是越來越熱門，新出的 Android 手機大都支援 NFC，也因此衍生出越來越多的應用和產品，像是利用 NFC 在手機間分享資料，NFC 付款等等。也有比較特別的像 NFC 印表機，NFC 冰箱等新奇的產品。 不過要成為一位專業的 NFC 玩家，並不是一定要購買市面上五花八門的產品，其實我們也可以客製化自己的 NFC，以下就來介紹如何利用 Firefox OS 來撰寫自己的第一支 NFC 程式！ 打造我的 Hello, NFC ! 首先要準備以下材料: 1. 一隻支援 NFC 的手機 (目前支援 NFC 的 Firefox OS 手機是 Nexus4)。 2. 一張可讀寫的 NFC Tag。 3. B2G 開發環境。 就只要這樣，接下來就可以開始 Coding 囉 ~ 我們的目標是要來撰寫一支當手機感應到 NFC Tag 時，可以印出 Hello, NFC! 的程式。而第一件事就是要告訴系統當感應到 NFC Tag 時，必須要通知我們。 而在 Firefox OS 裡，是利用 Web Activities [2] 來通知應用程式有關 NFC 的訊息，因此首先我們先在 webapp.manifest 增加下列屬性 \"activities\": { \"nfc-ndef-discovered\": { } } 1 2 3 4 \"activities\" : { \"nfc-ndef-discovered\" : { } } 看到這裡，相信各位一定有個疑問，什麼是 NDEF ? 這裡的 NDEF (NFC Data Exchange Format) [3]指的是 NFC Tag 裡儲存的資料格式，是 NFC Forum 用來統一不同 NFC 裝置傳輸的界面，簡而言之，就是一種公定的資料格式，而在稍候的文章會有更進一步的介紹。 而除了 manifest 外，在 js code 中，也要新增處理 activity 的程式碼 navigator.mozSetMessageHandler('activity', activityHandler); function activityHandler(activity) { var activityName = activity.source.name; var data = activity.source.data; switch (activityName) { case 'nfc-ndef-discovered': console.log('Hello, NFC!'); handleNDEF(data); break; } } 1 2 3 4 5 6 7 8 9 10 11 12 13 navigator . mozSetMessageHandler ( 'activity' , activityHandler ) ; function activityHandler ( activity ) { var activityName = activity . source . name ; var data = activity . source . data ; switch ( activityName ) { case 'nfc-ndef-discovered' : console . log ( 'Hello, NFC!' ) ; handleNDEF ( data ) ; break ; } } 寫到這裡，其實已經大功告成了，各位可以拿出手機去感應一下手邊的 NFC Tag，相信就可以從 log 上看到令人感動的 Hello, NFC! 了。如果沒有看到的話，請記得去設定頁面將 NFC 打開。 不過相信這短短的10行 code 是沒有辦法滿足大家的，因此我們可以再更進一步將 Tag 的內容讀出，而要讀取 Tag 裡的資料，就需要跟 NDEF message 打交道，不過在處理 NDEF 之前，讓我們先來了解一下 NDEF 的格式。 從圖一可以看出一個 NDEF Message 是由許多個 NDEF Record 所組成。 圖一、NDEF 格式 而在 NDEF Record 中的 TNF (Type Name Format) 欄位則定義了這些 Record 的內容。 圖二、TNF 從圖二可以看到除了 RFC 所定義的標準格式外，還有 NFC Forum 自己定義的 RTD (Record Type Definition)[4]，因此當我們要判斷 NDEF 裡的內容時，首先要先檢查 TNF ，如果是 RTD type 的話就要再檢查是哪一種 RTD 。 假設今天我們想要得到 NFC Tag 裡文字的內容，利用下列程式碼就可以判斷感應到的 Tag 是否儲存文字並將資料讀出。 function handleNDEF(data) { if (data.records[0].tnf == 1 && data.records[0].type == 'T') { // Assume there is only one record for simplicity. let textPayload = data.records[0].payload; } else { // Not Text Data } } 1 2 3 4 5 6 7 8 function handleNDEF ( data ) { if ( data . records [ 0 ] . tnf == 1 && data . records [ 0 ] . type == 'T' ) { // Assume there is only one record for simplicity. let textPayload = data . records [ 0 ] . payload ; } else { // Not Text Data } } 程式碼中的 textPayload 就儲存了文字的內容，而這樣我們也就完成了一支可以讀取 NFC Tag 的程式了，是不是非常容易！ 當然除了讀寫 NFC Tag 以外，NFC 也支援所謂的點對點 (P2P) 模式，我們可以在兩隻支援 NFC 的手機間互相傳送資料，像是照片，音樂，聯絡人資訊 … 等等。 而 Firefox OS 當然也支援大家來共同開發這樣的應用程式，不過由於 筆者懶惰 篇幅有限，就不在此贅述了。 有興趣的人可以加入我們或參考Wiki[5]，相信一定很快就可以寫出更厲害的 NFC App！ 參考資料： [1] http://en.wikipedia.org/wiki/Near_field_communication [2] https://developer.mozilla.org/zh-TW/docs/WebAPI/Web_Activities [3] http://developer.nokia.com/Community/Wiki/Understanding_NFC_Data_Exchange_Format_%28NDEF%29_messages [4] NFC Record Type Definition (RTD) Technical Specification [5] https://wiki.mozilla.org/WebAPI/WebNFC",
+  "images": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/nfc-promo-300x165.jpg",
+      "alt": "nfc-promo",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/3610/wp-content/uploads/2013/12/nfc-promo-300x165.jpg",
+      "markdown_path": "../assets/3610/wp-content/uploads/2013/12/nfc-promo-300x165.jpg",
+      "wayback_timestamp": "20200919192659",
+      "asset_archive_url": "https://web.archive.org/web/20200919192659id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/nfc-promo-300x165.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/nfc-promo.jpg",
+      "alt": "nfc-promo",
+      "kind": "image",
+      "source": "img-srcset",
+      "archive_path": "assets/3610/wp-content/uploads/2013/12/nfc-promo.jpg",
+      "markdown_path": "../assets/3610/wp-content/uploads/2013/12/nfc-promo.jpg",
+      "wayback_timestamp": "20200919192659",
+      "asset_archive_url": "https://web.archive.org/web/20200919192659id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/nfc-promo.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Ndef-Format-Overview-300x160.png",
+      "alt": "NFC Ndef Format",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/3610/wp-content/uploads/2013/12/Ndef-Format-Overview-300x160.png",
+      "markdown_path": "../assets/3610/wp-content/uploads/2013/12/Ndef-Format-Overview-300x160.png",
+      "wayback_timestamp": "20200919192659",
+      "asset_archive_url": "https://web.archive.org/web/20200919192659id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Ndef-Format-Overview-300x160.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Ndef-Format-Overview.png",
+      "alt": "NFC Ndef Format",
+      "kind": "image",
+      "source": "img-srcset",
+      "archive_path": "assets/3610/wp-content/uploads/2013/12/Ndef-Format-Overview.png",
+      "markdown_path": "../assets/3610/wp-content/uploads/2013/12/Ndef-Format-Overview.png",
+      "wayback_timestamp": "20200919192659",
+      "asset_archive_url": "https://web.archive.org/web/20200919192659id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Ndef-Format-Overview.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/TNF-300x165.png",
+      "alt": "NFC TNF",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/3610/wp-content/uploads/2013/12/TNF-300x165.png",
+      "markdown_path": "../assets/3610/wp-content/uploads/2013/12/TNF-300x165.png",
+      "wayback_timestamp": "20200919192659",
+      "asset_archive_url": "https://web.archive.org/web/20200919192659id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/TNF-300x165.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/TNF.png",
+      "alt": "NFC TNF",
+      "kind": "image",
+      "source": "img-srcset",
+      "archive_path": "assets/3610/wp-content/uploads/2013/12/TNF.png",
+      "markdown_path": "../assets/3610/wp-content/uploads/2013/12/TNF.png",
+      "wayback_timestamp": "20200919192659",
+      "asset_archive_url": "https://web.archive.org/web/20200919192659id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/TNF.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://www.android-apk.com/wp-content/uploads/2013/05/sony-nfc-promo.jpg",
+      "alt": "http://www.android-apk.com/wp-content/uploads/2013/05/sony-nfc-promo.jpg",
+      "kind": "image",
+      "source": "a-href",
+      "archive_path": "assets/3610/wp-content/uploads/2013/05/sony-nfc-promo.jpg",
+      "markdown_path": "../assets/3610/wp-content/uploads/2013/05/sony-nfc-promo.jpg",
+      "wayback_timestamp": "20200919192659",
+      "asset_archive_url": "https://web.archive.org/web/20200919192659id_/https://www.android-apk.com/wp-content/uploads/2013/05/sony-nfc-promo.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/nfc-promo-300x165.jpg",
+      "alt": "nfc-promo",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/3610/wp-content/uploads/2013/12/nfc-promo-300x165.jpg",
+      "markdown_path": "../assets/3610/wp-content/uploads/2013/12/nfc-promo-300x165.jpg",
+      "wayback_timestamp": "20200919192659",
+      "asset_archive_url": "https://web.archive.org/web/20200919192659id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/nfc-promo-300x165.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/nfc-promo.jpg",
+      "alt": "nfc-promo",
+      "kind": "image",
+      "source": "img-srcset",
+      "archive_path": "assets/3610/wp-content/uploads/2013/12/nfc-promo.jpg",
+      "markdown_path": "../assets/3610/wp-content/uploads/2013/12/nfc-promo.jpg",
+      "wayback_timestamp": "20200919192659",
+      "asset_archive_url": "https://web.archive.org/web/20200919192659id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/nfc-promo.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Ndef-Format-Overview-300x160.png",
+      "alt": "NFC Ndef Format",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/3610/wp-content/uploads/2013/12/Ndef-Format-Overview-300x160.png",
+      "markdown_path": "../assets/3610/wp-content/uploads/2013/12/Ndef-Format-Overview-300x160.png",
+      "wayback_timestamp": "20200919192659",
+      "asset_archive_url": "https://web.archive.org/web/20200919192659id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Ndef-Format-Overview-300x160.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Ndef-Format-Overview.png",
+      "alt": "NFC Ndef Format",
+      "kind": "image",
+      "source": "img-srcset",
+      "archive_path": "assets/3610/wp-content/uploads/2013/12/Ndef-Format-Overview.png",
+      "markdown_path": "../assets/3610/wp-content/uploads/2013/12/Ndef-Format-Overview.png",
+      "wayback_timestamp": "20200919192659",
+      "asset_archive_url": "https://web.archive.org/web/20200919192659id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Ndef-Format-Overview.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/TNF-300x165.png",
+      "alt": "NFC TNF",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/3610/wp-content/uploads/2013/12/TNF-300x165.png",
+      "markdown_path": "../assets/3610/wp-content/uploads/2013/12/TNF-300x165.png",
+      "wayback_timestamp": "20200919192659",
+      "asset_archive_url": "https://web.archive.org/web/20200919192659id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/TNF-300x165.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/TNF.png",
+      "alt": "NFC TNF",
+      "kind": "image",
+      "source": "img-srcset",
+      "archive_path": "assets/3610/wp-content/uploads/2013/12/TNF.png",
+      "markdown_path": "../assets/3610/wp-content/uploads/2013/12/TNF.png",
+      "wayback_timestamp": "20200919192659",
+      "asset_archive_url": "https://web.archive.org/web/20200919192659id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/TNF.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://www.android-apk.com/wp-content/uploads/2013/05/sony-nfc-promo.jpg",
+      "alt": "http://www.android-apk.com/wp-content/uploads/2013/05/sony-nfc-promo.jpg",
+      "kind": "image",
+      "source": "a-href",
+      "archive_path": "assets/3610/wp-content/uploads/2013/05/sony-nfc-promo.jpg",
+      "markdown_path": "../assets/3610/wp-content/uploads/2013/05/sony-nfc-promo.jpg",
+      "wayback_timestamp": "20200919192659",
+      "asset_archive_url": "https://web.archive.org/web/20200919192659id_/https://www.android-apk.com/wp-content/uploads/2013/05/sony-nfc-promo.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/nfc-promo.jpg",
+      "text": ""
+    },
+    {
+      "url": "https://www.android-apk.com/wp-content/uploads/2013/05/sony-nfc-promo.jpg",
+      "text": "http://www.android-apk.com/wp-content/uploads/2013/05/sony-nfc-promo.jpg"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Ndef-Format-Overview.png",
+      "text": ""
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/TNF.png",
+      "text": ""
+    },
+    {
+      "url": "https://en.wikipedia.org/wiki/Near_field_communication",
+      "text": "http://en.wikipedia.org/wiki/Near_field_communication"
+    },
+    {
+      "url": "https://developer.mozilla.org/zh-TW/docs/WebAPI/Web_Activities",
+      "text": "https://developer.mozilla.org/zh-TW/docs/WebAPI/Web_Activities"
+    },
+    {
+      "url": "https://developer.nokia.com/Community/Wiki/Understanding_NFC_Data_Exchange_Format_%28NDEF%29_messages",
+      "text": "http://developer.nokia.com/Community/Wiki/Understanding_NFC_Data_Exchange_Format_%28NDEF%29_messages"
+    },
+    {
+      "url": "https://wiki.mozilla.org/WebAPI/WebNFC",
+      "text": "https://wiki.mozilla.org/WebAPI/WebNFC"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": []
+}

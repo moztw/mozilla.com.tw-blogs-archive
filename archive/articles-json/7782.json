@@ -1,0 +1,85 @@
+{
+  "post_id": 7782,
+  "title": "Pointer Events 現已進入 Firefox Nightly",
+  "date": "2015-08-20",
+  "year": 2015,
+  "month": 8,
+  "day": 20,
+  "categories": [
+    "Firefox"
+  ],
+  "tags": [
+    "Firefox"
+  ],
+  "author": "",
+  "original_url": "https://blog.mozilla.com.tw/?p=7782",
+  "archive_url": "https://web.archive.org/web/20190825011727id_/https://blog.mozilla.com.tw/?p=7782",
+  "wayback_timestamp": "20190825011727",
+  "content_html": "<div class=\"entry-content close\">\n    <p>就在今年二月，<a href=\"http://www.w3.org/TR/pointerevents/\">Pointer Events</a> 已正式列入 W3C 的「建議 (Recommendation)」公告。而在這段期間，<a href=\"https://www.mozilla.org\">Mozilla</a> 與 <a href=\"https://msopentech.com/\">Microsoft Open Tech</a> 一同合作建構其規格。隨著消費者以越來越多樣的裝置探索網路，所搭配的輸入機制 (如觸控、滑鼠、觸控筆) 也更顯豐富。所以讓開發者能在自己的 App 中使用一致的 API 就更顯重要。我們在努力之下達到了重要里程碑：Pointer event 現已進入 <a href=\"https://nightly.mozilla.org/\">Firefox 每夜更新版 (Nightly)</a>。此代表了多家瀏覽器供應商投入心力共同合作，要能產生高品質的業界標準 API 並拓展其支援範圍。</p>\n<div id=\"attachment_7790\" style=\"width: 600px\" class=\"wp-caption aligncenter\"><a href=\"http://www.w3.org/TR/pointerevents/\" target=\"_blank\"><img class=\"wp-image-7790\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/tiltY_600px.png\" alt=\"圖片來源：http://www.w3.org\" width=\"590\" height=\"438\" /></a><p class=\"wp-caption-text\">圖片來源：http://www.w3.org</p></div>\n<p>但請確實下載 Firefox Nightly 版本才得以實際體驗。另請透過 <a href=\"https://lists.mozilla.org/listinfo/dev-platform\">dev-platform</a> 郵件群組或 <a href=\"https://groups.google.com/forum/#%21forum/mozilla.dev.platform\">mozilla.dev.platform</a> 不吝提供意見。如果你想針對規格提出建議，請寄送至 <a href=\"mailto:public-pointer-events@w3.org\">public-pointer-events@w3.org</a>。</p>\n<p>此一規格是希望能讓 Open Web 支援更多樣的輸入機制，並能繼續相容絕大多數以 <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent\">Mouse events</a> 所打造的 Web 架構內容。此 API 將可透過單一解決方案處理多樣的輸入裝置，且著重於點擊裝置 (如滑鼠、觸控筆、觸控手勢)。Pointer 的規格定義不限於特定硬體 (Hardware-agnostic) 裝置，因此可支援特定的螢幕座標集合。Pointer events 是刻意要近似於現有 Mouse events 的相關事件集合。</p>\n<p>目前的 Nightly 版本已針對滑鼠輸入而支援了 Pointer events。此外，如果你正好在使用 Windows，則只要設定 2 組偏好，就會一併啟用 Touch events。在將 <code>layers.async-pan-zoom.enabled</code> 的 Firefox <a href=\"https://developer.mozilla.org/en-US/docs/Mozilla/Preferences/A_brief_guide_to_Mozilla_preferences#Modifying_preferences\">組態偏好</a>設定為「true」之後，即可啟用第一組 Async Pan &amp; Zoom (<a href=\"https://wiki.mozilla.org/Platform/GFX/APZ\">APZ</a>) 屬性。另在自己的偏好中，將 <code>dom.w3c_touch_events.enabled</code> 值設定為 1 即可啟用之。</p>\n<p>本篇文章將提及新 API 的某些基本功能。</p>\n<h4>使用 Pointer API</h4>\n<p>在開始 Pointer API 之前，必須先確認你所用的瀏覽器可支援此 API。下列範例程式碼即可測試：</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-55fd2853a92d0323892886\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nif (window.PointerEvent) {\r\n  .....\r\n}else{\r\n  // use mouse events\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-55fd2853a92d0323892886-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55fd2853a92d0323892886-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-55fd2853a92d0323892886-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55fd2853a92d0323892886-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-55fd2853a92d0323892886-5\">5</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-55fd2853a92d0323892886-1\"><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">window</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">PointerEvent</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55fd2853a92d0323892886-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">.</span><span class=\"crayon-sy\">.</span><span class=\"crayon-sy\">.</span><span class=\"crayon-sy\">.</span><span class=\"crayon-sy\">.</span></div><div class=\"crayon-line\" id=\"crayon-55fd2853a92d0323892886-3\"><span class=\"crayon-sy\">}</span><span class=\"crayon-st\">else</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55fd2853a92d0323892886-4\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-c\">// use mouse events</span></div><div class=\"crayon-line\" id=\"crayon-55fd2853a92d0323892886-5\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0011 seconds] -->\r\n<p>看到這裡，如果你早就對 Pointer events 有著極高的興趣也躍躍欲試，請千萬別錯過<a href=\"https://hacks.mozilla.org/2015/08/pointer-events-now-in-firefox-nightly/\" target=\"_blank\">原文及其中的範例程式碼</a>。</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2015/08/pointer-events-now-in-firefox-nightly/\" target=\"_blank\">Pointer Events now in Firefox Nightly</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
+  "content_text": "就在今年二月， Pointer Events 已正式列入 W3C 的「建議 (Recommendation)」公告。而在這段期間， Mozilla 與 Microsoft Open Tech 一同合作建構其規格。隨著消費者以越來越多樣的裝置探索網路，所搭配的輸入機制 (如觸控、滑鼠、觸控筆) 也更顯豐富。所以讓開發者能在自己的 App 中使用一致的 API 就更顯重要。我們在努力之下達到了重要里程碑：Pointer event 現已進入 Firefox 每夜更新版 (Nightly) 。此代表了多家瀏覽器供應商投入心力共同合作，要能產生高品質的業界標準 API 並拓展其支援範圍。 圖片來源：http://www.w3.org 但請確實下載 Firefox Nightly 版本才得以實際體驗。另請透過 dev-platform 郵件群組或 mozilla.dev.platform 不吝提供意見。如果你想針對規格提出建議，請寄送至 public-pointer-events@w3.org 。 此一規格是希望能讓 Open Web 支援更多樣的輸入機制，並能繼續相容絕大多數以 Mouse events 所打造的 Web 架構內容。此 API 將可透過單一解決方案處理多樣的輸入裝置，且著重於點擊裝置 (如滑鼠、觸控筆、觸控手勢)。Pointer 的規格定義不限於特定硬體 (Hardware-agnostic) 裝置，因此可支援特定的螢幕座標集合。Pointer events 是刻意要近似於現有 Mouse events 的相關事件集合。 目前的 Nightly 版本已針對滑鼠輸入而支援了 Pointer events。此外，如果你正好在使用 Windows，則只要設定 2 組偏好，就會一併啟用 Touch events。在將 layers.async-pan-zoom.enabled 的 Firefox 組態偏好 設定為「true」之後，即可啟用第一組 Async Pan & Zoom ( APZ ) 屬性。另在自己的偏好中，將 dom.w3c_touch_events.enabled 值設定為 1 即可啟用之。 本篇文章將提及新 API 的某些基本功能。 使用 Pointer API 在開始 Pointer API 之前，必須先確認你所用的瀏覽器可支援此 API。下列範例程式碼即可測試： if (window.PointerEvent) { ..... }else{ // use mouse events } 1 2 3 4 5 if ( window . PointerEvent ) { . . . . . } else { // use mouse events } 看到這裡，如果你早就對 Pointer events 有著極高的興趣也躍躍欲試，請千萬別錯過 原文及其中的範例程式碼 。 原文連結： Pointer Events now in Firefox Nightly",
+  "images": [
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/tiltY_600px.png",
+      "alt": "圖片來源：http://www.w3.org",
+      "archive_path": "assets/7782/wp-content/uploads/tiltY_600px.png",
+      "markdown_path": "../assets/7782/wp-content/uploads/tiltY_600px.png"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://www.w3.org/TR/pointerevents/",
+      "text": "Pointer Events"
+    },
+    {
+      "url": "https://www.mozilla.org/",
+      "text": "Mozilla"
+    },
+    {
+      "url": "https://msopentech.com/",
+      "text": "Microsoft Open Tech"
+    },
+    {
+      "url": "https://nightly.mozilla.org/",
+      "text": "Firefox 每夜更新版 (Nightly)"
+    },
+    {
+      "url": "https://www.w3.org/TR/pointerevents/",
+      "text": ""
+    },
+    {
+      "url": "https://lists.mozilla.org/listinfo/dev-platform",
+      "text": "dev-platform"
+    },
+    {
+      "url": "https://groups.google.com/forum/#%21forum/mozilla.dev.platform",
+      "text": "mozilla.dev.platform"
+    },
+    {
+      "url": "mailto:public-pointer-events@w3.org",
+      "text": "public-pointer-events@w3.org"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent",
+      "text": "Mouse events"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Mozilla/Preferences/A_brief_guide_to_Mozilla_preferences#Modifying_preferences",
+      "text": "組態偏好"
+    },
+    {
+      "url": "https://wiki.mozilla.org/Platform/GFX/APZ",
+      "text": "APZ"
+    },
+    {
+      "url": "https://hacks.mozilla.org/2015/08/pointer-events-now-in-firefox-nightly/",
+      "text": "原文及其中的範例程式碼"
+    },
+    {
+      "url": "https://hacks.mozilla.org/2015/08/pointer-events-now-in-firefox-nightly/",
+      "text": "Pointer Events now in Firefox Nightly"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": []
+}

@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+Address-Sanitizer(ASAN): 一個 C/C++ 記憶體偵錯的工具 | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="https://tech.mozilla.com.tw/?p=4282"/><meta property="og:image" content="https://tech.mozilla.com.tw/wp-content/uploads/2014/04/ASAN.png" />
+
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css" /><!--<link rel="pingback" href="https://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="https://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://tech.mozilla.com.tw/","urlLoginRedirect":"https://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=b9b467560c","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel='dns-prefetch' href='//s.w.org'>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo;" href="https://tech.mozilla.com.tw/?feed=rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 迴響" href="https://tech.mozilla.com.tw/?feed=comments-rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; Address-Sanitizer(ASAN): 一個 C/C++ 記憶體偵錯的工具 迴響" href="https://tech.mozilla.com.tw/?feed=rss2&#038;p=4282" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='crayon-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-arduino-ide-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='advanced-responsive-video-embedder-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0' type='text/css' media='all' />
+<link rel='stylesheet' id='persona-style-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46' type='text/css' media='all' />
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<link rel='https://api.w.org/' href='https://tech.mozilla.com.tw/?rest_route=/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Mozilla UX Team大解密' href='https://tech.mozilla.com.tw/?p=4559' />
+<link rel='next' title='淺談 Cycle Collection' href='https://tech.mozilla.com.tw/?p=4351' />
+<meta name="generator" content="WordPress 4.6" />
+<link rel="canonical" href="https://tech.mozilla.com.tw/?p=4282" />
+<link rel='shortlink' href='https://tech.mozilla.com.tw/?p=4282' />
+<link rel="alternate" type="application/json+oembed" href="https://tech.mozilla.com.tw/?rest_route=%2Foembed%2F1.0%2Fembed&#038;url=https%3A%2F%2Ftech.mozilla.com.tw%2F%3Fp%3D4282" />
+<link rel="stylesheet" href="https://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-4282 single-format-standard sand">
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='//mozilla.com.tw/' class='home'>Home</a>
+            <b>&raquo;</b>
+            <a href='//mozilla.com.tw/news/'>訊息中心</a>
+            <b>&raquo;</b>
+                          <a href='//tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>
+              <span>Address-Sanitizer(ASAN): 一個 C/C++ 記憶體偵錯的工具</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="https://tech.mozilla.com.tw/?p=4282" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="https://tech.mozilla.com.tw/?p=4282"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=https://tech.mozilla.com.tw/?p=4282&media=https://tech.mozilla.com.tw/wp-content/uploads/2014/04/ASAN-150x150.png" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+	        <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">2</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://tech.mozilla.com.tw/?p=4559"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2014/05/IMAG2179-150x150.jpg" class="attachment-48x48 size-48x48 wp-post-image" alt="IMAG2179" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2014/05/IMAG2179-150x150.jpg 150w, https://tech.mozilla.com.tw/wp-content/uploads/2014/05/IMAG2179-300x300.jpg 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/05/IMAG2179-1024x1024.jpg 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2014/05/IMAG2179.jpg 1520w" sizes="(max-width: 48px) 100vw, 48px" /><span class="meta-nav">Mozilla UX Team大解密</span></div></a></div>		
+							<div class="nav-next"><a href="https://tech.mozilla.com.tw/?p=4351"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2014/04/CC_refCycle-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="CC_refCycle" /><span class="meta-nav">淺談 Cycle Collection</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-4282" class="post-4282 post type-post status-publish format-standard has-post-thumbnail hentry category-firefox category-b2g category-mozilla category-open-source tag-asan tag-clang tag-debug tag-llvm">
+	 	<header class="entry-header">
+		<h1 class="entry-title">Address-Sanitizer(ASAN): 一個 C/C++ 記憶體偵錯的工具</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://tech.mozilla.com.tw/?m=201405" class="posted-month">5月</a>
+	        <span class="posted-date">19</span>
+	        <a title="See all posts from 2014" href="https://tech.mozilla.com.tw/?m=2014" class="posted-year">2014</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="99">
+		  	<a href="https://tech.mozilla.com.tw/?author=99">
+	          <img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/99/3bee2766a4946840a9d65c94930e93f9-bpthumb.jpg" alt="" class="avatar user-99-avatar" width='24' height='24' /><!--
+	       --><div class="author-info">阿帆達 Avatar</div><!--
+	       --><div class="author-title"></div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p>LLVM 有一系列以 Sanitizer 結尾的偵錯工具(ASAN/TSAN/MSAN/DFSAN/LSAN)<a href="http://clang.llvm.org/docs/">[1]</a>，每個工具各司其職，在此我們介紹其中的 ASAN<a href="https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer">[2]</a>。</p>
+<p>Memory Corruption 一直是個非常難除錯非常讓人苦惱的問題， ASAN 正是一個幫助大家處理這樣問題的工具， ASAN 內建於 LLVM 3.1 和 gcc 4.8<a href="http://gcc.gnu.org/gcc-4.8/changes.html">[3]</a>，其可偵測出以下的問題：</p>
+<ul>
+<li>Use after free (dangling pointer dereference)</li>
+<li>Heap buffer overflow</li>
+<li>Stack buffer overflow</li>
+<li>Global buffer overflow</li>
+<li>Use after return</li>
+</ul>
+<p>對 ASAN 演算法有興趣的夥伴可以參考<a href="https://code.google.com/p/address-sanitizer/wiki/AddressSanitizerAlgorithm">官網頁面說明</a></p>
+<h2></h2>
+<h2>使用方式 (Using ASAN)</h2>
+<p>1.    編譯時要加上使用 ASAN 的 flag (<strong>-fsanitize=address</strong>)<br />
+2.    執行檔中就直接插入了記憶體偵錯的程式碼<br />
+3.    直接跑執行檔，如果有偵測到錯誤會在輸出訊息中看到結果</p>
+<p><strong>以下是一個使用 ASAN 的範例</strong></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f282c8226421196618081" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+(compile)
+% cat tests/use-after-free.c
+#include &lt;stdlib.h&gt;
+int main() {
+char *x = (char*)malloc(10 * sizeof(char*));
+free(x);
+return x[5];
+}
+
+% ../clang_build_Linux/Release+Asserts/bin/clang -fsanitize=address -O1 -fno-omit-frame-pointer -g tests/use-after-free.c</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f282c8226421196618081-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226421196618081-2">2</div><div class="crayon-num" data-line="crayon-5f282c8226421196618081-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226421196618081-4">4</div><div class="crayon-num" data-line="crayon-5f282c8226421196618081-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226421196618081-6">6</div><div class="crayon-num" data-line="crayon-5f282c8226421196618081-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226421196618081-8">8</div><div class="crayon-num" data-line="crayon-5f282c8226421196618081-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226421196618081-10">10</div><div class="crayon-num" data-line="crayon-5f282c8226421196618081-11">11</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f282c8226421196618081-1"><span class="crayon-sy">(</span><span class="crayon-v">compile</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226421196618081-2"><span class="crayon-ta">%</span><span class="crayon-h"> </span><span class="crayon-i">cat</span><span class="crayon-h"> </span><span class="crayon-v">tests</span><span class="crayon-o">/</span><span class="crayon-v">use</span><span class="crayon-o">-</span><span class="crayon-v">after</span><span class="crayon-o">-</span><span class="crayon-v">free</span><span class="crayon-sy">.</span><span class="crayon-i">c</span></div><div class="crayon-line" id="crayon-5f282c8226421196618081-3">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226421196618081-4"><span class="crayon-p">#include &lt;stdlib.h&gt;</span></div><div class="crayon-line" id="crayon-5f282c8226421196618081-5"><span class="crayon-t">int</span><span class="crayon-h"> </span><span class="crayon-e">main</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226421196618081-6"><span class="crayon-t">char</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-v">x</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-t">char</span><span class="crayon-o">*</span><span class="crayon-sy">)</span><span class="crayon-e">malloc</span><span class="crayon-sy">(</span><span class="crayon-cn">10</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-e">sizeof</span><span class="crayon-sy">(</span><span class="crayon-t">char</span><span class="crayon-o">*</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f282c8226421196618081-7"><span class="crayon-e">free</span><span class="crayon-sy">(</span><span class="crayon-v">x</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226421196618081-8"><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-v">x</span><span class="crayon-sy">[</span><span class="crayon-cn">5</span><span class="crayon-sy">]</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f282c8226421196618081-9"><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226421196618081-10">&nbsp;</div><div class="crayon-line" id="crayon-5f282c8226421196618081-11"><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-o">/</span><span class="crayon-v">clang_build_Linux</span><span class="crayon-o">/</span><span class="crayon-v">Release</span><span class="crayon-o">+</span><span class="crayon-v">Asserts</span><span class="crayon-o">/</span><span class="crayon-v">bin</span><span class="crayon-o">/</span><span class="crayon-v">clang</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-v">fsanitize</span><span class="crayon-o">=</span><span class="crayon-v">address</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-v">O1</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-v">fno</span><span class="crayon-o">-</span><span class="crayon-v">omit</span><span class="crayon-o">-</span><span class="crayon-v">frame</span><span class="crayon-o">-</span><span class="crayon-v">pointer</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-i">g</span><span class="crayon-h"> </span><span class="crayon-v">tests</span><span class="crayon-o">/</span><span class="crayon-st">use</span><span class="crayon-o">-</span><span class="crayon-v">after</span><span class="crayon-o">-</span><span class="crayon-v">free</span><span class="crayon-sy">.</span><span class="crayon-v">c</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0033 seconds] -->
+<p><em>[其它的 flag ]<br />
+-O1 : 是為了得到較佳的效能<br />
+-fno-omit-frame-pointer: 是為了在錯誤訊息中能得到正確的 stack trace</em></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f282c822642b528177144" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+(Execute and Output)
+% ./a.out
+==9901==ERROR: AddressSanitizer: heap-use-after-free on address 0x60700000dfb5 at 
+pc 0x45917b bp 0x7fff4490c700 sp 0x7fff4490c6f8
+READ of size 1 at 0x60700000dfb5 thread T0
+    #0 0x45917a in main use-after-free.c:5
+    #1 0x7fce9f25e76c in __libc_start_main /build/buildd/eglibc-2.15/csu/libc-start.c:226
+    #2 0x459074 in _start (a.out+0x459074)
+0x60700000dfb5 is located 5 bytes inside of 80-byte region [0x60700000dfb0,0x60700000e000)
+freed by thread T0 here:
+    #0 0x4441ee in __interceptor_free projects/compiler-rt/lib/asan/asan_malloc_linux.cc:64
+    #1 0x45914a in main use-after-free.c:4
+    #2 0x7fce9f25e76c in __libc_start_main /build/buildd/eglibc-2.15/csu/libc-start.c:226
+previously allocated by thread T0 here:
+    #0 0x44436e in __interceptor_malloc projects/compiler-rt/lib/asan/asan_malloc_linux.cc:74
+    #1 0x45913f in main use-after-free.c:3
+    #2 0x7fce9f25e76c in __libc_start_main /build/buildd/eglibc-2.15/csu/libc-start.c:226
+SUMMARY: AddressSanitizer: heap-use-after-free use-after-free.c:5 main</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f282c822642b528177144-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c822642b528177144-2">2</div><div class="crayon-num" data-line="crayon-5f282c822642b528177144-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c822642b528177144-4">4</div><div class="crayon-num" data-line="crayon-5f282c822642b528177144-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c822642b528177144-6">6</div><div class="crayon-num" data-line="crayon-5f282c822642b528177144-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c822642b528177144-8">8</div><div class="crayon-num" data-line="crayon-5f282c822642b528177144-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c822642b528177144-10">10</div><div class="crayon-num" data-line="crayon-5f282c822642b528177144-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c822642b528177144-12">12</div><div class="crayon-num" data-line="crayon-5f282c822642b528177144-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c822642b528177144-14">14</div><div class="crayon-num" data-line="crayon-5f282c822642b528177144-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c822642b528177144-16">16</div><div class="crayon-num" data-line="crayon-5f282c822642b528177144-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c822642b528177144-18">18</div><div class="crayon-num" data-line="crayon-5f282c822642b528177144-19">19</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f282c822642b528177144-1"><span class="crayon-sy">(</span><span class="crayon-e">Execute </span><span class="crayon-st">and</span><span class="crayon-h"> </span><span class="crayon-v">Output</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c822642b528177144-2"><span class="crayon-ta">%</span><span class="crayon-h"> </span><span class="crayon-sy">.</span><span class="crayon-o">/</span><span class="crayon-v">a</span><span class="crayon-sy">.</span><span class="crayon-i">out</span></div><div class="crayon-line" id="crayon-5f282c822642b528177144-3">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f282c822642b528177144-4"><span class="crayon-o">==</span><span class="crayon-cn">9901</span><span class="crayon-o">==</span><span class="crayon-v">ERROR</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">AddressSanitizer</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">heap</span><span class="crayon-o">-</span><span class="crayon-st">use</span><span class="crayon-o">-</span><span class="crayon-v">after</span><span class="crayon-o">-</span><span class="crayon-e">free </span><span class="crayon-e">on </span><span class="crayon-i">address</span><span class="crayon-h"> </span><span class="crayon-cn">0x60700000dfb5</span><span class="crayon-h"> </span><span class="crayon-e">at </span></div><div class="crayon-line" id="crayon-5f282c822642b528177144-5"><span class="crayon-i">pc</span><span class="crayon-h"> </span><span class="crayon-cn">0x45917b</span><span class="crayon-h"> </span><span class="crayon-i">bp</span><span class="crayon-h"> </span><span class="crayon-cn">0x7fff4490c700</span><span class="crayon-h"> </span><span class="crayon-i">sp</span><span class="crayon-h"> </span><span class="crayon-cn">0x7fff4490c6f8</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c822642b528177144-6"><span class="crayon-e">READ </span><span class="crayon-e">of </span><span class="crayon-i">size</span><span class="crayon-h"> </span><span class="crayon-cn">1</span><span class="crayon-h"> </span><span class="crayon-i">at</span><span class="crayon-h"> </span><span class="crayon-cn">0x60700000dfb5</span><span class="crayon-h"> </span><span class="crayon-e">thread </span><span class="crayon-v">T0</span></div><div class="crayon-line" id="crayon-5f282c822642b528177144-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-p">#0 0x45917a in main use-after-free.c:5</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c822642b528177144-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-p">#1 0x7fce9f25e76c in __libc_start_main /build/buildd/eglibc-2.15/csu/libc-start.c:226</span></div><div class="crayon-line" id="crayon-5f282c822642b528177144-9"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-p">#2 0x459074 in _start (a.out+0x459074)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c822642b528177144-10"><span class="crayon-cn">0x60700000dfb5</span><span class="crayon-h"> </span><span class="crayon-st">is</span><span class="crayon-h"> </span><span class="crayon-i">located</span><span class="crayon-h"> </span><span class="crayon-cn">5</span><span class="crayon-h"> </span><span class="crayon-e">bytes </span><span class="crayon-e">inside </span><span class="crayon-i">of</span><span class="crayon-h"> </span><span class="crayon-cn">80</span><span class="crayon-o">-</span><span class="crayon-t">byte</span><span class="crayon-h"> </span><span class="crayon-i">region</span><span class="crayon-h"> </span><span class="crayon-sy">[</span><span class="crayon-cn">0x60700000dfb0</span><span class="crayon-sy">,</span><span class="crayon-cn">0x60700000e000</span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-5f282c822642b528177144-11"><span class="crayon-e">freed </span><span class="crayon-e">by </span><span class="crayon-e">thread </span><span class="crayon-e">T0 </span><span class="crayon-v">here</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c822642b528177144-12"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-p">#0 0x4441ee in __interceptor_free projects/compiler-rt/lib/asan/asan_malloc_linux.cc:64</span></div><div class="crayon-line" id="crayon-5f282c822642b528177144-13"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-p">#1 0x45914a in main use-after-free.c:4</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c822642b528177144-14"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-p">#2 0x7fce9f25e76c in __libc_start_main /build/buildd/eglibc-2.15/csu/libc-start.c:226</span></div><div class="crayon-line" id="crayon-5f282c822642b528177144-15"><span class="crayon-e">previously </span><span class="crayon-e">allocated </span><span class="crayon-e">by </span><span class="crayon-e">thread </span><span class="crayon-e">T0 </span><span class="crayon-v">here</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c822642b528177144-16"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-p">#0 0x44436e in __interceptor_malloc projects/compiler-rt/lib/asan/asan_malloc_linux.cc:74</span></div><div class="crayon-line" id="crayon-5f282c822642b528177144-17"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-p">#1 0x45913f in main use-after-free.c:3</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c822642b528177144-18"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-p">#2 0x7fce9f25e76c in __libc_start_main /build/buildd/eglibc-2.15/csu/libc-start.c:226</span></div><div class="crayon-line" id="crayon-5f282c822642b528177144-19"><span class="crayon-v">SUMMARY</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">AddressSanitizer</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">heap</span><span class="crayon-o">-</span><span class="crayon-st">use</span><span class="crayon-o">-</span><span class="crayon-v">after</span><span class="crayon-o">-</span><span class="crayon-e">free </span><span class="crayon-st">use</span><span class="crayon-o">-</span><span class="crayon-v">after</span><span class="crayon-o">-</span><span class="crayon-v">free</span><span class="crayon-sy">.</span><span class="crayon-v">c</span><span class="crayon-o">:</span><span class="crayon-cn">5</span><span class="crayon-h"> </span><span class="crayon-v">main</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0008 seconds] -->
+<p>從結果我們可以看出 ASAN 有偵測到 heap-use-after-free 的錯誤，接著提供了 pc/bp/sp 這幾個有用暫存器的值，再來是發生錯誤的 call stack 以及何處去 allocate 何處已經被 free 的 call stack，最後有一個這次偵測錯誤的總結。</p>
+<h2></h2>
+<h2>ASAN on Android<a href="https://code.google.com/p/address-sanitizer/wiki/Android">[4]</a></h2>
+<p>Android 在 Jelly Bean 支援了 Address-sanitizer。</p>
+<p>開啟方式非常簡單，只要在 Android.mk 裡加上</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f282c822642f273061247" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+“LOCAL_ADDRESS_SANITIZE := true”</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f282c822642f273061247-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f282c822642f273061247-1">“<span class="crayon-v">LOCAL_ADDRESS_SANITIZE</span><span class="crayon-h"> </span><span class="crayon-o">:</span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">true</span>”</div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>執行包含新編譯的執行檔前，需要把 asanwrapper 以及 libasan_preload.so 分別放到 system/bin/ 以及 system/lib/，最後是要將執行產生的錯誤訊息利用一個 python 進行解析。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f282c8226432144086544" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+(用 b2g-info 當作範例)
+1. rebuild b2g-info as b2g-info__asan
+  (add "LOCAL_ADDRESS_SANITIZER := true" in Android.mk)
+2. Push “asanwrapper” and “b2g-info__asan” into “system/bin/”
+   Push “libasan_preload.so” into “system/lib/”
+3. adb shell "asanwrapper /system/bin/b2g-info" &gt; err.txt
+4. modify err.txt (remove /system/bin and /system/lib)
+5. copy "b2g-info__asan" and "libc.so" from "out/target/product/mako/symbols/"
+6. cat err.txt 2&gt;&amp;1 | ~/workspace/Nexus-4/external/compiler-rt/lib/asan/scripts/asan_symbolize.py --demangle
+   #0 0xb6f809c7 in main /home/xxx/workspace/Nexus-4/gonk-misc/b2g-info/b2g-info.cpp:342:0
+   #1 0xb5954b4f in __libc_init /home/xxx/workspace/Nexus-4/bionic/libc/bionic/libc_init_dynamic.cpp:112:</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f282c8226432144086544-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226432144086544-2">2</div><div class="crayon-num" data-line="crayon-5f282c8226432144086544-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226432144086544-4">4</div><div class="crayon-num" data-line="crayon-5f282c8226432144086544-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226432144086544-6">6</div><div class="crayon-num" data-line="crayon-5f282c8226432144086544-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226432144086544-8">8</div><div class="crayon-num" data-line="crayon-5f282c8226432144086544-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226432144086544-10">10</div><div class="crayon-num" data-line="crayon-5f282c8226432144086544-11">11</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f282c8226432144086544-1"><span class="crayon-sy">(</span>用<span class="crayon-h"> </span><span class="crayon-v">b2g</span><span class="crayon-o">-</span><span class="crayon-i">info</span><span class="crayon-h"> </span>當作範例<span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226432144086544-2"><span class="crayon-cn">1.</span><span class="crayon-h"> </span><span class="crayon-e">rebuild </span><span class="crayon-v">b2g</span><span class="crayon-o">-</span><span class="crayon-e">info </span><span class="crayon-st">as</span><span class="crayon-h"> </span><span class="crayon-v">b2g</span><span class="crayon-o">-</span><span class="crayon-e">info__asan</span></div><div class="crayon-line" id="crayon-5f282c8226432144086544-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">(</span><span class="crayon-i">add</span><span class="crayon-h"> </span><span class="crayon-s">"LOCAL_ADDRESS_SANITIZER := true"</span><span class="crayon-h"> </span><span class="crayon-st">in</span><span class="crayon-h"> </span><span class="crayon-v">Android</span><span class="crayon-sy">.</span><span class="crayon-v">mk</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226432144086544-4"><span class="crayon-cn">2.</span><span class="crayon-h"> </span><span class="crayon-i">Push</span><span class="crayon-h"> </span>“<span class="crayon-i">asanwrapper</span>”<span class="crayon-h"> </span><span class="crayon-st">and</span><span class="crayon-h"> </span>“<span class="crayon-v">b2g</span><span class="crayon-o">-</span><span class="crayon-v">info_</span><span class="crayon-sy">_</span>asan”<span class="crayon-h"> </span><span class="crayon-i">into</span><span class="crayon-h"> </span>“<span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">bin</span><span class="crayon-o">/</span>”</div><div class="crayon-line" id="crayon-5f282c8226432144086544-5"><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-i">Push</span><span class="crayon-h"> </span>“<span class="crayon-v">libasan_preload</span><span class="crayon-sy">.</span><span class="crayon-i">so</span>”<span class="crayon-h"> </span><span class="crayon-i">into</span><span class="crayon-h"> </span>“<span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">lib</span><span class="crayon-o">/</span>”</div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226432144086544-6"><span class="crayon-cn">3.</span><span class="crayon-h"> </span><span class="crayon-e">adb </span><span class="crayon-i">shell</span><span class="crayon-h"> </span><span class="crayon-s">"asanwrapper /system/bin/b2g-info"</span><span class="crayon-h"> </span><span class="crayon-o">&gt;</span><span class="crayon-h"> </span><span class="crayon-v">err</span><span class="crayon-sy">.</span><span class="crayon-i">txt</span></div><div class="crayon-line" id="crayon-5f282c8226432144086544-7"><span class="crayon-cn">4.</span><span class="crayon-h"> </span><span class="crayon-e">modify </span><span class="crayon-v">err</span><span class="crayon-sy">.</span><span class="crayon-e">txt</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">remove</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-e">bin </span><span class="crayon-st">and</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">lib</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226432144086544-8"><span class="crayon-cn">5.</span><span class="crayon-h"> </span><span class="crayon-i">copy</span><span class="crayon-h"> </span><span class="crayon-s">"b2g-info__asan"</span><span class="crayon-h"> </span><span class="crayon-st">and</span><span class="crayon-h"> </span><span class="crayon-s">"libc.so"</span><span class="crayon-h"> </span><span class="crayon-i">from</span><span class="crayon-h"> </span><span class="crayon-s">"out/target/product/mako/symbols/"</span></div><div class="crayon-line" id="crayon-5f282c8226432144086544-9"><span class="crayon-cn">6.</span><span class="crayon-h"> </span><span class="crayon-e">cat </span><span class="crayon-v">err</span><span class="crayon-sy">.</span><span class="crayon-i">txt</span><span class="crayon-h"> </span><span class="crayon-cn">2</span><span class="crayon-o">&gt;</span><span class="crayon-o">&amp;</span><span class="crayon-cn">1</span><span class="crayon-h"> </span><span class="crayon-o">|</span><span class="crayon-h"> </span><span class="crayon-o">~</span><span class="crayon-o">/</span><span class="crayon-v">workspace</span><span class="crayon-o">/</span><span class="crayon-v">Nexus</span><span class="crayon-o">-</span><span class="crayon-cn">4</span><span class="crayon-o">/</span><span class="crayon-v">external</span><span class="crayon-o">/</span><span class="crayon-v">compiler</span><span class="crayon-o">-</span><span class="crayon-v">rt</span><span class="crayon-o">/</span><span class="crayon-v">lib</span><span class="crayon-o">/</span><span class="crayon-v">asan</span><span class="crayon-o">/</span><span class="crayon-v">scripts</span><span class="crayon-o">/</span><span class="crayon-v">asan_symbolize</span><span class="crayon-sy">.</span><span class="crayon-v">py</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-v">demangle</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226432144086544-10"><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-p">#0 0xb6f809c7 in main /home/xxx/workspace/Nexus-4/gonk-misc/b2g-info/b2g-info.cpp:342:0</span></div><div class="crayon-line" id="crayon-5f282c8226432144086544-11"><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-p">#1 0xb5954b4f in __libc_init /home/xxx/workspace/Nexus-4/bionic/libc/bionic/libc_init_dynamic.cpp:112:</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0007 seconds] -->
+<p></p>
+<h2></h2>
+<h2>ASAN on firefox <a href="https://developer.mozilla.org/en-US/docs/Building_Firefox_with_Address_Sanitizer">[5]</a></h2>
+<p><strong>下載(Download Executable file with ASAN)</strong><br />
+我們可以直接從下面連結取得有 ASAN 功能的 firefox：<br />
+1. <a href="https://ftp.mozilla.org/pub/mozilla.org/firefox/tinderbox-builds/mozilla-central-linux64-asan/">mozilla-central optimized builds</a> (recommended for testing)<br />
+2. <a href="https://ftp.mozilla.org/pub/mozilla.org/firefox/tinderbox-builds/mozilla-central-linux64-asan-debug/">mozilla-central debug builds</a> (recommended for debugging if the optimized builds don&#8217;t do the job)</p>
+<p><strong>自行編譯(Build by myself)</strong><br />
+必須要先建立包含下面內容的 .mozconfig，再進行編譯，我們就可以編譯出帶有 ASAN 的執行檔。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f282c8226436658984210" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/objdir-ff-asan
+mk_add_options MOZ_MAKE_FLAGS=-j12
+
+# Enable ASan specific code and build workarounds
+ac_add_options --enable-address-sanitizer
+
+# Ensure you set this to your LLVM_HOME path
+export LLVM_HOME="/path/to/your/llvm"
+
+# Set CC/CXX based on LLVM_HOME
+export CC="$LLVM_HOME/build/bin/clang"
+export CXX="$LLVM_HOME/build/bin/clang++"
+
+# Add ASan to our compiler flags
+export CFLAGS="-fsanitize=address -Dxmalloc=myxmalloc"
+export CXXFLAGS="-fsanitize=address -Dxmalloc=myxmalloc"
+
+# Additionally, we need the ASan flag during linking. Normally, our C/CXXFLAGS would
+# be used during linking as well but there is at least one place in our build where
+# our CFLAGS are not added during linking.
+# Note: The use of this flag causes Clang to automatically link the ASan runtime :)
+export LDFLAGS="-fsanitize=address"
+
+# Avoid using ASan flags when building host tools like nsinstall
+export HOST_CFLAGS=" "
+export HOST_CXXFLAGS=" "
+export HOST_LDFLAGS=" "
+
+# These three are required by ASan
+ac_add_options --disable-jemalloc
+ac_add_options --disable-crashreporter
+ac_add_options --disable-elf-hack
+
+# Keep symbols to symbolize ASan traces later
+export MOZ_DEBUG_SYMBOLS=1
+ac_add_options --enable-debug-symbols
+ac_add_options --disable-install-strip
+
+# Settings for a debug+opt build
+ac_add_options --enable-optimize
+ac_add_options --enable-debug
+
+# Settings for an opt build
+#ac_add_options --enable-optimize
+#ac_add_options --disable-debug</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f282c8226436658984210-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-2">2</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-4">4</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-6">6</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-8">8</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-10">10</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-12">12</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-14">14</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-16">16</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-18">18</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-20">20</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-22">22</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-24">24</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-25">25</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-26">26</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-27">27</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-28">28</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-29">29</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-30">30</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-31">31</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-32">32</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-33">33</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-34">34</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-35">35</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-36">36</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-37">37</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-38">38</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-39">39</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-40">40</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-41">41</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-42">42</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-43">43</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f282c8226436658984210-44">44</div><div class="crayon-num" data-line="crayon-5f282c8226436658984210-45">45</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f282c8226436658984210-1"><span class="crayon-e">mk_add_options </span><span class="crayon-v">MOZ_OBJDIR</span><span class="crayon-o">=</span><span class="crayon-sy">@</span><span class="crayon-v">TOPSRCDIR</span><span class="crayon-sy">@</span><span class="crayon-o">/</span><span class="crayon-v">objdir</span><span class="crayon-o">-</span><span class="crayon-v">ff</span><span class="crayon-o">-</span><span class="crayon-e">asan</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-2"><span class="crayon-e">mk_add_options </span><span class="crayon-v">MOZ_MAKE_FLAGS</span><span class="crayon-o">=</span><span class="crayon-o">-</span><span class="crayon-v">j12</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-3">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-4"><span class="crayon-p"># Enable ASan specific code and build workarounds</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-5"><span class="crayon-v">ac_add_options</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-v">enable</span><span class="crayon-o">-</span><span class="crayon-v">address</span><span class="crayon-o">-</span><span class="crayon-v">sanitizer</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-6">&nbsp;</div><div class="crayon-line" id="crayon-5f282c8226436658984210-7"><span class="crayon-p"># Ensure you set this to your LLVM_HOME path</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-8"><span class="crayon-e">export </span><span class="crayon-v">LLVM_HOME</span><span class="crayon-o">=</span><span class="crayon-s">"/path/to/your/llvm"</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-9">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-10"><span class="crayon-p"># Set CC/CXX based on LLVM_HOME</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-11"><span class="crayon-e">export </span><span class="crayon-v">CC</span><span class="crayon-o">=</span><span class="crayon-s">"$LLVM_HOME/build/bin/clang"</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-12"><span class="crayon-e">export </span><span class="crayon-v">CXX</span><span class="crayon-o">=</span><span class="crayon-s">"$LLVM_HOME/build/bin/clang++"</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-13">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-14"><span class="crayon-p"># Add ASan to our compiler flags</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-15"><span class="crayon-e">export </span><span class="crayon-v">CFLAGS</span><span class="crayon-o">=</span><span class="crayon-s">"-fsanitize=address -Dxmalloc=myxmalloc"</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-16"><span class="crayon-e">export </span><span class="crayon-v">CXXFLAGS</span><span class="crayon-o">=</span><span class="crayon-s">"-fsanitize=address -Dxmalloc=myxmalloc"</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-17">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-18"><span class="crayon-p"># Additionally, we need the ASan flag during linking. Normally, our C/CXXFLAGS would</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-19"><span class="crayon-p"># be used during linking as well but there is at least one place in our build where</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-20"><span class="crayon-p"># our CFLAGS are not added during linking.</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-21"><span class="crayon-p"># Note: The use of this flag causes Clang to automatically link the ASan runtime :)</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-22"><span class="crayon-e">export </span><span class="crayon-v">LDFLAGS</span><span class="crayon-o">=</span><span class="crayon-s">"-fsanitize=address"</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-23">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-24"><span class="crayon-p"># Avoid using ASan flags when building host tools like nsinstall</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-25"><span class="crayon-e">export </span><span class="crayon-v">HOST_CFLAGS</span><span class="crayon-o">=</span><span class="crayon-s">" "</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-26"><span class="crayon-e">export </span><span class="crayon-v">HOST_CXXFLAGS</span><span class="crayon-o">=</span><span class="crayon-s">" "</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-27"><span class="crayon-e">export </span><span class="crayon-v">HOST_LDFLAGS</span><span class="crayon-o">=</span><span class="crayon-s">" "</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-28">&nbsp;</div><div class="crayon-line" id="crayon-5f282c8226436658984210-29"><span class="crayon-p"># These three are required by ASan</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-30"><span class="crayon-v">ac_add_options</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-v">disable</span><span class="crayon-o">-</span><span class="crayon-e">jemalloc</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-31"><span class="crayon-v">ac_add_options</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-v">disable</span><span class="crayon-o">-</span><span class="crayon-e">crashreporter</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-32"><span class="crayon-v">ac_add_options</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-v">disable</span><span class="crayon-o">-</span><span class="crayon-v">elf</span><span class="crayon-o">-</span><span class="crayon-v">hack</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-33">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-34"><span class="crayon-p"># Keep symbols to symbolize ASan traces later</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-35"><span class="crayon-e">export </span><span class="crayon-v">MOZ_DEBUG_SYMBOLS</span><span class="crayon-o">=</span><span class="crayon-cn">1</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-36"><span class="crayon-v">ac_add_options</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-v">enable</span><span class="crayon-o">-</span><span class="crayon-v">debug</span><span class="crayon-o">-</span><span class="crayon-e">symbols</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-37"><span class="crayon-v">ac_add_options</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-v">disable</span><span class="crayon-o">-</span><span class="crayon-v">install</span><span class="crayon-o">-</span><span class="crayon-v">strip</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-38">&nbsp;</div><div class="crayon-line" id="crayon-5f282c8226436658984210-39"><span class="crayon-p"># Settings for a debug+opt build</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-40"><span class="crayon-v">ac_add_options</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-v">enable</span><span class="crayon-o">-</span><span class="crayon-e">optimize</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-41"><span class="crayon-v">ac_add_options</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-v">enable</span><span class="crayon-o">-</span><span class="crayon-v">debug</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-42">&nbsp;</div><div class="crayon-line" id="crayon-5f282c8226436658984210-43"><span class="crayon-p"># Settings for an opt build</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f282c8226436658984210-44"><span class="crayon-p">#ac_add_options --enable-optimize</span></div><div class="crayon-line" id="crayon-5f282c8226436658984210-45"><span class="crayon-p">#ac_add_options --disable-debug</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0007 seconds] -->
+<p></p>
+<h2></h2>
+<h2>結語</h2>
+<p>以上就是對於 ASAN 簡單的介紹， ASAN 跟所有偵錯的工具一樣都要付出一些代價(更大的記憶體使用量、較差的效能)，然而確實可以利用它找出一些用人眼或人腦會忽略的程式錯誤甚至是一些潛在的問題，因此需要善用這樣的工具讓我們的生活更好臭蟲更少(笑)。</p>
+<h2>參考資料</h2>
+<p>[1] <a href="http://clang.llvm.org/docs/">http://clang.llvm.org/docs/</a><br />
+[2]<a href="https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer"> https://code.google.com/p/address-sanitizer/wiki/AddressSanitizer</a><br />
+[3] <a href="http://gcc.gnu.org/gcc-4.8/changes.html">http://gcc.gnu.org/gcc-4.8/changes.html</a><br />
+[4] <a href="https://code.google.com/p/address-sanitizer/wiki/Android">https://code.google.com/p/address-sanitizer/wiki/Android</a><br />
+[5] <a href="https://developer.mozilla.org/en-US/docs/Building_Firefox_with_Address_Sanitizer">https://developer.mozilla.org/en-US/docs/Building_Firefox_with_Address_Sanitizer</a></p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://tech.mozilla.com.tw/?cat=4" rel="category">Firefox</a>、<a href="https://tech.mozilla.com.tw/?cat=3" rel="category">Firefox OS(B2G)</a>、<a href="https://tech.mozilla.com.tw/?cat=5" rel="category">Mozilla</a>、<a href="https://tech.mozilla.com.tw/?cat=7" rel="category">Open Source</a>      </div>
+    </footer> 
+    </article><!-- #post-4282 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" 
+	              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+			<h3 id="comments-title">
+			共 2 則讀者回應
+		</h3>
+
+		
+		<ol class="commentlist">
+				<li class="post pingback">
+		<p>參照： <a href='http://et3w503.wordpress.com/2014/05/19/asan/' rel='external nofollow' class='url'>ASAN | 不分享空間</a></p>
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1" id="li-comment-148559">
+		<article id="comment-148559" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='https://secure.gravatar.com/avatar/4e70ad3d7711754cb1d8cc41fc97d836?s=40&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/4e70ad3d7711754cb1d8cc41fc97d836?s=80&amp;d=mm&amp;r=g 2x' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn"><a href='http://www.leetcode.cn' rel='external nofollow' class='url'>Leslie Zhai</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://tech.mozilla.com.tw/?p=4282#comment-148559"><time pubdate datetime="2016-11-30T17:23:57+00:00">
+					2016 年 11 月 30 日 下午 05:23					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>&gt; char *x = (char*)malloc(10 * sizeof(char*));</p>
+<p>char *x = (char*)malloc(10 * sizeof(char));</p>
+<p>sizeof(char*) is 8 for 64bit, and 4 for 32bit</p>
+</div>
+
+			<div class="reply">
+				<a rel='nofollow' class='comment-reply-link' href='https://tech.mozilla.com.tw/?p=4282&#038;replytocom=148559#respond' onclick='return addComment.moveForm( "comment-148559", "148559", "respond", "4282" )' aria-label='回覆 Leslie Zhai'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+		</ol>
+
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/?p=4282#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required='true' required='required' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required='true' required='required' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表" /> <input type='hidden' name='comment_post_ID' value='4282' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="85a54b7c91" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="85"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class='name-title'><a class="profile-link" href="https://tech.mozilla.com.tw/?author=99"><span class="gravatar left"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/99/3bee2766a4946840a9d65c94930e93f9-bpthumb.jpg" alt="" class="avatar user-99-avatar" width='48' height='48' /></span><span class="name">阿帆達 Avatar</span></a></span><p class='contact'></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="70" href="https://tech.mozilla.com.tw/?author=70"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg" alt="" class="avatar user-70-avatar" width='96' height='96' /></a><a data-author-id="33" href="https://tech.mozilla.com.tw/?author=33"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg" alt="" class="avatar user-33-avatar" width='96' height='96' /></a><a data-author-id="90" href="https://tech.mozilla.com.tw/?author=90"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg" alt="" class="avatar user-90-avatar" width='96' height='96' /></a><a data-author-id="52" href="https://tech.mozilla.com.tw/?author=52"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg" alt="" class="avatar user-52-avatar" width='96' height='96' /></a><a data-author-id="59" href="https://tech.mozilla.com.tw/?author=59"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg" alt="" class="avatar user-59-avatar" width='96' height='96' /></a><a data-author-id="60" href="https://tech.mozilla.com.tw/?author=60"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg" alt="" class="avatar user-60-avatar" width='96' height='96' /></a></div><a class="more" href="/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://tech.mozilla.com.tw/?cat=8" >CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://tech.mozilla.com.tw/?cat=4" >Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://tech.mozilla.com.tw/?cat=3" >Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://tech.mozilla.com.tw/?cat=30" >Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://tech.mozilla.com.tw/?cat=9" >Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://tech.mozilla.com.tw/?cat=42" >Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://tech.mozilla.com.tw/?cat=5" >Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://tech.mozilla.com.tw/?cat=7" >Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://tech.mozilla.com.tw/?cat=29" >UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">選擇月份</option>
+				<option value='https://tech.mozilla.com.tw/?m=201605'> 2016 年 五月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201602'> 2016 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201507'> 2015 年 七月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201506'> 2015 年 六月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201505'> 2015 年 五月 &nbsp;(2)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201504'> 2015 年 四月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201503'> 2015 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201502'> 2015 年 二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201501'> 2015 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201412'> 2014 年 十二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201411'> 2014 年 十一月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201410'> 2014 年 十月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201409'> 2014 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201408'> 2014 年 八月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201407'> 2014 年 七月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201405'> 2014 年 五月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201404'> 2014 年 四月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201403'> 2014 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201402'> 2014 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201401'> 2014 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201312'> 2013 年 十二月 &nbsp;(6)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201311'> 2013 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201310'> 2013 年 十月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201309'> 2013 年 九月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201308'> 2013 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201307'> 2013 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201306'> 2013 年 六月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201305'> 2013 年 五月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201304'> 2013 年 四月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201303'> 2013 年 三月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201302'> 2013 年 二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201301'> 2013 年 一月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201212'> 2012 年 十二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201211'> 2012 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201210'> 2012 年 十月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201209'> 2012 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201208'> 2012 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201207'> 2012 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201206'> 2012 年 六月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201205'> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

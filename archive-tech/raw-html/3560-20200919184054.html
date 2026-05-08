@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+Inter App Communication &#8211; App 的溝通橋樑 | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="https://tech.mozilla.com.tw/?p=3560"/><meta property="og:image" content="https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg" />
+
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css" /><!--<link rel="pingback" href="https://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="https://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://tech.mozilla.com.tw/","urlLoginRedirect":"https://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=bbf4b82746","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel='dns-prefetch' href='//s.w.org'>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo;" href="https://tech.mozilla.com.tw/?feed=rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 迴響" href="https://tech.mozilla.com.tw/?feed=comments-rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; Inter App Communication &#8211; App 的溝通橋樑 迴響" href="https://tech.mozilla.com.tw/?feed=rss2&#038;p=3560" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='crayon-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-github-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/github/github.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='advanced-responsive-video-embedder-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0' type='text/css' media='all' />
+<link rel='stylesheet' id='persona-style-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46' type='text/css' media='all' />
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<link rel='https://api.w.org/' href='https://tech.mozilla.com.tw/?rest_route=/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='網頁上也能做刮刮樂！運用 HTML5 canvas 合成功能' href='https://tech.mozilla.com.tw/?p=3502' />
+<link rel='next' title='一起動手做吧！用迷你積木拼出一隻小火狐' href='https://tech.mozilla.com.tw/?p=3748' />
+<meta name="generator" content="WordPress 4.6" />
+<link rel="canonical" href="https://tech.mozilla.com.tw/?p=3560" />
+<link rel='shortlink' href='https://tech.mozilla.com.tw/?p=3560' />
+<link rel="alternate" type="application/json+oembed" href="https://tech.mozilla.com.tw/?rest_route=%2Foembed%2F1.0%2Fembed&#038;url=https%3A%2F%2Ftech.mozilla.com.tw%2F%3Fp%3D3560" />
+<link rel="stylesheet" href="https://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-3560 single-format-standard sand">
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='//mozilla.com.tw/' class='home'>Home</a>
+            <b>&raquo;</b>
+            <a href='//mozilla.com.tw/news/'>訊息中心</a>
+            <b>&raquo;</b>
+                          <a href='//tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>
+              <span>Inter App Communication &#8211; App 的溝通橋樑</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="https://tech.mozilla.com.tw/?p=3560" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="https://tech.mozilla.com.tw/?p=3560"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=https://tech.mozilla.com.tw/?p=3560&media=https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac-150x150.jpg" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+	        <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">1</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://tech.mozilla.com.tw/?p=3502"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2013/11/螢幕快照-2013-12-03-下午10.50.53-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="Firefox 刮刮樂" /><span class="meta-nav">網頁上也能做刮刮樂！運用 HTML5 canvas 合成功能</span></div></a></div>		
+							<div class="nav-next"><a href="https://tech.mozilla.com.tw/?p=3748"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2013/12/nanoblock-firefox.16.complete-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="nanoblock-firefox.16.complete" /><span class="meta-nav">一起動手做吧！用迷你積木拼出一隻小火狐</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-3560" class="post-3560 post type-post status-publish format-standard has-post-thumbnail hentry category-b2g category-javascript category-open-source tag-iac tag-inter-app-communication tag-mesage tag-transfer">
+	 	<header class="entry-header">
+		<h1 class="entry-title">Inter App Communication &#8211; App 的溝通橋樑</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://tech.mozilla.com.tw/?m=201312" class="posted-month">12月</a>
+	        <span class="posted-date">16</span>
+	        <a title="See all posts from 2014" href="https://tech.mozilla.com.tw/?m=2013" class="posted-year">2013</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="89">
+		  	<a href="https://tech.mozilla.com.tw/?author=89">
+	          <img src="https://secure.gravatar.com/avatar/f42e154ceb44bcbf4b2fdb676527d09d?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=24" alt="" class="avatar user-89-avatar" width='24' height='24' /><!--
+	       --><div class="author-info">EragonJ</div><!--
+	       --><div class="author-title"></div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p><a href="http://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg"><img class="alignnone size-full wp-image-3573" alt="iac" src="http://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg" width="600" height="300" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg 600w, https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac-300x150.jpg 300w" sizes="(max-width: 600px) 100vw, 600px" /></a></p>
+<p>在開發 App 的時候，我們有時候需要在App之間傳遞資訊，而今天我們要介紹的主角就是新引入的 <a href="https://wiki.mozilla.org/WebAPI/Inter_App_Communication" target="_blank">WebAPI: IAC (Inter App Communication)</a>，有了這個好東西，我們就可以輕易的在 App 間傳遞訊息，以下就用筆者遇到的例子來說明吧：</p>
+<h2>User story</h2>
+<p>當使用者拿到 Firefox OS 手機，第一次開機的時候，會自動先開啓 FTU (First Time Use) App 作導覽。當導覽進行到最後一步的時候，會看到這個畫面，可以按下「Home」鍵回到主畫面。</p>
+<p style="text-align: center;"><a href="http://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile.png"><img class=" wp-image-3561 aligncenter" alt="ftu-mobile" src="http://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile-627x1024.png" width="376" height="614" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile-627x1024.png 627w, https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile-183x300.png 183w, https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile.png 1078w" sizes="(max-width: 376px) 100vw, 376px" /></a></p>
+<p>而在 Firefox OS 平板上，最後一步的導覽畫面會是這樣，但是改透過由螢幕下方往上滑動的手勢回到主畫面：</p>
+<p><a href="http://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet.png"><img class="alignnone size-large wp-image-3562" alt="ftu-tablet" src="http://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet-1024x640.png" width="640" height="400" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet-1024x640.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet-300x187.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet.png 1280w" sizes="(max-width: 640px) 100vw, 640px" /></a></p>
+<p>大家可能還不是很明白為什麼這個 User Story 下面要使用 IAC，讓我解釋一下。因為在手機剛啟動的時候，我們的 FTU 是一個獨立的 App，而這個 App 是被 System App 所呼叫起來的，兩個 App 之間如果需要溝通，就需要透過 IAC 來傳遞資料。</p>
+<p>之所以 FTU App 需要跟 System App 做溝通，是因為「使用者在 FTU 導覽過程中，是無法按 Home 鍵離開的」，但很不巧的這個需求在 Firefox OS 平台是 Tablet 的時候反而變成是一種限制，怎麼說呢，因為對 Tablet 來說，我們並沒有實體的 Home 鍵，因此<strong>「Swipe 向上的手勢」</strong>就被我們定義成<strong>「使用者按 Home 鍵」</strong>，但是在先前 Mobile 的需求下，使用者在 FTU 是不允許按 Home 鍵的！！因此這就產生了一個問題，我要怎麼判別使用者現在的情境是：</p>
+<ol>
+<li>Tablet 使用者</li>
+<li>FTU 已經導覽到最後一步</li>
+<li>使用者可以透過螢幕下方往上滑動的手勢（等同按 Home 鍵）離開 FTU App</li>
+</ol>
+<p>這個時候…<span style="font-size: 13px;">我們就需要 IAC 的幫助！</span></p>
+<h2>IAC , we need your help</h2>
+<p>這邊要解釋一下 FTU App、System App 及 IAC 的角色。</p>
+<p>FTU App 的功用主要是在教導使用者如何初始設定 FxOS 及透過 step by step 的教學來了解如何使用 FxOS 的裝置，所以他可以知道使用者目前的 step 到哪個階段了。</p>
+<p>System App 在這裡的功用是在處理使用者按下 Home 鍵時要處理的事情，他只知道目前使用者是不是按下 Home 鍵（在 Tablet 就是 Swipe 向上的手勢），然後依照各個平台做相對應的事情。</p>
+<p>而 IAC 的角色就是 FTU App 及 System App 溝通的橋樑，因為 System App 不知道目前 FTU App 是不是到了最後一步，所以自然就無法解除阻擋 Home 鍵這件事情，所以在這個 User Story 下，當使用者來到最後一個 Step 的時候（而且是在 Tablet 的平台），FTU App 就會透過 IAC 和 System App 溝通，然後請求 System App 可以讓我們以透過 Swipe 向上的手勢（等同按 Home 鍵）離開 FTU App。</p>
+<p>在 Gaia 我是這麼做的：</p>
+<p>In FTU App :</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f6650b64509d956040143" class="crayon-syntax crayon-theme-github crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+    if (this.currentStep &gt; this.numTutorialSteps) {
+      Tutorial.tutorialScreen.classList.remove('show');
+      Tutorial.tutorialFinish.classList.add('show');
+
+      // for large devices, we have to use IAC to tell system ftu is done
+      if (this.layout !== 'tiny') {
+        navigator.mozApps.getSelf().onsuccess = function(evt) {
+          var app = evt.target.result;
+          app.connect('ftucomms').then(function onConnAccepted(ports) {
+            ports.forEach(function(port) {
+              port.postMessage('done');
+            });
+          }, function onConnRejected(reason) {
+            console.log('FTU is rejected');
+            console.log(reason);
+          });
+        };
+      }
+    }</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f6650b64509d956040143-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b64509d956040143-2">2</div><div class="crayon-num" data-line="crayon-5f6650b64509d956040143-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b64509d956040143-4">4</div><div class="crayon-num" data-line="crayon-5f6650b64509d956040143-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b64509d956040143-6">6</div><div class="crayon-num" data-line="crayon-5f6650b64509d956040143-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b64509d956040143-8">8</div><div class="crayon-num" data-line="crayon-5f6650b64509d956040143-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b64509d956040143-10">10</div><div class="crayon-num" data-line="crayon-5f6650b64509d956040143-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b64509d956040143-12">12</div><div class="crayon-num" data-line="crayon-5f6650b64509d956040143-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b64509d956040143-14">14</div><div class="crayon-num" data-line="crayon-5f6650b64509d956040143-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b64509d956040143-16">16</div><div class="crayon-num" data-line="crayon-5f6650b64509d956040143-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b64509d956040143-18">18</div><div class="crayon-num" data-line="crayon-5f6650b64509d956040143-19">19</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f6650b64509d956040143-1"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">currentStep</span><span class="crayon-h"> </span><span class="crayon-o">&gt;</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">numTutorialSteps</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b64509d956040143-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">Tutorial</span><span class="crayon-sy">.</span><span class="crayon-v">tutorialScreen</span><span class="crayon-sy">.</span><span class="crayon-v">classList</span><span class="crayon-sy">.</span><span class="crayon-e">remove</span><span class="crayon-sy">(</span><span class="crayon-s">'show'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f6650b64509d956040143-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">Tutorial</span><span class="crayon-sy">.</span><span class="crayon-v">tutorialFinish</span><span class="crayon-sy">.</span><span class="crayon-v">classList</span><span class="crayon-sy">.</span><span class="crayon-e">add</span><span class="crayon-sy">(</span><span class="crayon-s">'show'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b64509d956040143-4">&nbsp;</div><div class="crayon-line" id="crayon-5f6650b64509d956040143-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// for large devices, we have to use IAC to tell system ftu is done</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b64509d956040143-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">layout</span><span class="crayon-h"> </span><span class="crayon-o">!==</span><span class="crayon-h"> </span><span class="crayon-s">'tiny'</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f6650b64509d956040143-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">navigator</span><span class="crayon-sy">.</span><span class="crayon-v">mozApps</span><span class="crayon-sy">.</span><span class="crayon-e">getSelf</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-v">onsuccess</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-sy">(</span><span class="crayon-v">evt</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b64509d956040143-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">app</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">evt</span><span class="crayon-sy">.</span><span class="crayon-v">target</span><span class="crayon-sy">.</span><span class="crayon-v">result</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f6650b64509d956040143-9"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">app</span><span class="crayon-sy">.</span><span class="crayon-e">connect</span><span class="crayon-sy">(</span><span class="crayon-s">'ftucomms'</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-st">then</span><span class="crayon-sy">(</span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">onConnAccepted</span><span class="crayon-sy">(</span><span class="crayon-v">ports</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b64509d956040143-10"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">ports</span><span class="crayon-sy">.</span><span class="crayon-st">forEach</span><span class="crayon-sy">(</span><span class="crayon-t">function</span><span class="crayon-sy">(</span><span class="crayon-v">port</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f6650b64509d956040143-11"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">port</span><span class="crayon-sy">.</span><span class="crayon-e">postMessage</span><span class="crayon-sy">(</span><span class="crayon-s">'done'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b64509d956040143-12"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f6650b64509d956040143-13"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">onConnRejected</span><span class="crayon-sy">(</span><span class="crayon-v">reason</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b64509d956040143-14"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">console</span><span class="crayon-sy">.</span><span class="crayon-e">log</span><span class="crayon-sy">(</span><span class="crayon-s">'FTU is rejected'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f6650b64509d956040143-15"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">console</span><span class="crayon-sy">.</span><span class="crayon-e">log</span><span class="crayon-sy">(</span><span class="crayon-v">reason</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b64509d956040143-16"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f6650b64509d956040143-17"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b64509d956040143-18"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f6650b64509d956040143-19"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0008 seconds] -->
+<p>從程式碼中可以看到我們透過 app 實體去連接一個 <strong>keyword</strong>（在這個例子中就是 ftucomms），FTU App 跟 System App 之間就是透過這個 keyword 來當做識別並透過 <strong>port</strong> 來溝通，我們只需要把東西通通塞進 <strong>port.postMessage </strong>做雞精就對了！</p>
+<p>聰明的你可能會問，所以 App 只需要隨便用個 keyword 就可以連結並傳東西嗎？當然不行，<strong>接收訊息的 App （傳送訊息的不需要）</strong>還需要去它的 <strong>manifest.webapp</strong> 設定如下：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f6650b6450a8030097006" class="crayon-syntax crayon-theme-github crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+{
+  "connections": {
+    "ftucomms": {
+      "description": "Communicate between communications/ftu and System",
+      "rules": {}
+    }
+  }
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f6650b6450a8030097006-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b6450a8030097006-2">2</div><div class="crayon-num" data-line="crayon-5f6650b6450a8030097006-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b6450a8030097006-4">4</div><div class="crayon-num" data-line="crayon-5f6650b6450a8030097006-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b6450a8030097006-6">6</div><div class="crayon-num" data-line="crayon-5f6650b6450a8030097006-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b6450a8030097006-8">8</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f6650b6450a8030097006-1"><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b6450a8030097006-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-s">"connections"</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f6650b6450a8030097006-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-s">"ftucomms"</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b6450a8030097006-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-s">"description"</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">"Communicate between communications/ftu and System"</span><span class="crayon-sy">,</span></div><div class="crayon-line" id="crayon-5f6650b6450a8030097006-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-s">"rules"</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b6450a8030097006-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f6650b6450a8030097006-7"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b6450a8030097006-8"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>這樣子我們 System App 就可以接收來自 FTU App 的訊息了！在 System App 只要我們確定傳送進來的 message 是我們當初預期的 &#8216;done&#8217; 就可以放行讓使用者可以透過 Swipe 向上的手勢離開 FTU App 了！</p>
+<p>不過你可能又會問我要怎麼讓 System App 來接這個訊息呢，這是個好問題。如果你需要透過 IAC 來做資料傳遞的時候，你需要使用 mozSetMessageHandler 來掛載相對應的 Handler。</p>
+<p>下面是 IAC 的基本使用方法：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f6650b6450ac498555835" class="crayon-syntax crayon-theme-github crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+window.navigator.mozSetMessageHandler('connection', 
+  function onConnected(request) {
+   var keyword = request.keyword;
+   var port = request.port;
+
+   port.onmessage = function onReceivedMessage(evt) {
+     // this is the message you sent
+     var message = evt.data;
+     // do whatever you want to do later
+   };
+});</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f6650b6450ac498555835-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b6450ac498555835-2">2</div><div class="crayon-num" data-line="crayon-5f6650b6450ac498555835-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b6450ac498555835-4">4</div><div class="crayon-num" data-line="crayon-5f6650b6450ac498555835-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b6450ac498555835-6">6</div><div class="crayon-num" data-line="crayon-5f6650b6450ac498555835-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b6450ac498555835-8">8</div><div class="crayon-num" data-line="crayon-5f6650b6450ac498555835-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b6450ac498555835-10">10</div><div class="crayon-num" data-line="crayon-5f6650b6450ac498555835-11">11</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f6650b6450ac498555835-1"><span class="crayon-v">window</span><span class="crayon-sy">.</span><span class="crayon-v">navigator</span><span class="crayon-sy">.</span><span class="crayon-e">mozSetMessageHandler</span><span class="crayon-sy">(</span><span class="crayon-s">'connection'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b6450ac498555835-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">onConnected</span><span class="crayon-sy">(</span><span class="crayon-v">request</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f6650b6450ac498555835-3"><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">keyword</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">request</span><span class="crayon-sy">.</span><span class="crayon-v">keyword</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b6450ac498555835-4"><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">port</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">request</span><span class="crayon-sy">.</span><span class="crayon-v">port</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f6650b6450ac498555835-5">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b6450ac498555835-6"><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-v">port</span><span class="crayon-sy">.</span><span class="crayon-v">onmessage</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">onReceivedMessage</span><span class="crayon-sy">(</span><span class="crayon-v">evt</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f6650b6450ac498555835-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-c">// this is the message you sent</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b6450ac498555835-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">message</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">evt</span><span class="crayon-sy">.</span><span class="crayon-v">data</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f6650b6450ac498555835-9"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-c">// do whatever you want to do later</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b6450ac498555835-10"><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f6650b6450ac498555835-11"><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0004 seconds] -->
+<p>但是要注意的是因為這個 API 只會執行最後一個掛上去的 Handler，所以當你一個 App 要做多組 IAC 資訊傳遞的時候就需要自己做額外的處理。</p>
+<p>但在寫程式的時候沒注意到件事情，所以當時 Music App 的另一個 contributor &#8211; Jim Porter 同時也自己在 System App 建立了一個 Handler，而我的 Handler 又是在他建立之前建立的，因此所有我 FTU 有關的 Handler 不會執行到，因為通通都被它的 Handler 蓋過去了。</p>
+<p>所以為了讓後面的人不要發生這個問題，之後就和 Jim Porter 討論出一個 IACHanlder，每個 App 只要引入這段 javascript ，我們就會自動幫他建好一個共用的 Handler，所有的資料都是這個 Handler 統一管理，然後以一個固定的 naming 用 Custom Event 的方式傳播出去，讓有需要的人可以自己接 Event。（有興趣了解實作的人可以看<a href="https://github.com/mozilla-b2g/gaia/blob/e0120f015b108d12c50cd020a1f29d88d9cc11e1/shared/js/iac_handler.js" target="_blank">這裡</a>）</p>
+<p>所以最後 System App 只要用這樣簡單一行程式碼就可以接 Event 然後做解除限制的動作了：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f6650b6450af173204613" class="crayon-syntax crayon-theme-github crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+window.addEventListener('iac-ftucomms', function() {
+  var message = evt.detail;
+  if (message === 'done') {
+    self.setBypassHome(true);
+  }
+});</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f6650b6450af173204613-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b6450af173204613-2">2</div><div class="crayon-num" data-line="crayon-5f6650b6450af173204613-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b6450af173204613-4">4</div><div class="crayon-num" data-line="crayon-5f6650b6450af173204613-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f6650b6450af173204613-6">6</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f6650b6450af173204613-1"><span class="crayon-v">window</span><span class="crayon-sy">.</span><span class="crayon-e">addEventListener</span><span class="crayon-sy">(</span><span class="crayon-s">'iac-ftucomms'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b6450af173204613-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">message</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">evt</span><span class="crayon-sy">.</span><span class="crayon-v">detail</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f6650b6450af173204613-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">message</span><span class="crayon-h"> </span><span class="crayon-o">===</span><span class="crayon-h"> </span><span class="crayon-s">'done'</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b6450af173204613-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">self</span><span class="crayon-sy">.</span><span class="crayon-e">setBypassHome</span><span class="crayon-sy">(</span><span class="crayon-t">true</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f6650b6450af173204613-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f6650b6450af173204613-6"><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>是不是很簡單呢！希望這篇能夠幫助到也需要使用 IAC 的開發者朋友哦 🙂</p>
+<p>參考資料： <a href="https://wiki.mozilla.org/WebAPI/Inter_App_Communication_Alt_proposal#Music_controls_in_the_lockscreen" target="_blank">Inter App Communication wiki 文件</a></p>
+<p>&#8212;</p>
+<p>My Blog : <a href="http://eragonj.me" target="_blank">http://eragonj.me</a></p>
+<p>My Twitter : <a href="http://twitter.com/EragonJ" target="_blank">http://twitter.com/EragonJ</a></p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://tech.mozilla.com.tw/?cat=3" rel="category">Firefox OS(B2G)</a>、<a href="https://tech.mozilla.com.tw/?cat=9" rel="category">Javascript</a>、<a href="https://tech.mozilla.com.tw/?cat=7" rel="category">Open Source</a>      </div>
+    </footer> 
+    </article><!-- #post-3560 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" 
+	              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+			<h3 id="comments-title">
+			共 1 則讀者回應
+		</h3>
+
+		
+		<ol class="commentlist">
+				<li class="post pingback">
+		<p>參照： <a href='http://tech.mozilla.com.tw/posts/4540/%e5%86%8d%e6%8e%a2-inter-app-communication-iac' rel='external nofollow' class='url'>再探 Inter-App Communication (IAC) | Mozilla Tech | 謀智台客</a></p>
+	</li><!-- #comment-## -->
+		</ol>
+
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/?p=3560#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required='true' required='required' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required='true' required='required' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表" /> <input type='hidden' name='comment_post_ID' value='3560' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="3c512d52c6" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="77"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class='name-title'><a class="profile-link" href="https://tech.mozilla.com.tw/?author=89"><span class="gravatar left"><img src="https://secure.gravatar.com/avatar/f42e154ceb44bcbf4b2fdb676527d09d?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=48" alt="" class="avatar user-89-avatar" width='48' height='48' /></span><span class="name">EragonJ</span></a></span><p class='contact'><span class="web"><strong>網站：</strong><a href="http://eragonj.me">http://eragonj.me</a></span></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="52" href="https://tech.mozilla.com.tw/?author=52"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg" alt="" class="avatar user-52-avatar" width='96' height='96' /></a><a data-author-id="18" href="https://tech.mozilla.com.tw/?author=18"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg" alt="" class="avatar user-18-avatar" width='96' height='96' /></a><a data-author-id="43" href="https://tech.mozilla.com.tw/?author=43"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg" alt="" class="avatar user-43-avatar" width='96' height='96' /></a><a data-author-id="133" href="https://tech.mozilla.com.tw/?author=133"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg" alt="" class="avatar user-133-avatar" width='96' height='96' /></a><a data-author-id="59" href="https://tech.mozilla.com.tw/?author=59"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg" alt="" class="avatar user-59-avatar" width='96' height='96' /></a><a data-author-id="60" href="https://tech.mozilla.com.tw/?author=60"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg" alt="" class="avatar user-60-avatar" width='96' height='96' /></a></div><a class="more" href="/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://tech.mozilla.com.tw/?cat=8" >CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://tech.mozilla.com.tw/?cat=4" >Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://tech.mozilla.com.tw/?cat=3" >Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://tech.mozilla.com.tw/?cat=30" >Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://tech.mozilla.com.tw/?cat=9" >Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://tech.mozilla.com.tw/?cat=42" >Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://tech.mozilla.com.tw/?cat=5" >Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://tech.mozilla.com.tw/?cat=7" >Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://tech.mozilla.com.tw/?cat=29" >UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">選擇月份</option>
+				<option value='https://tech.mozilla.com.tw/?m=201605'> 2016 年 五月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201602'> 2016 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201507'> 2015 年 七月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201506'> 2015 年 六月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201505'> 2015 年 五月 &nbsp;(2)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201504'> 2015 年 四月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201503'> 2015 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201502'> 2015 年 二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201501'> 2015 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201412'> 2014 年 十二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201411'> 2014 年 十一月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201410'> 2014 年 十月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201409'> 2014 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201408'> 2014 年 八月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201407'> 2014 年 七月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201405'> 2014 年 五月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201404'> 2014 年 四月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201403'> 2014 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201402'> 2014 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201401'> 2014 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201312'> 2013 年 十二月 &nbsp;(6)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201311'> 2013 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201310'> 2013 年 十月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201309'> 2013 年 九月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201308'> 2013 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201307'> 2013 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201306'> 2013 年 六月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201305'> 2013 年 五月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201304'> 2013 年 四月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201303'> 2013 年 三月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201302'> 2013 年 二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201301'> 2013 年 一月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201212'> 2012 年 十二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201211'> 2012 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201210'> 2012 年 十月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201209'> 2012 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201208'> 2012 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201207'> 2012 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201206'> 2012 年 六月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201205'> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

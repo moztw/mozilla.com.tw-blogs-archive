@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+Phone App 與 Callscreen 的背後功臣：Telephony API | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="https://tech.mozilla.com.tw/?p=6016"/><meta property="og:image" content="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/final.png" />
+
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<link rel="stylesheet" type="text/css" media="all" href="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css" /><!--<link rel="pingback" href="https://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="https://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://tech.mozilla.com.tw/","urlLoginRedirect":"https://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=616abff960","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel='dns-prefetch' href='//s.w.org'>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo;" href="https://tech.mozilla.com.tw/?feed=rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 迴響" href="https://tech.mozilla.com.tw/?feed=comments-rss2" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; Phone App 與 Callscreen 的背後功臣：Telephony API 迴響" href="https://tech.mozilla.com.tw/?feed=rss2&#038;p=6016" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='crayon-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-arduino-ide-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='advanced-responsive-video-embedder-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0' type='text/css' media='all' />
+<link rel='stylesheet' id='persona-style-css'  href='https://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46' type='text/css' media='all' />
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<link rel='https://api.w.org/' href='https://tech.mozilla.com.tw/?rest_route=/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='謀智菜逼八談 XPCOM 實務入門' href='https://tech.mozilla.com.tw/?p=6010' />
+<link rel='next' title='如何在 Firefox OS 上建立瀏覽器 APP' href='https://tech.mozilla.com.tw/?p=6046' />
+<meta name="generator" content="WordPress 4.6" />
+<link rel="canonical" href="https://tech.mozilla.com.tw/?p=6016" />
+<link rel='shortlink' href='https://tech.mozilla.com.tw/?p=6016' />
+<link rel="alternate" type="application/json+oembed" href="https://tech.mozilla.com.tw/?rest_route=%2Foembed%2F1.0%2Fembed&#038;url=https%3A%2F%2Ftech.mozilla.com.tw%2F%3Fp%3D6016" />
+<link rel="stylesheet" href="https://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-6016 single-format-standard sand">
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='//mozilla.com.tw/' class='home'>Home</a>
+            <b>&raquo;</b>
+            <a href='//mozilla.com.tw/news/'>訊息中心</a>
+            <b>&raquo;</b>
+                          <a href='//tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>
+              <span>Phone App 與 Callscreen 的背後功臣：Telephony API</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="https://tech.mozilla.com.tw/?p=6016" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="https://tech.mozilla.com.tw/?p=6016"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=https://tech.mozilla.com.tw/?p=6016&media=https://tech.mozilla.com.tw/wp-content/uploads/2015/02/final-150x150.png" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+	        <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">0</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://tech.mozilla.com.tw/?p=6010"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2015/01/xpcomEmbedding-50x50.gif" class="attachment-48x48 size-48x48 wp-post-image" alt="XPCOM" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2015/01/xpcomEmbedding-50x50.gif 50w, https://tech.mozilla.com.tw/wp-content/uploads/2015/01/xpcomEmbedding-150x150.gif 150w" sizes="(max-width: 48px) 100vw, 48px" /><span class="meta-nav">謀智菜逼八談 XPCOM 實務入門</span></div></a></div>		
+							<div class="nav-next"><a href="https://tech.mozilla.com.tw/?p=6046"><div class="post-tip"><img width="48" height="48" src="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/Blank_Skitch_Document1-50x50.png" class="attachment-48x48 size-48x48 wp-post-image" alt="mybrowser finished" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/Blank_Skitch_Document1-50x50.png 50w, https://tech.mozilla.com.tw/wp-content/uploads/2015/02/Blank_Skitch_Document1-150x150.png 150w" sizes="(max-width: 48px) 100vw, 48px" /><span class="meta-nav">如何在 Firefox OS 上建立瀏覽器 APP</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-6016" class="post-6016 post type-post status-publish format-standard has-post-thumbnail hentry category-b2g category-javascript">
+	 	<header class="entry-header">
+		<h1 class="entry-title">Phone App 與 Callscreen 的背後功臣：Telephony API</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://tech.mozilla.com.tw/?m=201503" class="posted-month">3月</a>
+	        <span class="posted-date">16</span>
+	        <a title="See all posts from 2014" href="https://tech.mozilla.com.tw/?m=2015" class="posted-year">2015</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="144">
+		  	<a href="https://tech.mozilla.com.tw/?author=144">
+	          <img src="https://secure.gravatar.com/avatar/961de5c7c602cc6e3da0c496d3297495?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=24" alt="" class="avatar user-144-avatar" width='24' height='24' /><!--
+	       --><div class="author-info">Sean Lee</div><!--
+	       --><div class="author-title"></div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p>手機產品是 Firefox OS 的重要任務之一，Phone app 與 Callscreen app 實現了撥打/接聽電話功能，背後與底層溝通的媒介 Telephony API [1] 佔了非常重要的地位，安全性的考量下，Telephony API 僅開放給 Certified app 使用，不過依然可以輕易地客製你的 Phone app，因此這篇文章將以 Firefox OS v2.1 為範例，為讀者介紹 Telephony API 的操作以及 Phone app 與 Callscreen app 實際上如何使用這項功能。</p>
+<div id="attachment_6138" style="width: 310px" class="wp-caption aligncenter"><a href="http://tech.mozilla.com.tw/wp-content/uploads/2015/02/final.png"><img class="wp-image-6138 size-medium" src="http://tech.mozilla.com.tw/wp-content/uploads/2015/02/final-300x267.png" alt="Phone app &amp; Callscreen" width="300" height="267" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/final-300x267.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2015/02/final.png 960w" sizes="(max-width: 300px) 100vw, 300px" /></a><p class="wp-caption-text">左為 Phone app，右為 Callscreen</p></div>
+<h2>System app 與 Callscreen 的運作機制</h2>
+<p>當有電話撥入時，由 Callscreen app 負責顯示通話的資訊，但是系統啟動接著進入 Home Screen 後，Callscreen app 其實從未開啟過，它又是如何被系統叫出畫面的呢？</p>
+<p>這時我們就需要探討 System app 中，如何藉由以下這兩者間的合作，在收到 incoming call/dialing 事件後，顯示 Callscreen app 的過程。</p>
+<ul>
+<li>
+			<span id="crayon-5f8e09dad21b1024838312" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">DialerAgent</span></span></span> (<a href="https://github.com/mozilla-b2g/gaia/blob/master/apps/system/js/dialer_agent.js" target="_blank">apps/system/js/dialer_agent.js</a>)</li>
+<li>
+			<span id="crayon-5f8e09dad21bc993432144" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">CallscreenWindow</span></span></span> (<a href="https://github.com/mozilla-b2g/gaia/blob/master/apps/system/js/callscreen_window.js" target="_blank">apps/system/js/callscreen_window.js</a>)</li>
+</ul>
+<p>
+			<span id="crayon-5f8e09dad21bf671658198" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">CallscreenWindow</span></span></span>  繼承自 
+			<span id="crayon-5f8e09dad21c2498504328" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">AttentionWindow</span></span></span>  / 
+			<span id="crayon-5f8e09dad21c4363714116" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">AppWindow</span></span></span> ，因此可以透過 AppWindow API 來控制 App 顯示與否，而 
+			<span id="crayon-5f8e09dad21c7983404518" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">CallscreenWindow</span></span></span>  的目的就是可以更容易地操作 Callscreen app 顯示的時機。</p>
+<p>回到初始的過程，首先由 bootstrap.js [2] 來建立 
+			<span id="crayon-5f8e09dad21c9815114288" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">DialerAgent</span></span></span> 物件，以及呼叫 
+			<span id="crayon-5f8e09dad21cb628863145" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">start</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> ：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f8e09dad21ce257675794" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+  DialerAgent.prototype.start = function da_start() {
+    ...
+    this._telephony.addEventListener('callschanged', this);
+    ....
+    this._callscreenWindow = new CallscreenWindow();
+    this._callscreenWindow.hide();
+    ...
+    return this;
+  };</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f8e09dad21ce257675794-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21ce257675794-2">2</div><div class="crayon-num" data-line="crayon-5f8e09dad21ce257675794-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21ce257675794-4">4</div><div class="crayon-num" data-line="crayon-5f8e09dad21ce257675794-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21ce257675794-6">6</div><div class="crayon-num" data-line="crayon-5f8e09dad21ce257675794-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21ce257675794-8">8</div><div class="crayon-num" data-line="crayon-5f8e09dad21ce257675794-9">9</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f8e09dad21ce257675794-1"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">DialerAgent</span><span class="crayon-sy">.</span><span class="crayon-v">prototype</span><span class="crayon-sy">.</span><span class="crayon-v">start</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">da_start</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21ce257675794-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span></div><div class="crayon-line" id="crayon-5f8e09dad21ce257675794-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">_telephony</span><span class="crayon-sy">.</span><span class="crayon-e">addEventListener</span><span class="crayon-sy">(</span><span class="crayon-s">'callschanged'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21ce257675794-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span></div><div class="crayon-line" id="crayon-5f8e09dad21ce257675794-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">_callscreenWindow</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-r">new</span><span class="crayon-h"> </span><span class="crayon-e">CallscreenWindow</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21ce257675794-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">_callscreenWindow</span><span class="crayon-sy">.</span><span class="crayon-e">hide</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad21ce257675794-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21ce257675794-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad21ce257675794-9"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0004 seconds] -->
+<p>
+			<span id="crayon-5f8e09dad21d1432305564" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">DialerAgent</span></span></span> 與 
+			<span id="crayon-5f8e09dad21d3712369352" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">CallscreenWindow</span></span></span> 的初始工作可以分成以下三項：</p>
+<ol>
+<li><strong>初始 CallscreenWindow</strong>－建立 
+			<span id="crayon-5f8e09dad21d6551358032" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">_callscreenWindow</span></span></span> 物件，讓接下來的程式碼可以操作 
+			<span id="crayon-5f8e09dad21d8474680526" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">CallscreenWindow</span></span></span> 。
+			<span id="crayon-5f8e09dad21da179790957" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">CSORIGIN</span></span></span> 是 Callscreen 的 URL：app://callscreen.gaiamobile.org/，藉由它來設定 
+			<span id="crayon-5f8e09dad21dd671701278" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">manifestURL</span></span></span> 、
+			<span id="crayon-5f8e09dad21df570711489" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">url</span></span></span> 以及 
+			<span id="crayon-5f8e09dad21e1738440546" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">origin</span></span></span> ，這些資訊在下一步會用來建立 iframe。<br />
+<!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f8e09dad21e4745233645" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+  var CSORIGIN =
+      window.location.origin.replace('system', 'callscreen') + '/';
+  var CallscreenWindow = function CallscreenWindow() {
+    this.config = {
+      manifestURL: CSORIGIN + 'manifest.webapp',
+      url: CSORIGIN + 'index.html',
+      origin: CSORIGIN
+    };
+    this.isCallscreenWindow = true;
+    this.reConfig(this.config);
+    this.render();
+    if (this._DEBUG) {
+      CallscreenWindow[this.instanceID] = this;
+    }
+    this.publish('created');
+  };</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f8e09dad21e4745233645-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21e4745233645-2">2</div><div class="crayon-num" data-line="crayon-5f8e09dad21e4745233645-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21e4745233645-4">4</div><div class="crayon-num" data-line="crayon-5f8e09dad21e4745233645-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21e4745233645-6">6</div><div class="crayon-num" data-line="crayon-5f8e09dad21e4745233645-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21e4745233645-8">8</div><div class="crayon-num" data-line="crayon-5f8e09dad21e4745233645-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21e4745233645-10">10</div><div class="crayon-num" data-line="crayon-5f8e09dad21e4745233645-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21e4745233645-12">12</div><div class="crayon-num" data-line="crayon-5f8e09dad21e4745233645-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21e4745233645-14">14</div><div class="crayon-num" data-line="crayon-5f8e09dad21e4745233645-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21e4745233645-16">16</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f8e09dad21e4745233645-1"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">CSORIGIN</span><span class="crayon-h"> </span><span class="crayon-o">=</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21e4745233645-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">window</span><span class="crayon-sy">.</span><span class="crayon-v">location</span><span class="crayon-sy">.</span><span class="crayon-v">origin</span><span class="crayon-sy">.</span><span class="crayon-e">replace</span><span class="crayon-sy">(</span><span class="crayon-s">'system'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">'callscreen'</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-s">'/'</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad21e4745233645-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">CallscreenWindow</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">CallscreenWindow</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21e4745233645-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">config</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f8e09dad21e4745233645-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">manifestURL</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">CSORIGIN</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-s">'manifest.webapp'</span><span class="crayon-sy">,</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21e4745233645-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">url</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">CSORIGIN</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-s">'index.html'</span><span class="crayon-sy">,</span></div><div class="crayon-line" id="crayon-5f8e09dad21e4745233645-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">origin</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-i">CSORIGIN</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21e4745233645-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad21e4745233645-9"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">isCallscreenWindow</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">true</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21e4745233645-10"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-e">reConfig</span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">config</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad21e4745233645-11"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-e">render</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21e4745233645-12"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">_DEBUG</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f8e09dad21e4745233645-13"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">CallscreenWindow</span><span class="crayon-sy">[</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">instanceID</span><span class="crayon-sy">]</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21e4745233645-14"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f8e09dad21e4745233645-15"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-e">publish</span><span class="crayon-sy">(</span><span class="crayon-s">'created'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21e4745233645-16"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0006 seconds] -->
+<br />
+&nbsp;</li>
+<li><strong>初始 Callscreen app</strong>－CallscreenWindow 的建構子執行 
+			<span id="crayon-5f8e09dad21e6043291328" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">render</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> ，設定 iframe 這些參數 (
+			<span id="crayon-5f8e09dad21e9754591398" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">mozbrowser</span></span></span> 、
+			<span id="crayon-5f8e09dad21eb726486587" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">remote</span></span></span> 、
+			<span id="crayon-5f8e09dad21ee359974337" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">src</span></span></span> 以及 
+			<span id="crayon-5f8e09dad21f0801305159" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">mozapp</span></span></span> [3])， 將 Callscreen app 的畫面嵌在 iframe 中，接著用 
+			<span id="crayon-5f8e09dad21f3845472586" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">hide</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 將 Callscreen app 先隱藏在背景中待命。<br />
+<!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f8e09dad21f5037752845" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+  CallscreenWindow.prototype.render = function cw_render() {
+    this.publish('willrender');
+    this.containerElement.insertAdjacentHTML('beforeend', this.view());
+
+    this.element =
+      document.getElementById(this.instanceID);
+    // XXX: Use BrowserFrame
+    var iframe = document.createElement('iframe');
+    iframe.setAttribute('name', 'call_screen');
+    iframe.setAttribute('mozbrowser', 'true');
+    iframe.setAttribute('remote', 'false');
+    iframe.setAttribute('mozapp', this.config.manifestURL);
+    iframe.src = this.config.url;
+    this.browser = {
+      element: iframe
+    };
+    this.browserContainer = this.element.querySelector('.browser-container');
+    this.browserContainer.insertBefore(this.browser.element, null);
+    this.frame = this.element;
+    this.iframe = this.browser.element;
+    this.screenshotOverlay = this.element.querySelector('.screenshot-overlay');
+
+    this._registerEvents();
+    this.installSubComponents();
+    this.publish('rendered');
+  };</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f8e09dad21f5037752845-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21f5037752845-2">2</div><div class="crayon-num" data-line="crayon-5f8e09dad21f5037752845-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21f5037752845-4">4</div><div class="crayon-num" data-line="crayon-5f8e09dad21f5037752845-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21f5037752845-6">6</div><div class="crayon-num" data-line="crayon-5f8e09dad21f5037752845-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21f5037752845-8">8</div><div class="crayon-num" data-line="crayon-5f8e09dad21f5037752845-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21f5037752845-10">10</div><div class="crayon-num" data-line="crayon-5f8e09dad21f5037752845-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21f5037752845-12">12</div><div class="crayon-num" data-line="crayon-5f8e09dad21f5037752845-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21f5037752845-14">14</div><div class="crayon-num" data-line="crayon-5f8e09dad21f5037752845-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21f5037752845-16">16</div><div class="crayon-num" data-line="crayon-5f8e09dad21f5037752845-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21f5037752845-18">18</div><div class="crayon-num" data-line="crayon-5f8e09dad21f5037752845-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21f5037752845-20">20</div><div class="crayon-num" data-line="crayon-5f8e09dad21f5037752845-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21f5037752845-22">22</div><div class="crayon-num" data-line="crayon-5f8e09dad21f5037752845-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21f5037752845-24">24</div><div class="crayon-num" data-line="crayon-5f8e09dad21f5037752845-25">25</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad21f5037752845-26">26</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f8e09dad21f5037752845-1"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">CallscreenWindow</span><span class="crayon-sy">.</span><span class="crayon-v">prototype</span><span class="crayon-sy">.</span><span class="crayon-v">render</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">cw_render</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21f5037752845-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-e">publish</span><span class="crayon-sy">(</span><span class="crayon-s">'willrender'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad21f5037752845-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">containerElement</span><span class="crayon-sy">.</span><span class="crayon-e">insertAdjacentHTML</span><span class="crayon-sy">(</span><span class="crayon-s">'beforeend'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-e">view</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21f5037752845-4">&nbsp;</div><div class="crayon-line" id="crayon-5f8e09dad21f5037752845-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">element</span><span class="crayon-h"> </span><span class="crayon-o">=</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21f5037752845-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">document</span><span class="crayon-sy">.</span><span class="crayon-e">getElementById</span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">instanceID</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad21f5037752845-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// XXX: Use BrowserFrame</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21f5037752845-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">iframe</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">document</span><span class="crayon-sy">.</span><span class="crayon-e">createElement</span><span class="crayon-sy">(</span><span class="crayon-s">'iframe'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad21f5037752845-9"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">iframe</span><span class="crayon-sy">.</span><span class="crayon-e">setAttribute</span><span class="crayon-sy">(</span><span class="crayon-s">'name'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">'call_screen'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21f5037752845-10"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">iframe</span><span class="crayon-sy">.</span><span class="crayon-e">setAttribute</span><span class="crayon-sy">(</span><span class="crayon-s">'mozbrowser'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">'true'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad21f5037752845-11"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">iframe</span><span class="crayon-sy">.</span><span class="crayon-e">setAttribute</span><span class="crayon-sy">(</span><span class="crayon-s">'remote'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-s">'false'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21f5037752845-12"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">iframe</span><span class="crayon-sy">.</span><span class="crayon-e">setAttribute</span><span class="crayon-sy">(</span><span class="crayon-s">'mozapp'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">config</span><span class="crayon-sy">.</span><span class="crayon-v">manifestURL</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad21f5037752845-13"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">iframe</span><span class="crayon-sy">.</span><span class="crayon-v">src</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">config</span><span class="crayon-sy">.</span><span class="crayon-v">url</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21f5037752845-14"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">browser</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f8e09dad21f5037752845-15"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">element</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-i">iframe</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21f5037752845-16"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad21f5037752845-17"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">browserContainer</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">element</span><span class="crayon-sy">.</span><span class="crayon-e">querySelector</span><span class="crayon-sy">(</span><span class="crayon-s">'.browser-container'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21f5037752845-18"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">browserContainer</span><span class="crayon-sy">.</span><span class="crayon-e">insertBefore</span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">browser</span><span class="crayon-sy">.</span><span class="crayon-v">element</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-t">null</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad21f5037752845-19"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">frame</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">element</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21f5037752845-20"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">iframe</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">browser</span><span class="crayon-sy">.</span><span class="crayon-v">element</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad21f5037752845-21"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">screenshotOverlay</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">element</span><span class="crayon-sy">.</span><span class="crayon-e">querySelector</span><span class="crayon-sy">(</span><span class="crayon-s">'.screenshot-overlay'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21f5037752845-22">&nbsp;</div><div class="crayon-line" id="crayon-5f8e09dad21f5037752845-23"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-e">_registerEvents</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21f5037752845-24"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-e">installSubComponents</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad21f5037752845-25"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-e">publish</span><span class="crayon-sy">(</span><span class="crayon-s">'rendered'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad21f5037752845-26"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0010 seconds] -->
+<br />
+&nbsp;</li>
+<li><strong>註冊 callschanged 事件[4]</strong>－當事件觸發時，若 
+			<span id="crayon-5f8e09dad21f8880938359" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">telephony</span><span class="crayon-sy">.</span><span class="crayon-v">calls</span></span></span> 中，有 
+			<span id="crayon-5f8e09dad21fb800136787" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">call</span><span class="crayon-sy">.</span><span class="crayon-v">state</span></span></span> 為 
+			<span id="crayon-5f8e09dad21fd970272774" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">incoming</span></span></span> (來電)或是 
+			<span id="crayon-5f8e09dad21ff334621306" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">dialing</span></span></span> (撥出)的 
+			<span id="crayon-5f8e09dad2201737511224" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">TelephonyCall</span></span></span>  時，開啟 Callscreen－
+			<span id="crayon-5f8e09dad2204210590653" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">DialerAgent</span><span class="crayon-sy">.</span><span class="crayon-e">openCallscreen</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> [5]，透過 
+			<span id="crayon-5f8e09dad2206517576513" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">ensure</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 顯示 Callscreen app：<br />
+<!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f8e09dad2208901916131" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+  DialerAgent.prototype.openCallscreen = function() {
+    if (this._callscreenWindow) {
+      this._callscreenWindow.ensure();
+      this._callscreenWindow.requestOpen();
+    }
+  };</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f8e09dad2208901916131-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad2208901916131-2">2</div><div class="crayon-num" data-line="crayon-5f8e09dad2208901916131-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad2208901916131-4">4</div><div class="crayon-num" data-line="crayon-5f8e09dad2208901916131-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad2208901916131-6">6</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f8e09dad2208901916131-1"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">DialerAgent</span><span class="crayon-sy">.</span><span class="crayon-v">prototype</span><span class="crayon-sy">.</span><span class="crayon-v">openCallscreen</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad2208901916131-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">_callscreenWindow</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f8e09dad2208901916131-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">_callscreenWindow</span><span class="crayon-sy">.</span><span class="crayon-e">ensure</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad2208901916131-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">_callscreenWindow</span><span class="crayon-sy">.</span><span class="crayon-e">requestOpen</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad2208901916131-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad2208901916131-6"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<br />
+&nbsp;</li>
+</ol>
+<p>以上的初始流程結束後，只要有撥打電話(dialing)或是電話撥入(incoming)時，就會觸發 
+			<span id="crayon-5f8e09dad220b145393628" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">callschanged</span></span></span> 事件，透過 
+			<span id="crayon-5f8e09dad220d534900727" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">openCallscreen</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 顯示出 Callscreen app 。</p>
+<h2>Callscreen 的運作</h2>
+<p>在 
+			<span id="crayon-5f8e09dad2210041073526" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">CallsHandler</span></span></span> 中也註冊 
+			<span id="crayon-5f8e09dad2214317216218" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">callchanged</span></span></span> 事件，該事件觸發後隨即執行的 
+			<span id="crayon-5f8e09dad2217260911254" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">CallsHandler</span><span class="crayon-sy">.</span><span class="crayon-e">onCallsChanged</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 會針對未處理過的通話使用 
+			<span id="crayon-5f8e09dad2219909582064" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">addCall</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 將每個通話的 
+			<span id="crayon-5f8e09dad221c726637014" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">HandledCall</span></span></span> 物件加入 
+			<span id="crayon-5f8e09dad221e178411186" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">handledCalls</span></span></span> 陣列。<br />
+
+			<span id="crayon-5f8e09dad2220160570661" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">HandledCall</span></span></span> 則會用來操作 TelephonyCall API [6]，例如聽 
+			<span id="crayon-5f8e09dad2223480970651" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">statechange</span></span></span> 事件，以處理各種通話狀態如 
+			<span id="crayon-5f8e09dad2225516860244" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">connected</span></span></span> 、
+			<span id="crayon-5f8e09dad2227119922296" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">disconnected</span></span></span> 與 
+			<span id="crayon-5f8e09dad2229076443421" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">held</span></span></span> 。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f8e09dad222b834189562" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+function HandledCall(aCall) {
+  aCall.addEventListener('statechange', this);
+  aCall.addEventListener('statechange', CallsHandler.updatePlaceNewCall);
+  ...
+}
+
+HandledCall.prototype.handleEvent = function hc_handle(evt) {
+  switch (evt.call.state) {
+    case 'connected':
+      // The dialer agent in the system app plays and stops the ringtone once
+      // the call state changes. If we play silence right after the ringtone
+      // stops then a mozinterrupbegin event is fired. This is a race condition
+      // we could easily avoid with a 1-second-timeout fix.
+      window.setTimeout(function onTimeout() {
+        AudioCompetingHelper.compete();
+      }, 1000);
+      CallScreen.render('connected');
+      this.connected();
+      break;
+    case 'disconnected':
+      AudioCompetingHelper.leaveCompetition();
+      this.disconnected();
+      break;
+    case 'held':
+      AudioCompetingHelper.leaveCompetition();
+      this.node.classList.add('held');
+      break;
+  }
+};</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f8e09dad222b834189562-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad222b834189562-2">2</div><div class="crayon-num" data-line="crayon-5f8e09dad222b834189562-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad222b834189562-4">4</div><div class="crayon-num" data-line="crayon-5f8e09dad222b834189562-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad222b834189562-6">6</div><div class="crayon-num" data-line="crayon-5f8e09dad222b834189562-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad222b834189562-8">8</div><div class="crayon-num" data-line="crayon-5f8e09dad222b834189562-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad222b834189562-10">10</div><div class="crayon-num" data-line="crayon-5f8e09dad222b834189562-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad222b834189562-12">12</div><div class="crayon-num" data-line="crayon-5f8e09dad222b834189562-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad222b834189562-14">14</div><div class="crayon-num" data-line="crayon-5f8e09dad222b834189562-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad222b834189562-16">16</div><div class="crayon-num" data-line="crayon-5f8e09dad222b834189562-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad222b834189562-18">18</div><div class="crayon-num" data-line="crayon-5f8e09dad222b834189562-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad222b834189562-20">20</div><div class="crayon-num" data-line="crayon-5f8e09dad222b834189562-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad222b834189562-22">22</div><div class="crayon-num" data-line="crayon-5f8e09dad222b834189562-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad222b834189562-24">24</div><div class="crayon-num" data-line="crayon-5f8e09dad222b834189562-25">25</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad222b834189562-26">26</div><div class="crayon-num" data-line="crayon-5f8e09dad222b834189562-27">27</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad222b834189562-28">28</div><div class="crayon-num" data-line="crayon-5f8e09dad222b834189562-29">29</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f8e09dad222b834189562-1"><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">HandledCall</span><span class="crayon-sy">(</span><span class="crayon-v">aCall</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad222b834189562-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">aCall</span><span class="crayon-sy">.</span><span class="crayon-e">addEventListener</span><span class="crayon-sy">(</span><span class="crayon-s">'statechange'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad222b834189562-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">aCall</span><span class="crayon-sy">.</span><span class="crayon-e">addEventListener</span><span class="crayon-sy">(</span><span class="crayon-s">'statechange'</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">CallsHandler</span><span class="crayon-sy">.</span><span class="crayon-v">updatePlaceNewCall</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad222b834189562-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span></div><div class="crayon-line" id="crayon-5f8e09dad222b834189562-5"><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad222b834189562-6">&nbsp;</div><div class="crayon-line" id="crayon-5f8e09dad222b834189562-7"><span class="crayon-v">HandledCall</span><span class="crayon-sy">.</span><span class="crayon-v">prototype</span><span class="crayon-sy">.</span><span class="crayon-v">handleEvent</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">hc_handle</span><span class="crayon-sy">(</span><span class="crayon-v">evt</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad222b834189562-8"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">switch</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">evt</span><span class="crayon-sy">.</span><span class="crayon-v">call</span><span class="crayon-sy">.</span><span class="crayon-v">state</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f8e09dad222b834189562-9"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">case</span><span class="crayon-h"> </span><span class="crayon-s">'connected'</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad222b834189562-10"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// The dialer agent in the system app plays and stops the ringtone once</span></div><div class="crayon-line" id="crayon-5f8e09dad222b834189562-11"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// the call state changes. If we play silence right after the ringtone</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad222b834189562-12"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// stops then a mozinterrupbegin event is fired. This is a race condition</span></div><div class="crayon-line" id="crayon-5f8e09dad222b834189562-13"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// we could easily avoid with a 1-second-timeout fix.</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad222b834189562-14"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">window</span><span class="crayon-sy">.</span><span class="crayon-e">setTimeout</span><span class="crayon-sy">(</span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">onTimeout</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f8e09dad222b834189562-15"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">AudioCompetingHelper</span><span class="crayon-sy">.</span><span class="crayon-e">compete</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad222b834189562-16"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">1000</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad222b834189562-17"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">CallScreen</span><span class="crayon-sy">.</span><span class="crayon-e">render</span><span class="crayon-sy">(</span><span class="crayon-s">'connected'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad222b834189562-18"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-e">connected</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad222b834189562-19"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">break</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad222b834189562-20"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">case</span><span class="crayon-h"> </span><span class="crayon-s">'disconnected'</span><span class="crayon-o">:</span></div><div class="crayon-line" id="crayon-5f8e09dad222b834189562-21"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">AudioCompetingHelper</span><span class="crayon-sy">.</span><span class="crayon-e">leaveCompetition</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad222b834189562-22"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-e">disconnected</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad222b834189562-23"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">break</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad222b834189562-24"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">case</span><span class="crayon-h"> </span><span class="crayon-s">'held'</span><span class="crayon-o">:</span></div><div class="crayon-line" id="crayon-5f8e09dad222b834189562-25"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">AudioCompetingHelper</span><span class="crayon-sy">.</span><span class="crayon-e">leaveCompetition</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad222b834189562-26"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">node</span><span class="crayon-sy">.</span><span class="crayon-v">classList</span><span class="crayon-sy">.</span><span class="crayon-e">add</span><span class="crayon-sy">(</span><span class="crayon-s">'held'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad222b834189562-27"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">break</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad222b834189562-28"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f8e09dad222b834189562-29"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0008 seconds] -->
+<p></p>
+<h2>撥打電話</h2>
+<p>Phone app 在使用者輸入完號碼後，透過 
+			<span id="crayon-5f8e09dad222e107066500" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">TelephonyHelper</span></span></span> 來呼叫 
+			<span id="crayon-5f8e09dad2231001603152" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">navigator</span><span class="crayon-sy">.</span><span class="crayon-v">mozTelephony</span><span class="crayon-sy">.</span><span class="crayon-v">dial</span></span></span> 而達到撥打電話的目的。此外還必須從 
+			<span id="crayon-5f8e09dad2234598718496" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">navigator</span><span class="crayon-sy">.</span><span class="crayon-v">mozMobileConnections</span></span></span> 來判斷是否為 
+			<span id="crayon-5f8e09dad2236105569594" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">emergencyCallsOnly</span></span></span> ，決定呼叫 
+			<span id="crayon-5f8e09dad2238986700906" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">dialEmergency</span></span></span> 或是 
+			<span id="crayon-5f8e09dad223b416591352" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">dial</span></span></span> ；撥打緊急電話時，若手機中完全沒有 SIM card，
+			<span id="crayon-5f8e09dad223d564247130" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">emergencyCallsOnly</span></span></span> 才會表示為 
+			<span id="crayon-5f8e09dad223f763348023" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-t">true</span></span></span> ，若有一或多張 SIM ，依然為 
+			<span id="crayon-5f8e09dad2241996093446" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-t">false</span></span></span> 。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f8e09dad2244638485924" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+      var emergencyOnly = conn.voice.emergencyCallsOnly;
+      ...
+      } else if (emergencyOnly) {
+        ...
+        callPromise = telephony.dialEmergency(sanitizedNumber);
+      } else {
+        callPromise = telephony.dial(sanitizedNumber, cardIndex);
+      }</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f8e09dad2244638485924-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad2244638485924-2">2</div><div class="crayon-num" data-line="crayon-5f8e09dad2244638485924-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad2244638485924-4">4</div><div class="crayon-num" data-line="crayon-5f8e09dad2244638485924-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad2244638485924-6">6</div><div class="crayon-num" data-line="crayon-5f8e09dad2244638485924-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad2244638485924-8">8</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f8e09dad2244638485924-1"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">emergencyOnly</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">conn</span><span class="crayon-sy">.</span><span class="crayon-v">voice</span><span class="crayon-sy">.</span><span class="crayon-v">emergencyCallsOnly</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad2244638485924-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span></div><div class="crayon-line" id="crayon-5f8e09dad2244638485924-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-h"> </span><span class="crayon-st">else</span><span class="crayon-h"> </span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">emergencyOnly</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad2244638485924-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span></div><div class="crayon-line" id="crayon-5f8e09dad2244638485924-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">callPromise</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">telephony</span><span class="crayon-sy">.</span><span class="crayon-e">dialEmergency</span><span class="crayon-sy">(</span><span class="crayon-v">sanitizedNumber</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad2244638485924-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-h"> </span><span class="crayon-st">else</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f8e09dad2244638485924-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">callPromise</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">telephony</span><span class="crayon-sy">.</span><span class="crayon-e">dial</span><span class="crayon-sy">(</span><span class="crayon-v">sanitizedNumber</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">cardIndex</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad2244638485924-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0012 seconds] -->
+<p>當電話撥出中 (dialing) 時，Callscreen 會被我們先前在 
+			<span id="crayon-5f8e09dad2246614687073" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">DialerAgent</span></span></span> 註冊的 
+			<span id="crayon-5f8e09dad2249686449017" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">callschanged</span></span></span> event 叫出，以等待對方接通電話並更新畫面上的撥號狀態與資訊。</p>
+<h2>靜音與擴音</h2>
+<p>通話中經常使用的功能是靜音功能（下圖中的第一個按鈕），在 Telephony API 的實作很單純就是去設定 Telephony.muted [1] 是 true / false 來決定是否要使用靜音。</p>
+<p>另一項常用的擴音功能，在 Telephony API 的部分依然單純地設定 
+			<span id="crayon-5f8e09dad224c950972578" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">Telephony</span><span class="crayon-sy">.</span><span class="crayon-v">speakerEnabled</span></span></span> 為 true/false 就可以達到是否需要擴音的需求。但除此之外還要考量 speaker、手機聽筒與藍牙耳機的切換。</p>
+<div id="attachment_6140" style="width: 443px" class="wp-caption aligncenter"><a href="http://tech.mozilla.com.tw/wp-content/uploads/2015/02/final2.png"><img class="  wp-image-6140" src="http://tech.mozilla.com.tw/wp-content/uploads/2015/02/final2-300x63.png" alt="Callscreen 下方第四個按鈕可用來切換擴音，右邊的耳機按鈕表示有藍芽裝置。" width="433" height="91" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/final2-300x63.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2015/02/final2.png 960w" sizes="(max-width: 433px) 100vw, 433px" /></a><p class="wp-caption-text">第四個按鈕可用來切換擴音， 右邊的耳機按鈕表示有藍芽裝置。</p></div>
+<p>在 
+			<span id="crayon-5f8e09dad224f118286145" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">CallsHandler</span><span class="crayon-sy">.</span><span class="crayon-e">setup</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 中，可以透過 
+			<span id="crayon-5f8e09dad2252413750311" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">btHelper</span></span></span> 來取得目前是否有藍芽裝置，若是有我們就用 
+			<span id="crayon-5f8e09dad2254275664118" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">CallScreen</span><span class="crayon-sy">.</span><span class="crayon-e">setBTReceiverIcon</span><span class="crayon-sy">(</span><span class="crayon-t">true</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></span></span> 將畫面的擴音圖示以 
+			<span id="crayon-5f8e09dad2257248388688" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">bluetoothButton</span></span></span> 取代 
+			<span id="crayon-5f8e09dad2259934671250" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">speakerButton</span></span></span>，反之亦然。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f8e09dad225b871113991" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+    btHelper.getConnectedDevicesByProfile(btHelper.profiles.HFP,
+    function(result) {
+      CallScreen.setBTReceiverIcon(!!(result &amp;&amp; result.length));
+    });
+
+    btHelper.onhfpstatuschanged = function(evt) {
+      CallScreen.setBTReceiverIcon(evt.status);
+    };</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f8e09dad225b871113991-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad225b871113991-2">2</div><div class="crayon-num" data-line="crayon-5f8e09dad225b871113991-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad225b871113991-4">4</div><div class="crayon-num" data-line="crayon-5f8e09dad225b871113991-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad225b871113991-6">6</div><div class="crayon-num" data-line="crayon-5f8e09dad225b871113991-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad225b871113991-8">8</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f8e09dad225b871113991-1"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">btHelper</span><span class="crayon-sy">.</span><span class="crayon-e">getConnectedDevicesByProfile</span><span class="crayon-sy">(</span><span class="crayon-v">btHelper</span><span class="crayon-sy">.</span><span class="crayon-v">profiles</span><span class="crayon-sy">.</span><span class="crayon-v">HFP</span><span class="crayon-sy">,</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad225b871113991-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">function</span><span class="crayon-sy">(</span><span class="crayon-v">result</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f8e09dad225b871113991-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">CallScreen</span><span class="crayon-sy">.</span><span class="crayon-e">setBTReceiverIcon</span><span class="crayon-sy">(</span><span class="crayon-o">!</span><span class="crayon-o">!</span><span class="crayon-sy">(</span><span class="crayon-v">result</span><span class="crayon-h"> </span><span class="crayon-o">&amp;&amp;</span><span class="crayon-h"> </span><span class="crayon-v">result</span><span class="crayon-sy">.</span><span class="crayon-v">length</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad225b871113991-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad225b871113991-5">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad225b871113991-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">btHelper</span><span class="crayon-sy">.</span><span class="crayon-v">onhfpstatuschanged</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-sy">(</span><span class="crayon-v">evt</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f8e09dad225b871113991-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">CallScreen</span><span class="crayon-sy">.</span><span class="crayon-e">setBTReceiverIcon</span><span class="crayon-sy">(</span><span class="crayon-v">evt</span><span class="crayon-sy">.</span><span class="crayon-v">status</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad225b871113991-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p>當 
+			<span id="crayon-5f8e09dad225e038440941" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">bluetoothButton</span></span></span> 被按下時，會顯示選單讓使用者切換通話裝置。</p>
+<p><a href="http://tech.mozilla.com.tw/wp-content/uploads/2015/02/2015-02-25-16-08-23.png"><img class=" size-medium wp-image-6143 aligncenter" src="http://tech.mozilla.com.tw/wp-content/uploads/2015/02/2015-02-25-16-08-23-169x300.png" alt="2015-02-25-16-08-23" width="169" height="300" srcset="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/2015-02-25-16-08-23-169x300.png 169w, https://tech.mozilla.com.tw/wp-content/uploads/2015/02/2015-02-25-16-08-23.png 480w" sizes="(max-width: 169px) 100vw, 169px" /></a></p>
+<p>最終會利用 CallsHandler 設定 
+			<span id="crayon-5f8e09dad2260521416191" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">Telephony</span><span class="crayon-sy">.</span><span class="crayon-v">speakerEnabled</span></span></span> ，而利用 
+			<span id="crayon-5f8e09dad2263991429403" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">btHelper</span></span></span> 的
+			<span id="crayon-5f8e09dad2265896063160" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">connectSco</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 與 
+			<span id="crayon-5f8e09dad2268242740155" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">disconnectSco</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 控制是否要使用藍芽裝置通話。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5f8e09dad226a470605776" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+  function switchToSpeaker() { // 切換至 Speaker 通話
+    btHelper.disconnectSco();
+    if (!telephony.speakerEnabled) {
+      telephony.speakerEnabled = true;
+    }
+  }
+
+  // 由 doNotConnect = false 來啟動藍芽裝置通話
+  function switchToDefaultOut(doNotConnect) {
+    if (telephony.speakerEnabled) {
+      telephony.speakerEnabled = false;
+    }
+
+    if (!doNotConnect &amp;&amp; telephony.active &amp;&amp; !document.hidden) {
+      btHelper.connectSco();
+    }
+  }
+
+  // 使用手機聽筒通話
+  function switchToReceiver() {
+    btHelper.disconnectSco();
+    if (telephony.speakerEnabled) {
+      telephony.speakerEnabled = false;
+    }
+  }</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5f8e09dad226a470605776-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad226a470605776-2">2</div><div class="crayon-num" data-line="crayon-5f8e09dad226a470605776-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad226a470605776-4">4</div><div class="crayon-num" data-line="crayon-5f8e09dad226a470605776-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad226a470605776-6">6</div><div class="crayon-num" data-line="crayon-5f8e09dad226a470605776-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad226a470605776-8">8</div><div class="crayon-num" data-line="crayon-5f8e09dad226a470605776-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad226a470605776-10">10</div><div class="crayon-num" data-line="crayon-5f8e09dad226a470605776-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad226a470605776-12">12</div><div class="crayon-num" data-line="crayon-5f8e09dad226a470605776-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad226a470605776-14">14</div><div class="crayon-num" data-line="crayon-5f8e09dad226a470605776-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad226a470605776-16">16</div><div class="crayon-num" data-line="crayon-5f8e09dad226a470605776-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad226a470605776-18">18</div><div class="crayon-num" data-line="crayon-5f8e09dad226a470605776-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad226a470605776-20">20</div><div class="crayon-num" data-line="crayon-5f8e09dad226a470605776-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad226a470605776-22">22</div><div class="crayon-num" data-line="crayon-5f8e09dad226a470605776-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-5f8e09dad226a470605776-24">24</div><div class="crayon-num" data-line="crayon-5f8e09dad226a470605776-25">25</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5f8e09dad226a470605776-1"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">switchToSpeaker</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-c">// 切換至 Speaker 通話</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad226a470605776-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">btHelper</span><span class="crayon-sy">.</span><span class="crayon-e">disconnectSco</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad226a470605776-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-o">!</span><span class="crayon-v">telephony</span><span class="crayon-sy">.</span><span class="crayon-v">speakerEnabled</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad226a470605776-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">telephony</span><span class="crayon-sy">.</span><span class="crayon-v">speakerEnabled</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">true</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5f8e09dad226a470605776-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad226a470605776-6"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f8e09dad226a470605776-7">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad226a470605776-8"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-c">// 由 doNotConnect = false 來啟動藍芽裝置通話</span></div><div class="crayon-line" id="crayon-5f8e09dad226a470605776-9"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">switchToDefaultOut</span><span class="crayon-sy">(</span><span class="crayon-v">doNotConnect</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad226a470605776-10"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">telephony</span><span class="crayon-sy">.</span><span class="crayon-v">speakerEnabled</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f8e09dad226a470605776-11"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">telephony</span><span class="crayon-sy">.</span><span class="crayon-v">speakerEnabled</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">false</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad226a470605776-12"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f8e09dad226a470605776-13">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad226a470605776-14"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-o">!</span><span class="crayon-v">doNotConnect</span><span class="crayon-h"> </span><span class="crayon-o">&amp;&amp;</span><span class="crayon-h"> </span><span class="crayon-v">telephony</span><span class="crayon-sy">.</span><span class="crayon-v">active</span><span class="crayon-h"> </span><span class="crayon-o">&amp;&amp;</span><span class="crayon-h"> </span><span class="crayon-o">!</span><span class="crayon-v">document</span><span class="crayon-sy">.</span><span class="crayon-v">hidden</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f8e09dad226a470605776-15"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">btHelper</span><span class="crayon-sy">.</span><span class="crayon-e">connectSco</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad226a470605776-16"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f8e09dad226a470605776-17"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad226a470605776-18">&nbsp;</div><div class="crayon-line" id="crayon-5f8e09dad226a470605776-19"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-c">// 使用手機聽筒通話</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad226a470605776-20"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">switchToReceiver</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f8e09dad226a470605776-21"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">btHelper</span><span class="crayon-sy">.</span><span class="crayon-e">disconnectSco</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad226a470605776-22"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">telephony</span><span class="crayon-sy">.</span><span class="crayon-v">speakerEnabled</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5f8e09dad226a470605776-23"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">telephony</span><span class="crayon-sy">.</span><span class="crayon-v">speakerEnabled</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">false</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5f8e09dad226a470605776-24"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5f8e09dad226a470605776-25"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0007 seconds] -->
+<p>&nbsp;</p>
+<p>以上是針對 Phone app 與 Callscreen 作部分的說明，以及說明 Telepnony API 是如何被使用及其相關的小細節，若是有任何疑問或是想知道多些資訊，歡迎留言討論喔！</p>
+<h2>Reference</h2>
+<p>[1] <a href="https://developer.mozilla.org/en-US/docs/Web/API/Telephony" target="_blank">https://developer.mozilla.org/en-US/docs/Web/API/Telephony</a></p>
+<p>[2] <a href="https://github.com/mozilla-b2g/gaia/blob/v2.1/apps/system/js/bootstrap.js#L142" target="_blank">https://github.com/mozilla-b2g/gaia/blob/v2.1/apps/system/js/bootstrap.js#L142</a></p>
+<p>[3] <a href="https://developer.mozilla.org/en-US/docs/Web/API/Using_the_Browser_API" target="_blank">https://developer.mozilla.org/en-US/docs/Web/API/Using_the_Browser_API</a></p>
+<p>[4] <a href="https://developer.mozilla.org/en-US/docs/Web/Events/callschanged" target="_blank">https://developer.mozilla.org/en-US/docs/Web/Events/callschanged</a></p>
+<p>[5] <a href="https://github.com/mozilla-b2g/gaia/blob/v2.1/apps/system/js/dialer_agent.js#L216" target="_blank">https://github.com/mozilla-b2g/gaia/blob/v2.1/apps/system/js/dialer_agent.js#L216</a></p>
+<p>[6] <a href="https://developer.mozilla.org/en-US/docs/Web/API/TelephonyCall" target="_blank">https://developer.mozilla.org/en-US/docs/Web/API/TelephonyCall</a></p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://tech.mozilla.com.tw/?cat=3" rel="category">Firefox OS(B2G)</a>、<a href="https://tech.mozilla.com.tw/?cat=9" rel="category">Javascript</a>      </div>
+    </footer> 
+    </article><!-- #post-6016 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" 
+	              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/?p=6016#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required='true' required='required' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required='true' required='required' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表" /> <input type='hidden' name='comment_post_ID' value='6016' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="44a3dd4a37" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="66"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class='name-title'><a class="profile-link" href="https://tech.mozilla.com.tw/?author=144"><span class="gravatar left"><img src="https://secure.gravatar.com/avatar/961de5c7c602cc6e3da0c496d3297495?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=48" alt="" class="avatar user-144-avatar" width='48' height='48' /></span><span class="name">Sean Lee</span></a></span><p class='contact'></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="60" href="https://tech.mozilla.com.tw/?author=60"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg" alt="" class="avatar user-60-avatar" width='96' height='96' /></a><a data-author-id="18" href="https://tech.mozilla.com.tw/?author=18"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg" alt="" class="avatar user-18-avatar" width='96' height='96' /></a><a data-author-id="14" href="https://tech.mozilla.com.tw/?author=14"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg" alt="" class="avatar user-14-avatar" width='96' height='96' /></a><a data-author-id="61" href="https://tech.mozilla.com.tw/?author=61"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg" alt="" class="avatar user-61-avatar" width='96' height='96' /></a><a data-author-id="103" href="https://tech.mozilla.com.tw/?author=103"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg" alt="" class="avatar user-103-avatar" width='96' height='96' /></a><a data-author-id="133" href="https://tech.mozilla.com.tw/?author=133"><img src="https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg" alt="" class="avatar user-133-avatar" width='96' height='96' /></a></div><a class="more" href="/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://tech.mozilla.com.tw/?cat=8" >CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://tech.mozilla.com.tw/?cat=4" >Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://tech.mozilla.com.tw/?cat=3" >Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://tech.mozilla.com.tw/?cat=30" >Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://tech.mozilla.com.tw/?cat=9" >Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://tech.mozilla.com.tw/?cat=42" >Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://tech.mozilla.com.tw/?cat=5" >Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://tech.mozilla.com.tw/?cat=7" >Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://tech.mozilla.com.tw/?cat=29" >UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">選擇月份</option>
+				<option value='https://tech.mozilla.com.tw/?m=201605'> 2016 年 五月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201602'> 2016 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201507'> 2015 年 七月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201506'> 2015 年 六月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201505'> 2015 年 五月 &nbsp;(2)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201504'> 2015 年 四月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201503'> 2015 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201502'> 2015 年 二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201501'> 2015 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201412'> 2014 年 十二月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201411'> 2014 年 十一月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201410'> 2014 年 十月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201409'> 2014 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201408'> 2014 年 八月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201407'> 2014 年 七月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201405'> 2014 年 五月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201404'> 2014 年 四月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201403'> 2014 年 三月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201402'> 2014 年 二月 &nbsp;(1)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201401'> 2014 年 一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201312'> 2013 年 十二月 &nbsp;(6)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201311'> 2013 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201310'> 2013 年 十月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201309'> 2013 年 九月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201308'> 2013 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201307'> 2013 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201306'> 2013 年 六月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201305'> 2013 年 五月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201304'> 2013 年 四月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201303'> 2013 年 三月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201302'> 2013 年 二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201301'> 2013 年 一月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201212'> 2012 年 十二月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201211'> 2012 年 十一月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201210'> 2012 年 十月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201209'> 2012 年 九月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201208'> 2012 年 八月 &nbsp;(4)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201207'> 2012 年 七月 &nbsp;(5)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201206'> 2012 年 六月 &nbsp;(3)</option>
+	<option value='https://tech.mozilla.com.tw/?m=201205'> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

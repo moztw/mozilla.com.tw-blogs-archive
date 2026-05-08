@@ -1,0 +1,58 @@
+{
+  "post_id": 1605,
+  "title": "你丟我撿！神奇的 Firefox 內部記憶體回收機制",
+  "date": "2013-03-06",
+  "year": 2013,
+  "month": 3,
+  "day": 6,
+  "categories": [
+    "Firefox",
+    "Javascript"
+  ],
+  "tags": [
+    "Firefox",
+    "Javascript"
+  ],
+  "author": "",
+  "page_type": "post",
+  "original_url": "https://tech.mozilla.com.tw/?p=1605",
+  "archive_url": "https://web.archive.org/web/20140723214738id_/https://tech.mozilla.com.tw/?p=1605",
+  "wayback_timestamp": "20140723214738",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>大家都知道 JavaScript 是一個很方便的語言，想要一個新物件? 沒問題，new 一下就有了。需要一個陣列來做暫存空間? 也是交給 new。不像其他，比如說 C，等較低階的語言，JavaScript 的使用者絕大多數時候都不必煩惱實際上資料被放到什麼地方，也不需擔心用完了卻忘記要交還給系統而造成記憶體漏洞。在這麼方便的語言特性背後，其實有一套相當複雜的機制在運作，將我們從瑣碎的記憶體管理中解放出來。今天要向各位介紹的便是 Firefox 內部的記憶體回收機制。</p>\n<p><strong>物件實體與參照</strong></p>\n<p>在介紹記憶體回收機制前，要先來複習一下 JavaScript 對物件的操作行為。在 JavaScript 中，物件的變數名稱僅是參照 (reference)，它是用來存取物件的一個連結，每當我們在程式裡提及一個物件變數，代表我們想對某個物件實體做點什麼事。我們透過參照/變數名稱來存取物件，而物件實體則放在別的地方。不同的變數可能參照到同一個物件實體，但是一個變數只能參照到一個實體。</p>\n<p>舉列來說，假設我們有一個物件 car_a，其廠牌和型號分別是 toyota 和 camry。當我們需要另一台同廠牌但不同型號的 car_b 時，一個直覺但是錯誤的做法是將 car_a 複製過來，然後把型號換掉：</p><!-- Crayon Syntax Highlighter v2.6.1 -->\r\n\r\n\t\t<div id=\"crayon-53be3d7564593139232000\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\njs&gt; var car_a = {brand: \"toyota\", type: \"camry\"};\r\njs&gt; var car_b = car_a; // car_a 和 car_b 參照到的其實是同一個物件\r\njs&gt; car_b.type = \"corolla\"; // 修改 car_b 的型號\r\njs&gt; print(car_a.type); // 糟糕，我們連 car_a 的型號也修改了\r\ncorolla</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-53be3d7564593139232000-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53be3d7564593139232000-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-53be3d7564593139232000-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53be3d7564593139232000-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-53be3d7564593139232000-5\">5</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-line\" id=\"crayon-53be3d7564593139232000-1\"><span class=\"crayon-v\">js</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">car_a</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span><span class=\"crayon-v\">brand</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"toyota\"</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">type</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"camry\"</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53be3d7564593139232000-2\"><span class=\"crayon-v\">js</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">car_b</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">car_a</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// car_a 和 car_b 參照到的其實是同一個物件</span></div><div class=\"crayon-line\" id=\"crayon-53be3d7564593139232000-3\"><span class=\"crayon-v\">js</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">car_b</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">type</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"corolla\"</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// 修改 car_b 的型號</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53be3d7564593139232000-4\"><span class=\"crayon-v\">js</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">print</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">car_a</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">type</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// 糟糕，我們連 car_a 的型號也修改了</span></div><div class=\"crayon-line\" id=\"crayon-53be3d7564593139232000-5\"><span class=\"crayon-v\">corolla</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0026 seconds] -->\r\n<p>由此例可知物件實體和參照的不同。</p>\n<p><strong>垃圾回收器 Garbage Collector</strong></p>\n<p>那麼，Firefox 內部是如何管理這些物件實體的呢? 每當有新的物件被定義或 new 出來時，記憶體中就會有一個區塊被劃出來以存放這個物件實體，而當這個物件變成&#8221;垃圾&#8221;之後，最終就會被垃圾回收器 (garbage collector) 發現，而它所佔用的記憶體區塊也就在此時被歸還。決定是不是垃圾的方式就是透過參照，當一個物件實體已經沒有被任何變數參照到時，代表我們再也無法存取到它了，這時就可以很放心的把它給回收掉。</p>\n<p>判斷一個物件有無被參照到的方式主要有兩類：reference count 及 mark-sweep。reference count 顧名思義就是在每個物件身上裝一個計數器，每當有新的變數參照到這個物件時，計數器就加一。當參照到這個物件的變數改參照到別的物件時，計數器就減一。當計數器變成零時，代表此時已無變數參照到此物件，它就可以被回收掉。</p>\n<p>另一個方法是 mark-sweep。這個方法會從一組我們總是可以存取到的變數開始，如全域變數，當前方法及其呼叫者的區域變數等等，把它們能參照到的物件，這些物件參照到的其他物件&#8230;等所有直接及間接可參照到的所有物件標記起來，最後，沒被標記到物件代表它們已經無法被存取到，只要一次把這些沒被標記到的物件給釋放掉即可。</p>\n<p>和 mark-sweep 比起來，reference count 有一些缺點：</p>\n<p>比較肥：由於每個物件都要有一個計數器，因此會使用較多的額外空間。</p>\n<p>比較慢：如果我們把物件當成頂點，參照當成邊，畫成數學上的圖，則 mark-sweep 的標記過程會把所有可存取到的邊都走訪過一遍。相對的，reference count 中計數器的每一個增減都對應到邊的變動。換句話說，reference count 的時間成本正比於從無到有，建構這個 (物件&#8211;參照) 圖的步驟的數目。而 mark-sweep 需要的僅是開始標記前一刻，這個圖的一個子集而已。在絕大多數情況下，兩者的總計算量差距是相當大的。</p>\n<p>漏網之魚：萬一有兩個以上的物件互相參照，但是完全獨立於其他物件們，這樣一來雖然 reference count 不為零，卻永遠無法被回收。這會造成記憶體漏洞。</p>\n<p>但是 mark-sweep 也不是全無缺點。由於它的特性是一段時間才會作動一次，因此會讓整個記憶體使用量較大，回收後也較容易有記憶體破碎的問題。雖然記憶體破碎通常能由 compacting GC 來解決，但代價就是得多花時間。</p>\n<p>另外，不像 reference count 的計算是平均分布在整個使用過程，它是一段時間才做一次，因此這一次 mark-sweep 可能會相當久，且標記時物件不可變動，所有 thread 都得停下來等它，常見的結果就是會造成使用者介面不時會忽然頓一下。因此 Firefox 中的回收器採回漸進式回收 (Incremental GC)，透過一些標記時的小技巧 (read/write barrier)，把一次很長的標記過程拆成許多次，讓整個過程更平順。</p>\n<p><strong>結語</strong></p>\n<p>方才所談僅是 Firefox 中，記憶體回收機制的初步介紹，下次將再說明更多實做上的細節及技巧，如分層回收 (Generational GC) 及回收器切入的時間點等等。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/02/23235021ZS.jpg\"><img class=\"aligncenter  wp-image-1831\" title=\"23235021ZS\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/02/23235021ZS.jpg\" alt=\"\" width=\"295\" height=\"258\" /></a></p>\n<p>圖片來源：http://www.veeqi.com/show/12680/</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
+  "content_text": "大家都知道 JavaScript 是一個很方便的語言，想要一個新物件? 沒問題，new 一下就有了。需要一個陣列來做暫存空間? 也是交給 new。不像其他，比如說 C，等較低階的語言，JavaScript 的使用者絕大多數時候都不必煩惱實際上資料被放到什麼地方，也不需擔心用完了卻忘記要交還給系統而造成記憶體漏洞。在這麼方便的語言特性背後，其實有一套相當複雜的機制在運作，將我們從瑣碎的記憶體管理中解放出來。今天要向各位介紹的便是 Firefox 內部的記憶體回收機制。 物件實體與參照 在介紹記憶體回收機制前，要先來複習一下 JavaScript 對物件的操作行為。在 JavaScript 中，物件的變數名稱僅是參照 (reference)，它是用來存取物件的一個連結，每當我們在程式裡提及一個物件變數，代表我們想對某個物件實體做點什麼事。我們透過參照/變數名稱來存取物件，而物件實體則放在別的地方。不同的變數可能參照到同一個物件實體，但是一個變數只能參照到一個實體。 舉列來說，假設我們有一個物件 car_a，其廠牌和型號分別是 toyota 和 camry。當我們需要另一台同廠牌但不同型號的 car_b 時，一個直覺但是錯誤的做法是將 car_a 複製過來，然後把型號換掉： js> var car_a = {brand: \"toyota\", type: \"camry\"}; js> var car_b = car_a; // car_a 和 car_b 參照到的其實是同一個物件 js> car_b.type = \"corolla\"; // 修改 car_b 的型號 js> print(car_a.type); // 糟糕，我們連 car_a 的型號也修改了 corolla 1 2 3 4 5 js > var car_a = { brand : \"toyota\" , type : \"camry\" } ; js > var car_b = car_a ; // car_a 和 car_b 參照到的其實是同一個物件 js > car_b . type = \"corolla\" ; // 修改 car_b 的型號 js > print ( car_a . type ) ; // 糟糕，我們連 car_a 的型號也修改了 corolla 由此例可知物件實體和參照的不同。 垃圾回收器 Garbage Collector 那麼，Firefox 內部是如何管理這些物件實體的呢? 每當有新的物件被定義或 new 出來時，記憶體中就會有一個區塊被劃出來以存放這個物件實體，而當這個物件變成”垃圾”之後，最終就會被垃圾回收器 (garbage collector) 發現，而它所佔用的記憶體區塊也就在此時被歸還。決定是不是垃圾的方式就是透過參照，當一個物件實體已經沒有被任何變數參照到時，代表我們再也無法存取到它了，這時就可以很放心的把它給回收掉。 判斷一個物件有無被參照到的方式主要有兩類：reference count 及 mark-sweep。reference count 顧名思義就是在每個物件身上裝一個計數器，每當有新的變數參照到這個物件時，計數器就加一。當參照到這個物件的變數改參照到別的物件時，計數器就減一。當計數器變成零時，代表此時已無變數參照到此物件，它就可以被回收掉。 另一個方法是 mark-sweep。這個方法會從一組我們總是可以存取到的變數開始，如全域變數，當前方法及其呼叫者的區域變數等等，把它們能參照到的物件，這些物件參照到的其他物件…等所有直接及間接可參照到的所有物件標記起來，最後，沒被標記到物件代表它們已經無法被存取到，只要一次把這些沒被標記到的物件給釋放掉即可。 和 mark-sweep 比起來，reference count 有一些缺點： 比較肥：由於每個物件都要有一個計數器，因此會使用較多的額外空間。 比較慢：如果我們把物件當成頂點，參照當成邊，畫成數學上的圖，則 mark-sweep 的標記過程會把所有可存取到的邊都走訪過一遍。相對的，reference count 中計數器的每一個增減都對應到邊的變動。換句話說，reference count 的時間成本正比於從無到有，建構這個 (物件–參照) 圖的步驟的數目。而 mark-sweep 需要的僅是開始標記前一刻，這個圖的一個子集而已。在絕大多數情況下，兩者的總計算量差距是相當大的。 漏網之魚：萬一有兩個以上的物件互相參照，但是完全獨立於其他物件們，這樣一來雖然 reference count 不為零，卻永遠無法被回收。這會造成記憶體漏洞。 但是 mark-sweep 也不是全無缺點。由於它的特性是一段時間才會作動一次，因此會讓整個記憶體使用量較大，回收後也較容易有記憶體破碎的問題。雖然記憶體破碎通常能由 compacting GC 來解決，但代價就是得多花時間。 另外，不像 reference count 的計算是平均分布在整個使用過程，它是一段時間才做一次，因此這一次 mark-sweep 可能會相當久，且標記時物件不可變動，所有 thread 都得停下來等它，常見的結果就是會造成使用者介面不時會忽然頓一下。因此 Firefox 中的回收器採回漸進式回收 (Incremental GC)，透過一些標記時的小技巧 (read/write barrier)，把一次很長的標記過程拆成許多次，讓整個過程更平順。 結語 方才所談僅是 Firefox 中，記憶體回收機制的初步介紹，下次將再說明更多實做上的細節及技巧，如分層回收 (Generational GC) 及回收器切入的時間點等等。 圖片來源：http://www.veeqi.com/show/12680/",
+  "images": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/23235021ZS.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/1605/wp-content/uploads/2013/02/23235021ZS.jpg",
+      "markdown_path": "../assets/1605/wp-content/uploads/2013/02/23235021ZS.jpg",
+      "wayback_timestamp": "20140723214738",
+      "asset_archive_url": "https://web.archive.org/web/20140723214738id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/02/23235021ZS.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/23235021ZS.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/1605/wp-content/uploads/2013/02/23235021ZS.jpg",
+      "markdown_path": "../assets/1605/wp-content/uploads/2013/02/23235021ZS.jpg",
+      "wayback_timestamp": "20140723214738",
+      "asset_archive_url": "https://web.archive.org/web/20140723214738id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/02/23235021ZS.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/23235021ZS.jpg",
+      "text": ""
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": []
+}

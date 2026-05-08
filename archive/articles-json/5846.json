@@ -1,0 +1,245 @@
+{
+  "post_id": 5846,
+  "title": "介紹 Firefox 開發者工具之 Web Audio 編輯器",
+  "date": "2014-06-25",
+  "year": 2014,
+  "month": 6,
+  "day": 25,
+  "categories": [
+    "Firefox"
+  ],
+  "tags": [
+    "Firefox"
+  ],
+  "author": "",
+  "original_url": "https://blog.mozilla.com.tw/?p=5846",
+  "archive_url": "https://web.archive.org/web/20201231235959id_/https://blog.mozilla.com.tw/?p=5846",
+  "wayback_timestamp": "20201231235959",
+  "content_html": "<div class=\"entry-content close\">\n    <p>除了「著色器編輯器 (Shader Editor)」與「Canvas 除錯器 (Canvas Debugger)」之外，從 Firefox 32 開始，更有「Web Audio 編輯器 (Web Audio Editor)」可針對網頁的多媒體內容進行除錯。若是使用 Web Audio API 開發 <a href=\"https://developer.mozilla.org/en/html/html5\">HTML5</a> 遊戲或有趣的合成器 (Synthesizer)，就能讓 Web Audio 編輯器透過 <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/AudioContext\">Web Audio AudioContext</a>，呈現並修改所有的音訊節點。</p>\n<p><a href=\"https://hacks.mozilla.org/wp-content/uploads/2014/06/Web-Audio-Editor-1.png\" target=\"_blank\"><img class=\"aligncenter wp-image-5847\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-1-1024x391.png\" alt=\"Web-Audio-Editor-1\" width=\"590\" height=\"226\" /></a></p>\n<h4>將 Audio Context 視覺化</h4>\n<p>當以 <a href=\"http://webaudio.github.io/web-audio-api/\">Web Audio API</a> 的模組化路由 (Modular routing) 進行開發時，光是聆聽音訊輸出很難解析音訊節點的連結方式。此外，只是聆聽輸出，或觀看音訊節點的程式碼，也難以對 AudioContext 進行除錯。但 Web Audio 編輯器可透過有向圖 (Directed graph) 描繪所有 <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/AudioNode\">AudioNodes</a>，並展示所有音訊節點的階層與連結。讓開發者能確認所有節點均照著自己期望的方式完成連結。如果遇到複雜網頁 (例如用一個節點網路專門操作音訊，又用另一個節點網路分析資料) 時，這個功能就特別有用。我們已經看過能構成這些圖像的 <a href=\"http://webaudiodemos.appspot.com/Vocoder/\">Web Audio 酷炫應用</a>！</p>\n<p><a href=\"https://hacks.mozilla.org/wp-content/uploads/2014/06/complex_webaudio_graph.png\" target=\"_blank\"><img class=\"aligncenter wp-image-5848\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/complex_webaudio_graph-1024x299.png\" alt=\"complex_webaudio_graph\" width=\"590\" height=\"173\" /></a></p>\n<p>如果要啟動 Web Audio 編輯器，可開啟開發者工具中的「工具箱選項」(即齒輪圖示) 並勾選「Web Audio Editor」。在啟動編輯器之後，就會開啟工具並重新載入頁 面，由工具監控所有的 Web Audio activity。只要建立新的音訊節點，或節點之間發生連線/中斷，圖表也將更新為最新內容。</p>\n<h4>修改 AudioNode 屬性</h4>\n<p>在描繪圖表之後，即可分別檢測音訊節點。只要點擊圖表上的 AudioNode 隨即開啟 AudioNode 檢測器，即可檢視並修改節點上的 <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/AudioParam\">AudioParam</a> 與特定屬性。</p>\n<p><img class=\"aligncenter wp-image-5849\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-2.png\" alt=\"Web-Audio-Editor-2\" width=\"550\" height=\"441\" /></p>\n<h4>未來開發重點</h4>\n<p>這是 Web Audio 編輯器首次現身，我們將為音訊開發者繼續強化此工具。</p>\n<ul>\n<li>顯示節點的視覺反饋效果，並可呈現時域/頻域</li>\n<li>可透過編輯器進一步建立、連接、中斷音訊節點</li>\n<li>可用於 <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode#Event_handlers\">onaudioprocess</a> 活動與音訊突波 (glitch) 的除錯 工具</li>\n<li>顯示額外的 AudioContext 資訊，可支援多個 AudioContext</li>\n<li>將來不僅能修改節點檢測器中的參數 (Primitive)，例如亦可新增 AudioBuffer</li>\n</ul>\n<p>我們還規劃了許多<a href=\"https://gist.github.com/jsantell/ee1be41bc87968d7b170\">絕佳功能</a>， 你可檢視 Web Audio 編輯器<a href=\"https://bugzilla.mozilla.org/buglist.cgi?component=Developer%20Tools%3A%20Web%20Audio%20Editor&amp;product=Firefox&amp;bug_status=__open__&amp;list_id=10101182\">所開放的錯誤</a>， 或<a href=\"https://bugzilla.mozilla.org/enter_bug.cgi?product=Firefox&amp;component=Developer%20Tools%3A%20Web%20Audio%20Editor\">提報新的錯誤</a>。另請參閱 Web Audio 編輯器的 <a href=\"https://developer.mozilla.org/en-US/docs/Tools/Web_Audio_Editor\">MDN 說明文件</a>；我們也歡迎 <a href=\"http://mzl.la/devtools\">UserVoice feedback channel 上提出任何意見與想法</a>，你當然 也能使用 <a href=\"http://twitter.com/firefoxdevtools\">Twitter @firefoxdevtools</a>。</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2014/06/introducing-the-web-audio-editor-in-firefox-developer-tools/\" target=\"_blank\">Introducing the Web Audio Editor in Firefox Developer Tools</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
+  "content_text": "除了「著色器編輯器 (Shader Editor)」與「Canvas 除錯器 (Canvas Debugger)」之外，從 Firefox 32 開始，更有「Web Audio 編輯器 (Web Audio Editor)」可針對網頁的多媒體內容進行除錯。若是使用 Web Audio API 開發 HTML5 遊戲或有趣的合成器 (Synthesizer)，就能讓 Web Audio 編輯器透過 Web Audio AudioContext ，呈現並修改所有的音訊節點。 將 Audio Context 視覺化 當以 Web Audio API 的模組化路由 (Modular routing) 進行開發時，光是聆聽音訊輸出很難解析音訊節點的連結方式。此外，只是聆聽輸出，或觀看音訊節點的程式碼，也難以對 AudioContext 進行除錯。但 Web Audio 編輯器可透過有向圖 (Directed graph) 描繪所有 AudioNodes ，並展示所有音訊節點的階層與連結。讓開發者能確認所有節點均照著自己期望的方式完成連結。如果遇到複雜網頁 (例如用一個節點網路專門操作音訊，又用另一個節點網路分析資料) 時，這個功能就特別有用。我們已經看過能構成這些圖像的 Web Audio 酷炫應用 ！ 如果要啟動 Web Audio 編輯器，可開啟開發者工具中的「工具箱選項」(即齒輪圖示) 並勾選「Web Audio Editor」。在啟動編輯器之後，就會開啟工具並重新載入頁 面，由工具監控所有的 Web Audio activity。只要建立新的音訊節點，或節點之間發生連線/中斷，圖表也將更新為最新內容。 修改 AudioNode 屬性 在描繪圖表之後，即可分別檢測音訊節點。只要點擊圖表上的 AudioNode 隨即開啟 AudioNode 檢測器，即可檢視並修改節點上的 AudioParam 與特定屬性。 未來開發重點 這是 Web Audio 編輯器首次現身，我們將為音訊開發者繼續強化此工具。 顯示節點的視覺反饋效果，並可呈現時域/頻域 可透過編輯器進一步建立、連接、中斷音訊節點 可用於 onaudioprocess 活動與音訊突波 (glitch) 的除錯 工具 顯示額外的 AudioContext 資訊，可支援多個 AudioContext 將來不僅能修改節點檢測器中的參數 (Primitive)，例如亦可新增 AudioBuffer 我們還規劃了許多 絕佳功能 ， 你可檢視 Web Audio 編輯器 所開放的錯誤 ， 或 提報新的錯誤 。另請參閱 Web Audio 編輯器的 MDN 說明文件 ；我們也歡迎 UserVoice feedback channel 上提出任何意見與想法 ，你當然 也能使用 Twitter @firefoxdevtools 。 原文連結： Introducing the Web Audio Editor in Firefox Developer Tools",
+  "images": [
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-1-1024x391.png",
+      "alt": "Web-Audio-Editor-1",
+      "fallback_url": "https://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-1-1024x391.png",
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-1-1024x391.png",
+      "archive_path": "assets/5846/wp-content/uploads/Web-Audio-Editor-1-1024x391.png",
+      "markdown_path": "../assets/5846/wp-content/uploads/Web-Audio-Editor-1-1024x391.png",
+      "wayback_timestamp": "20140725010249",
+      "asset_archive_url": "https://web.archive.org/web/20140725010249id_/https://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-1-1024x391.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/complex_webaudio_graph-1024x299.png",
+      "alt": "complex_webaudio_graph",
+      "post_id": 5846,
+      "page_type": "other",
+      "title": "介紹 Firefox 開發者工具之 Web Audio 編輯器",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 1,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/complex_webaudio_graph-1024x299.png",
+      "archive_path": "assets/5846/wp-content/uploads/complex_webaudio_graph-1024x299.png",
+      "markdown_path": "../assets/5846/wp-content/uploads/complex_webaudio_graph-1024x299.png",
+      "wayback_timestamp": "20140725015013",
+      "asset_archive_url": "https://web.archive.org/web/20140725015013id_/http://blog.mozilla.com.tw/wp-content/uploads/complex_webaudio_graph-1024x299.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-2.png",
+      "alt": "Web-Audio-Editor-2",
+      "post_id": 5846,
+      "page_type": "other",
+      "title": "介紹 Firefox 開發者工具之 Web Audio 編輯器",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 2,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-2.png",
+      "archive_path": "assets/5846/wp-content/uploads/Web-Audio-Editor-2.png",
+      "markdown_path": "../assets/5846/wp-content/uploads/Web-Audio-Editor-2.png",
+      "wayback_timestamp": "20140725013109",
+      "asset_archive_url": "https://web.archive.org/web/20140725013109id_/http://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-2.png",
+      "content_type": "image/png"
+    },
+    {
+      "post_id": 5846,
+      "page_type": "other",
+      "title": "介紹 Firefox 開發者工具之 Web Audio 編輯器",
+      "page_timestamp": "20201231235959",
+      "url": "https://hacks.mozilla.org/wp-content/uploads/2014/06/Web-Audio-Editor-1.png",
+      "source": "a-href",
+      "kind": "image",
+      "index": 3,
+      "archive_path": "assets/5846/wp-content/uploads/2014/06/Web-Audio-Editor-1.png",
+      "markdown_path": "../assets/5846/wp-content/uploads/2014/06/Web-Audio-Editor-1.png",
+      "direct_source_url": "https://hacks.mozilla.org/wp-content/uploads/2014/06/Web-Audio-Editor-1.png",
+      "content_type": "image/png",
+      "recovered_from": "direct_external_source"
+    },
+    {
+      "post_id": 5846,
+      "page_type": "other",
+      "title": "介紹 Firefox 開發者工具之 Web Audio 編輯器",
+      "page_timestamp": "20201231235959",
+      "url": "https://hacks.mozilla.org/wp-content/uploads/2014/06/complex_webaudio_graph.png",
+      "source": "a-href",
+      "kind": "image",
+      "index": 4,
+      "archive_path": "assets/5846/wp-content/uploads/2014/06/complex_webaudio_graph.png",
+      "markdown_path": "../assets/5846/wp-content/uploads/2014/06/complex_webaudio_graph.png",
+      "direct_source_url": "https://hacks.mozilla.org/wp-content/uploads/2014/06/complex_webaudio_graph.png",
+      "content_type": "image/png",
+      "recovered_from": "direct_external_source"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://developer.mozilla.org/en/html/html5",
+      "text": "HTML5"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/AudioContext",
+      "text": "Web Audio AudioContext"
+    },
+    {
+      "url": "https://hacks.mozilla.org/wp-content/uploads/2014/06/Web-Audio-Editor-1.png",
+      "text": ""
+    },
+    {
+      "url": "https://webaudio.github.io/web-audio-api/",
+      "text": "Web Audio API"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/AudioNode",
+      "text": "AudioNodes"
+    },
+    {
+      "url": "https://webaudiodemos.appspot.com/Vocoder/",
+      "text": "Web Audio 酷炫應用"
+    },
+    {
+      "url": "https://hacks.mozilla.org/wp-content/uploads/2014/06/complex_webaudio_graph.png",
+      "text": ""
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/AudioParam",
+      "text": "AudioParam"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode#Event_handlers",
+      "text": "onaudioprocess"
+    },
+    {
+      "url": "https://gist.github.com/jsantell/ee1be41bc87968d7b170",
+      "text": "絕佳功能"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/buglist.cgi?component=Developer%20Tools%3A%20Web%20Audio%20Editor&product=Firefox&bug_status=__open__&list_id=10101182",
+      "text": "所開放的錯誤"
+    },
+    {
+      "url": "https://bugzilla.mozilla.org/enter_bug.cgi?product=Firefox&component=Developer%20Tools%3A%20Web%20Audio%20Editor",
+      "text": "提報新的錯誤"
+    },
+    {
+      "url": "https://developer.mozilla.org/en-US/docs/Tools/Web_Audio_Editor",
+      "text": "MDN 說明文件"
+    },
+    {
+      "url": "https://mzl.la/devtools",
+      "text": "UserVoice feedback channel 上提出任何意見與想法"
+    },
+    {
+      "url": "https://twitter.com/firefoxdevtools",
+      "text": "Twitter @firefoxdevtools"
+    },
+    {
+      "url": "https://hacks.mozilla.org/2014/06/introducing-the-web-audio-editor-in-firefox-developer-tools/",
+      "text": "Introducing the Web Audio Editor in Firefox Developer Tools"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": [],
+  "media": [
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-1-1024x391.png",
+      "alt": "Web-Audio-Editor-1",
+      "fallback_url": "https://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-1-1024x391.png",
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-1-1024x391.png",
+      "archive_path": "assets/5846/wp-content/uploads/Web-Audio-Editor-1-1024x391.png",
+      "markdown_path": "../assets/5846/wp-content/uploads/Web-Audio-Editor-1-1024x391.png",
+      "wayback_timestamp": "20140725010249",
+      "asset_archive_url": "https://web.archive.org/web/20140725010249id_/https://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-1-1024x391.png",
+      "content_type": "image/png",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/complex_webaudio_graph-1024x299.png",
+      "alt": "complex_webaudio_graph",
+      "post_id": 5846,
+      "page_type": "other",
+      "title": "介紹 Firefox 開發者工具之 Web Audio 編輯器",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 1,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/complex_webaudio_graph-1024x299.png",
+      "archive_path": "assets/5846/wp-content/uploads/complex_webaudio_graph-1024x299.png",
+      "markdown_path": "../assets/5846/wp-content/uploads/complex_webaudio_graph-1024x299.png",
+      "wayback_timestamp": "20140725015013",
+      "asset_archive_url": "https://web.archive.org/web/20140725015013id_/http://blog.mozilla.com.tw/wp-content/uploads/complex_webaudio_graph-1024x299.png",
+      "content_type": "image/png"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-2.png",
+      "alt": "Web-Audio-Editor-2",
+      "post_id": 5846,
+      "page_type": "other",
+      "title": "介紹 Firefox 開發者工具之 Web Audio 編輯器",
+      "page_timestamp": "20201231235959",
+      "source": "img",
+      "kind": "image",
+      "index": 2,
+      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-2.png",
+      "archive_path": "assets/5846/wp-content/uploads/Web-Audio-Editor-2.png",
+      "markdown_path": "../assets/5846/wp-content/uploads/Web-Audio-Editor-2.png",
+      "wayback_timestamp": "20140725013109",
+      "asset_archive_url": "https://web.archive.org/web/20140725013109id_/http://blog.mozilla.com.tw/wp-content/uploads/Web-Audio-Editor-2.png",
+      "content_type": "image/png"
+    },
+    {
+      "post_id": 5846,
+      "page_type": "other",
+      "title": "介紹 Firefox 開發者工具之 Web Audio 編輯器",
+      "page_timestamp": "20201231235959",
+      "url": "https://hacks.mozilla.org/wp-content/uploads/2014/06/Web-Audio-Editor-1.png",
+      "source": "a-href",
+      "kind": "image",
+      "index": 3,
+      "archive_path": "assets/5846/wp-content/uploads/2014/06/Web-Audio-Editor-1.png",
+      "markdown_path": "../assets/5846/wp-content/uploads/2014/06/Web-Audio-Editor-1.png",
+      "direct_source_url": "https://hacks.mozilla.org/wp-content/uploads/2014/06/Web-Audio-Editor-1.png",
+      "content_type": "image/png",
+      "recovered_from": "direct_external_source"
+    },
+    {
+      "post_id": 5846,
+      "page_type": "other",
+      "title": "介紹 Firefox 開發者工具之 Web Audio 編輯器",
+      "page_timestamp": "20201231235959",
+      "url": "https://hacks.mozilla.org/wp-content/uploads/2014/06/complex_webaudio_graph.png",
+      "source": "a-href",
+      "kind": "image",
+      "index": 4,
+      "archive_path": "assets/5846/wp-content/uploads/2014/06/complex_webaudio_graph.png",
+      "markdown_path": "../assets/5846/wp-content/uploads/2014/06/complex_webaudio_graph.png",
+      "direct_source_url": "https://hacks.mozilla.org/wp-content/uploads/2014/06/complex_webaudio_graph.png",
+      "content_type": "image/png",
+      "recovered_from": "direct_external_source"
+    }
+  ]
+}

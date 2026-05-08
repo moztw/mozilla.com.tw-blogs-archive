@@ -1,0 +1,302 @@
+{
+  "post_id": 2731,
+  "title": "先別說 Flash 了，你聽過 SVG 嗎？",
+  "date": "2013-09-02",
+  "year": 2013,
+  "month": 9,
+  "day": 2,
+  "categories": [
+    "Open Source"
+  ],
+  "tags": [],
+  "author": "小雪",
+  "page_type": "post",
+  "original_url": "https://tech.mozilla.com.tw/?p=2731",
+  "archive_url": "https://web.archive.org/web/20191118141006id_/https://tech.mozilla.com.tw/?p=2731",
+  "wayback_timestamp": "20191118141006",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p dir=\"ltr\" id=\"docs-internal-guid-4a64c306-29c4-cdf7-fc04-0de52f542d50\">Scalable Vector Graphics (SVG)，可縮放向量圖形，是一種 XML 標記語言，用來描述二維向量圖形。SVG 對一般使用者而言， 也許是個相對陌生的名詞，但是我相信大家一定聽過 Adobe Flash，SVG 跟 Flash 一樣，其特點都是使用向量圖形，與事件觸發高度整合，非常適合用來開發互動式元件或是網頁。</p>\n<p dir=\"ltr\">我 Flash 用的好好的，幹嘛要換成什麼 SVG ?</p>\n<p dir=\"ltr\">你興沖沖的開啟某網頁，卻跳出必須下載並安裝播放器外掛，否則無法正常觀看內容的擾人經驗嗎？ SVG 是由 W3C 建議並制定的標準語言，特別設計用來跟 CSS、DOM 和 SMIL 一起共同運作的元件，當然，其技術也是公開共享。也就是說，這項技術不屬於任何一家營利公司，瀏覽器不需要安裝額外的 plug-in 來執行，使用者和開發者也不需要支付任何費用給特定的營利組織。</p>\n<p dir=\"ltr\">SVG 還有很多其他優點喔！</p>\n<p dir=\"ltr\">解析度不夠高的點陣圖（例如 .png、.jpg 格式的圖片），放大之後的影像會像馬賽克一樣模糊，邊緣也會呈現鋸齒狀。向量圖形顧名思義是由向量組成，電腦會根據這些向量或是其他數據計算出圖形，而其中最大的優點，就是在放大或是縮小圖形時，影像都不會失真。讓我們來看看這個例子 [<a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/07/firefox-logos.htm\">SVG &#8211; 經典火狐</a>]：左邊的火狐 logo 是原始的 SVG 圖形，右邊的火狐 logo 是直接將它放大三倍的樣子，圖像的品質看起來是不是都一樣？另外值得一提的是，現今行動裝置百百種，螢幕大小也是相當多樣，相信行動裝置軟體的開發者一定不喜歡同樣的圖形元件要做好幾個不同大小的版本，如果要修改某個元件，其他大小的某元件也要一一修改，實在是件費時耗力的苦工。但是 SVG 只需要簡單幾個指令，就能達到想要的效果，例如將原圖 [line 1] 放大三倍，只需要加上 <em>transform=\"scale(3.0)</em>\" 這個 attribute [line 2]，就能輕鬆改變圖形大小。</p>\n<p dir=\"ltr\"><em>line 1 &lt;use xlink:href=\"#Firefox\"/&gt;</em><br />\n<em>line 2 &lt;use xlink:href=\"#Firefox\" transform=\"translate(200, 0) scale(3.0)\"/&gt;</em></p>\n<p dir=\"ltr\">最棒的是，SVG 檔案的大小遠小於點陣圖，這差距在高解析度的圖形上尤其明顯，下面這個火狐 logo [1]，是 jpg 格式，2485&#215;2340，300dpi，703.9kB，而這個差不多大小的 SVG 火狐 logo [<a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox-big-logo.htm\">SVG &#8211; 放大火狐</a>]，只有 44.7kB 喔！[2] 在開發 Retina 或是 HD 螢幕顯示的行動裝置，足以省下不少資源。<a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi.jpg\"><img class=\"size-medium wp-image-3028 aligncenter\" alt=\"firefox_logo-only_RGB-300dpi\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg\" width=\"300\" height=\"282\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg 300w, https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-1024x964.jpg 1024w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a></p>\n<p dir=\"ltr\">[1] 圖片取自 [Firefox branding] <a href=\"http://www.mozilla.org/en-US/styleguide/identity/firefox/branding/\">http://www.mozilla.org/en-US/styleguide/identity/firefox/branding/<br />\n[</a>2] 由於無法取得一模一樣的 SVG firefox logo，所以只能說是粗略的比較。</p>\n<p dir=\"ltr\">另外，SVG 也非常適用於互動式的文件開發，由於 SVG 自身的每個標籤，都可視作 DOM 元件，所以可以輕鬆與滑鼠點擊或是鍵盤等的事件做結合。SVG 自身的檔案大小也不因圖像大小而有所改變，如果你想要開發的應用程式，包含大範圍的圖形顯示，並且參雜不少使用者互動，例如 Google Maps，SVG 絕對是你的首選！</p>\n<p dir=\"ltr\">動畫的部份，則由 SMIL (Synchronized Multimedia Integration Language)，同步多媒體整合語言來定義，同樣也是 W3C 為描述多媒體而提出的建議標準。對動畫的時間屬性，座標轉換，顏色成像，以及多媒體嵌入等都有不少的定義。以下這個例子 [<a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/07/firefox-logo-rotate.htm\">SVG &#8211; 旋轉火狐</a>]，便是由 SMIL 的 <em>animateTransform</em> 標籤來旋轉火狐 logo 的呢！</p>\n<p dir=\"ltr\">最後為各位介紹一款 SVG 的編輯工具：<a title=\"Inkscape\" href=\"http://inkscape.org\" target=\"_blank\">Inkscape</a>。一款向量圖形編輯器，同樣也是以開源軟體授權發布與使用。雖然還沒有動畫部份的整合，但是其他方面都開發的相當完善，也很容易可以找到 SVG 的示範教學喔！以下推薦幾個學習 Inkspace 的網站跟影片：</p>\n<p dir=\"ltr\" style=\"text-align: center;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg\"><img class=\"size-full wp-image-3031 aligncenter\" alt=\"RSS-box\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg\" width=\"200\" height=\"200\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg 200w, https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box-150x150.jpg 150w\" sizes=\"(max-width: 200px) 100vw, 200px\" /></a><br />\n<a title=\"Use Inkscape to Create a Grunge RSS Box Icon\" href=\"http://vector.tutsplus.com/tutorials/icon-design/use-inkscape-to-create-a-grunge-rss-box-icon/\" target=\"_blank\">Use Inkscape to Create a Grunge RSS Box Icon</a></p>\n<p dir=\"ltr\" style=\"text-align: center;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/snowman.jpg\"><img class=\"size-full wp-image-3032 aligncenter\" alt=\"snowman\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/snowman.jpg\" width=\"200\" height=\"200\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/08/snowman.jpg 200w, https://tech.mozilla.com.tw/wp-content/uploads/2013/08/snowman-150x150.jpg 150w\" sizes=\"(max-width: 200px) 100vw, 200px\" /></a><br />\n<a title=\"Drawing snowman in 3D with Inkscape\" href=\"http://libregraphicsworld.org/blog/entry/drawing-3d-objects-in-inkscape\" target=\"_blank\">Drawing snowman in 3D with Inkscape</a></p>\n<p dir=\"ltr\" style=\"text-align: center;\"><a href=\"https://www.youtube.com/watch?v=q8XORGTMjIs\" target=\"_blank\">Youtube : Inkscape Flourish</a></p>\n<p dir=\"ltr\">\n\t\t\t</div>",
+  "content_text": "Scalable Vector Graphics (SVG)，可縮放向量圖形，是一種 XML 標記語言，用來描述二維向量圖形。SVG 對一般使用者而言， 也許是個相對陌生的名詞，但是我相信大家一定聽過 Adobe Flash，SVG 跟 Flash 一樣，其特點都是使用向量圖形，與事件觸發高度整合，非常適合用來開發互動式元件或是網頁。 我 Flash 用的好好的，幹嘛要換成什麼 SVG ? 你興沖沖的開啟某網頁，卻跳出必須下載並安裝播放器外掛，否則無法正常觀看內容的擾人經驗嗎？ SVG 是由 W3C 建議並制定的標準語言，特別設計用來跟 CSS、DOM 和 SMIL 一起共同運作的元件，當然，其技術也是公開共享。也就是說，這項技術不屬於任何一家營利公司，瀏覽器不需要安裝額外的 plug-in 來執行，使用者和開發者也不需要支付任何費用給特定的營利組織。 SVG 還有很多其他優點喔！ 解析度不夠高的點陣圖（例如 .png、.jpg 格式的圖片），放大之後的影像會像馬賽克一樣模糊，邊緣也會呈現鋸齒狀。向量圖形顧名思義是由向量組成，電腦會根據這些向量或是其他數據計算出圖形，而其中最大的優點，就是在放大或是縮小圖形時，影像都不會失真。讓我們來看看這個例子 [ SVG – 經典火狐 ]：左邊的火狐 logo 是原始的 SVG 圖形，右邊的火狐 logo 是直接將它放大三倍的樣子，圖像的品質看起來是不是都一樣？另外值得一提的是，現今行動裝置百百種，螢幕大小也是相當多樣，相信行動裝置軟體的開發者一定不喜歡同樣的圖形元件要做好幾個不同大小的版本，如果要修改某個元件，其他大小的某元件也要一一修改，實在是件費時耗力的苦工。但是 SVG 只需要簡單幾個指令，就能達到想要的效果，例如將原圖 [line 1] 放大三倍，只需要加上 transform=\"scale(3.0) \" 這個 attribute [line 2]，就能輕鬆改變圖形大小。 line 1 <use xlink:href=\"#Firefox\"/> line 2 <use xlink:href=\"#Firefox\" transform=\"translate(200, 0) scale(3.0)\"/> 最棒的是，SVG 檔案的大小遠小於點陣圖，這差距在高解析度的圖形上尤其明顯，下面這個火狐 logo [1]，是 jpg 格式，2485×2340，300dpi，703.9kB，而這個差不多大小的 SVG 火狐 logo [ SVG – 放大火狐 ]，只有 44.7kB 喔！[2] 在開發 Retina 或是 HD 螢幕顯示的行動裝置，足以省下不少資源。 [1] 圖片取自 [Firefox branding] http://www.mozilla.org/en-US/styleguide/identity/firefox/branding/ [ 2] 由於無法取得一模一樣的 SVG firefox logo，所以只能說是粗略的比較。 另外，SVG 也非常適用於互動式的文件開發，由於 SVG 自身的每個標籤，都可視作 DOM 元件，所以可以輕鬆與滑鼠點擊或是鍵盤等的事件做結合。SVG 自身的檔案大小也不因圖像大小而有所改變，如果你想要開發的應用程式，包含大範圍的圖形顯示，並且參雜不少使用者互動，例如 Google Maps，SVG 絕對是你的首選！ 動畫的部份，則由 SMIL (Synchronized Multimedia Integration Language)，同步多媒體整合語言來定義，同樣也是 W3C 為描述多媒體而提出的建議標準。對動畫的時間屬性，座標轉換，顏色成像，以及多媒體嵌入等都有不少的定義。以下這個例子 [ SVG – 旋轉火狐 ]，便是由 SMIL 的 animateTransform 標籤來旋轉火狐 logo 的呢！ 最後為各位介紹一款 SVG 的編輯工具： Inkscape 。一款向量圖形編輯器，同樣也是以開源軟體授權發布與使用。雖然還沒有動畫部份的整合，但是其他方面都開發的相當完善，也很容易可以找到 SVG 的示範教學喔！以下推薦幾個學習 Inkspace 的網站跟影片： Use Inkscape to Create a Grunge RSS Box Icon Drawing snowman in 3D with Inkscape Youtube : Inkscape Flourish",
+  "images": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "alt": "firefox_logo-only_RGB-300dpi",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/2731/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "markdown_path": "../assets/2731/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "wayback_timestamp": "20191118141006",
+      "asset_archive_url": "https://web.archive.org/web/20191118141006id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-1024x964.jpg",
+      "alt": "firefox_logo-only_RGB-300dpi",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "archive_path": "assets/2731/007-1af818ab31e3.jpg",
+      "markdown_path": "../assets/2731/007-1af818ab31e3.jpg",
+      "wayback_timestamp": "20131102053003",
+      "asset_archive_url": "https://web.archive.org/web/20131102053003id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "content_type": "image/jpeg",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg",
+      "alt": "RSS-box",
+      "kind": "image",
+      "source": "img",
+      "post_id": 2731,
+      "page_type": "post",
+      "title": "先別說 Flash 了，你聽過 SVG 嗎？",
+      "page_timestamp": "20191118141006",
+      "index": 3,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg",
+      "archive_path": "assets/2731/009-954f84b99f6e.jpg",
+      "markdown_path": "../assets/2731/009-954f84b99f6e.jpg",
+      "wayback_timestamp": "20131102052447",
+      "asset_archive_url": "https://web.archive.org/web/20131102052447id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg",
+      "content_type": "image/jpeg",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box-150x150.jpg",
+      "alt": "RSS-box",
+      "kind": "image",
+      "source": "img-srcset",
+      "post_id": 2731,
+      "page_type": "post",
+      "title": "先別說 Flash 了，你聽過 SVG 嗎？",
+      "page_timestamp": "20191118141006",
+      "index": 4,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg",
+      "archive_path": "assets/2731/009-954f84b99f6e.jpg",
+      "markdown_path": "../assets/2731/009-954f84b99f6e.jpg",
+      "wayback_timestamp": "20131102052447",
+      "asset_archive_url": "https://web.archive.org/web/20131102052447id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg",
+      "content_type": "image/jpeg",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/snowman.jpg",
+      "alt": "snowman",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/2731/wp-content/uploads/2013/08/snowman.jpg",
+      "markdown_path": "../assets/2731/wp-content/uploads/2013/08/snowman.jpg",
+      "wayback_timestamp": "20191118141006",
+      "asset_archive_url": "https://web.archive.org/web/20191118141006id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/snowman.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/snowman-150x150.jpg",
+      "alt": "snowman",
+      "kind": "image",
+      "source": "img-srcset",
+      "archive_path": "assets/2731/wp-content/uploads/2013/08/snowman-150x150.jpg",
+      "markdown_path": "../assets/2731/wp-content/uploads/2013/08/snowman-150x150.jpg",
+      "wayback_timestamp": "20191118141006",
+      "asset_archive_url": "https://web.archive.org/web/20191118141006id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/snowman-150x150.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "a-href",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "archive_path": "assets/2731/008-1af818ab31e3.jpg",
+      "markdown_path": "../assets/2731/008-1af818ab31e3.jpg",
+      "wayback_timestamp": "20131102053003",
+      "asset_archive_url": "https://web.archive.org/web/20131102053003id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "content_type": "image/jpeg",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "post_id": 2731,
+      "page_type": "post",
+      "title": "先別說 Flash 了，你聽過 SVG 嗎？",
+      "page_timestamp": "20191118141006",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/40/cb3599ee6fd7c63ed869653349b1e19e-bpthumb.jpg",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/40/cb3599ee6fd7c63ed869653349b1e19e-bpthumb.jpg",
+      "archive_path": "assets/2731/wp-content/uploads/avatars/40/cb3599ee6fd7c63ed869653349b1e19e-bpthumb.jpg",
+      "markdown_path": "../assets/2731/wp-content/uploads/avatars/40/cb3599ee6fd7c63ed869653349b1e19e-bpthumb.jpg",
+      "wayback_timestamp": "20171207055303",
+      "asset_archive_url": "https://web.archive.org/web/20171207055303id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/40/cb3599ee6fd7c63ed869653349b1e19e-bpthumb.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "alt": "firefox_logo-only_RGB-300dpi",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/2731/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "markdown_path": "../assets/2731/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "wayback_timestamp": "20191118141006",
+      "asset_archive_url": "https://web.archive.org/web/20191118141006id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-1024x964.jpg",
+      "alt": "firefox_logo-only_RGB-300dpi",
+      "kind": "image",
+      "source": "img-srcset",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "archive_path": "assets/2731/007-1af818ab31e3.jpg",
+      "markdown_path": "../assets/2731/007-1af818ab31e3.jpg",
+      "wayback_timestamp": "20131102053003",
+      "asset_archive_url": "https://web.archive.org/web/20131102053003id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "content_type": "image/jpeg",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg",
+      "alt": "RSS-box",
+      "kind": "image",
+      "source": "img",
+      "post_id": 2731,
+      "page_type": "post",
+      "title": "先別說 Flash 了，你聽過 SVG 嗎？",
+      "page_timestamp": "20191118141006",
+      "index": 3,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg",
+      "archive_path": "assets/2731/009-954f84b99f6e.jpg",
+      "markdown_path": "../assets/2731/009-954f84b99f6e.jpg",
+      "wayback_timestamp": "20131102052447",
+      "asset_archive_url": "https://web.archive.org/web/20131102052447id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg",
+      "content_type": "image/jpeg",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box-150x150.jpg",
+      "alt": "RSS-box",
+      "kind": "image",
+      "source": "img-srcset",
+      "post_id": 2731,
+      "page_type": "post",
+      "title": "先別說 Flash 了，你聽過 SVG 嗎？",
+      "page_timestamp": "20191118141006",
+      "index": 4,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg",
+      "archive_path": "assets/2731/009-954f84b99f6e.jpg",
+      "markdown_path": "../assets/2731/009-954f84b99f6e.jpg",
+      "wayback_timestamp": "20131102052447",
+      "asset_archive_url": "https://web.archive.org/web/20131102052447id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg",
+      "content_type": "image/jpeg",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/snowman.jpg",
+      "alt": "snowman",
+      "kind": "image",
+      "source": "img",
+      "archive_path": "assets/2731/wp-content/uploads/2013/08/snowman.jpg",
+      "markdown_path": "../assets/2731/wp-content/uploads/2013/08/snowman.jpg",
+      "wayback_timestamp": "20191118141006",
+      "asset_archive_url": "https://web.archive.org/web/20191118141006id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/snowman.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/snowman-150x150.jpg",
+      "alt": "snowman",
+      "kind": "image",
+      "source": "img-srcset",
+      "archive_path": "assets/2731/wp-content/uploads/2013/08/snowman-150x150.jpg",
+      "markdown_path": "../assets/2731/wp-content/uploads/2013/08/snowman-150x150.jpg",
+      "wayback_timestamp": "20191118141006",
+      "asset_archive_url": "https://web.archive.org/web/20191118141006id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/snowman-150x150.jpg",
+      "content_type": "image/jpeg"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "a-href",
+      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "archive_path": "assets/2731/008-1af818ab31e3.jpg",
+      "markdown_path": "../assets/2731/008-1af818ab31e3.jpg",
+      "wayback_timestamp": "20131102053003",
+      "asset_archive_url": "https://web.archive.org/web/20131102053003id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi-300x282.jpg",
+      "content_type": "image/jpeg",
+      "fallback_reason": "same_directory_wordpress_size_variant"
+    },
+    {
+      "post_id": 2731,
+      "page_type": "post",
+      "title": "先別說 Flash 了，你聽過 SVG 嗎？",
+      "page_timestamp": "20191118141006",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/40/cb3599ee6fd7c63ed869653349b1e19e-bpthumb.jpg",
+      "source": "img",
+      "kind": "image",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/40/cb3599ee6fd7c63ed869653349b1e19e-bpthumb.jpg",
+      "archive_path": "assets/2731/wp-content/uploads/avatars/40/cb3599ee6fd7c63ed869653349b1e19e-bpthumb.jpg",
+      "markdown_path": "../assets/2731/wp-content/uploads/avatars/40/cb3599ee6fd7c63ed869653349b1e19e-bpthumb.jpg",
+      "wayback_timestamp": "20171207055303",
+      "asset_archive_url": "https://web.archive.org/web/20171207055303id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/40/cb3599ee6fd7c63ed869653349b1e19e-bpthumb.jpg",
+      "content_type": "image/jpeg"
+    }
+  ],
+  "links": [
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/firefox-logos.htm",
+      "text": "SVG – 經典火狐"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox-big-logo.htm",
+      "text": "SVG – 放大火狐"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/firefox_logo-only_RGB-300dpi.jpg",
+      "text": ""
+    },
+    {
+      "url": "https://www.mozilla.org/en-US/styleguide/identity/firefox/branding/",
+      "text": "http://www.mozilla.org/en-US/styleguide/identity/firefox/branding/ ["
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/firefox-logo-rotate.htm",
+      "text": "SVG – 旋轉火狐"
+    },
+    {
+      "url": "https://inkscape.org/",
+      "text": "Inkscape"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/RSS-box.jpg",
+      "text": ""
+    },
+    {
+      "url": "https://vector.tutsplus.com/tutorials/icon-design/use-inkscape-to-create-a-grunge-rss-box-icon/",
+      "text": "Use Inkscape to Create a Grunge RSS Box Icon"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/snowman.jpg",
+      "text": ""
+    },
+    {
+      "url": "https://libregraphicsworld.org/blog/entry/drawing-3d-objects-in-inkscape",
+      "text": "Drawing snowman in 3D with Inkscape"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=q8XORGTMjIs",
+      "text": "Youtube : Inkscape Flourish"
+    }
+  ],
+  "status": "ok",
+  "asset_status": "ok",
+  "asset_errors": []
+}
