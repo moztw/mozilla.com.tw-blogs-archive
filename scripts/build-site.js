@@ -4,23 +4,22 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const args = parseArgs(process.argv.slice(2));
-const SITE_HOST = String(args.siteHost || args['site-host'] || 'blog.mozilla.com.tw').replace(/^https?:\/\//, '').replace(/\/.*$/, '');
-const SITE_ORIGIN = `https://${SITE_HOST}`;
 const ARCHIVE_DIR = path.resolve(ROOT, args.archiveDir || args['archive-dir'] || 'archive');
 const MD_DIR = path.join(ARCHIVE_DIR, 'articles-md');
 const THEME_ASSETS_DIR = path.resolve(ROOT, args.themeAssets || args['theme-assets'] || path.join('archive', 'theme-assets'));
 const BUILD_DIR = path.resolve(ROOT, args.buildDir || args['build-dir'] || 'blog');
+const BUILD_DIR_NAME = path.basename(BUILD_DIR);
+const SITE_HOST = `${BUILD_DIR_NAME}.mozilla.com.tw`;
+const SITE_ORIGIN = `https://${SITE_HOST}`;
 const POSTS_DIR = path.join(BUILD_DIR, 'posts');
 const ASSETS_DIR = path.join(BUILD_DIR, 'assets');
 
 const SITE_TITLE = args.siteTitle || args['site-title'] || SITE_HOST;
 const SITE_SUBTITLE = args.siteSubtitle || args['site-subtitle'] || '';
-const ARCHIVE_LABEL = args.archiveLabel || args['archive-label'] || `${SITE_TITLE} 封存`;
+const ARCHIVE_LABEL = `${SITE_TITLE} 封存`;
 const SITE_DESCRIPTION = args.siteDescription || args['site-description'] || ARCHIVE_LABEL;
 const LICENSE_NAME = '創用 CC 姓名標示─相同方式分享 4.0 國際';
 const LICENSE_URL = 'https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant';
-const KNOWN_CATEGORIES = ['Firefox', 'Firefox for Android', 'Firefox for iOS', 'Firefox OS', 'Identity', 'Mozilla', 'Privacy', 'Security', 'Web App', '新聞訊息', '未分類', '校園大使', '活動'];
-const SHOW_ALL_CATEGORIES = hasFlag('all-categories');
 const SITE_SNAPSHOT_URL = args.snapshotUrl || args['snapshot-url'] || `https://web.archive.org/web/*/${SITE_ORIGIN}/`;
 let ALL_POSTS = [];
 
@@ -504,15 +503,10 @@ function categoryLink(category, rootPrefix) {
 }
 
 function displayCategories(post) {
-  return SHOW_ALL_CATEGORIES
-    ? post.categories
-    : post.categories.filter((category) => KNOWN_CATEGORIES.includes(category));
+  return post.categories;
 }
 
 function siteCategoryNames() {
-  if (!SHOW_ALL_CATEGORIES) {
-    return KNOWN_CATEGORIES;
-  }
   return [...new Set(ALL_POSTS.flatMap((post) => displayCategories(post)))]
     .sort((a, b) => a.localeCompare(b, 'zh-Hant'));
 }
@@ -761,10 +755,6 @@ function parseArgs(argv) {
     i += 1;
   }
   return parsed;
-}
-
-function hasFlag(name) {
-  return args[name] === true;
 }
 
 function escapeRegExp(value) {

@@ -12,12 +12,9 @@ const TARGETS = [
     buildArgs: [
       '--archive-dir', 'archive',
       '--build-dir', 'blog',
-      '--site-host', 'blog.mozilla.com.tw',
-      '--site-title', '部落格',
+      '--site-title', 'Mozilla Taiwan 部落格',
       '--site-subtitle', '最新部落格文章，提供各式 Mozilla 產品與專案相關訊息',
       '--site-description', '提供 Mozilla 與 Firefox、Firefox OS 的五花八門最新訊息，包括 Firefox 開發、Firefox 最新功能、Firefox 使用教學、Firefox 錯誤迷思導正、Firefox 好用附加元件訊息，以及由 Mozilla Taiwan 官方舉辦的各式 Firefox 活動訊息、新聞、部落文分享',
-      '--archive-label', 'Mozilla Taiwan 部落格封存',
-      '--all-categories',
     ],
   },
   {
@@ -26,12 +23,9 @@ const TARGETS = [
     buildArgs: [
       '--archive-dir', 'archive-tech',
       '--build-dir', 'tech',
-      '--site-host', 'tech.mozilla.com.tw',
       '--site-title', '謀智台客',
       '--site-subtitle', 'Firefox OS 研發工程師團隊共筆資料庫，提供各式 Firefox OS 開發心得與甘苦談',
       '--site-description', 'Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。',
-      '--archive-label', 'Mozilla Tech 部落格封存',
-      '--all-categories',
     ],
   },
 ];
@@ -207,10 +201,6 @@ function parseArgs(values) {
 }
 
 function targetLabel(target) {
-  const archiveLabelIndex = target.buildArgs.indexOf('--archive-label');
-  if (archiveLabelIndex >= 0 && target.buildArgs[archiveLabelIndex + 1]) {
-    return target.buildArgs[archiveLabelIndex + 1];
-  }
   const siteTitleIndex = target.buildArgs.indexOf('--site-title');
   if (siteTitleIndex >= 0 && target.buildArgs[siteTitleIndex + 1]) {
     return `${target.buildArgs[siteTitleIndex + 1]} 封存`;
