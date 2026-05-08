@@ -341,8 +341,8 @@ async function writeArchivePages(posts) {
       title: `文章分類：${group.name}`,
       posts: group.posts,
       rootPrefix: '../../',
+      breadcrumbLeadingSeparator: true,
       breadcrumbs: [
-        { label: ARCHIVE_LABEL, href: '../../index.html' },
         { label: '分類', href: '../' },
         { label: group.name, href: './' },
       ],
@@ -366,8 +366,8 @@ async function writeArchivePages(posts) {
       title: `月份封存：${monthLabel(group.name)}`,
       posts: group.posts,
       rootPrefix: '../../',
+      breadcrumbLeadingSeparator: true,
       breadcrumbs: [
-        { label: ARCHIVE_LABEL, href: '../../index.html' },
         { label: '月份', href: '../' },
         { label: monthLabel(group.name), href: './' },
       ],
@@ -407,12 +407,13 @@ function postThumbnail(markdown, rootPrefix) {
   };
 }
 
-function renderArchivePage({ title, posts, rootPrefix, breadcrumbs }) {
+function renderArchivePage({ title, posts, rootPrefix, breadcrumbs, breadcrumbLeadingSeparator = false }) {
   return pageShell({
     title: `${title} | ${SITE_TITLE} 封存`,
     rootPrefix,
     bodyClass: 'archive',
     breadcrumbs,
+    breadcrumbLeadingSeparator,
     snapshotUrl: SITE_SNAPSHOT_URL,
     body: `
       <main id="primary" class="content" role="main">
@@ -432,8 +433,8 @@ function renderArchiveIndex({ title, rootPrefix, groups }) {
     title: `${title} | ${SITE_TITLE} 封存`,
     rootPrefix,
     bodyClass: 'archive-index',
+    breadcrumbLeadingSeparator: true,
     breadcrumbs: [
-      { label: ARCHIVE_LABEL, href: `${rootPrefix}index.html` },
       { label: title, href: './' },
     ],
     snapshotUrl: SITE_SNAPSHOT_URL,
@@ -542,8 +543,8 @@ function renderNotFound() {
     title: `找不到頁面 | ${SITE_TITLE}`,
     rootPrefix: '',
     bodyClass: 'error404',
+    breadcrumbLeadingSeparator: true,
     breadcrumbs: [
-      { label: ARCHIVE_LABEL, href: 'index.html' },
       { label: '找不到頁面', href: './' },
     ],
     snapshotUrl: SITE_SNAPSHOT_URL,
