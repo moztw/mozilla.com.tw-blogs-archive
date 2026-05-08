@@ -11,6 +11,7 @@ const sites = {
     targetPrefix: '/blog/taipei',
     sourcePathnames: [
       '/',
+      '/main',
       '/blog.mozilla.com.tw/main',
     ],
     categoryMap: {
@@ -132,7 +133,7 @@ function redirectHtml(config) {
         return target('/months/');
       }
 
-      if (pathname === '/' || pathname === '/blog.mozilla.com.tw/main') return target('/');
+      if (pathname === '/' || pathname === '/main' || pathname === '/blog.mozilla.com.tw/main') return target('/');
 
       if (params.has('paged') || params.has('s') || params.has('ajaxCalendar') || params.has('attachment_id')) {
         return target('/');
