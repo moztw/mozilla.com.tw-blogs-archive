@@ -1,0 +1,117 @@
+#!/usr/bin/env node
+
+import { readdir, readFile, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+
+const SITES = [
+  {
+    name: 'taipei',
+    buildDir: 'blog',
+    archiveDir: 'archive-blog',
+    baseUrl: 'https://moztw.org/blog/taipei/',
+  },
+  {
+    name: 'tech',
+    buildDir: 'tech',
+    archiveDir: 'archive-tech',
+    baseUrl: 'https://moztw.org/blog/tech/',
+  },
+];
+
+async function main() {
+  for (const site of SITES) {
+    const buildDir = path.join(ROOT, site.buildDir);
+    const articleDates = await readArticleDates(path.join(ROOT, site.archiveDir, 'articles-json'));
+    const indexFiles = await findIndexFiles(buildDir);
+    const urls = indexFiles
+      .map((filePath) => sitemapEntry(site, buildDir, filePath, articleDates))
+      .sort((a, b) => a.loc.localeCompare(b.loc));
+    const xml = renderSitemap(urls);
+    const outputPath = path.join(buildDir, 'sitemap.xml');
+    await writeFile(outputPath, xml, 'utf8');
+    console.log(`Wrote ${urls.length} URLs to ${relative(outputPath)} for ${site.baseUrl}`);
+  }
+}
+
+async function readArticleDates(jsonDir) {
+  const dates = new Map();
+  let files = [];
+  try {
+    files = await readdir(jsonDir);
+  } catch {
+    return dates;
+  }
+
+  for (const file of files.filter((item) => item.endsWith('.json'))) {
+    try {
+      const article = JSON.parse(await readFile(path.join(jsonDir, file), 'utf8'));
+      if (article.post_id && article.date) {
+        dates.set(String(article.post_id), article.date);
+      }
+    } catch {
+      // Ignore malformed archived article metadata; sitemap can still be built without lastmod.
+    }
+  }
+  return dates;
+}
+
+async function findIndexFiles(dir) {
+  const results = [];
+  const entries = await readdir(dir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results.push(...await findIndexFiles(fullPath));
+    } else if (entry.isFile() && entry.name === 'index.html') {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
+function sitemapEntry(site, buildDir, filePath, articleDates) {
+  const relativeFile = path.relative(buildDir, filePath);
+  const relativeDir = path.dirname(relativeFile) === '.' ? '' : path.dirname(relativeFile);
+  const urlPath = relativeDir ? `${encodePath(relativeDir)}/` : '';
+  const loc = new URL(urlPath, site.baseUrl).toString();
+  const postId = relativeDir.match(/^posts\/(\d+)$/)?.[1] || '';
+  const lastmod = postId ? articleDates.get(postId) || '' : '';
+  return { loc, lastmod };
+}
+
+function encodePath(value) {
+  return value
+    .split(path.sep)
+    .map((part) => encodeURIComponent(part))
+    .join('/');
+}
+
+function renderSitemap(urls) {
+  const body = urls.map((entry) => {
+    const lastmod = entry.lastmod ? `\n    <lastmod>${escapeXml(entry.lastmod)}</lastmod>` : '';
+    return `  <url>\n    <loc>${escapeXml(entry.loc)}</loc>${lastmod}\n  </url>`;
+  }).join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
+}
+
+function escapeXml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function relative(filePath) {
+  return path.relative(ROOT, filePath) || '.';
+}
+
+main().catch((error) => {
+  console.error(error.stack || error.message);
+  process.exitCode = 1;
+});
