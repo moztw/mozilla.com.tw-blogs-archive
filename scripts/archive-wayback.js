@@ -1578,9 +1578,11 @@ function parseArticle(html, originalUrl) {
 
   const categories = collectRelText(articleHtml, 'category');
   const tags = collectRelText(articleHtml, 'tag');
-  const author = cleanText(firstCapture(articleHtml, [
-    /<[^>]*class=["'][^"']*\bauthor\b[^"']*["'][^>]*>([\s\S]*?)<\/[^>]+>/i,
-  ]));
+  const author =
+    cleanText(firstCapture(articleHtml, [
+      /<[^>]*class=["'][^"']*\bauthor\b[^"']*["'][^>]*>([\s\S]*?)<\/[^>]+>/i,
+    ])) ||
+    parseLegacyAuthor(`${html}\n${articleHtml}`);
   const images = collectImages(contentHtml, originalUrl);
   const media = collectMedia(html, originalUrl);
   const links = collectLinks(contentHtml, originalUrl);
@@ -1650,45 +1652,61 @@ function sliceBalancedElement(html, startIndex, tagName) {
 async function archiveAssets(postId, images, timestamp) {
   const usedPaths = new Set();
   const assetErrors = [];
-  const archivedImages = [];
+  const archivedImages = Array(images.length);
+  let pending = images.map((image, index) => ({ image, index }));
 
-  for (const [index, image] of images.entries()) {
-    try {
-      const { buffer, contentType, snapshot } = await fetchAssetBuffer(timestamp, image.url);
+  while (pending.length) {
+    const currentBatch = pending;
+    pending = [];
 
-      const assetPath = chooseAssetPath(postId, image.url, index, buffer, contentType, usedPaths);
-      usedPaths.add(assetPath);
-      await mkdir(path.dirname(assetPath), { recursive: true });
-      await writeFile(assetPath, buffer);
+    for (const { image, index } of currentBatch) {
+      try {
+        const { buffer, contentType, snapshot } = await fetchAssetBuffer(timestamp, image.url);
 
-      archivedImages.push({
-        ...image,
-        archive_path: path.relative(ARCHIVE_DIR, assetPath),
-        markdown_path: `../assets/${path.relative(ASSETS_DIR, assetPath).split(path.sep).join('/')}`,
-        wayback_timestamp: snapshot.timestamp,
-        asset_archive_url: waybackAssetUrl(snapshot.timestamp, snapshot.original),
-        content_type: contentType,
-      });
-    } catch (error) {
-      assetErrors.push({ url: image.url, reason: error.message });
-      archivedImages.push(image);
+        const assetPath = chooseAssetPath(postId, image.url, index, buffer, contentType, usedPaths);
+        usedPaths.add(assetPath);
+        await mkdir(path.dirname(assetPath), { recursive: true });
+        await writeFile(assetPath, buffer);
+
+        archivedImages[index] = {
+          ...image,
+          archive_path: path.relative(ARCHIVE_DIR, assetPath),
+          markdown_path: `../assets/${path.relative(ASSETS_DIR, assetPath).split(path.sep).join('/')}`,
+          wayback_timestamp: snapshot.timestamp,
+          asset_archive_url: waybackAssetUrl(snapshot.timestamp, snapshot.original),
+          content_type: contentType,
+        };
+      } catch (error) {
+        if (isDefinitive404ErrorMessage(error.message)) {
+          assetErrors.push({ url: image.url, reason: error.message });
+          archivedImages[index] = image;
+        } else {
+          pending.push({ image, index });
+          console.warn(`Archive asset deferred ${postId}: ${image.url}: ${error.message}`);
+        }
+      }
+
+      await sleep(randomDelay());
     }
 
-    await sleep(randomDelay());
+    if (pending.length) {
+      await sleep(5_000);
+    }
   }
 
   return {
-    images: archivedImages,
+    images: archivedImages.filter(Boolean),
     asset_status: assetErrors.length ? 'partial_assets_failed' : 'ok',
     asset_errors: assetErrors,
   };
 }
 
 async function fetchAssetBuffer(pageTimestamp, originalUrl) {
+  const variants = assetUrlVariants(originalUrl);
   const attempts = [
-    { timestamp: pageTimestamp, original: originalUrl },
+    ...variants.flatMap((variant) => (pageTimestamp ? [{ timestamp: pageTimestamp, original: variant }] : [])),
     ...await scanAssetSnapshots(originalUrl, pageTimestamp),
-    { timestamp: '', original: originalUrl, timegate: true },
+    ...variants.map((variant) => ({ timestamp: '', original: variant, timegate: true })),
   ];
   const errors = [];
 
@@ -1872,36 +1890,52 @@ async function recoverArticleMedia() {
     failed: [],
   };
 
-  for (const item of candidates) {
-    const article = byPost.get(item.post_id) ?? JSON.parse(await readFile(path.join(JSON_DIR, `${item.post_id}.json`), 'utf8'));
-    byPost.set(item.post_id, article);
+  let pending = candidates.slice();
 
-    try {
-      const usedPaths = new Set((article.media || article.images || [])
-        .map((media) => media.archive_path)
-        .filter(Boolean)
-        .map((archivePath) => path.join(ARCHIVE_DIR, archivePath)));
-      const recovered = await recoverOneMedia(article, item, usedPaths);
-      mergeRecoveredMedia(article, recovered);
-      result.localized_now += 1;
-      result.recovered.push({
-        post_id: item.post_id,
-        url: item.url,
-        archive_path: recovered.archive_path,
-        wayback_timestamp: recovered.wayback_timestamp,
-      });
-    } catch (error) {
-      result.failed.push({ ...item, reason: error.message });
-      console.warn(`Media recover failed ${item.post_id}: ${item.url}: ${error.message}`);
+  while (pending.length) {
+    const currentBatch = pending;
+    pending = [];
+
+    for (const item of currentBatch) {
+      const article = byPost.get(item.post_id) ?? JSON.parse(await readFile(path.join(JSON_DIR, `${item.post_id}.json`), 'utf8'));
+      byPost.set(item.post_id, article);
+
+      try {
+        const usedPaths = new Set((article.media || article.images || [])
+          .map((media) => media.archive_path)
+          .filter(Boolean)
+          .map((archivePath) => path.join(ARCHIVE_DIR, archivePath)));
+        const recovered = await recoverOneMedia(article, item, usedPaths);
+        mergeRecoveredMedia(article, recovered);
+        result.localized_now += 1;
+        result.recovered.push({
+          post_id: item.post_id,
+          url: item.url,
+          archive_path: recovered.archive_path,
+          wayback_timestamp: recovered.wayback_timestamp,
+        });
+      } catch (error) {
+        if (isDefinitive404ErrorMessage(error.message)) {
+          result.failed.push({ ...item, reason: error.message });
+          console.warn(`Media recover 404 ${item.post_id}: ${item.url}: ${error.message}`);
+        } else {
+          pending.push(item);
+          console.warn(`Media recover deferred ${item.post_id}: ${item.url}: ${error.message}`);
+        }
+      }
+
+      if ((result.recovered.length + result.failed.length) % Number(args.checkpointEvery || args['checkpoint-every'] || 25) === 0) {
+        await writeRecoveredArticles(byPost);
+        await saveJson(ARTICLE_MEDIA_RECOVER_PATH, result);
+        console.log(`Media recover checkpoint: ${result.recovered.length + result.failed.length}/${candidates.length}`);
+      }
+
+      await sleep(randomDelay());
     }
 
-    if ((result.recovered.length + result.failed.length) % Number(args.checkpointEvery || args['checkpoint-every'] || 25) === 0) {
-      await writeRecoveredArticles(byPost);
-      await saveJson(ARTICLE_MEDIA_RECOVER_PATH, result);
-      console.log(`Media recover checkpoint: ${result.recovered.length + result.failed.length}/${candidates.length}`);
+    if (pending.length) {
+      await sleep(5_000);
     }
-
-    await sleep(randomDelay());
   }
 
   await writeRecoveredArticles(byPost);
@@ -2474,7 +2508,35 @@ function mediaUrlRecoveryCandidates(url) {
       candidates.push(parsed.href);
     }
   } catch {}
-  return [...new Set(candidates)];
+  return [...new Set(candidates.flatMap((candidate) => assetUrlVariants(candidate)))];
+}
+
+function assetUrlVariants(url) {
+  const variants = new Set([url]);
+
+  try {
+    const parsed = new URL(url);
+    if (/\.mozilla\.com\.tw$/i.test(parsed.hostname) || parsed.hostname === 'blog.mozilla.com.tw') {
+      const alternate = new URL(parsed.href);
+      alternate.protocol = parsed.protocol === 'https:' ? 'http:' : 'https:';
+      variants.add(alternate.href);
+    }
+
+    const decodedPath = decodeURIComponent(parsed.pathname);
+    if (decodedPath !== parsed.pathname) {
+      const decoded = new URL(parsed.href);
+      decoded.pathname = decodedPath;
+      variants.add(decoded.href);
+
+      if (/\.mozilla\.com\.tw$/i.test(parsed.hostname) || parsed.hostname === 'blog.mozilla.com.tw') {
+        const decodedAlternate = new URL(decoded.href);
+        decodedAlternate.protocol = decoded.protocol === 'https:' ? 'http:' : 'https:';
+        variants.add(decodedAlternate.href);
+      }
+    }
+  } catch {}
+
+  return [...variants];
 }
 
 async function alternatePostImageAttempts(article, item) {
@@ -3031,7 +3093,7 @@ async function fetchWithRetry(url, { accept }) {
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 20_000);
+      const timeout = setTimeout(() => controller.abort(), 5_000);
       const response = await fetch(url, {
         headers: { 'user-agent': USER_AGENT, accept },
         signal: controller.signal,
@@ -3044,12 +3106,24 @@ async function fetchWithRetry(url, { accept }) {
       return response;
     } catch (error) {
       lastError = error;
+      if (isNotFoundResponseError(error)) {
+        break;
+      }
       if (attempt < 3) {
-        await sleep(500 * attempt);
+        await sleep(5_000);
       }
     }
   }
   throw lastError;
+}
+
+function isNotFoundResponseError(error) {
+  return String(error?.message || '').includes('http_404');
+}
+
+function isDefinitive404ErrorMessage(message) {
+  const parts = String(message || '').split('|').map((part) => part.trim()).filter(Boolean);
+  return parts.length > 0 && parts.every((part) => part.includes('http_404'));
 }
 
 async function ensureArchiveDirs() {
@@ -3199,9 +3273,27 @@ function parseDisplayedPostDate(html) {
 }
 
 function parseLegacyPublishedDate(html) {
-  return parseDate(firstCapture(html, [
+  const numeric = parseDate(firstCapture(html, [
     /發表於[:：]\s*(\d{4}[/.]\d{1,2}[/.]\d{1,2})/i,
   ]));
+  if (numeric) {
+    return numeric;
+  }
+
+  const match = html.match(/發表於[:：]?\s*(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日/i);
+  if (!match) {
+    return '';
+  }
+
+  return [match[1], match[2].padStart(2, '0'), match[3].padStart(2, '0')].join('-');
+}
+
+function parseLegacyAuthor(html) {
+  const raw = cleanText(firstCapture(html, [
+    /<div\b[^>]*id=["']author-meta["'][^>]*>[\s\S]*?<div\b[^>]*id=["']author-info["'][^>]*>([\s\S]*?)<\/div>/i,
+    /<aside\b[^>]*id=["'][^"']*author_contact_info[^"']*["'][^>]*>[\s\S]*?<span\b[^>]*class=["'][^"']*\bname\b[^"']*["'][^>]*>([\s\S]*?)<\/span>/i,
+  ]));
+  return raw.replace(/^投稿者\s*/u, '').trim();
 }
 
 function parseMonth(text) {

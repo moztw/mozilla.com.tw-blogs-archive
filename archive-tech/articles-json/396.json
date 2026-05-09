@@ -11,17 +11,115 @@
   "tags": [
     "Firefox OS(B2G)"
   ],
-  "author": "",
+  "author": "shianyow",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=396",
   "archive_url": "https://web.archive.org/web/20140705215910id_/https://tech.mozilla.com.tw/?p=396",
   "wayback_timestamp": "20140705215910",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p><strong>目前 Firefox OS (以下簡稱<strong><strong>專案名</strong>B2G</strong>) 已經支持的設備包括：</strong></p>\n<ul>\n<li>Samsung Galaxy S2 I-9100 (以及兩款 SGS2 variants：I-9100G，Skyrocket)</li>\n<li>Nexus S</li>\n<li>Maguro/Akami</li>\n<li>Emulator</li>\n</ul>\n<p>除此之外，還有好幾款設備正在進行 porting 中。</p>\n<p>很多人想知道，要如何在 B2G 支持一個新的設備呢？本文將 B2G porting 流程做一個概略的介紹。</p>\n<p><strong>前言：</strong></p>\n<p>B2G 的架構 [1] 包括 Gaia，Gecko，和 Gonk。要將 B2G 移植到一個新的設備，主要的工作在 Gonk.</p>\n<p>將 B2G port 到新的設備，要產生下面兩個 image：</p>\n<ol>\n<li>Kernel image</li>\n<li>System image</li>\n</ol>\n<p>Kernel image 包括 Linux kernel 和 ramfs。通常 Linux kernel 不太需要修改，但是我們需要修改 init.rc，移除一些不需要執行的 Android process (ex: zygote 等)，並新增 B2G 相關 process，所以還是得 flash kernel image。System image 包括了 AOSP，以及部份需要從設備中 extract 出來的 binary blobs。</p>\n<p>針對市面上某一款設備的 porting，可以先去 XDA forum [2] 找尋此款設備的相關討論。如果已經有人做出這款設備包括 ClockWorkMod recovery 的 initramfs，甚至在裡面也加入了 busybox 的支持，那麼延用這部份的成果，會讓整個 porting 的過程更方便。例如，目前在 Samsung Galaxy S2 上就是這樣做的。每款設備使用的 flash 方式也不相同，大部份用的是 fastboot，而在 Samsung 設備上使用 heimdall 或是 odin。另外，如果是市面上比較普遍的機種，可以到 CyanogenMod [3] 網站參考相關的資源，加快 porting 的速度。</p>\n<p>另 外要提的一點，隨著 B2G 的演進，從早期 B2G 使用的 AOSP 是 GingerBread，到現在以 ICS 主。而 B2G build system 也在最近逐漸從舊系統 [4] 轉換到新系統 [5]。在這樣的情況下，雖然 porting 的原理上相同，但是實際修改到的系統目錄會不太一樣，而且對於不同設備所使用的方式也各有差別。由於目前舊系統對於 GB/ICS 的支持已經很成熟，本次先介紹基於舊系統的 porting 方式。</p>\n<p><strong>Porting 相關的系統目錄：</strong></p>\n<ul>\n<li>B2G/Makefile  (Top level Makefile)</li>\n<li>B2G/boot  (Kernel and/or initramfs)</li>\n<li>B2G/glue/gonk/device/&lt;manufacturer&gt;/&lt;device_id&gt;  (device configuration tree for GingerBread)</li>\n<li>B2G/glue/gonk-ics/device/&lt;manufacturer&gt;/&lt;device_id&gt;  (device configuration tree for ICS)</li>\n</ul>\n<p><strong>Porting 的概略流程：</strong></p>\n<ol>\n<li>先備份原廠的 firmware</li>\n<li>在 B2G Makefile 中支持新設備，新增包括 build kernel，config device，flash 相關的 script</li>\n<li>取得新設備的 kernel source，放在 B2G/boot</li>\n<li>新增 device configuration，並加入至少以下檔案：\n<ul>\n<li>AndroidKernel.mk</li>\n<li>AndroidBoard.mk</li>\n<li>AndroidProducts.mk</li>\n<li>BoardConfig.mk</li>\n<li>extract-files.sh</li>\n<li>full_&lt;device_id&gt;.mk</li>\n<li>idc files for touch screen</li>\n</ul>\n</li>\n<li>修改 init.rc for B2G</li>\n<li>Config/build/flash image 到新的設備並測試</li>\n</ol>\n<p><strong>關於 init.rc：</strong></p>\n<p>前面提到，要在這個檔案中移除不需要的 process 並加入 B2G 相關 process，實際的內容可以參考已經支持的設備。<br />\n對於 Maguro/Akami 設備，B2G source tree 中的 init.rc 是放在 device configuration 中，再經由 AndroidBoard.mk 將其 copy 到 target output 目錄，產生於 boot.img 中。使用這種方式，除了 init.rc 之外，AndroidBoard.mk 還要 copy 其它需要的系統檔案 (ex： init.qcom.rc，uevent.rc&#8230;)。而在 Galaxy S2 上，則用了一個 hacking 的做法，將 init.rc 存放在 B2G/boot/initramfs 中，並且在 build kernel 時就將 initramfs 合併於 zImage 中。</p>\n<p><strong>關於 extract-files.sh：</strong></p>\n<p>B2G 會用到一些原廠設備特有的 binary blobs，包括 execution files，shared libraries，WIFI firmware，system configuration 等。不同設備之間有相當的差異，要怎麼判斷哪些 files 需要被 extract 呢？這部份需要一些經驗。可以先參考相似 solution 設備的做法，再根據 flash 後，B2G 跑起來的 logcat 訊息來調整。</p>\n<p><strong>結語：</strong></p>\n<p>本 文提供的是一個 porting 的大原則，實際在 porting 時可能會碰到各式各樣的問題。在後續的文章中，將針對一些比較常遇到的問題深入探討。在此提供一個以 Samsung Galaxy S2 Skyrocket 的 porting 範例 [6]，做為參考。</p>\n<p>[1] https://wiki.mozilla.org/B2G/Architecture<br />\n[2] http://forum.xda-developers.com<br />\n[3] http://www.cyanogenmod.com<br />\n[4] https://github.com/andreasgal/B2G<br />\n[5] https://github.com/mozilla-b2g/B2G<br />\n[6] https://github.com/shianyow/B2G/tree/skyrocket</p>\n\t\t\t</div>",
   "content_text": "目前 Firefox OS (以下簡稱 專案名 B2G ) 已經支持的設備包括： Samsung Galaxy S2 I-9100 (以及兩款 SGS2 variants：I-9100G，Skyrocket) Nexus S Maguro/Akami Emulator 除此之外，還有好幾款設備正在進行 porting 中。 很多人想知道，要如何在 B2G 支持一個新的設備呢？本文將 B2G porting 流程做一個概略的介紹。 前言： B2G 的架構 [1] 包括 Gaia，Gecko，和 Gonk。要將 B2G 移植到一個新的設備，主要的工作在 Gonk. 將 B2G port 到新的設備，要產生下面兩個 image： Kernel image System image Kernel image 包括 Linux kernel 和 ramfs。通常 Linux kernel 不太需要修改，但是我們需要修改 init.rc，移除一些不需要執行的 Android process (ex: zygote 等)，並新增 B2G 相關 process，所以還是得 flash kernel image。System image 包括了 AOSP，以及部份需要從設備中 extract 出來的 binary blobs。 針對市面上某一款設備的 porting，可以先去 XDA forum [2] 找尋此款設備的相關討論。如果已經有人做出這款設備包括 ClockWorkMod recovery 的 initramfs，甚至在裡面也加入了 busybox 的支持，那麼延用這部份的成果，會讓整個 porting 的過程更方便。例如，目前在 Samsung Galaxy S2 上就是這樣做的。每款設備使用的 flash 方式也不相同，大部份用的是 fastboot，而在 Samsung 設備上使用 heimdall 或是 odin。另外，如果是市面上比較普遍的機種，可以到 CyanogenMod [3] 網站參考相關的資源，加快 porting 的速度。 另 外要提的一點，隨著 B2G 的演進，從早期 B2G 使用的 AOSP 是 GingerBread，到現在以 ICS 主。而 B2G build system 也在最近逐漸從舊系統 [4] 轉換到新系統 [5]。在這樣的情況下，雖然 porting 的原理上相同，但是實際修改到的系統目錄會不太一樣，而且對於不同設備所使用的方式也各有差別。由於目前舊系統對於 GB/ICS 的支持已經很成熟，本次先介紹基於舊系統的 porting 方式。 Porting 相關的系統目錄： B2G/Makefile (Top level Makefile) B2G/boot (Kernel and/or initramfs) B2G/glue/gonk/device/<manufacturer>/<device_id> (device configuration tree for GingerBread) B2G/glue/gonk-ics/device/<manufacturer>/<device_id> (device configuration tree for ICS) Porting 的概略流程： 先備份原廠的 firmware 在 B2G Makefile 中支持新設備，新增包括 build kernel，config device，flash 相關的 script 取得新設備的 kernel source，放在 B2G/boot 新增 device configuration，並加入至少以下檔案： AndroidKernel.mk AndroidBoard.mk AndroidProducts.mk BoardConfig.mk extract-files.sh full_<device_id>.mk idc files for touch screen 修改 init.rc for B2G Config/build/flash image 到新的設備並測試 關於 init.rc： 前面提到，要在這個檔案中移除不需要的 process 並加入 B2G 相關 process，實際的內容可以參考已經支持的設備。 對於 Maguro/Akami 設備，B2G source tree 中的 init.rc 是放在 device configuration 中，再經由 AndroidBoard.mk 將其 copy 到 target output 目錄，產生於 boot.img 中。使用這種方式，除了 init.rc 之外，AndroidBoard.mk 還要 copy 其它需要的系統檔案 (ex： init.qcom.rc，uevent.rc…)。而在 Galaxy S2 上，則用了一個 hacking 的做法，將 init.rc 存放在 B2G/boot/initramfs 中，並且在 build kernel 時就將 initramfs 合併於 zImage 中。 關於 extract-files.sh： B2G 會用到一些原廠設備特有的 binary blobs，包括 execution files，shared libraries，WIFI firmware，system configuration 等。不同設備之間有相當的差異，要怎麼判斷哪些 files 需要被 extract 呢？這部份需要一些經驗。可以先參考相似 solution 設備的做法，再根據 flash 後，B2G 跑起來的 logcat 訊息來調整。 結語： 本 文提供的是一個 porting 的大原則，實際在 porting 時可能會碰到各式各樣的問題。在後續的文章中，將針對一些比較常遇到的問題深入探討。在此提供一個以 Samsung Galaxy S2 Skyrocket 的 porting 範例 [6]，做為參考。 [1] https://wiki.mozilla.org/B2G/Architecture [2] http://forum.xda-developers.com [3] http://www.cyanogenmod.com [4] https://github.com/andreasgal/B2G [5] https://github.com/mozilla-b2g/B2G [6] https://github.com/shianyow/B2G/tree/skyrocket",
-  "images": [],
-  "media": [],
+  "images": [
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/05/dot_com_brains_and_dot_org_heart-150x150.jpg",
+      "alt": ".com brains .org heart",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/Aptana_install-150x150.png",
+      "alt": "Aptana_install",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/IMG_0695-150x150.png",
+      "alt": "有圖有真相! 你看這位 Mozillian 多麼熱情!",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/channels-firefox.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/05/dot_com_brains_and_dot_org_heart-150x150.jpg",
+      "alt": ".com brains .org heart",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/08/Aptana_install-150x150.png",
+      "alt": "Aptana_install",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/IMG_0695-150x150.png",
+      "alt": "有圖有真相! 你看這位 Mozillian 多麼熱情!",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/channels-firefox.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
+    }
+  ],
   "links": [],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

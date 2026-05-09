@@ -11,7 +11,7 @@
   "tags": [
     "Firefox OS(B2G)"
   ],
-  "author": "",
+  "author": "李YY",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=378",
   "archive_url": "https://web.archive.org/web/20140723181538id_/https://tech.mozilla.com.tw/?p=378",
@@ -20,42 +20,118 @@
   "content_text": "俗話說得好： 每個偉大系統背後都有個好用的 Thread 機制，Gecko 也不例外，本篇台客文就是介紹在 Gecko 裡 thread 的一些基本使用方式及相關的 class 。 首先， Gecko 內部的 thread 基本上是使用 nsIThread 這個介面，透過 NS_NewThread 來產生， thread 會有一個 job queue， thread 會一直執行 queue 裡面的 job，如果沒有 job 時，則是停留在 queue 內部，此時不會耗費額外的 cpu；而由 NS_NewThread 所產生的 thread 會由另外一個 class，nsThreadManager 來管理，當系統要停止時， nsThreadManager 便會把他所管理的所有 thread 分別呼叫 nsIThread::Shutdown ，來將旗下的 thread 停止。 下面我們來看一段簡單的程式碼 nsCOMPtr<nsIThread> sThread; class HelloThread : public RefCounted { public: void HelloWorld() { printf(\"我是台客\"); } }; void InititalizeThread() { NS_NewThread(getter_AddRefs(sThread)); } void ReleaseThread() { sThread->Shutdown(); } void AddJob() { nsCOMPtr<nsIRunnable> event = NS_NewRunnableMethod(new HelloThread(), &HelloThread::HelloWorld); sThread->Dispatch(event, NS_DISPATCH_NORMAL); } 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 nsCOMPtr < nsIThread > sThread ; class HelloThread : public RefCounted { public : void HelloWorld ( ) { printf ( \"我是台客\" ) ; } } ; void InititalizeThread ( ) { NS_NewThread ( getter_AddRefs ( sThread ) ) ; } void ReleaseThread ( ) { sThread -> Shutdown ( ) ; } void AddJob ( ) { nsCOMPtr < nsIRunnable > event = NS_NewRunnableMethod ( new HelloThread ( ) , & HelloThread :: HelloWorld ) ; sThread -> Dispatch ( event , NS_DISPATCH_NORMAL ) ; } 以上的程式碼就是實作一個簡單的 HelloThread ，當使用者呼叫了 AddJob 時，便會新增一個 job 到 sThread 的 queue 裡面，然後 sThread 便會去執行 HelloWorld 這個 function 印出 “我是台客”。 下面是幾個常見的問題， HelloThread 是否一定要繼承 RefCounted ? 不用，只要有實作 AddRef 和 Release 即可 我是否可以將 job 指定給 main thread? 可以的，你只要呼叫 NS_DispatchToMainThread。 sThread->Shutdown 時，若還有 job 在 thread 內部會怎樣? Shutdown 是一個 blocking function ，會將thread 內部所有的 job 都執行完，才會離開。 千萬不要 sThread本身呼叫 Shutdown ，這樣會導致 dead lock。",
   "images": [
     {
-      "post_id": 378,
-      "page_type": "post",
-      "title": "Gecko內部探索 – 如何使用 Thread",
-      "page_timestamp": "20140723181538",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/3e3bbf2f080470d961fbb160ffe70c73-bpthumb.jpg",
-      "source": "img",
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/3e3bbf2f080470d961fbb160ffe70c73-bpthumb.jpg",
-      "archive_path": "assets/378/wp-content/uploads/avatars/14/3e3bbf2f080470d961fbb160ffe70c73-bpthumb.jpg",
-      "markdown_path": "../assets/378/wp-content/uploads/avatars/14/3e3bbf2f080470d961fbb160ffe70c73-bpthumb.jpg",
-      "wayback_timestamp": "20130408021150",
-      "asset_archive_url": "https://web.archive.org/web/20130408021150id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/14/3e3bbf2f080470d961fbb160ffe70c73-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/05/dot_com_brains_and_dot_org_heart-150x150.jpg",
+      "alt": ".com brains .org heart",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/3e3bbf2f080470d961fbb160ffe70c73-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/23235021ZS-150x150.jpg",
+      "alt": "23235021ZS",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/04/partners-theswoop-150x150.png",
+      "alt": "partners-theswoop",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/channels-firefox.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
     }
   ],
   "media": [
     {
-      "post_id": 378,
-      "page_type": "post",
-      "title": "Gecko內部探索 – 如何使用 Thread",
-      "page_timestamp": "20140723181538",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/3e3bbf2f080470d961fbb160ffe70c73-bpthumb.jpg",
-      "source": "img",
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/3e3bbf2f080470d961fbb160ffe70c73-bpthumb.jpg",
-      "archive_path": "assets/378/wp-content/uploads/avatars/14/3e3bbf2f080470d961fbb160ffe70c73-bpthumb.jpg",
-      "markdown_path": "../assets/378/wp-content/uploads/avatars/14/3e3bbf2f080470d961fbb160ffe70c73-bpthumb.jpg",
-      "wayback_timestamp": "20130408021150",
-      "asset_archive_url": "https://web.archive.org/web/20130408021150id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/14/3e3bbf2f080470d961fbb160ffe70c73-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/05/dot_com_brains_and_dot_org_heart-150x150.jpg",
+      "alt": ".com brains .org heart",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/3e3bbf2f080470d961fbb160ffe70c73-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/23235021ZS-150x150.jpg",
+      "alt": "23235021ZS",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/04/partners-theswoop-150x150.png",
+      "alt": "partners-theswoop",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/channels-firefox.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
     }
   ],
   "links": [],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

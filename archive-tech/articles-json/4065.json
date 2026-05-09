@@ -11,235 +11,375 @@
   "tags": [
     "Javascript"
   ],
-  "author": "",
+  "author": "snowmantw",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=4065",
-  "archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/?p=4065",
-  "wayback_timestamp": "20140717224021",
-  "content_html": "<div class=\"entry-content close\">\n\t\t<p>自 ECMAScript 5.1 開始 JavaScript 加入了兩個關於陣列的函式：<a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map\">Array.prototype.map</a>/<a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce\">reduce</a>。這兩個函式可以針對陣列，讓開發者更清楚的描述接下來程式碼所要表達的運算性質。除此之外，也簡化了每次手寫迴圈進行尋訪陣列的繁瑣過程，特別是當尋訪實際上是要將原本的陣列映射(map)成另一個陣列，或是進行加總、檢驗等具有化簡(reduce)性質的操作。</p>\n<p style=\"text-align: center;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1.png\"><img class=\"size-full wp-image-4068 aligncenter\" alt=\"mapreduce_vs_for\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1.png\" width=\"796\" height=\"294\" /></a></p>\n<p style=\"text-align: center;\">左：使用普通 for 迴圈進行運算。右：使用 map &amp; reduce</p>\n<h2 style=\"text-align: left;\">Map/Reduce</h2>\n<p style=\"text-align: left;\">所謂的映射(map)，實際上是指將被操作的陣列在不改變結構的情況下，變形成另一個陣列。以上例而言，當陣列「arr」被 doMap 這個函式處理後，長度跟型別（依然是陣列）都沒有變化。變化的是這個結構中的元素，從原本的數字型別變為布林型別。所以我們可以說 doMap 這個函式，他代表的型別變化是</p>\n<p style=\"text-align: left;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005286945.png\"><img class=\"aligncenter size-full wp-image-4084\" alt=\"daum_equation_1391005286945\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005286945.png\" width=\"299\" height=\"34\" /></a></p>\n<p style=\"text-align: left;\">在前述的表達式中，[Number] 代表的是這是一個 Array of Number ，由數字構成的陣列。因此我們可以解讀這個式子，也就是這個函式的「型別簽名」(<a href=\"http://en.wikipedia.org/wiki/Type_signature\">Type Signature</a>)，表達的是「doMap 函式將會把一個數字陣列轉換成一個布林陣列」的意思。</p>\n<p style=\"text-align: left;\">相對的，由 doReduce 所進行的化簡(reduce)操作，則是會將陣列的結構改變，並轉換成另一個值。這裡說的值，也許是一個數字，或是一個布林值，或是任何其他不再被陣列結構所包括的結果。其型別簽名則是</p>\n<p style=\"text-align: left;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005248288.png\"><img class=\"aligncenter size-full wp-image-4083\" alt=\"daum_equation_1391005248288\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005248288.png\" width=\"304\" height=\"34\" /></a></p>\n<p style=\"text-align: left;\">因為我們最終所進行的是將陣列所有元素加總的動作，所以這個函式所代表的是「接收一個數字陣列，回傳一個數字結果」的型別。</p>\n<h2 style=\"text-align: left;\">Functional Programming</h2>\n<p style=\"text-align: left;\">事實上類似這樣 map/reduce 的運算，在 JavaScript 以前，就已經在所謂的函數式程式設計(<a href=\"http://en.wikipedia.org/wiki/Functional_programming\">Functional Programming</a>)中被廣泛使用。而後 Google 根據這樣類似的思想，開發出了所謂 <a href=\"http://zh.wikipedia.org/wiki/MapReduce\">MapReduce 的架構</a>用以處理大量資料。足見這是一個可以被延伸與拓展的良好設計模式(pattern)。有趣的是，在 Douglas Crockford 著名的 &#8220;<a href=\"http://javascript.crockford.com/javascript.html\">JavaScript: The World&#8217;s Most Misunderstood Programming Language</a>&#8221; 一文中，有以下描述</p>\n<blockquote>\n<p style=\"text-align: left;\">JavaScript&#8217;s C-like syntax, including curly braces and the clunky <tt>for</tt> statement, makes it appear to be an ordinary procedural language.<strong><em> This is misleading because JavaScript has more in common with functional languages like Lisp or Scheme than with C or Java.</em></strong></p>\n</blockquote>\n<p style=\"text-align: left;\">大意是說雖然 JavaScript 的文法類似 C 語言，但實際上比起 C 或 Java，它與函數式程式設計的程式語言如 Lisp 或 Scheme 比較接近。因此我們或許不例外其實 JavaScript 可以做到許多函數式語言可以做到，但純粹 Java 其他較「正統」的物件導向語言必須使用較複雜方式完成的工作。例如在 Java 8 以前，因為沒有匿名函式(<a href=\"http://en.wikipedia.org/wiki/Anonymous_function\">anonymous function</a>)的功能，如果要幫一個使用者點選事件(click event)設定某些簡單的程式行為，開發者必須使用匿名類別(<a href=\"http://docs.oracle.com/javase/tutorial/java/javaOO/anonymousclasses.html\">anonymous class</a>)的方式才能做到：</p>\n<p style=\"text-align: left;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/jvj.png\"><img class=\"size-full wp-image-4073 aligncenter\" alt=\"jvj\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/jvj.png\" width=\"721\" height=\"133\" /></a></p>\n<p style=\"text-align: center;\">左：Java 使用匿名類別 右：JavaScript 使用匿名函式</p>\n<p style=\"text-align: left;\">當然是否要使用匿名函式或類別去完成此類工作，一直都是爭論的焦點，畢竟就算在 JavaScript 中，匿名函式這種用法也常常因為不慎的使用而帶來問題。然而事實是在 <a href=\"http://www.slideshare.net/JustinSDK/java-se-8-lambda\">Java 8</a> 甚至 <a href=\"http://zh.wikipedia.org/wiki/C%2B%2B11#Lambda.E5.87.BD.E5.BC.8F.E8.88.87.E8.A1.A8.E7.A4.BA.E5.BC.8F\">C++ 11</a> 的標準中，也都加上了匿名函式的功能，足見將函式當成語言中的第一級(first-class)成員，也就是置於與類別相同的地位，是有其需求的。而這樣的特色，在諸如 Haskell 等函數式程式語言中，本就是一項自然且重要的特色之一。</p>\n<p style=\"text-align: left;\">那麼對開發者而言，函數式程式設計這種方式有什麼好處？在純函數式語言，例如 Haskell 中，複雜的運算是由簡單的運算環環相扣組織起來的。因此只要保證簡單的函式沒有安全的問題，就可以確保整個複雜的程式不會有安全問題。特別是像 Haskell 這種語言具有足夠強大的型別系統時，甚至可以做到經過編譯過的程式，除了像硬體有錯誤這種比較極端的例子外，並不會出現執行期錯誤的程度。此外，簡單的運算其程式碼比較不會有人為的錯誤，就算有也比較容易揪出。再加上因為注意程式安全，而在設計之初就將具有副作用(side-effect)的運算以合理的方式隔離，因此一般而言此類語言也具有適合平行運算的優點。</p>\n<p style=\"text-align: left;\">而在前述中函數式語言這個核心的化簡為繁組織方式，其實就是所謂的高階函式(<a href=\"http://en.wikipedia.org/wiki/Higher-order_function\">high-order function</a>)。這裡所謂的高階，並沒有比較級的意味在裡面。所謂的高階函式，單純只是一些函式，他們的參數是別的函式，或是回傳是另一個函式而已。以前述的 map/reduce 為例，讀者可以發現真正的 map 型別簽名實際上接近於</p>\n<p style=\"text-align: left;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391048096767.png\"><img class=\"aligncenter size-full wp-image-4100\" alt=\"daum_equation_1391048096767\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391048096767.png\" width=\"490\" height=\"34\" /></a></p>\n<p style=\"text-align: left;\">這意思是 map 會</p>\n<ol>\n<li>接收一個數字陣列，例如 [1,2,3,4]。這裡我們把 Array.prototype.map 函式從抽出來單獨說明，所以把它當成第一個參數看待。</li>\n<li>接收一個函式，或以 JavaScript 的慣用語而言，callback。這個函式將接收<strong>一個</strong>數字，回傳<strong>一個</strong>布林。就如同前述的 isOdd 般</li>\n<li>最終回傳一個布林陣列。例如前述陣列經過 map + isOdd 的處理後得到的 [true, false, true, false]</li>\n</ol>\n<p>前述第二點，也就是接收一個 callback 當作參數的這個行為，實際上代表的 map 就是一個高階函式。因為這類的函式，並不只是接收或回傳簡單的值，而是把函式也當成他們的參數或回傳值，也就是被處理的對象。在函數式程式設計中，此類的函式就能夠把大量簡單的函式一步步串連成巨大的程式，並且不需要諸如類別或是物件等方式來處理狀態。以 Haskell 而言，除了 map/reduce 以外，這類函式還包括 id, reduceRight, curry, uncurry, function composition, arrow, bind 等等。</p>\n<h2 style=\"text-align: left;\">Map/Reduce 實際應用</h2>\n<p style=\"text-align: left;\">然而在 JavaScript 中，也許會有人質疑 map/reduce 雖然方便，但看起來只適合數字，或是類似的資料處理。看起來並不是一個通用的功能。而其他的高階函式，也許在 JavaScript 本身有物件導向的能力之下，也許並不是那麼需要了。然而事實上「真正」的 map/reduce 並不受限於此，並由其型別簽名即可一窺端倪</p>\n<p style=\"text-align: left;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005490714.png\"><img class=\"aligncenter size-full wp-image-4087\" alt=\"daum_equation_1391005490714\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005490714.png\" width=\"307\" height=\"68\" /></a></p>\n<p style=\"text-align: center;\">(reduce 又名 foldl, reduceRight 則是  foldr。參考：<a href=\"http://www.haskell.org/haskellwiki/Foldr_Foldl_Foldl%27\" target=\"_blank\">Foldr Foldl Foldl&#8217;</a>)</p>\n<p style=\"text-align: left;\">這是從 Haskell 函式搜尋引擎 <a title=\"Hoogle\" href=\"http://www.haskell.org/hoogle/\" target=\"_blank\">Hoogle</a> 所找到的例子。同樣以 map 為例，可以解釋其型別意味著</p>\n<ol>\n<li>第一個參數是一個從某型別 a（例如 Number）到第二種型別 b（例如 Boolean）的<strong>函式</strong>，就像之前的 isOdd</li>\n<li>第二個參數是一個裝有某型別 a 的陣列，就像之前的 [1,2,3,4]</li>\n<li>最後給出一個裝有型別 b 的陣列，例如 [true, false, true, false]</li>\n</ol>\n<p>雖然參數的順序不一樣，但可以看出，真正的 map/reduce 所處理的對象絕對不限於簡單的資料。因為型別參數(<a href=\"http://en.wikipedia.org/wiki/Type_variable\">Type Variables</a>)代表的是各種使用者所指定的任意型別，所以事實上我們甚至可以把一段<strong>運算</strong>裝在陣列裡送去處理，並以這樣的技巧將串出複雜的運算，進而到整個程式。例如在 Haskell 中，IO 這個型別代表的要對檔案系統，乃至各種輸入輸出裝置進行操作。因此我們可以這樣利用 map/reduce ，加上 <a href=\"http://hackage.haskell.org/package/HDBC\">HDBC</a> 所提供的資料庫函式去串出查詢一堆條件的程式碼</p>\n<p style=\"text-align: center;\"><a href=\"https://gist.github.com/snowmantw/8708585\"><img class=\"aligncenter size-full wp-image-4105\" alt=\"Haskell and map/reduce\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/hdbcmr.png\" width=\"668\" height=\"224\" /></a></p>\n<p style=\"text-align: center;\">為了舉例，經過簡化且不完全正確的 Haskell 程式碼<br />\n(點選圖片連結至程式碼)</p>\n<p>上面的例子中，我們先在 makeQueries 這個函式中使用 map，把一個個 SQL 字串，經由  prepare 函式映射成型別為 IO Statement 的「命令」。也就是這個函式型別大致上為</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391046822235.png\"><img class=\"aligncenter size-full wp-image-4094\" alt=\"daum_equation_1391046822235\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391046822235.png\" width=\"380\" height=\"34\" /></a></p>\n<p>接著這些製作出來的命令，會在 doQuery 中，經由 foldl ，也就是  reduce 去串接。這邊的模式是因為 reduce 中的函式，可以接收「先前結果」與「現在元素」兩個參數，因此程式會按照範例中所述，將現在元素的 IO 命令透過<a href=\"http://book.realworldhaskell.org/read/monads.html\"> bind 函式 (&gt;&gt;) </a>與先前的命令結合串接，最後產出一個查詢所有 SQL 語句的單一命令。其型別類似於</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391070524080.png\"><img class=\"aligncenter size-full wp-image-4106\" alt=\"daum_equation_1391070524080\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391070524080.png\" width=\"398\" height=\"34\" /></a></p>\n<p>類似的技巧並不是只有在 Haskell 中使用而已。在 JavaScript 中，特別是在使用 <a title=\"Promise\" href=\"https://developer.mozilla.org/en-US/docs/Mozilla/JavaScript_code_modules/Promise.jsm/Promise\" target=\"_blank\">Promise</a> 建構運算並處理非同步程式的情況下，我們也可以發現因為 Promise 的特性，使得運算變成一個可持有、串接與變形的單位。因此我們也可以使用類似的技巧架構我們的查詢程式</p>\n<p style=\"text-align: center;\"><a href=\"https://gist.github.com/snowmantw/8708553\"><img class=\"aligncenter size-full wp-image-4107\" alt=\"Promise and map/reduce\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/jsmapreduce.png\" width=\"628\" height=\"321\" /></a></p>\n<p style=\"text-align: center;\">以 Node.js 建構出類似前述例子並結合 map/reduce 與 Promise 的範例(點選圖片連結至程式碼)<br />\n注意在 JavaScript 中命令會在定義的時候就被執行，跟 Haskell 不同<br />\n可參考 <a href=\"http://www.jroller.com/vaclav/entry/promises_getting_lazy\" target=\"_blank\">Lazy Promise</a> 與 <a href=\"http://www.haskell.org/haskellwiki/Lazy_evaluation\" target=\"_blank\">Lazy Evaluation</a></p>\n<h2>More on Functional Programming</h2>\n<p>其實除了 map/reduce 之外，JavaScript 還有很多類似的函數式程式設計技巧可以用。像是 Promise 實際使用起來已經可以具備類似 Monad 那樣串接具副作用運算的功用。又像是以 JavaScript 本身的特色做出 curry ，以及  zipWith 等好用的功能，都是可以參考的方式。進一步有興趣的讀者可以參考諸如 <a title=\"LiveScript\" href=\"http://livescript.net/\" target=\"_blank\">LiveScript</a>, <a title=\"wu.js\" href=\"http://fitzgen.github.io/wu.js/\" target=\"_blank\">wu.js</a>, <a title=\"underscore.js\" href=\"http://underscorejs.org/\" target=\"_blank\">underscore.js</a>, <a title=\"Elm\" href=\"http://elm-lang.org/\" target=\"_blank\">Elm</a> 等與 JavaScript 有關的函式庫或程式語言。當然，如果要徹底學習函數式程式語言，進一步理解計算機科學的邏輯核心的話，諸如 <a title=\"Haskell\" href=\"http://www.haskell.org/haskellwiki/Tw/Haskell%E5%85%A5%E9%96%80%E7%9A%845%E5%80%8B%E6%AD%A5%E9%A9%9F\" target=\"_blank\">Haskell</a>, <a title=\"Prolog\" href=\"http://zh.wikipedia.org/wiki/Prolog\" target=\"_blank\">Prolog</a> 與 <a title=\"Lisp\" href=\"http://acl.readthedocs.org/en/latest/zhTW/ch2.html\" target=\"_blank\">Lisp</a> 是很好的方式。也可以從 <a title=\"Scala\" href=\"http://www.scala-lang.org/\" target=\"_blank\">Scala</a> 或 <a title=\"Clojure\" href=\"http://clojure.org/\" target=\"_blank\">Clojure</a> 與 <a title=\"Erlang\" href=\"http://www.erlang.org/\" target=\"_blank\">Erlang</a> 著手。</p>\n\t\t\t</div>",
-  "content_text": "自 ECMAScript 5.1 開始 JavaScript 加入了兩個關於陣列的函式： Array.prototype.map / reduce 。這兩個函式可以針對陣列，讓開發者更清楚的描述接下來程式碼所要表達的運算性質。除此之外，也簡化了每次手寫迴圈進行尋訪陣列的繁瑣過程，特別是當尋訪實際上是要將原本的陣列映射(map)成另一個陣列，或是進行加總、檢驗等具有化簡(reduce)性質的操作。 左：使用普通 for 迴圈進行運算。右：使用 map & reduce Map/Reduce 所謂的映射(map)，實際上是指將被操作的陣列在不改變結構的情況下，變形成另一個陣列。以上例而言，當陣列「arr」被 doMap 這個函式處理後，長度跟型別（依然是陣列）都沒有變化。變化的是這個結構中的元素，從原本的數字型別變為布林型別。所以我們可以說 doMap 這個函式，他代表的型別變化是 在前述的表達式中，[Number] 代表的是這是一個 Array of Number ，由數字構成的陣列。因此我們可以解讀這個式子，也就是這個函式的「型別簽名」( Type Signature )，表達的是「doMap 函式將會把一個數字陣列轉換成一個布林陣列」的意思。 相對的，由 doReduce 所進行的化簡(reduce)操作，則是會將陣列的結構改變，並轉換成另一個值。這裡說的值，也許是一個數字，或是一個布林值，或是任何其他不再被陣列結構所包括的結果。其型別簽名則是 因為我們最終所進行的是將陣列所有元素加總的動作，所以這個函式所代表的是「接收一個數字陣列，回傳一個數字結果」的型別。 Functional Programming 事實上類似這樣 map/reduce 的運算，在 JavaScript 以前，就已經在所謂的函數式程式設計( Functional Programming )中被廣泛使用。而後 Google 根據這樣類似的思想，開發出了所謂 MapReduce 的架構 用以處理大量資料。足見這是一個可以被延伸與拓展的良好設計模式(pattern)。有趣的是，在 Douglas Crockford 著名的 “ JavaScript: The World’s Most Misunderstood Programming Language ” 一文中，有以下描述 JavaScript’s C-like syntax, including curly braces and the clunky for statement, makes it appear to be an ordinary procedural language. This is misleading because JavaScript has more in common with functional languages like Lisp or Scheme than with C or Java. 大意是說雖然 JavaScript 的文法類似 C 語言，但實際上比起 C 或 Java，它與函數式程式設計的程式語言如 Lisp 或 Scheme 比較接近。因此我們或許不例外其實 JavaScript 可以做到許多函數式語言可以做到，但純粹 Java 其他較「正統」的物件導向語言必須使用較複雜方式完成的工作。例如在 Java 8 以前，因為沒有匿名函式( anonymous function )的功能，如果要幫一個使用者點選事件(click event)設定某些簡單的程式行為，開發者必須使用匿名類別( anonymous class )的方式才能做到： 左：Java 使用匿名類別 右：JavaScript 使用匿名函式 當然是否要使用匿名函式或類別去完成此類工作，一直都是爭論的焦點，畢竟就算在 JavaScript 中，匿名函式這種用法也常常因為不慎的使用而帶來問題。然而事實是在 Java 8 甚至 C++ 11 的標準中，也都加上了匿名函式的功能，足見將函式當成語言中的第一級(first-class)成員，也就是置於與類別相同的地位，是有其需求的。而這樣的特色，在諸如 Haskell 等函數式程式語言中，本就是一項自然且重要的特色之一。 那麼對開發者而言，函數式程式設計這種方式有什麼好處？在純函數式語言，例如 Haskell 中，複雜的運算是由簡單的運算環環相扣組織起來的。因此只要保證簡單的函式沒有安全的問題，就可以確保整個複雜的程式不會有安全問題。特別是像 Haskell 這種語言具有足夠強大的型別系統時，甚至可以做到經過編譯過的程式，除了像硬體有錯誤這種比較極端的例子外，並不會出現執行期錯誤的程度。此外，簡單的運算其程式碼比較不會有人為的錯誤，就算有也比較容易揪出。再加上因為注意程式安全，而在設計之初就將具有副作用(side-effect)的運算以合理的方式隔離，因此一般而言此類語言也具有適合平行運算的優點。 而在前述中函數式語言這個核心的化簡為繁組織方式，其實就是所謂的高階函式( high-order function )。這裡所謂的高階，並沒有比較級的意味在裡面。所謂的高階函式，單純只是一些函式，他們的參數是別的函式，或是回傳是另一個函式而已。以前述的 map/reduce 為例，讀者可以發現真正的 map 型別簽名實際上接近於 這意思是 map 會 接收一個數字陣列，例如 [1,2,3,4]。這裡我們把 Array.prototype.map 函式從抽出來單獨說明，所以把它當成第一個參數看待。 接收一個函式，或以 JavaScript 的慣用語而言，callback。這個函式將接收 一個 數字，回傳 一個 布林。就如同前述的 isOdd 般 最終回傳一個布林陣列。例如前述陣列經過 map + isOdd 的處理後得到的 [true, false, true, false] 前述第二點，也就是接收一個 callback 當作參數的這個行為，實際上代表的 map 就是一個高階函式。因為這類的函式，並不只是接收或回傳簡單的值，而是把函式也當成他們的參數或回傳值，也就是被處理的對象。在函數式程式設計中，此類的函式就能夠把大量簡單的函式一步步串連成巨大的程式，並且不需要諸如類別或是物件等方式來處理狀態。以 Haskell 而言，除了 map/reduce 以外，這類函式還包括 id, reduceRight, curry, uncurry, function composition, arrow, bind 等等。 Map/Reduce 實際應用 然而在 JavaScript 中，也許會有人質疑 map/reduce 雖然方便，但看起來只適合數字，或是類似的資料處理。看起來並不是一個通用的功能。而其他的高階函式，也許在 JavaScript 本身有物件導向的能力之下，也許並不是那麼需要了。然而事實上「真正」的 map/reduce 並不受限於此，並由其型別簽名即可一窺端倪 (reduce 又名 foldl, reduceRight 則是 foldr。參考： Foldr Foldl Foldl’ ) 這是從 Haskell 函式搜尋引擎 Hoogle 所找到的例子。同樣以 map 為例，可以解釋其型別意味著 第一個參數是一個從某型別 a（例如 Number）到第二種型別 b（例如 Boolean）的 函式 ，就像之前的 isOdd 第二個參數是一個裝有某型別 a 的陣列，就像之前的 [1,2,3,4] 最後給出一個裝有型別 b 的陣列，例如 [true, false, true, false] 雖然參數的順序不一樣，但可以看出，真正的 map/reduce 所處理的對象絕對不限於簡單的資料。因為型別參數( Type Variables )代表的是各種使用者所指定的任意型別，所以事實上我們甚至可以把一段 運算 裝在陣列裡送去處理，並以這樣的技巧將串出複雜的運算，進而到整個程式。例如在 Haskell 中，IO 這個型別代表的要對檔案系統，乃至各種輸入輸出裝置進行操作。因此我們可以這樣利用 map/reduce ，加上 HDBC 所提供的資料庫函式去串出查詢一堆條件的程式碼 為了舉例，經過簡化且不完全正確的 Haskell 程式碼 (點選圖片連結至程式碼) 上面的例子中，我們先在 makeQueries 這個函式中使用 map，把一個個 SQL 字串，經由 prepare 函式映射成型別為 IO Statement 的「命令」。也就是這個函式型別大致上為 接著這些製作出來的命令，會在 doQuery 中，經由 foldl ，也就是 reduce 去串接。這邊的模式是因為 reduce 中的函式，可以接收「先前結果」與「現在元素」兩個參數，因此程式會按照範例中所述，將現在元素的 IO 命令透過 bind 函式 (>>) 與先前的命令結合串接，最後產出一個查詢所有 SQL 語句的單一命令。其型別類似於 類似的技巧並不是只有在 Haskell 中使用而已。在 JavaScript 中，特別是在使用 Promise 建構運算並處理非同步程式的情況下，我們也可以發現因為 Promise 的特性，使得運算變成一個可持有、串接與變形的單位。因此我們也可以使用類似的技巧架構我們的查詢程式 以 Node.js 建構出類似前述例子並結合 map/reduce 與 Promise 的範例(點選圖片連結至程式碼) 注意在 JavaScript 中命令會在定義的時候就被執行，跟 Haskell 不同 可參考 Lazy Promise 與 Lazy Evaluation More on Functional Programming 其實除了 map/reduce 之外，JavaScript 還有很多類似的函數式程式設計技巧可以用。像是 Promise 實際使用起來已經可以具備類似 Monad 那樣串接具副作用運算的功用。又像是以 JavaScript 本身的特色做出 curry ，以及 zipWith 等好用的功能，都是可以參考的方式。進一步有興趣的讀者可以參考諸如 LiveScript , wu.js , underscore.js , Elm 等與 JavaScript 有關的函式庫或程式語言。當然，如果要徹底學習函數式程式語言，進一步理解計算機科學的邏輯核心的話，諸如 Haskell , Prolog 與 Lisp 是很好的方式。也可以從 Scala 或 Clojure 與 Erlang 著手。",
+  "archive_url": "https://web.archive.org/web/20170518142150id_/https://tech.mozilla.com.tw/?p=4065",
+  "wayback_timestamp": "20170518142150",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>自 ECMAScript 5.1 開始 JavaScript 加入了兩個關於陣列的函式：<a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map\">Array.prototype.map</a>/<a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce\">reduce</a>。這兩個函式可以針對陣列，讓開發者更清楚的描述接下來程式碼所要表達的運算性質。除此之外，也簡化了每次手寫迴圈進行尋訪陣列的繁瑣過程，特別是當尋訪實際上是要將原本的陣列映射(map)成另一個陣列，或是進行加總、檢驗等具有化簡(reduce)性質的操作。</p>\n<p style=\"text-align: center;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1.png\"><img class=\"size-full wp-image-4068 aligncenter\" alt=\"mapreduce_vs_for\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1.png\" width=\"796\" height=\"294\" srcset=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1.png 796w, http://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1-300x110.png 300w\" sizes=\"(max-width: 796px) 100vw, 796px\" /></a></p>\n<p style=\"text-align: center;\">左：使用普通 for 迴圈進行運算。右：使用 map &amp; reduce</p>\n<h2 style=\"text-align: left;\">Map/Reduce</h2>\n<p style=\"text-align: left;\">所謂的映射(map)，實際上是指將被操作的陣列在不改變結構的情況下，變形成另一個陣列。以上例而言，當陣列「arr」被 doMap 這個函式處理後，長度跟型別（依然是陣列）都沒有變化。變化的是這個結構中的元素，從原本的數字型別變為布林型別。所以我們可以說 doMap 這個函式，他代表的型別變化是</p>\n<p style=\"text-align: left;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005286945.png\"><img class=\"aligncenter size-full wp-image-4084\" alt=\"daum_equation_1391005286945\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005286945.png\" width=\"299\" height=\"34\" /></a></p>\n<p style=\"text-align: left;\">在前述的表達式中，[Number] 代表的是這是一個 Array of Number ，由數字構成的陣列。因此我們可以解讀這個式子，也就是這個函式的「型別簽名」(<a href=\"http://en.wikipedia.org/wiki/Type_signature\">Type Signature</a>)，表達的是「doMap 函式將會把一個數字陣列轉換成一個布林陣列」的意思。</p>\n<p style=\"text-align: left;\">相對的，由 doReduce 所進行的化簡(reduce)操作，則是會將陣列的結構改變，並轉換成另一個值。這裡說的值，也許是一個數字，或是一個布林值，或是任何其他不再被陣列結構所包括的結果。其型別簽名則是</p>\n<p style=\"text-align: left;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005248288.png\"><img class=\"aligncenter size-full wp-image-4083\" alt=\"daum_equation_1391005248288\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005248288.png\" width=\"304\" height=\"34\" srcset=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005248288.png 304w, http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005248288-300x33.png 300w\" sizes=\"(max-width: 304px) 100vw, 304px\" /></a></p>\n<p style=\"text-align: left;\">因為我們最終所進行的是將陣列所有元素加總的動作，所以這個函式所代表的是「接收一個數字陣列，回傳一個數字結果」的型別。</p>\n<h2 style=\"text-align: left;\">Functional Programming</h2>\n<p style=\"text-align: left;\">事實上類似這樣 map/reduce 的運算，在 JavaScript 以前，就已經在所謂的函數式程式設計(<a href=\"http://en.wikipedia.org/wiki/Functional_programming\">Functional Programming</a>)中被廣泛使用。而後 Google 根據這樣類似的思想，開發出了所謂 <a href=\"http://zh.wikipedia.org/wiki/MapReduce\">MapReduce 的架構</a>用以處理大量資料。足見這是一個可以被延伸與拓展的良好設計模式(pattern)。有趣的是，在 Douglas Crockford 著名的 &#8220;<a href=\"http://javascript.crockford.com/javascript.html\">JavaScript: The World&#8217;s Most Misunderstood Programming Language</a>\" 一文中，有以下描述</p>\n<blockquote>\n<p style=\"text-align: left;\">JavaScript&#8217;s C-like syntax, including curly braces and the clunky <tt>for</tt> statement, makes it appear to be an ordinary procedural language.<strong><em> This is misleading because JavaScript has more in common with functional languages like Lisp or Scheme than with C or Java.</em></strong></p>\n</blockquote>\n<p style=\"text-align: left;\">大意是說雖然 JavaScript 的文法類似 C 語言，但實際上比起 C 或 Java，它與函數式程式設計的程式語言如 Lisp 或 Scheme 比較接近。因此我們或許不例外其實 JavaScript 可以做到許多函數式語言可以做到，但純粹 Java 其他較「正統」的物件導向語言必須使用較複雜方式完成的工作。例如在 Java 8 以前，因為沒有匿名函式(<a href=\"http://en.wikipedia.org/wiki/Anonymous_function\">anonymous function</a>)的功能，如果要幫一個使用者點選事件(click event)設定某些簡單的程式行為，開發者必須使用匿名類別(<a href=\"http://docs.oracle.com/javase/tutorial/java/javaOO/anonymousclasses.html\">anonymous class</a>)的方式才能做到：</p>\n<p style=\"text-align: left;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/jvj.png\"><img class=\"size-full wp-image-4073 aligncenter\" alt=\"jvj\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/jvj.png\" width=\"721\" height=\"133\" srcset=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/jvj.png 721w, http://tech.mozilla.com.tw/wp-content/uploads/2014/01/jvj-300x55.png 300w\" sizes=\"(max-width: 721px) 100vw, 721px\" /></a></p>\n<p style=\"text-align: center;\">左：Java 使用匿名類別 右：JavaScript 使用匿名函式</p>\n<p style=\"text-align: left;\">當然是否要使用匿名函式或類別去完成此類工作，一直都是爭論的焦點，畢竟就算在 JavaScript 中，匿名函式這種用法也常常因為不慎的使用而帶來問題。然而事實是在 <a href=\"http://www.slideshare.net/JustinSDK/java-se-8-lambda\">Java 8</a> 甚至 <a href=\"http://zh.wikipedia.org/wiki/C%2B%2B11#Lambda.E5.87.BD.E5.BC.8F.E8.88.87.E8.A1.A8.E7.A4.BA.E5.BC.8F\">C++ 11</a> 的標準中，也都加上了匿名函式的功能，足見將函式當成語言中的第一級(first-class)成員，也就是置於與類別相同的地位，是有其需求的。而這樣的特色，在諸如 Haskell 等函數式程式語言中，本就是一項自然且重要的特色之一。</p>\n<p style=\"text-align: left;\">那麼對開發者而言，函數式程式設計這種方式有什麼好處？在純函數式語言，例如 Haskell 中，複雜的運算是由簡單的運算環環相扣組織起來的。因此只要保證簡單的函式沒有安全的問題，就可以確保整個複雜的程式不會有安全問題。特別是像 Haskell 這種語言具有足夠強大的型別系統時，甚至可以做到經過編譯過的程式，除了像硬體有錯誤這種比較極端的例子外，並不會出現執行期錯誤的程度。此外，簡單的運算其程式碼比較不會有人為的錯誤，就算有也比較容易揪出。再加上因為注意程式安全，而在設計之初就將具有副作用(side-effect)的運算以合理的方式隔離，因此一般而言此類語言也具有適合平行運算的優點。</p>\n<p style=\"text-align: left;\">而在前述中函數式語言這個核心的化簡為繁組織方式，其實就是所謂的高階函式(<a href=\"http://en.wikipedia.org/wiki/Higher-order_function\">high-order function</a>)。這裡所謂的高階，並沒有比較級的意味在裡面。所謂的高階函式，單純只是一些函式，他們的參數是別的函式，或是回傳是另一個函式而已。以前述的 map/reduce 為例，讀者可以發現真正的 map 型別簽名實際上接近於</p>\n<p style=\"text-align: left;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391048096767.png\"><img class=\"aligncenter size-full wp-image-4100\" alt=\"daum_equation_1391048096767\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391048096767.png\" width=\"490\" height=\"34\" srcset=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391048096767.png 490w, http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391048096767-300x20.png 300w\" sizes=\"(max-width: 490px) 100vw, 490px\" /></a></p>\n<p style=\"text-align: left;\">這意思是 map 會</p>\n<ol>\n<li>接收一個數字陣列，例如 [1,2,3,4]。這裡我們把 Array.prototype.map 函式從抽出來單獨說明，所以把它當成第一個參數看待。</li>\n<li>接收一個函式，或以 JavaScript 的慣用語而言，callback。這個函式將接收<strong>一個</strong>數字，回傳<strong>一個</strong>布林。就如同前述的 isOdd 般</li>\n<li>最終回傳一個布林陣列。例如前述陣列經過 map + isOdd 的處理後得到的 [true, false, true, false]</li>\n</ol>\n<p>前述第二點，也就是接收一個 callback 當作參數的這個行為，實際上代表的 map 就是一個高階函式。因為這類的函式，並不只是接收或回傳簡單的值，而是把函式也當成他們的參數或回傳值，也就是被處理的對象。在函數式程式設計中，此類的函式就能夠把大量簡單的函式一步步串連成巨大的程式，並且不需要諸如類別或是物件等方式來處理狀態。以 Haskell 而言，除了 map/reduce 以外，這類函式還包括 id, reduceRight, curry, uncurry, function composition, arrow, bind 等等。</p>\n<h2 style=\"text-align: left;\">Map/Reduce 實際應用</h2>\n<p style=\"text-align: left;\">然而在 JavaScript 中，也許會有人質疑 map/reduce 雖然方便，但看起來只適合數字，或是類似的資料處理。看起來並不是一個通用的功能。而其他的高階函式，也許在 JavaScript 本身有物件導向的能力之下，也許並不是那麼需要了。然而事實上「真正」的 map/reduce 並不受限於此，並由其型別簽名即可一窺端倪</p>\n<p style=\"text-align: left;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005490714.png\"><img class=\"aligncenter size-full wp-image-4087\" alt=\"daum_equation_1391005490714\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005490714.png\" width=\"307\" height=\"68\" srcset=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005490714.png 307w, http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005490714-300x66.png 300w\" sizes=\"(max-width: 307px) 100vw, 307px\" /></a></p>\n<p style=\"text-align: center;\">(reduce 又名 foldl, reduceRight 則是  foldr。參考：<a href=\"http://www.haskell.org/haskellwiki/Foldr_Foldl_Foldl%27\" target=\"_blank\">Foldr Foldl Foldl&#8217;</a>)</p>\n<p style=\"text-align: left;\">這是從 Haskell 函式搜尋引擎 <a title=\"Hoogle\" href=\"http://www.haskell.org/hoogle/\" target=\"_blank\">Hoogle</a> 所找到的例子。同樣以 map 為例，可以解釋其型別意味著</p>\n<ol>\n<li>第一個參數是一個從某型別 a（例如 Number）到第二種型別 b（例如 Boolean）的<strong>函式</strong>，就像之前的 isOdd</li>\n<li>第二個參數是一個裝有某型別 a 的陣列，就像之前的 [1,2,3,4]</li>\n<li>最後給出一個裝有型別 b 的陣列，例如 [true, false, true, false]</li>\n</ol>\n<p>雖然參數的順序不一樣，但可以看出，真正的 map/reduce 所處理的對象絕對不限於簡單的資料。因為型別參數(<a href=\"http://en.wikipedia.org/wiki/Type_variable\">Type Variables</a>)代表的是各種使用者所指定的任意型別，所以事實上我們甚至可以把一段<strong>運算</strong>裝在陣列裡送去處理，並以這樣的技巧將串出複雜的運算，進而到整個程式。例如在 Haskell 中，IO 這個型別代表的要對檔案系統，乃至各種輸入輸出裝置進行操作。因此我們可以這樣利用 map/reduce ，加上 <a href=\"http://hackage.haskell.org/package/HDBC\">HDBC</a> 所提供的資料庫函式去串出查詢一堆條件的程式碼</p>\n<p style=\"text-align: center;\"><a href=\"https://gist.github.com/snowmantw/8708585\"><img class=\"aligncenter size-full wp-image-4105\" alt=\"Haskell and map/reduce\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/hdbcmr.png\" width=\"668\" height=\"224\" srcset=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/hdbcmr.png 668w, http://tech.mozilla.com.tw/wp-content/uploads/2014/01/hdbcmr-300x100.png 300w\" sizes=\"(max-width: 668px) 100vw, 668px\" /></a></p>\n<p style=\"text-align: center;\">為了舉例，經過簡化且不完全正確的 Haskell 程式碼<br />\n(點選圖片連結至程式碼)</p>\n<p>上面的例子中，我們先在 makeQueries 這個函式中使用 map，把一個個 SQL 字串，經由  prepare 函式映射成型別為 IO Statement 的「命令」。也就是這個函式型別大致上為</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391046822235.png\"><img class=\"aligncenter size-full wp-image-4094\" alt=\"daum_equation_1391046822235\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391046822235.png\" width=\"380\" height=\"34\" srcset=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391046822235.png 380w, http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391046822235-300x26.png 300w\" sizes=\"(max-width: 380px) 100vw, 380px\" /></a></p>\n<p>接著這些製作出來的命令，會在 doQuery 中，經由 foldl ，也就是  reduce 去串接。這邊的模式是因為 reduce 中的函式，可以接收「先前結果」與「現在元素」兩個參數，因此程式會按照範例中所述，將現在元素的 IO 命令透過<a href=\"http://book.realworldhaskell.org/read/monads.html\"> bind 函式 (&gt;&gt;) </a>與先前的命令結合串接，最後產出一個查詢所有 SQL 語句的單一命令。其型別類似於</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391070524080.png\"><img class=\"aligncenter size-full wp-image-4106\" alt=\"daum_equation_1391070524080\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391070524080.png\" width=\"398\" height=\"34\" srcset=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391070524080.png 398w, http://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391070524080-300x25.png 300w\" sizes=\"(max-width: 398px) 100vw, 398px\" /></a></p>\n<p>類似的技巧並不是只有在 Haskell 中使用而已。在 JavaScript 中，特別是在使用 <a title=\"Promise\" href=\"https://developer.mozilla.org/en-US/docs/Mozilla/JavaScript_code_modules/Promise.jsm/Promise\" target=\"_blank\">Promise</a> 建構運算並處理非同步程式的情況下，我們也可以發現因為 Promise 的特性，使得運算變成一個可持有、串接與變形的單位。因此我們也可以使用類似的技巧架構我們的查詢程式</p>\n<p style=\"text-align: center;\"><a href=\"https://gist.github.com/snowmantw/8708553\"><img class=\"aligncenter size-full wp-image-4107\" alt=\"Promise and map/reduce\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/jsmapreduce.png\" width=\"628\" height=\"321\" srcset=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/jsmapreduce.png 628w, http://tech.mozilla.com.tw/wp-content/uploads/2014/01/jsmapreduce-300x153.png 300w\" sizes=\"(max-width: 628px) 100vw, 628px\" /></a></p>\n<p style=\"text-align: center;\">以 Node.js 建構出類似前述例子並結合 map/reduce 與 Promise 的範例(點選圖片連結至程式碼)<br />\n注意在 JavaScript 中命令會在定義的時候就被執行，跟 Haskell 不同<br />\n可參考 <a href=\"http://www.jroller.com/vaclav/entry/promises_getting_lazy\" target=\"_blank\">Lazy Promise</a> 與 <a href=\"http://www.haskell.org/haskellwiki/Lazy_evaluation\" target=\"_blank\">Lazy Evaluation</a></p>\n<h2>More on Functional Programming</h2>\n<p>其實除了 map/reduce 之外，JavaScript 還有很多類似的函數式程式設計技巧可以用。像是 Promise 實際使用起來已經可以具備類似 Monad 那樣串接具副作用運算的功用。又像是以 JavaScript 本身的特色做出 curry ，以及  zipWith 等好用的功能，都是可以參考的方式。進一步有興趣的讀者可以參考諸如 <a title=\"LiveScript\" href=\"http://livescript.net/\" target=\"_blank\">LiveScript</a>, <a title=\"wu.js\" href=\"http://fitzgen.github.io/wu.js/\" target=\"_blank\">wu.js</a>, <a title=\"underscore.js\" href=\"http://underscorejs.org/\" target=\"_blank\">underscore.js</a>, <a title=\"Elm\" href=\"http://elm-lang.org/\" target=\"_blank\">Elm</a> 等與 JavaScript 有關的函式庫或程式語言。當然，如果要徹底學習函數式程式語言，進一步理解計算機科學的邏輯核心的話，諸如 <a title=\"Haskell\" href=\"http://www.haskell.org/haskellwiki/Tw/Haskell%E5%85%A5%E9%96%80%E7%9A%845%E5%80%8B%E6%AD%A5%E9%A9%9F\" target=\"_blank\">Haskell</a>, <a title=\"Prolog\" href=\"http://zh.wikipedia.org/wiki/Prolog\" target=\"_blank\">Prolog</a> 與 <a title=\"Lisp\" href=\"http://acl.readthedocs.org/en/latest/zhTW/ch2.html\" target=\"_blank\">Lisp</a> 是很好的方式。也可以從 <a title=\"Scala\" href=\"http://www.scala-lang.org/\" target=\"_blank\">Scala</a> 或 <a title=\"Clojure\" href=\"http://clojure.org/\" target=\"_blank\">Clojure</a> 與 <a title=\"Erlang\" href=\"http://www.erlang.org/\" target=\"_blank\">Erlang</a> 著手。</p>\n\t\t\t</div>",
+  "content_text": "自 ECMAScript 5.1 開始 JavaScript 加入了兩個關於陣列的函式： Array.prototype.map / reduce 。這兩個函式可以針對陣列，讓開發者更清楚的描述接下來程式碼所要表達的運算性質。除此之外，也簡化了每次手寫迴圈進行尋訪陣列的繁瑣過程，特別是當尋訪實際上是要將原本的陣列映射(map)成另一個陣列，或是進行加總、檢驗等具有化簡(reduce)性質的操作。 左：使用普通 for 迴圈進行運算。右：使用 map & reduce Map/Reduce 所謂的映射(map)，實際上是指將被操作的陣列在不改變結構的情況下，變形成另一個陣列。以上例而言，當陣列「arr」被 doMap 這個函式處理後，長度跟型別（依然是陣列）都沒有變化。變化的是這個結構中的元素，從原本的數字型別變為布林型別。所以我們可以說 doMap 這個函式，他代表的型別變化是 在前述的表達式中，[Number] 代表的是這是一個 Array of Number ，由數字構成的陣列。因此我們可以解讀這個式子，也就是這個函式的「型別簽名」( Type Signature )，表達的是「doMap 函式將會把一個數字陣列轉換成一個布林陣列」的意思。 相對的，由 doReduce 所進行的化簡(reduce)操作，則是會將陣列的結構改變，並轉換成另一個值。這裡說的值，也許是一個數字，或是一個布林值，或是任何其他不再被陣列結構所包括的結果。其型別簽名則是 因為我們最終所進行的是將陣列所有元素加總的動作，所以這個函式所代表的是「接收一個數字陣列，回傳一個數字結果」的型別。 Functional Programming 事實上類似這樣 map/reduce 的運算，在 JavaScript 以前，就已經在所謂的函數式程式設計( Functional Programming )中被廣泛使用。而後 Google 根據這樣類似的思想，開發出了所謂 MapReduce 的架構 用以處理大量資料。足見這是一個可以被延伸與拓展的良好設計模式(pattern)。有趣的是，在 Douglas Crockford 著名的 “ JavaScript: The World’s Most Misunderstood Programming Language \" 一文中，有以下描述 JavaScript’s C-like syntax, including curly braces and the clunky for statement, makes it appear to be an ordinary procedural language. This is misleading because JavaScript has more in common with functional languages like Lisp or Scheme than with C or Java. 大意是說雖然 JavaScript 的文法類似 C 語言，但實際上比起 C 或 Java，它與函數式程式設計的程式語言如 Lisp 或 Scheme 比較接近。因此我們或許不例外其實 JavaScript 可以做到許多函數式語言可以做到，但純粹 Java 其他較「正統」的物件導向語言必須使用較複雜方式完成的工作。例如在 Java 8 以前，因為沒有匿名函式( anonymous function )的功能，如果要幫一個使用者點選事件(click event)設定某些簡單的程式行為，開發者必須使用匿名類別( anonymous class )的方式才能做到： 左：Java 使用匿名類別 右：JavaScript 使用匿名函式 當然是否要使用匿名函式或類別去完成此類工作，一直都是爭論的焦點，畢竟就算在 JavaScript 中，匿名函式這種用法也常常因為不慎的使用而帶來問題。然而事實是在 Java 8 甚至 C++ 11 的標準中，也都加上了匿名函式的功能，足見將函式當成語言中的第一級(first-class)成員，也就是置於與類別相同的地位，是有其需求的。而這樣的特色，在諸如 Haskell 等函數式程式語言中，本就是一項自然且重要的特色之一。 那麼對開發者而言，函數式程式設計這種方式有什麼好處？在純函數式語言，例如 Haskell 中，複雜的運算是由簡單的運算環環相扣組織起來的。因此只要保證簡單的函式沒有安全的問題，就可以確保整個複雜的程式不會有安全問題。特別是像 Haskell 這種語言具有足夠強大的型別系統時，甚至可以做到經過編譯過的程式，除了像硬體有錯誤這種比較極端的例子外，並不會出現執行期錯誤的程度。此外，簡單的運算其程式碼比較不會有人為的錯誤，就算有也比較容易揪出。再加上因為注意程式安全，而在設計之初就將具有副作用(side-effect)的運算以合理的方式隔離，因此一般而言此類語言也具有適合平行運算的優點。 而在前述中函數式語言這個核心的化簡為繁組織方式，其實就是所謂的高階函式( high-order function )。這裡所謂的高階，並沒有比較級的意味在裡面。所謂的高階函式，單純只是一些函式，他們的參數是別的函式，或是回傳是另一個函式而已。以前述的 map/reduce 為例，讀者可以發現真正的 map 型別簽名實際上接近於 這意思是 map 會 接收一個數字陣列，例如 [1,2,3,4]。這裡我們把 Array.prototype.map 函式從抽出來單獨說明，所以把它當成第一個參數看待。 接收一個函式，或以 JavaScript 的慣用語而言，callback。這個函式將接收 一個 數字，回傳 一個 布林。就如同前述的 isOdd 般 最終回傳一個布林陣列。例如前述陣列經過 map + isOdd 的處理後得到的 [true, false, true, false] 前述第二點，也就是接收一個 callback 當作參數的這個行為，實際上代表的 map 就是一個高階函式。因為這類的函式，並不只是接收或回傳簡單的值，而是把函式也當成他們的參數或回傳值，也就是被處理的對象。在函數式程式設計中，此類的函式就能夠把大量簡單的函式一步步串連成巨大的程式，並且不需要諸如類別或是物件等方式來處理狀態。以 Haskell 而言，除了 map/reduce 以外，這類函式還包括 id, reduceRight, curry, uncurry, function composition, arrow, bind 等等。 Map/Reduce 實際應用 然而在 JavaScript 中，也許會有人質疑 map/reduce 雖然方便，但看起來只適合數字，或是類似的資料處理。看起來並不是一個通用的功能。而其他的高階函式，也許在 JavaScript 本身有物件導向的能力之下，也許並不是那麼需要了。然而事實上「真正」的 map/reduce 並不受限於此，並由其型別簽名即可一窺端倪 (reduce 又名 foldl, reduceRight 則是 foldr。參考： Foldr Foldl Foldl’ ) 這是從 Haskell 函式搜尋引擎 Hoogle 所找到的例子。同樣以 map 為例，可以解釋其型別意味著 第一個參數是一個從某型別 a（例如 Number）到第二種型別 b（例如 Boolean）的 函式 ，就像之前的 isOdd 第二個參數是一個裝有某型別 a 的陣列，就像之前的 [1,2,3,4] 最後給出一個裝有型別 b 的陣列，例如 [true, false, true, false] 雖然參數的順序不一樣，但可以看出，真正的 map/reduce 所處理的對象絕對不限於簡單的資料。因為型別參數( Type Variables )代表的是各種使用者所指定的任意型別，所以事實上我們甚至可以把一段 運算 裝在陣列裡送去處理，並以這樣的技巧將串出複雜的運算，進而到整個程式。例如在 Haskell 中，IO 這個型別代表的要對檔案系統，乃至各種輸入輸出裝置進行操作。因此我們可以這樣利用 map/reduce ，加上 HDBC 所提供的資料庫函式去串出查詢一堆條件的程式碼 為了舉例，經過簡化且不完全正確的 Haskell 程式碼 (點選圖片連結至程式碼) 上面的例子中，我們先在 makeQueries 這個函式中使用 map，把一個個 SQL 字串，經由 prepare 函式映射成型別為 IO Statement 的「命令」。也就是這個函式型別大致上為 接著這些製作出來的命令，會在 doQuery 中，經由 foldl ，也就是 reduce 去串接。這邊的模式是因為 reduce 中的函式，可以接收「先前結果」與「現在元素」兩個參數，因此程式會按照範例中所述，將現在元素的 IO 命令透過 bind 函式 (>>) 與先前的命令結合串接，最後產出一個查詢所有 SQL 語句的單一命令。其型別類似於 類似的技巧並不是只有在 Haskell 中使用而已。在 JavaScript 中，特別是在使用 Promise 建構運算並處理非同步程式的情況下，我們也可以發現因為 Promise 的特性，使得運算變成一個可持有、串接與變形的單位。因此我們也可以使用類似的技巧架構我們的查詢程式 以 Node.js 建構出類似前述例子並結合 map/reduce 與 Promise 的範例(點選圖片連結至程式碼) 注意在 JavaScript 中命令會在定義的時候就被執行，跟 Haskell 不同 可參考 Lazy Promise 與 Lazy Evaluation More on Functional Programming 其實除了 map/reduce 之外，JavaScript 還有很多類似的函數式程式設計技巧可以用。像是 Promise 實際使用起來已經可以具備類似 Monad 那樣串接具副作用運算的功用。又像是以 JavaScript 本身的特色做出 curry ，以及 zipWith 等好用的功能，都是可以參考的方式。進一步有興趣的讀者可以參考諸如 LiveScript , wu.js , underscore.js , Elm 等與 JavaScript 有關的函式庫或程式語言。當然，如果要徹底學習函數式程式語言，進一步理解計算機科學的邏輯核心的話，諸如 Haskell , Prolog 與 Lisp 是很好的方式。也可以從 Scala 或 Clojure 與 Erlang 著手。",
   "images": [
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-12-17-%E4%B8%8B%E5%8D%884.23.17-150x150.png",
+      "alt": "視差動畫",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/04/c-plus-plus-0x-11-150x150.jpg",
+      "alt": "c-plus-plus-0x-11",
+      "kind": "image",
+      "source": "img"
+    },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1.png",
       "alt": "mapreduce_vs_for",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/mapreduce_vs_for1.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/mapreduce_vs_for1.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1-300x110.png",
+      "alt": "mapreduce_vs_for",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005286945.png",
       "alt": "daum_equation_1391005286945",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/daum_equation_1391005286945.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/daum_equation_1391005286945.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005286945.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005248288.png",
       "alt": "daum_equation_1391005248288",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/daum_equation_1391005248288.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/daum_equation_1391005248288.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005248288.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005248288-300x33.png",
+      "alt": "daum_equation_1391005248288",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/jvj.png",
       "alt": "jvj",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/jvj.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/jvj.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/jvj.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/jvj-300x55.png",
+      "alt": "jvj",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391048096767.png",
       "alt": "daum_equation_1391048096767",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/daum_equation_1391048096767.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/daum_equation_1391048096767.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391048096767.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391048096767-300x20.png",
+      "alt": "daum_equation_1391048096767",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005490714.png",
       "alt": "daum_equation_1391005490714",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/daum_equation_1391005490714.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/daum_equation_1391005490714.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005490714.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005490714-300x66.png",
+      "alt": "daum_equation_1391005490714",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/hdbcmr.png",
       "alt": "Haskell and map/reduce",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/hdbcmr.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/hdbcmr.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/hdbcmr.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/hdbcmr-300x100.png",
+      "alt": "Haskell and map/reduce",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391046822235.png",
       "alt": "daum_equation_1391046822235",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/daum_equation_1391046822235.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/daum_equation_1391046822235.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391046822235.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391046822235-300x26.png",
+      "alt": "daum_equation_1391046822235",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391070524080.png",
       "alt": "daum_equation_1391070524080",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/daum_equation_1391070524080.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/daum_equation_1391070524080.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391070524080.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391070524080-300x25.png",
+      "alt": "daum_equation_1391070524080",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/jsmapreduce.png",
       "alt": "Promise and map/reduce",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/jsmapreduce.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/jsmapreduce.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/jsmapreduce.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/jsmapreduce-300x153.png",
+      "alt": "Promise and map/reduce",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "media": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-12-17-%E4%B8%8B%E5%8D%884.23.17-150x150.png",
+      "alt": "視差動畫",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/04/c-plus-plus-0x-11-150x150.jpg",
+      "alt": "c-plus-plus-0x-11",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1.png",
       "alt": "mapreduce_vs_for",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/mapreduce_vs_for1.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/mapreduce_vs_for1.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1-300x110.png",
+      "alt": "mapreduce_vs_for",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005286945.png",
       "alt": "daum_equation_1391005286945",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/daum_equation_1391005286945.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/daum_equation_1391005286945.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005286945.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005248288.png",
       "alt": "daum_equation_1391005248288",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/daum_equation_1391005248288.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/daum_equation_1391005248288.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005248288.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005248288-300x33.png",
+      "alt": "daum_equation_1391005248288",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/jvj.png",
       "alt": "jvj",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/jvj.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/jvj.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/jvj.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/jvj-300x55.png",
+      "alt": "jvj",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391048096767.png",
       "alt": "daum_equation_1391048096767",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/daum_equation_1391048096767.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/daum_equation_1391048096767.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391048096767.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391048096767-300x20.png",
+      "alt": "daum_equation_1391048096767",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005490714.png",
       "alt": "daum_equation_1391005490714",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/daum_equation_1391005490714.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/daum_equation_1391005490714.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005490714.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005490714-300x66.png",
+      "alt": "daum_equation_1391005490714",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/hdbcmr.png",
       "alt": "Haskell and map/reduce",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/hdbcmr.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/hdbcmr.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/hdbcmr.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/hdbcmr-300x100.png",
+      "alt": "Haskell and map/reduce",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391046822235.png",
       "alt": "daum_equation_1391046822235",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/daum_equation_1391046822235.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/daum_equation_1391046822235.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391046822235.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391046822235-300x26.png",
+      "alt": "daum_equation_1391046822235",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391070524080.png",
       "alt": "daum_equation_1391070524080",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/daum_equation_1391070524080.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/daum_equation_1391070524080.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391070524080.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391070524080-300x25.png",
+      "alt": "daum_equation_1391070524080",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/jsmapreduce.png",
       "alt": "Promise and map/reduce",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4065/wp-content/uploads/2014/01/jsmapreduce.png",
-      "markdown_path": "../assets/4065/wp-content/uploads/2014/01/jsmapreduce.png",
-      "wayback_timestamp": "20140717224021",
-      "asset_archive_url": "https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/jsmapreduce.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/jsmapreduce-300x153.png",
+      "alt": "Promise and map/reduce",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -401,6 +541,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }
