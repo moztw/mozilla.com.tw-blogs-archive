@@ -12,6 +12,10 @@ const ARCHIVE_DIR = path.resolve(ROOT, args.archiveDir || args['archive-dir'] ||
 const JSON_DIR = path.join(ARCHIVE_DIR, 'articles-json');
 const MD_DIR = path.join(ARCHIVE_DIR, 'articles-md');
 const RAW_DIR = path.join(ARCHIVE_DIR, 'raw-html');
+const EVENTS_DIR = path.join(ROOT, 'archive-blog', 'events');
+const EVENTS_JSON_DIR = path.join(EVENTS_DIR, 'events-json');
+const EVENTS_INDEX_PATH = path.join(EVENTS_DIR, 'events-index.json');
+const EVENTS_ASSETS_DIR = path.join(EVENTS_DIR, 'assets');
 const AUTHORS_JSON_DIR = path.join(ARCHIVE_DIR, 'authors', 'authors-json');
 const THEME_ASSETS_DIR = path.resolve(ROOT, args.themeAssets || args['theme-assets'] || DEFAULT_THEME_ASSETS_DIR);
 const SITE_HOST = `${BUILD_DIR_NAME}.mozilla.com.tw`;
@@ -31,12 +35,28 @@ const LICENSE_NAME = '創用 CC 姓名標示─相同方式分享 4.0 國際';
 const LICENSE_URL = 'https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant';
 const SITE_SNAPSHOT_URL = args.snapshotUrl || args['snapshot-url'] || `https://web.archive.org/web/*/${SITE_ORIGIN}/`;
 const TECH_AUTHORS_PAGE_ID = 4829;
+const TECH_CATEGORY_SLUG_MAP = {
+  css: 'css',
+  firefox: 'firefox',
+  b2g: 'firefox-os-b2g',
+  'interaction-design': 'interaction-design',
+  javascript: 'javascript',
+  'life-at-mozilla': 'life-at-mozilla',
+  mozilla: 'mozilla',
+  'open-source': 'open-source',
+  ux: 'ux-ue',
+};
+const TECH_CATEGORY_NAME_SLUG_MAP = {
+  'Firefox OS(B2G)': 'firefox-os-b2g',
+  'UX/UE': 'ux-ue',
+};
 let ALL_POSTS = [];
 let ALL_POST_IDS = new Set();
 let ALL_AUTHOR_SLUGS = new Set();
 
 async function main() {
   const posts = await readPosts();
+  const events = await readEvents();
   const authors = await readAuthors();
   const authorsLandingPage = await readTechAuthorsLandingPage();
   ALL_POSTS = posts;
@@ -46,6 +66,7 @@ async function main() {
   await rm(BUILD_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
   await mkdir(POSTS_DIR, { recursive: true });
   await cp(path.join(ARCHIVE_DIR, 'assets'), ASSETS_DIR, { recursive: true });
+  await cp(EVENTS_ASSETS_DIR, path.join(ASSETS_DIR, 'events'), { recursive: true }).catch(() => {});
   await cp(THEME_ASSETS_DIR, path.join(ASSETS_DIR, 'theme'), { recursive: true });
   await writeFile(path.join(BUILD_DIR, 'styles.css'), stylesheet());
   await writeFile(path.join(BUILD_DIR, '.nojekyll'), '');
@@ -60,11 +81,12 @@ async function main() {
   await writeAuthorPages(authors);
   await writeTechAuthorsLandingPage(authorsLandingPage);
   await writeTechAuthorCardAliases(authors, authorsLandingPage);
+  await writeEventPages(events);
   await writeArchivePages(posts);
   await writeFile(path.join(BUILD_DIR, 'index.html'), renderIndex(posts));
   await writeFile(path.join(BUILD_DIR, '404.html'), renderNotFound());
 
-  console.log(`Built ${posts.length} posts and ${authors.length} authors into ${relative(BUILD_DIR)}`);
+  console.log(`Built ${posts.length} posts, ${events.length} events and ${authors.length} authors into ${relative(BUILD_DIR)}`);
 }
 
 async function readPosts() {
@@ -110,6 +132,38 @@ async function readAuthors() {
   }
 
   return authors.sort((a, b) => a.slug.localeCompare(b.slug, 'en'));
+}
+
+async function readEvents() {
+  if (BUILD_DIR_NAME !== 'blog') {
+    return [];
+  }
+
+  const [files, indexRaw] = await Promise.all([
+    readdir(EVENTS_JSON_DIR).catch(() => []),
+    readFile(EVENTS_INDEX_PATH, 'utf8').catch(() => ''),
+  ]);
+  const eventOrder = new Map();
+  if (indexRaw) {
+    const parsed = JSON.parse(indexRaw);
+    for (const [position, event] of (parsed.events || []).entries()) {
+      eventOrder.set(event.slug, position);
+    }
+  }
+
+  const events = [];
+  for (const file of files.filter((entry) => entry.endsWith('.json'))) {
+    const event = JSON.parse(await readFile(path.join(EVENTS_JSON_DIR, file), 'utf8'));
+    events.push({
+      ...event,
+      order: eventOrder.get(event.slug) ?? Number.MAX_SAFE_INTEGER,
+    });
+  }
+
+  return events.sort((a, b) => {
+    const byDate = String(b.date || '').localeCompare(String(a.date || ''));
+    return byDate || a.order - b.order || String(a.slug).localeCompare(String(b.slug));
+  });
 }
 
 async function readTechAuthorsLandingPage() {
@@ -366,6 +420,15 @@ function rewriteUrl(url, rootPrefix, postIds) {
       const month = monthUrl[2];
       return month ? `${rootPrefix}months/${year}-${month}/` : `${rootPrefix}months/`;
     }
+
+    const categoryUrl = clean.match(/^https?:\/\/tech\.mozilla\.com\.tw\/posts\/category\/([^/?#]+)/i);
+    if (categoryUrl) {
+      const legacySlug = categoryUrl[1].toLowerCase();
+      const categorySlug = TECH_CATEGORY_SLUG_MAP[legacySlug];
+      if (categorySlug) {
+        return `${rootPrefix}categories/${categorySlug}/`;
+      }
+    }
   }
 
   const authorUrl = clean.match(new RegExp(`^https?://${escapeRegExp(SITE_HOST)}/posts/author/([^/?#]+)`));
@@ -443,6 +506,26 @@ function renderIndex(posts) {
       ${sidebar('', SITE_SNAPSHOT_URL)}
     `,
   });
+}
+
+async function writeEventPages(events) {
+  if (!events.length) {
+    return;
+  }
+
+  for (const event of events) {
+    const outputDir = path.join(BUILD_DIR, 'events', event.slug);
+    await mkdir(outputDir, { recursive: true });
+    await writeFile(path.join(outputDir, 'index.html'), renderEventPage(event));
+  }
+
+  const eventsDir = path.join(BUILD_DIR, 'events');
+  await mkdir(eventsDir, { recursive: true });
+  await writeFile(path.join(eventsDir, 'index.html'), renderEventIndex(events, '活動列表', '../', './'));
+
+  const eventsListDir = path.join(BUILD_DIR, 'events-list');
+  await mkdir(eventsListDir, { recursive: true });
+  await writeFile(path.join(eventsListDir, 'index.html'), renderEventIndex(events, '活動列表', '../', '../events/'));
 }
 
 async function writeArchivePages(posts) {
@@ -580,6 +663,87 @@ function renderArchiveIndex({ title, rootPrefix, groups }) {
   });
 }
 
+function renderEventPage(event) {
+  const bodyHtml = rewriteEventHtml(event.content_html || '', '../../', event.assets || []);
+  return pageShell({
+    title: `${event.title} | ${ARCHIVE_LABEL}`,
+    rootPrefix: '../../',
+    bodyClass: 'single event-page',
+    breadcrumbs: [
+      { label: '活動', href: '../../events/' },
+      { label: event.title, href: './' },
+    ],
+    breadcrumbLeadingSeparator: true,
+    snapshotUrl: event.archive_url || SITE_SNAPSHOT_URL,
+    body: `
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted">${dateBadge(event.date)}</p>
+              <h1 class="entry-title">${escapeHtml(event.title)}</h1>
+            </header>
+            <div class="entry-content">${bodyHtml}</div>
+          </article>
+        </div>
+      </main>
+      ${sidebar('../../', event.archive_url || SITE_SNAPSHOT_URL)}
+    `,
+  });
+}
+
+function renderEventIndex(events, title, rootPrefix, currentHref) {
+  return pageShell({
+    title: `${title} | ${SITE_TITLE} 封存`,
+    rootPrefix,
+    bodyClass: 'archive events-index',
+    breadcrumbs: [
+      { label: title, href: currentHref },
+    ],
+    breadcrumbLeadingSeparator: true,
+    snapshotUrl: SITE_SNAPSHOT_URL,
+    body: `
+      <main id="primary" class="content" role="main">
+        <header class="archive-header">
+          <h2>${escapeHtml(title)}</h2>
+          <p>${events.length} 場活動</p>
+        </header>
+        ${renderEventList(events, rootPrefix)}
+      </main>
+      ${sidebar(rootPrefix, SITE_SNAPSHOT_URL)}
+    `,
+  });
+}
+
+function renderEventList(events, rootPrefix) {
+  return events.map((event) => {
+    const excerpt = String(event.content_text || '').slice(0, 150);
+    const thumbnail = eventThumbnail(event, rootPrefix);
+    return `
+      <div class="article-div divider">
+        <article class="post-list-item">
+          <header class="entry-header">
+            <p class="entry-posted">${dateBadge(event.date)}</p>
+            <h2 class="entry-title"><a href="${rootPrefix}events/${event.slug}/">${escapeHtml(event.title)}</a></h2>
+          </header>
+          ${thumbnail ? `<div class="thumb-img"><img src="${escapeAttr(thumbnail.src)}" alt="${escapeAttr(thumbnail.alt)}" loading="lazy"></div>` : ''}
+          <div class="entry-content half">${escapeHtml(excerpt)}${excerpt ? '...' : ''}</div>
+        </article>
+      </div>`;
+  }).join('\n');
+}
+
+function eventThumbnail(event, rootPrefix) {
+  const firstImage = (event.assets || []).find((asset) => asset.kind === 'image' && asset.markdown_path);
+  if (!firstImage) {
+    return null;
+  }
+  return {
+    alt: firstImage.alt || '',
+    src: rewriteUrl(firstImage.markdown_path, rootPrefix, ALL_POST_IDS),
+  };
+}
+
 function groupByCategory(posts) {
   const groups = new Map();
   for (const post of posts) {
@@ -591,7 +755,7 @@ function groupByCategory(posts) {
     }
   }
   return [...groups.entries()]
-    .map(([name, groupPosts]) => ({ name, slug: slugify(name), posts: groupPosts }))
+    .map(([name, groupPosts]) => ({ name, slug: categorySlug(name), posts: groupPosts }))
     .sort((a, b) => a.name.localeCompare(b.name, 'zh-Hant'));
 }
 
@@ -628,7 +792,7 @@ function postBreadcrumbs(post, rootPrefix) {
 }
 
 function categoryLink(category, rootPrefix) {
-  return `<a href="${rootPrefix}categories/${escapeAttr(slugify(category))}/">${escapeHtml(category)}</a>`;
+  return `<a href="${rootPrefix}categories/${escapeAttr(categorySlug(category))}/">${escapeHtml(category)}</a>`;
 }
 
 function renderEntryMeta(post, rootPrefix) {
@@ -794,7 +958,43 @@ function rewriteLegacyTechHtml(html, rootPrefix, images, options = {}) {
   });
 
   output = output.replace(/<form\b[^>]*>[\s\S]*?<\/form>/gi, '');
+  output = output.replace(
+    /<footer\b[^>]*class=["'][^"']*entry-footer[^"']*["'][^>]*>([\s\S]*?<div\b[^>]*class=["'][^"']*entry-category-box[^"']*["'][^>]*>[\s\S]*?<\/div>)[\s\S]*?<\/footer>/gi,
+    '<footer class="entry-footer">$1</footer>'
+  );
   return output;
+}
+
+function rewriteEventHtml(html, rootPrefix, assets) {
+  const assetLookup = buildAssetLookup(assets);
+  let output = String(html || '');
+
+  output = output.replace(/\s(?:href|src)=["']([^"']+)["']/gi, (match, url) => {
+    const attrName = match.trim().startsWith('href=') ? 'href' : 'src';
+    const localAsset = assetLookup.get(normalizeAssetUrl(url)) || assetLookup.get(normalizeAssetVariantUrl(url));
+    const rewritten = localAsset
+      ? rewriteEventAssetPath(localAsset, rootPrefix)
+      : rewriteUrl(url, rootPrefix, ALL_POST_IDS);
+    return ` ${attrName}="${escapeAttr(rewritten)}"`;
+  });
+
+  output = output.replace(/url\(([^)]+)\)/gi, (_match, rawUrl) => {
+    const clean = rawUrl.trim().replace(/^['"]|['"]$/g, '');
+    const localAsset = assetLookup.get(normalizeAssetUrl(clean)) || assetLookup.get(normalizeAssetVariantUrl(clean));
+    const rewritten = localAsset
+      ? rewriteEventAssetPath(localAsset, rootPrefix)
+      : rewriteUrl(clean, rootPrefix, ALL_POST_IDS);
+    return `url(${escapeAttr(rewritten)})`;
+  });
+
+  return output;
+}
+
+function rewriteEventAssetPath(localPath, rootPrefix) {
+  const clean = String(localPath || '');
+  return clean.startsWith('../assets/')
+    ? `${rootPrefix}assets/events/${clean.slice('../assets/'.length)}`
+    : rewriteUrl(clean, rootPrefix, ALL_POST_IDS);
 }
 
 function stripLegacySecondary(html) {
@@ -908,6 +1108,13 @@ function rewriteAbsoluteUploadsUrls(html, rootPrefix, postId, authorSlug = '') {
 function siteCategoryNames() {
   return [...new Set(ALL_POSTS.flatMap((post) => displayCategories(post)))]
     .sort((a, b) => a.localeCompare(b, 'zh-Hant'));
+}
+
+function categorySlug(category) {
+  if (BUILD_DIR_NAME === 'tech' && TECH_CATEGORY_NAME_SLUG_MAP[category]) {
+    return TECH_CATEGORY_NAME_SLUG_MAP[category];
+  }
+  return slugify(category);
 }
 
 function slugify(value) {
