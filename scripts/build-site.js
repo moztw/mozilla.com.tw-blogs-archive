@@ -191,13 +191,34 @@ async function readAuthorMeta(postId, waybackTimestamp) {
     return null;
   }
 
-  const match = rawHtml.match(/<div class="author-meta"[^>]*?(?:data-author-id="([^"]+)")?[\s\S]*?<a href="([^"]+)"[\s\S]*?<img src="([^"]+)"[^>]*class="([^"]*avatar[^"]*)"[^>]*width=['"]?(\d+)['"]?[^>]*height=['"]?(\d+)['"]?[\s\S]*?<div class="author-info">([\s\S]*?)<\/div>[\s\S]*?<div class="author-title">([\s\S]*?)<\/div>/i);
-  if (!match) {
+  const articleJson = articleJsonRaw ? JSON.parse(articleJsonRaw) : null;
+  const modernMatch = rawHtml.match(/<div class="author-meta"[^>]*?(?:data-author-id="([^"]+)")?[\s\S]*?<a href="([^"]+)"[\s\S]*?<img src="([^"]+)"[^>]*class="([^"]*avatar[^"]*)"[^>]*width=['"]?(\d+)['"]?[^>]*height=['"]?(\d+)['"]?[\s\S]*?<div class="author-info">([\s\S]*?)<\/div>[\s\S]*?<div class="author-title">([\s\S]*?)<\/div>/i);
+  const legacyLinkedMatch = rawHtml.match(/<div[^>]*id=["']author-meta["'][^>]*>[\s\S]*?<a href="([^"]+)"[\s\S]*?<img src="([^"]+)"[^>]*class="([^"]*avatar[^"]*)"[^>]*width=['"]?(\d+)['"]?[^>]*height=['"]?(\d+)['"]?[^>]*>[\s\S]*?<div[^>]*id=["']author-info["'][^>]*>([\s\S]*?)<\/div>/i);
+  const legacyInlineMatch = rawHtml.match(/<div[^>]*id=["']author-meta["'][^>]*>[\s\S]*?<div[^>]*id=["']author-info["'][^>]*>([\s\S]*?)<\/div>[\s\S]*?<img src="([^"]+)"[^>]*class="([^"]*avatar[^"]*)"[^>]*width=['"]?(\d+)['"]?[^>]*height=['"]?(\d+)['"]?[^>]*>/i);
+
+  let authorId = '';
+  let href = '';
+  let avatarUrl = '';
+  let avatarClass = 'avatar';
+  let width = 24;
+  let height = 24;
+  let name = '';
+  let title = '';
+
+  if (modernMatch) {
+    [, authorId = '', href, avatarUrl, avatarClass = 'avatar', width = '24', height = '24', name = '', title = ''] = modernMatch;
+  } else if (legacyLinkedMatch) {
+    [, href, avatarUrl, avatarClass = 'avatar', width = '24', height = '24', name = ''] = legacyLinkedMatch;
+    authorId = authorIdFromAuthorHtml(legacyLinkedMatch[0]);
+  } else if (legacyInlineMatch) {
+    [, name = '', avatarUrl, avatarClass = 'avatar', width = '24', height = '24'] = legacyInlineMatch;
+    authorId = authorIdFromAuthorHtml(legacyInlineMatch[0]);
+  } else if (articleJson?.author) {
+    name = articleJson.author;
+  } else {
     return null;
   }
 
-  const [, authorId = '', href, avatarUrl, avatarClass = 'avatar', width = '24', height = '24', name = '', title = ''] = match;
-  const articleJson = articleJsonRaw ? JSON.parse(articleJsonRaw) : null;
   const localAvatarPath = findLocalAvatarPath(articleJson?.images || [], avatarUrl);
 
   return {
@@ -208,7 +229,7 @@ async function readAuthorMeta(postId, waybackTimestamp) {
     avatarClass,
     width: Number(width) || 24,
     height: Number(height) || 24,
-    name: decodeHtmlEntities(stripHtml(name).trim()),
+    name: normalizeAuthorName(name),
     title: decodeHtmlEntities(stripHtml(title).trim()),
     localAvatarPath,
     waybackTimestamp,
@@ -809,16 +830,19 @@ function renderAuthorMeta(post, rootPrefix) {
   }
   const href = post.authorMeta.slug && ALL_AUTHOR_SLUGS.has(post.authorMeta.slug)
     ? `${rootPrefix}posts/author/${post.authorMeta.slug}/`
-    : waybackUrl(post.authorMeta.href, post.authorMeta.waybackTimestamp || post.frontmatter.wayback_timestamp);
+    : post.authorMeta.href
+      ? waybackUrl(post.authorMeta.href, post.authorMeta.waybackTimestamp || post.frontmatter.wayback_timestamp)
+      : '';
   const avatarSrc = post.authorMeta.localAvatarPath
     ? rewriteUrl(post.authorMeta.localAvatarPath, rootPrefix, ALL_POST_IDS)
     : post.authorMeta.avatarUrl;
-  return `<div class="author-meta"${post.authorMeta.authorId ? ` data-author-id="${escapeAttr(post.authorMeta.authorId)}"` : ''}>
-    <a href="${escapeAttr(href)}">
-      <img src="${escapeAttr(avatarSrc)}" alt="" class="${escapeAttr(post.authorMeta.avatarClass)}" width="${post.authorMeta.width}" height="${post.authorMeta.height}"><!--
-   --><div class="author-info">${escapeHtml(post.authorMeta.name)}</div><!--
+  const innerHtml = `
+      ${avatarSrc ? `<img src="${escapeAttr(avatarSrc)}" alt="" class="${escapeAttr(post.authorMeta.avatarClass)}" width="${post.authorMeta.width}" height="${post.authorMeta.height}"><!--
+   -->` : ''}<div class="author-info">${escapeHtml(post.authorMeta.name)}</div><!--
    -->${post.authorMeta.title ? `<div class="author-title">${escapeHtml(post.authorMeta.title)}</div>` : '<div class="author-title"></div>'}
-    </a>
+  `;
+  return `<div class="author-meta"${post.authorMeta.authorId ? ` data-author-id="${escapeAttr(post.authorMeta.authorId)}"` : ''}>
+    ${href ? `<a href="${escapeAttr(href)}">${innerHtml}</a>` : innerHtml}
   </div>`;
 }
 
@@ -1141,6 +1165,10 @@ function normalizeAssetVariantUrl(value) {
     return normalized.replace(/-bpthumb(\.[a-z0-9]+)$/i, '-bpfull$1');
   }
   return '';
+}
+
+function normalizeAuthorName(value) {
+  return decodeHtmlEntities(stripHtml(value).replace(/投稿者/gu, ' ').replace(/\s+/g, ' ').trim());
 }
 
 function authorSlugFromUrl(url) {
