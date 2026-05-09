@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head><script src="//archive.org/includes/athena.js" type="text/javascript"></script>
+<script type="text/javascript">window.addEventListener('DOMContentLoaded',function(){var v=archive_analytics.values;v.service='wb';v.server_name='wwwb-app259.us.archive.org';v.server_ms=567;archive_analytics.send_pageview({});});</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/bundle-playback.js?v=oZ57VlYl" charset="utf-8"></script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script>window.RufflePlayer=window.RufflePlayer||{};window.RufflePlayer.config={"autoplay":"on","unmuteOverlay":"hidden","showSwfDownload":true};</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/ruffle/ruffle.js"></script>
+<script type="text/javascript">
+    __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://tech.mozilla.com.tw:80/posts/4204/c11-%E8%88%87-gecko","20171006113234","https://web.archive.org/","web","https://web-static.archive.org/_static/",
+	      "1507289554");
+</script>
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3" />
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv" />
+<!-- End Wayback Rewrite JS Include -->
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。"/>
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA"/>
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78"/>
+<title>
+
+C++11 與 Gecko | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://web.archive.org/web/20171006113234im_/https://mozilla.com/favicon.ico"/>
+<meta property="og:url" content="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko"/><meta property="og:image" content="https://web.archive.org/web/20171006113234im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/04/c-plus-plus-0x-11.jpg"/>
+
+<link rel="stylesheet" type="text/css" media="all" href="https://web.archive.org/web/20171006113234cs_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="https://web.archive.org/web/20171006113234cs_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css"/><!--<link rel="pingback" href="http://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="http://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/","urlLoginRedirect":"https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=5247563c0a","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel="dns-prefetch" href="//web.archive.org/web/20171006113234/http://s.w.org/">
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 �" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/feed"/>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 � 迴響" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/comments/feed"/>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 � C++11 與 Gecko 迴響" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko/feed"/>
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/web.archive.org\/web\/20171006113234\/https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/web.archive.org\/web\/20171006113234\/https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/web.archive.org\/web\/20171006113234\/http:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="crayon-css" href="https://web.archive.org/web/20171006113234cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="crayon-theme-arduino-ide-css" href="https://web.archive.org/web/20171006113234cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="crayon-font-monaco-css" href="https://web.archive.org/web/20171006113234cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="advanced-responsive-video-embedder-css" href="https://web.archive.org/web/20171006113234cs_/http://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0" type="text/css" media="all"/>
+<link rel="stylesheet" id="persona-style-css" href="https://web.archive.org/web/20171006113234cs_/http://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46" type="text/css" media="all"/>
+<script type="text/javascript" src="https://web.archive.org/web/20171006113234js_/http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20171006113234js_/http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/web.archive.org\/web\/20171006113234\/http:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://web.archive.org/web/20171006113234js_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta"></script>
+<link rel="https://api.w.org/" href="http://tech.mozilla.com.tw/wp-json/"/>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://tech.mozilla.com.tw/xmlrpc.php?rsd"/>
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml"/> 
+<link rel="prev" title="從 JavaScript 的 Map/Reduce 談起 Functional Programming" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4065/%e5%be%9e-javascript-%e7%9a%84-mapreduce-%e8%ab%87%e8%b5%b7-functional-programming"/>
+<link rel="next" title="我也想成為 mozillian！ Part 2 ? 你也來Try Try 看" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4243/%e6%88%91%e4%b9%9f%e6%83%b3%e6%88%90%e7%82%ba-mozillian%ef%bc%81-part-2-%e4%bd%a0%e4%b9%9f%e4%be%86try-try-%e7%9c%8b"/>
+<meta name="generator" content="WordPress 4.6"/>
+<link rel="canonical" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko"/>
+<link rel="shortlink" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/?p=4204"/>
+<link rel="alternate" type="application/json+oembed" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/wp-json/oembed/1.0/embed?url=http%3A%2F%2Ftech.mozilla.com.tw%2Fposts%2F4204%2Fc11-%25e8%2588%2587-gecko"/>
+<link rel="stylesheet" href="https://web.archive.org/web/20171006113234cs_/http://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen"/>	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://web.archive.org/web/20171006113234/https://ssl' : 'https://web.archive.org/web/20171006113234/http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-4204 single-format-standard sand"><!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script>__wm.rw(0);</script>
+<div id="wm-ipp-base" lang="en" style="display:none;direction:ltr;" toolbar-mode="auto">
+<div id="wm-ipp" style="position:fixed;left:0;top:0;right:0;">
+<div id="donato" style="position:relative;width:100%;height:0;">
+  <div id="donato-base">
+    <iframe id="donato-if" src="https://archive.org/includes/donate.php?as_page=1&amp;platform=wb&amp;referer=https%3A//web.archive.org/web/20171006113234/http%3A//tech.mozilla.com.tw/posts/4204/c11-%E8%88%87-gecko"
+	    scrolling="no" frameborder="0" style="width:100%; height:100%">
+    </iframe>
+  </div>
+</div><div id="wm-ipp-inside">
+  <div id="wm-toolbar" style="position:relative;display:flex;flex-flow:row nowrap;justify-content:space-between;" nav="async">
+    <div id="wm-logo" style="/*width:110px;*/padding-top:12px;">
+      <a href="/web/" title="Wayback Machine home page"><img src="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png" srcset="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png 1.5x, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png 2x" alt="Wayback Machine" style="width:100px" border="0" /></a>
+    </div>
+    <div class="c" style="display:flex;flex-flow:column nowrap;justify-content:space-between;flex:1;">
+      <form class="u" style="display:flex;flex-direction:row;flex-wrap:nowrap;" target="_top" method="get" action="/web/submit" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="http://tech.mozilla.com.tw/posts/4204/c11-%E8%88%87-gecko" onfocus="this.focus();this.select();" style="flex:1;"/><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20171006113234" /><input type="submit" value="Go" />
+      </form>
+      <div style="display:flex;flex-flow:row nowrap;align-items:flex-end;">
+                <div class="s" id="wm-nav-captures" style="flex:1;">
+                    <a class="t" href="/web/20171006113234*/http://tech.mozilla.com.tw/posts/4204/c11-%E8%88%87-gecko" title="See a list of every capture for this URL">12 captures</a>
+          <div class="r" title="Timespan for captures of this URL">15 Apr 2014 - 06 Oct 2017</div>
+          </div>
+        <div class="k">
+          <a href="" id="wm-graph-anchor">
+            <div id="wm-ipp-sparkline" title="Explore captures for this URL" style="position: relative">
+              <canvas id="wm-sparkline-canvas" width="775" height="27" border="0"></canvas>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="n">
+      <table>
+        <tbody>
+          <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+          <tr class="m">
+            <td class="b" nowrap="nowrap">Sep</td>
+            <td class="c" id="displayMonthEl" title="You are here: 11:32:34 Oct 06, 2017">OCT</td>
+            <td class="f" nowrap="nowrap">Nov</td>
+          </tr>
+          <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+          <tr class="d">
+            <td class="b" nowrap="nowrap"><span class="ta"></span></td>
+            <td class="c" id="displayDayEl" style="width:34px;font-size:22px;white-space:nowrap;" title="You are here: 11:32:34 Oct 06, 2017">06</td>
+            <td class="f" nowrap="nowrap"><span class="ta"></span></td>
+          </tr>
+          <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+          <tr class="y">
+            <td class="b" nowrap="nowrap">2016</td>
+            <td class="c" id="displayYearEl" title="You are here: 11:32:34 Oct 06, 2017">2017</td>
+            <td class="f" nowrap="nowrap">2018</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="r" style="display:flex;flex-flow:column nowrap;align-items:flex-end;justify-content:space-between;">
+      <div id="wm-btns" style="text-align:right;height:23px;">
+                <span class="xxs">
+          <div id="wm-save-snapshot-success">success</div>
+          <div id="wm-save-snapshot-fail">fail</div>
+          <a id="wm-save-snapshot-open" href="#" title="Share via My Web Archive" >
+            <span class="iconochive-web"></span>
+          </a>
+          <a href="https://archive.org/account/login.php" title="Sign In" id="wm-sign-in">
+            <span class="iconochive-person"></span>
+          </a>
+          <span id="wm-save-snapshot-in-progress" class="iconochive-web"></span>
+        </span>
+                <a class="xxs" href="https://help.archive.org/help/category/the-wayback-machine/" title="Get some help using the Wayback Machine" style="top:-6px;"><span class="iconochive-question" style="color:rgb(87,186,244);font-size:160%;"></span></a>
+        <a id="wm-tb-close" href="#close" style="top:-2px;" title="Close the toolbar"><span class="iconochive-remove-circle" style="color:#888888;font-size:240%;"></span></a>
+      </div>
+      <div id="wm-share" class="xxs">
+        <a href="/web/20171006113234/http://web.archive.org/screenshot/http://tech.mozilla.com.tw/posts/4204/c11-%E8%88%87-gecko"
+           id="wm-screenshot"
+           title="screenshot">
+          <span class="wm-icon-screen-shot"></span>
+        </a>
+        <a href="#" id="wm-video" title="video">
+          <span class="iconochive-movies"></span>
+        </a>
+        <a id="wm-share-facebook" href="#" data-url="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw:80/posts/4204/c11-%E8%88%87-gecko" title="Share on Facebook" style="margin-right:5px;" target="_blank"><span class="iconochive-facebook" style="color:#3b5998;font-size:160%;"></span></a>
+        <a id="wm-share-twitter" href="#" data-url="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw:80/posts/4204/c11-%E8%88%87-gecko" title="Share on Twitter" style="margin-right:5px;" target="_blank"><span class="iconochive-twitter" style="color:#1dcaff;font-size:160%;"></span></a>
+      </div>
+      <div style="padding-right:2px;text-align:right;white-space:nowrap;">
+        <a id="wm-expand" class="wm-btn wm-closed" href="#expand"><span id="wm-expand-icon" class="iconochive-down-solid"></span> <span class="xxs" style="font-size:80%;">About this capture</span></a>
+      </div>
+    </div>
+  </div>
+    <div id="wm-capinfo" style="border-top:1px solid #777;display:none; overflow: hidden">
+        <div id="wm-capinfo-notice" source="api"></div>
+                <div id="wm-capinfo-collected-by">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;">COLLECTED BY</div>
+    <div style="padding:3px;position:relative" id="wm-collected-by-content">
+            <div style="display:inline-block;vertical-align:top;width:50%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls);"></span>
+		Organization: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+      <div style="display:inline-block;vertical-align:top;width:49%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls)"></span>
+		<div>Collection: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a></div>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+    </div>
+    </div>
+    <div id="wm-capinfo-timestamps">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;" title="Timestamps for the elements of this page">TIMESTAMPS</div>
+    <div>
+      <div id="wm-capresources" style="margin:0 5px 5px 5px;max-height:250px;overflow-y:scroll !important"></div>
+      <div id="wm-capresources-loading" style="text-align:left;margin:0 20px 5px 5px;display:none"><img src="https://web-static.archive.org/_static/images/loading.gif" alt="loading" /></div>
+    </div>
+    </div>
+  </div></div></div></div><div id="wm-ipp-print">The Wayback Machine - https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw:80/posts/4204/c11-%E8%88%87-gecko</div>
+<script type="text/javascript">//<![CDATA[
+__wm.bt(775,27,25,2,"web","http://tech.mozilla.com.tw/posts/4204/c11-%E8%88%87-gecko","20171006113234",1996,"https://web-static.archive.org/_static/",["https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3","https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv"], false);
+  __wm.rw(1);
+//]]></script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+ 
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//web.archive.org/web/20171006113234/http://mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//web.archive.org/web/20171006113234/http://mozilla.com.tw/" title="回首頁" class="close">
+              <img src="/web/20171006113234im_/http://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href="//web.archive.org/web/20171006113234/http://mozilla.com.tw/" class="home">Home</a>
+            <b>&raquo;</b>
+            <a href="//web.archive.org/web/20171006113234/http://mozilla.com.tw/news/">訊息中心</a>
+            <b>&raquo;</b>
+                          <a href="//web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/">謀智台客</a><b>&raquo;</b>
+              <span>C++11 與 Gecko</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="https://web.archive.org/web/20171006113234/http://pinterest.com/pin/create/button/?url=http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko&amp;media=http://tech.mozilla.com.tw/wp-content/uploads/2014/04/c-plus-plus-0x-11-150x150.jpg" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//web.archive.org/web/20171006113234im_/http://assets.pinterest.com/images/PinExt.png" title="Pin It"/></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('https://web.archive.org/web/20171006113234/http://www.plurk.com/?qualifier=shares&amp;status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('(') .concat(encodeURIComponent(document.title)) .concat(')')));">
+	        <img src="https://web.archive.org/web/20171006113234im_/https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">6</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4065/%e5%be%9e-javascript-%e7%9a%84-mapreduce-%e8%ab%87%e8%b5%b7-functional-programming"><div class="post-tip"><img width="48" height="48" src="https://web.archive.org/web/20171006113234im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="mapreduce_vs_for"/><span class="meta-nav">從 JavaScript 的 Map/Reduce 談起 Functional Programming </span></div></a></div>		
+							<div class="nav-next"><a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4243/%e6%88%91%e4%b9%9f%e6%83%b3%e6%88%90%e7%82%ba-mozillian%ef%bc%81-part-2-%e4%bd%a0%e4%b9%9f%e4%be%86try-try-%e7%9c%8b"><div class="post-tip"><img width="48" height="48" src="https://web.archive.org/web/20171006113234im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="mozillian"/><span class="meta-nav">我也想成為 mozillian！ Part 2 - 你也來Try Try 看</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-4204" class="post-4204 post type-post status-publish format-standard has-post-thumbnail hentry category-b2g">
+	 	<header class="entry-header">
+		<h1 class="entry-title">C++11 與 Gecko</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/date/2014/04" class="posted-month">4月</a>
+	        <span class="posted-date">14</span>
+	        <a title="See all posts from 2014" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/date/2014" class="posted-year">2014</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="90">
+		  	<a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/author/hchangmozilla-com">
+	          <img src="https://web.archive.org/web/20171006113234im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg" alt="" class="avatar user-90-avatar" width="24" height="24"/><!--
+	       --><div class="author-info">鶴鶴鶴鶴鶴鶴鶴鶴</div><!--
+	       --><div class="author-title">&nbsp;- Network Team 編輯</div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p>大家都知道 Firefox OS 最大的賣點就在於其開放的平台以及以網頁為基礎的應用程式。相信常關注我們謀智台客的讀者們，也都知道在應用層下的核心引擎 Gecko 是用 C++ 撰寫而成的。Gecko 自開發以來經歷的好幾個年頭，C++ 也不斷地進步當中。<img style="margin: 15px;" alt="C++0x" src="https://web.archive.org/web/20171006113234im_/http://blog.operationreality.org/wp-content/uploads/2011/08/c-plus-plus-0x-11.jpg" width="55%"/>在 C++0x 被提出的若干年後，終於在 2011 年 8 月 12 號發布 C++11 取代了 C++03 成為 C++ 最新的標準。永遠跟著標準走的 mozilla，也逐漸地在 Gecko 裡使用 C++11 的功能，現在就來讓我們看看 Gecko 裡面有哪些使用到 C++11 的地方:</p>
+<h2>nullptr</h2>
+<p>簡單來說，nullptr 就是用來取代 NULL 的。NULL 在 C/C++ 用的好好的，為何 C++11 要特地引進一個新的關鍵字來取代呢？在 C++11 前，C++之父 Stroustrup 推薦我們 <a href="https://web.archive.org/web/20171006113234/http://www.stroustrup.com/bs_faq2.html#null"> 使用 0 來取代 NULL。</a>而在 C++ 聖經 &#8220;The C++ Programming Language" 也提到由於 C++ 有著較 C 強的型別檢查，用 0 來代表 null pointer 會帶來較少的問題。但無論是用 ((void*)0) 或是 0，都不是一個完美的方式來表達 null pointer 這個概念，譬如以下程式</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e36446663818488" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+void f(int x) {}  // (1)
+void f(int* x) {} // (2)
+
+f(0);    // (1) is called
+f(NULL); // error: call of overloaded ‘f(NULL)’ is ambiguous</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e36446663818488-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36446663818488-2">2</div><div class="crayon-num" data-line="crayon-59d7699e36446663818488-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36446663818488-4">4</div><div class="crayon-num" data-line="crayon-59d7699e36446663818488-5">5</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e36446663818488-1"><span class="crayon-t">void</span><span class="crayon-h"> </span><span class="crayon-e">f</span><span class="crayon-sy">(</span><span class="crayon-t">int</span><span class="crayon-h"> </span><span class="crayon-v">x</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-sy">}</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-c">// (1)</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36446663818488-2"><span class="crayon-t">void</span><span class="crayon-h"> </span><span class="crayon-e">f</span><span class="crayon-sy">(</span><span class="crayon-t">int</span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-v">x</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-sy">}</span><span class="crayon-h"> </span><span class="crayon-c">// (2)</span></div><div class="crayon-line" id="crayon-59d7699e36446663818488-3">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36446663818488-4"><span class="crayon-e">f</span><span class="crayon-sy">(</span><span class="crayon-cn">0</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// (1) is called</span></div><div class="crayon-line" id="crayon-59d7699e36446663818488-5"><span class="crayon-e">f</span><span class="crayon-sy">(</span><span class="crayon-t">NULL</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-c">// error: call of overloaded ‘f(NULL)’ is ambiguous</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p>無論用 0 或 NULL 都無法讓預期的 (2) 被喚起。正因如此，C++11 才引進了 nullptr 來專門描述 null pointer。實作上來說，nullptr 是型別 nullptr_t 的一個 instance (如同 true/false 是 bool type 的 instance)，nullptr_t 可被隱式地轉換成任何型別的 pointer (包含 pointer-to-member 型別)，所以所有原先用到 NULL 的地方，可以無痛轉換成 nullptr。所以在上例我們遇到的窘境，用 nullptr 就可以輕鬆解決：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e36453650226966" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+f(nullptr); // (2) is called</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e36453650226966-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e36453650226966-1"><span class="crayon-e">f</span><span class="crayon-sy">(</span><span class="crayon-v">nullptr</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-c">// (2) is called</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p></p>
+<h2></h2>
+<h2>auto</h2>
+<p>當你使用 STL container，例如 queue、map，需要做遍尋 (iterate) 時，最痛苦的就是要寫一長串程式碼來描述 iterator 的型別:</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e36455594097374" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+std::map&lt;int, int&gt; m;
+for (std::map&lt;int, int&gt;::iterator i = m.begin(); i != m.end(); ++i) {
+  // ...
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e36455594097374-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36455594097374-2">2</div><div class="crayon-num" data-line="crayon-59d7699e36455594097374-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36455594097374-4">4</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e36455594097374-1"><span class="crayon-v">std</span><span class="crayon-o">::</span><span class="crayon-v">map</span><span class="crayon-o">&lt;</span><span class="crayon-t">int</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-t">int</span><span class="crayon-o">&gt;</span><span class="crayon-h"> </span><span class="crayon-v">m</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36455594097374-2"><span class="crayon-st">for</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">std</span><span class="crayon-o">::</span><span class="crayon-v">map</span><span class="crayon-o">&lt;</span><span class="crayon-t">int</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-t">int</span><span class="crayon-o">&gt;</span><span class="crayon-o">::</span><span class="crayon-i">iterator</span><span class="crayon-h"> </span><span class="crayon-v">i</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">m</span><span class="crayon-sy">.</span><span class="crayon-e">begin</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-v">i</span><span class="crayon-h"> </span><span class="crayon-o">!=</span><span class="crayon-h"> </span><span class="crayon-v">m</span><span class="crayon-sy">.</span><span class="crayon-st">end</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-o">++</span><span class="crayon-v">i</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-59d7699e36455594097374-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-c">// ...</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36455594097374-4"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0004 seconds] -->
+<p>但有了 auto 之後，你可以輕鬆地這樣寫: [1]</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e36457530554065" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+for (auto i = m.begin(); i != m.end(); ++i) {
+  // ...
+};</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e36457530554065-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36457530554065-2">2</div><div class="crayon-num" data-line="crayon-59d7699e36457530554065-3">3</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e36457530554065-1"><span class="crayon-st">for</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-i">auto</span><span class="crayon-h"> </span><span class="crayon-v">i</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">m</span><span class="crayon-sy">.</span><span class="crayon-e">begin</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-v">i</span><span class="crayon-h"> </span><span class="crayon-o">!=</span><span class="crayon-h"> </span><span class="crayon-v">m</span><span class="crayon-sy">.</span><span class="crayon-st">end</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-o">++</span><span class="crayon-v">i</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36457530554065-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-c">// ...</span></div><div class="crayon-line" id="crayon-59d7699e36457530554065-3"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>C++11 引進了 auto 關鍵字 [2] 來作自動的型別推斷，請注意它只是"推斷"，該變數本身還是有一個型別，auto 的功用並非將 C++ 推向弱型別的語言。auto 在使用上雖然仍有些限制 (譬如無法乾淨俐落地<a href="https://web.archive.org/web/20171006113234/http://stackoverflow.com/questions/15233188/how-do-i-get-a-const-iterator-using-auto">用 auto 得到 const_iterator</a>)<br/>
+但在大部分情況下我們還是能從中得到許多好處，甚至連 return type 都可以用 auto 來表示。</p>
+<h2>static_assert</h2>
+<p>在防禦式程式設計 (Defensive Programming) 中，我們常常需要對各種輸入輸出參數做檢查，而為了減少 runtime overhead，一般會用 assert 對 debug 版本做檢查。有些檢查可以提前在 compile time 完成，譬如某個寫死的表格的大小應該等於某個特定值。聰明的工程師們利用 macro 寫出各種 compile time 的assert function，但 macro 始終是危險的玩意兒，所以 C++11 從語言層面加入了 compile time assertion: static_assert。舉例來說，在 dom/indexedDB/OpenDatabaseHelper.cpp 你可以看到這樣的 static_assert 使用：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e36459094171767" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+// The schema version we store in the SQLite database is a (signed) 32-bit
+// integer. The major version is left-shifted 4 bits so the max value is
+// 0xFFFFFFF. The minor version occupies the lower 4 bits and its max is 0xF.
+static_assert(kMajorSchemaVersion &lt;= 0xFFFFFFF,
+              "Major version needs to fit in 28 bits.");
+static_assert(kMinorSchemaVersion &lt;= 0xF,
+              "Minor version needs to fit in 4 bits.");</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e36459094171767-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36459094171767-2">2</div><div class="crayon-num" data-line="crayon-59d7699e36459094171767-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36459094171767-4">4</div><div class="crayon-num" data-line="crayon-59d7699e36459094171767-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36459094171767-6">6</div><div class="crayon-num" data-line="crayon-59d7699e36459094171767-7">7</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e36459094171767-1"><span class="crayon-c">// The schema version we store in the SQLite database is a (signed) 32-bit</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36459094171767-2"><span class="crayon-c">// integer. The major version is left-shifted 4 bits so the max value is</span></div><div class="crayon-line" id="crayon-59d7699e36459094171767-3"><span class="crayon-c">// 0xFFFFFFF. The minor version occupies the lower 4 bits and its max is 0xF.</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36459094171767-4"><span class="crayon-e">static_assert</span><span class="crayon-sy">(</span><span class="crayon-v">kMajorSchemaVersion</span><span class="crayon-h"> </span><span class="crayon-o">&lt;=</span><span class="crayon-h"> </span><span class="crayon-cn">0xFFFFFFF</span><span class="crayon-sy">,</span></div><div class="crayon-line" id="crayon-59d7699e36459094171767-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-s">"Major version needs to fit in 28 bits."</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36459094171767-6"><span class="crayon-e">static_assert</span><span class="crayon-sy">(</span><span class="crayon-v">kMinorSchemaVersion</span><span class="crayon-h"> </span><span class="crayon-o">&lt;=</span><span class="crayon-h"> </span><span class="crayon-cn">0xF</span><span class="crayon-sy">,</span></div><div class="crayon-line" id="crayon-59d7699e36459094171767-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-s">"Minor version needs to fit in 4 bits."</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p></p>
+<h2>rvalue reference</h2>
+<p>rvalue reference 可能是 C++11 的新標準中最讓人難以理解的一項，它通常會伴隨著 move semantics 這概念而出現。為了幫助理解，我們從 move semantics 出發。考慮以下 function：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e3645d828129744" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+std::vector&lt;int&gt; createVectorWithOnes(int num) {
+  return std::vector&lt;int&gt;(num, 1);
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e3645d828129744-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e3645d828129744-2">2</div><div class="crayon-num" data-line="crayon-59d7699e3645d828129744-3">3</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e3645d828129744-1"><span class="crayon-v">std</span><span class="crayon-o">::</span><span class="crayon-v">vector</span><span class="crayon-o">&lt;</span><span class="crayon-t">int</span><span class="crayon-o">&gt;</span><span class="crayon-h"> </span><span class="crayon-e">createVectorWithOnes</span><span class="crayon-sy">(</span><span class="crayon-t">int</span><span class="crayon-h"> </span><span class="crayon-v">num</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e3645d828129744-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">return</span><span class="crayon-h"> </span><span class="crayon-v">std</span><span class="crayon-o">::</span><span class="crayon-v">vector</span><span class="crayon-o">&lt;</span><span class="crayon-t">int</span><span class="crayon-o">&gt;</span><span class="crayon-sy">(</span><span class="crayon-v">num</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">1</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-59d7699e3645d828129744-3"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p>不考慮任何的 RVO (Return Value Optimization)，以下的一行 function call</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e3645f349046453" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+std::vector&lt;int&gt; v = createVectorWithOnes(10000);</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e3645f349046453-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e3645f349046453-1"><span class="crayon-v">std</span><span class="crayon-o">::</span><span class="crayon-v">vector</span><span class="crayon-o">&lt;</span><span class="crayon-t">int</span><span class="crayon-o">&gt;</span><span class="crayon-h"> </span><span class="crayon-v">v</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">createVectorWithOnes</span><span class="crayon-sy">(</span><span class="crayon-cn">10000</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>在 C++03 總共會做一次 constructor，兩次 copy constructor。</p>
+<p>但這兩次複製真的有必要的嗎? 在 std::vector 內部的實作，必定是有個指標指向一塊記憶體。對於普通的複製行為，我們無法只複製指標 (shallow copy) 而必需要整塊複製被指向的記憶體 (deep copy)。然而以上的動作，與其說是"複製"，不如說是"移動”。你可以想像在過程當中被呼叫的兩次 copy constructor 的參數都是暫存物件，一旦離開了 constructor，就再沒人能碰觸的到它並會被立即釋放。面對這種特別的"移動"的語意，我們大可以放膽地"偷"暫存物件的內容，也就是只複製指標 (以及一些 meta data)。所以在 C++11 的 <a href="https://web.archive.org/web/20171006113234/http://www.cplusplus.com/reference/vector/vector/vector/">std::vector constructors</a> 中我們可以看到所謂 move constructor：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e36462376925423" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+vector(vector&amp;&amp; x)</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e36462376925423-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e36462376925423-1"><span class="crayon-e">vector</span><span class="crayon-sy">(</span><span class="crayon-v">vector</span><span class="crayon-o">&amp;&amp;</span><span class="crayon-h"> </span><span class="crayon-v">x</span><span class="crayon-sy">)</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>連續的兩個 &amp;&amp; 代表 x 是一個 rvalue reference。我們可以簡單地理解 rvalue 為暫存物件，它不具名且稍縱即逝。Compiler 會在適當的時機喚起這個版本的 constructor，在裡面你就可以盡情地偷竊並榨乾 x 裡的內容而不必感到罪惡!</p>
+<p>另一個解讀 move semantics 的方法，就是所有權的轉移 (ownership transfer)，這也是 Gecko 裡用到 rvalue reference 的地方之一：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e36464802307382" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+nsAutoPtr( nsAutoPtr&amp;&amp; aSmartPtr )
+  : mRawPtr( aSmartPtr.forget() )
+// Construct by transferring ownership from another smart pointer.
+{
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e36464802307382-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36464802307382-2">2</div><div class="crayon-num" data-line="crayon-59d7699e36464802307382-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36464802307382-4">4</div><div class="crayon-num" data-line="crayon-59d7699e36464802307382-5">5</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e36464802307382-1"><span class="crayon-e">nsAutoPtr</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-v">nsAutoPtr</span><span class="crayon-o">&amp;&amp;</span><span class="crayon-h"> </span><span class="crayon-i">aSmartPtr</span><span class="crayon-h"> </span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36464802307382-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-e">mRawPtr</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-v">aSmartPtr</span><span class="crayon-sy">.</span><span class="crayon-e">forget</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">)</span></div><div class="crayon-line" id="crayon-59d7699e36464802307382-3"><span class="crayon-c">// Construct by transferring ownership from another smart pointer.</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36464802307382-4"><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-59d7699e36464802307382-5"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>Auto pointer 通常蘊含著某個物件指標的"唯一所有權"，正因為是"唯一所有權"，所以只有"轉移"而沒有"複製"這回事。類似的唯一所有權概念也發生在 thread object 身上。在 C++03 時代，我們沒有 rvalue reference，對於 auto pointer 只能提供 copy constructor 並且禱告使用者不要在所有權轉移後，繼續使用原先已故的 auto pointer。有了 rvalue reference，我們就可以只提供 move constructor，防止使用者無意間轉移了所有權仍持續使用無效的auto pointer。</p>
+<h2>final / override</h2>
+<p>既然 C++ 是物件導向的程式語言，繼承以及多型必定是最常被使用到的特性之一。然而過具彈性的 C++ 語法，常常讓使用者能做出原設計者預期外的行為。像是繼承某些先天就不是設計成被用來繼承的class，如 std::string 和 std::vector。在 C++03 你無法防止 class 被繼承，C++11 加進了關鍵字 final，來提示 compiler 以及 programmer 這個 class 不允許被繼承。final 除了用來防止 class 被繼承外，也能用來提示某個 virtual function 不應該被覆寫 (override)。這裡其實有些矛盾存在: 如果你不希望一個 function 被 override, 為何還要宣告它為 virtual function? C++ 之父同樣地提出了<a href="https://web.archive.org/web/20171006113234/http://stroustrup.com/C++11FAQ.html#final">這個問題</a></p>
+<p>至於另一個關鍵字 override，則是用來提示 compiler 這個 function 應該要 override 某個 parent class 的版本。這點在龐大的繼承體系下尤其重要，可以用來避免因為少打或打錯一兩個字而沒有提供到 overridden 的行為。舉例來說 accessible/src/html/HTMLFormControlAccessible.h</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e36466829489650" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+class HTMLRangeAccessible : public LeafAccessible
+{
+  ...
+  virtual double MaxValue() const MOZ_OVERRIDE;
+  ...
+};</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e36466829489650-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36466829489650-2">2</div><div class="crayon-num" data-line="crayon-59d7699e36466829489650-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36466829489650-4">4</div><div class="crayon-num" data-line="crayon-59d7699e36466829489650-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36466829489650-6">6</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e36466829489650-1"><span class="crayon-t">class</span><span class="crayon-h"> </span><span class="crayon-v">HTMLRangeAccessible</span><span class="crayon-h"> </span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-m">public</span><span class="crayon-h"> </span><span class="crayon-e">LeafAccessible</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36466829489650-2"><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-59d7699e36466829489650-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36466829489650-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">virtual </span><span class="crayon-t">double</span><span class="crayon-h"> </span><span class="crayon-e">MaxValue</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-m">const</span><span class="crayon-h"> </span><span class="crayon-v">MOZ_OVERRIDE</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-59d7699e36466829489650-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36466829489650-6"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>這裡可以加上 MOZ_OVERRIDE (也就是 override 的 macro ) 用來提示 compiler 該 virtual function 將會 override LeafAccessible::MaxValue。反之如果你不小心手滑打成</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e3646c119408798" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+class HTMLRangeAccessible : public LeafAccessible
+{
+  ...
+  virtual double MaxValue() MOZ_OVERRIDE; // |const| is missing!
+  ...
+};</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e3646c119408798-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e3646c119408798-2">2</div><div class="crayon-num" data-line="crayon-59d7699e3646c119408798-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e3646c119408798-4">4</div><div class="crayon-num" data-line="crayon-59d7699e3646c119408798-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e3646c119408798-6">6</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e3646c119408798-1"><span class="crayon-t">class</span><span class="crayon-h"> </span><span class="crayon-v">HTMLRangeAccessible</span><span class="crayon-h"> </span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-m">public</span><span class="crayon-h"> </span><span class="crayon-e">LeafAccessible</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e3646c119408798-2"><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-59d7699e3646c119408798-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e3646c119408798-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">virtual </span><span class="crayon-t">double</span><span class="crayon-h"> </span><span class="crayon-e">MaxValue</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-v">MOZ_OVERRIDE</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-c">// |const| is missing!</span></div><div class="crayon-line" id="crayon-59d7699e3646c119408798-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e3646c119408798-6"><span class="crayon-sy">}</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p>你就會得到一個 compile error 而知道自己不小心打錯囉！</p>
+<p>而在 Gecko 裡，為了不同編譯器間相容性的問題，我們使用 MOZ_FINAL 以及 MOZ_OVERRIDE 這兩個 macro 來取代 final/override 的使用。</p>
+<h2>default / delete</h2>
+<p>當你在建構一個 C++ 物件時，如果你不主動實作以下四個function: copy constructor、default constructor、destructor 以及 copy assignment operator，它們會被 compiler 自動產生。有時候我們不希望 compiler 那麼雞婆，譬如我們希望某個 class 無法被複製，最常見的方法就是將 copy constructor 和 copy assignment operator 宣告為 private 且不提供實作。這是個好方法，唯一的缺點是在 link time 才會得到 error。 C++11 加進了 default 和 delete 關鍵字對 compiler-generated function 有了更細部的控制。以上述的例子來看，只要將 copy constructor 和 copy assignment operator 後加上 &#8220;delete"，compiler 就不會自動產生這兩個 function 的實作，一旦被明確或是隱式地使用，你也可在 compile time 就得到錯誤訊息及早治療。與 delete 相對的是 default，用來告訴 compiler 我就是希望你幫我產生一個預設版本。 delete 不僅可用在上述四個可能會被自動產生的 function，還可用來修飾任意 function 防止其被呼叫。甚麼情況你會宣告 function 卻不希望被呼叫呢？假設你定義了以下 function：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e3646f687518369" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+void f(int) { /* ... */ }</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e3646f687518369-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e3646f687518369-1"><span class="crayon-t">void</span><span class="crayon-h"> </span><span class="crayon-e">f</span><span class="crayon-sy">(</span><span class="crayon-t">int</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span><span class="crayon-h"> </span><span class="crayon-c">/* ... */</span><span class="crayon-h"> </span><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>以下的用法都可以經過編譯</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e36471286460523" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+f(0);   // (1) OK. No conversion
+f('c'); // (2) OK. |char| implicitly converted to |int|
+f(0.5); // (3) OK. |float| implicitly converted to |int|</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e36471286460523-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36471286460523-2">2</div><div class="crayon-num" data-line="crayon-59d7699e36471286460523-3">3</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e36471286460523-1"><span class="crayon-e">f</span><span class="crayon-sy">(</span><span class="crayon-cn">0</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-c">// (1) OK. No conversion</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36471286460523-2"><span class="crayon-e">f</span><span class="crayon-sy">(</span><span class="crayon-s">'c'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-c">// (2) OK. |char| implicitly converted to |int|</span></div><div class="crayon-line" id="crayon-59d7699e36471286460523-3"><span class="crayon-e">f</span><span class="crayon-sy">(</span><span class="crayon-cn">0.5</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-c">// (3) OK. |float| implicitly converted to |int|</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>可能某些原因，你不希望隱式的型別轉換發生，在 C++03 你只能故技重施宣告一個多載 (overloading) 的版本而不定義它. 而在 C++11 你可以這樣作：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e36472335651182" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+void f(char) = delete;
+void f(float) = delete;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e36472335651182-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36472335651182-2">2</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e36472335651182-1"><span class="crayon-t">void</span><span class="crayon-h"> </span><span class="crayon-e">f</span><span class="crayon-sy">(</span><span class="crayon-t">char</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">delete</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36472335651182-2"><span class="crayon-t">void</span><span class="crayon-h"> </span><span class="crayon-e">f</span><span class="crayon-sy">(</span><span class="crayon-t">float</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">delete</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>來讓 compiler 在 compile time 就幫你檢查是否有人違法呼叫這個 function。</p>
+<h2>Right angle bracket</h2>
+<p>C++11 前的 compiler parsing rule 上有個著名的 bug, 就是 &gt;&gt; 永遠會被解讀為 right shift operator。所以以下語法</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e36474969189167" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+std::vector&lt;std::vector&lt;int&gt;&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e36474969189167-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e36474969189167-1"><span class="crayon-v">std</span><span class="crayon-o">::</span><span class="crayon-v">vector</span><span class="crayon-o">&lt;</span><span class="crayon-v">std</span><span class="crayon-o">::</span><span class="crayon-v">vector</span><span class="crayon-o">&lt;</span><span class="crayon-t">int</span><span class="crayon-o">&gt;&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p>的最後兩個 &gt;&gt; 會被優先解讀為 right shift operator 而導致 compile error. C++11 修正了這個 bug，所以我們再也不用寫出std::vector&lt;std::vector&lt;int&gt; &gt; 這種奇怪的code啦！</p>
+<p>以上僅列舉部份 C++11 在 Gecko 裡的使用, 完整的 C++11 清單可參考 <a href="https://web.archive.org/web/20171006113234/http://en.wikipedia.org/wiki/C++11">wiki</a> 或是免費的 <a href="https://web.archive.org/web/20171006113234/http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf"> draft。</a></p>
+<p>&nbsp;</p>
+<p>[1] C++11 有所謂的 range-based for loop，所以這裡的 for loop 可以更進一步簡化成</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d7699e36476596513079" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+for (auto i : m) {
+  // ...
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d7699e36476596513079-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d7699e36476596513079-2">2</div><div class="crayon-num" data-line="crayon-59d7699e36476596513079-3">3</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d7699e36476596513079-1"><span class="crayon-st">for</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-i">auto</span><span class="crayon-h"> </span><span class="crayon-v">i</span><span class="crayon-h"> </span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">m</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d7699e36476596513079-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-c">// ...</span></div><div class="crayon-line" id="crayon-59d7699e36476596513079-3"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>不過根據<a href="https://web.archive.org/web/20171006113234/https://developer.mozilla.org/en-US/docs/Using_CXX_in_Mozilla_code">這篇文章</a>，gecko 裡不允許使用 range-based for loop。</p>
+<p>[2] C++98 就存在關鍵字 auto 作為 storage class specifier，簡單的說就是 local variable，由於 C++ 預設就是 auto，所以幾乎是沒有機會用到。</p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/category/b2g" rel="category tag">Firefox OS(B2G)</a>      </div>
+    </footer> 
+    </article><!-- #post-4204 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&amp;hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+			<h3 id="comments-title">
+			共 6 則讀者回應
+		</h3>
+
+		
+		<ol class="commentlist">
+				<li class="comment byuser comment-author-cyumozilla-com even thread-even depth-1" id="li-comment-484">
+		<article id="comment-484" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img src="https://web.archive.org/web/20171006113234im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg" alt="" class="avatar user-18-avatar" width="40" height="40"/>										<cite class="fn">阿不拉</cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko#comment-484"><time pubdate datetime="2014-04-14T19:55:02+00:00">
+					2014 年 04 月 14 日 下午 07:55					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p><a href="https://web.archive.org/web/20171006113234/https://bugzilla.mozilla.org/show_bug.cgi?id=921563#c1" rel="nofollow">https://bugzilla.mozilla.org/show_bug.cgi?id=921563#c1</a> 有關於 IPC code generator 為什麼要使用 auto 的理由</p>
+</div>
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko?replytocom=484#respond" onclick="return addComment.moveForm( &quot;comment-484&quot;, &quot;484&quot;, &quot;respond&quot;, &quot;4204&quot; )" aria-label="回覆 阿不拉">回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-488">
+		<article id="comment-488" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt="" src="https://web.archive.org/web/20171006113234im_/http://2.gravatar.com/avatar/bb6fa9733bef5b0de15f529814564a9e?s=40&amp;d=mm&amp;r=g" srcset="https://web.archive.org/web/20171006113234im_/http://2.gravatar.com/avatar/bb6fa9733bef5b0de15f529814564a9e?s=80&amp;d=mm&amp;r=g 2x" class="avatar avatar-40 photo" height="40" width="40"/>										<cite class="fn"><a href="https://web.archive.org/web/20171006113234/http://about.me/littleq" rel="external nofollow" class="url">Colin Su</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko#comment-488"><time pubdate datetime="2014-04-15T14:53:17+00:00">
+					2014 年 04 月 15 日 下午 02:53					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>問個問題，如果我在 return type 上面用了 auto，我是不是可以回傳不同的 type？auto 的判定是在 runtime 做還是 compile time 做？</p>
+</div>
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko?replytocom=488#respond" onclick="return addComment.moveForm( &quot;comment-488&quot;, &quot;488&quot;, &quot;respond&quot;, &quot;4204&quot; )" aria-label="回覆 Colin Su">回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	<ul class="children">
+	<li class="comment even depth-2" id="li-comment-489">
+		<article id="comment-489" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt="" src="https://web.archive.org/web/20171006113234im_/http://2.gravatar.com/avatar/83bf60a5fe08aebd22f560cef939aa17?s=40&amp;d=mm&amp;r=g" srcset="https://web.archive.org/web/20171006113234im_/http://2.gravatar.com/avatar/83bf60a5fe08aebd22f560cef939aa17?s=80&amp;d=mm&amp;r=g 2x" class="avatar avatar-40 photo" height="40" width="40"/>										<cite class="fn">鶴</cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko#comment-489"><time pubdate datetime="2014-04-15T18:04:44+00:00">
+					2014 年 04 月 15 日 下午 06:04					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>auto 用作 return type 稍微有點不一樣, 除了語法外, 和傳統 return type 唯一的差別是因為型別寫在後面, compiler parse 到你型別時你已經跟 function 同 scope, 所以你獲得少寫一點 code 的機會, 譬如: <a href="https://web.archive.org/web/20171006113234/http://www.cprogramming.com/c++11/c++11-auto-decltype-return-value-after-function.html" rel="nofollow">http://www.cprogramming.com/c++11/c++11-auto-decltype-return-value-after-function.html</a> (search for &#8220;New Return Value Syntax")</p>
+<p>另外 auto 是 compile time 發生的事~</p>
+</div>
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko?replytocom=489#respond" onclick="return addComment.moveForm( &quot;comment-489&quot;, &quot;489&quot;, &quot;respond&quot;, &quot;4204&quot; )" aria-label="回覆 鶴">回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+	<li class="comment odd alt thread-even depth-1" id="li-comment-29089">
+		<article id="comment-29089" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt="" src="https://web.archive.org/web/20171006113234im_/http://1.gravatar.com/avatar/7159f555f64a720dab715189fc87e5d8?s=40&amp;d=mm&amp;r=g" srcset="https://web.archive.org/web/20171006113234im_/http://1.gravatar.com/avatar/7159f555f64a720dab715189fc87e5d8?s=80&amp;d=mm&amp;r=g 2x" class="avatar avatar-40 photo" height="40" width="40"/>										<cite class="fn">Haung</cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko#comment-29089"><time pubdate datetime="2015-03-20T21:55:07+00:00">
+					2015 年 03 月 20 日 下午 09:55					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>帥哥原PO安安 &gt;///&lt;<br/>
+我最近想突然寫個開源簡報軟體 (生出來的簡報檔案是網頁)，<br/>
+有想到要用摸資拉的 Gecko、XUL 來開發，不過 Document 好少 Q.Q<br/>
+請問你工作的時候都是看什麼文檔？</p>
+</div>
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko?replytocom=29089#respond" onclick="return addComment.moveForm( &quot;comment-29089&quot;, &quot;29089&quot;, &quot;respond&quot;, &quot;4204&quot; )" aria-label="回覆 Haung">回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+	<li class="comment even thread-odd thread-alt depth-1" id="li-comment-74884">
+		<article id="comment-74884" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt="" src="https://web.archive.org/web/20171006113234im_/http://0.gravatar.com/avatar/0bb30f6a12a63c547859f8520f9e9d1d?s=40&amp;d=mm&amp;r=g" srcset="https://web.archive.org/web/20171006113234im_/http://0.gravatar.com/avatar/0bb30f6a12a63c547859f8520f9e9d1d?s=80&amp;d=mm&amp;r=g 2x" class="avatar avatar-40 photo" height="40" width="40"/>										<cite class="fn"><a href="https://web.archive.org/web/20171006113234/http://iiwahiqtvjm.com/" rel="external nofollow" class="url">Eddie</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko#comment-74884"><time pubdate datetime="2016-05-13T12:19:53+00:00">
+					2016 年 05 月 13 日 下午 12:19					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>I always trying to find valuable data on web. Internet is actually my no. in gaenirthg realiable data. This is certainly one of better website for this. Hands up for managment words below.</p>
+</div>
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko?replytocom=74884#respond" onclick="return addComment.moveForm( &quot;comment-74884&quot;, &quot;74884&quot;, &quot;respond&quot;, &quot;4204&quot; )" aria-label="回覆 Eddie">回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-even depth-1" id="li-comment-121172">
+		<article id="comment-121172" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt="" src="https://web.archive.org/web/20171006113234im_/http://0.gravatar.com/avatar/c43dd62741acc04a964db80172d017d0?s=40&amp;d=mm&amp;r=g" srcset="https://web.archive.org/web/20171006113234im_/http://0.gravatar.com/avatar/c43dd62741acc04a964db80172d017d0?s=80&amp;d=mm&amp;r=g 2x" class="avatar avatar-40 photo" height="40" width="40"/>										<cite class="fn"><a href="https://web.archive.org/web/20171006113234/http://insurevehicles.imahillbilly.com/non_owner_car_insurance_in_california.xml" rel="external nofollow" class="url">http://insurevehicles.imahillbilly.com/non_owner_car_insurance_in_california.xml</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko#comment-121172"><time pubdate datetime="2016-07-20T22:30:25+00:00">
+					2016 年 07 月 20 日 下午 10:30					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>You have to their younger counterparts. Apart from this article to learn statisticalfor the same coverage or they simply want to know if there is no way mean poor quality. Instead, insurance providers that give the insurance company has many satisfied customers. thatalso good options which you can look appealing because of their &#8220;driving" needs as well as anti-theft devices, you could afford the expenses regardless of fault. Comprehensive insurance goes up, driverwith regard to insurance companies, seeking out information for example are easily available online, and it gives tax advantaged status to cars that you should be able to save you farquickest way to know the car indemnity rate from any witnesses, any passengers in the past, how old you are, the less risky when they drive faster, you can be littleYou will get pieces of furniture would look at consolidating your auto insurance agents. As an example, the insured can be the rule. This is called &#8220;fronting" and in no Itrate a driver&#8217;s education course. These are the top MD car insurance rates must be careful in selecting insurance from the same types of health related complication. So you do dropnew lower rate but this is that most drivers attend traffic school is usually a 6 month period. It is lovely to live in a cheaper premium. To bring the ofyour business.</p>
+</div>
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko?replytocom=121172#respond" onclick="return addComment.moveForm( &quot;comment-121172&quot;, &quot;121172&quot;, &quot;respond&quot;, &quot;4204&quot; )" aria-label="回覆 http://insurevehicles.imahillbilly.com/non_owner_car_insurance_in_california.xml">回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+		</ol>
+
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/web/20171006113234/http://tech.mozilla.com.tw/posts/4204/c11-%E8%88%87-gecko#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required="true" required="required"/></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required="true" required="required"/></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200"/></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表"/> <input type="hidden" name="comment_post_ID" value="4204" id="comment_post_ID"/>
+<input type="hidden" name="comment_parent" id="comment_parent" value="0"/>
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="a9ffb63e7c"/></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="177"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class="name-title"><a class="profile-link" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/author/hchangmozilla-com"><span class="gravatar left"><img src="https://web.archive.org/web/20171006113234im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg" alt="" class="avatar user-90-avatar" width="48" height="48"/></span><span class="name">鶴鶴鶴鶴鶴鶴鶴鶴</span></a></span><pre class="bio no-style">擅長 C++，從事 
+Firefox OS 的 Gecko開發</pre><p class="contact"></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="33" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/author/pwangmozilla-com"><img src="https://web.archive.org/web/20171006113234im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg" alt="" class="avatar user-33-avatar" width="96" height="96"/></a><a data-author-id="90" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/author/hchangmozilla-com"><img src="https://web.archive.org/web/20171006113234im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg" alt="" class="avatar user-90-avatar" width="96" height="96"/></a><a data-author-id="52" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/author/etsengmozilla-com"><img src="https://web.archive.org/web/20171006113234im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg" alt="" class="avatar user-52-avatar" width="96" height="96"/></a><a data-author-id="43" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/author/atsaimozilla-com"><img src="https://web.archive.org/web/20171006113234im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg" alt="" class="avatar user-43-avatar" width="96" height="96"/></a><a data-author-id="59" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/author/pyangmozilla-com"><img src="https://web.archive.org/web/20171006113234im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg" alt="" class="avatar user-59-avatar" width="96" height="96"/></a><a data-author-id="60" href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/author/gasolinmozilla-com"><img src="https://web.archive.org/web/20171006113234im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg" alt="" class="avatar user-60-avatar" width="96" height="96"/></a></div><a class="more" href="/web/20171006113234/http://tech.mozilla.com.tw/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s"/>
+					<input type="submit" id="searchsubmit" value="搜尋"/>
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://web.archive.org/web/20171006113234if_/https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&amp;opaque=True&amp;hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://web.archive.org/web/20171006113234/https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://web.archive.org/web/20171006113234/https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="https://web.archive.org/web/20171006113234/http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="https://web.archive.org/web/20171006113234/http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="https://web.archive.org/web/20171006113234/http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/category/css">CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/category/firefox">Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/category/b2g">Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/category/interaction-design">Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/category/javascript">Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/category/life-at-mozilla">Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/category/mozilla">Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/category/open-source">Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://web.archive.org/web/20171006113234/http://tech.mozilla.com.tw/posts/category/ux">UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;">
+			
+			<option value="">選擇月份</option>
+				<option value="http://tech.mozilla.com.tw/posts/date/2016/05"> 2016 年 五月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2016/02"> 2016 年 二月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/07"> 2015 年 七月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/06"> 2015 年 六月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/05"> 2015 年 五月 &nbsp;(2)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/04"> 2015 年 四月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/03"> 2015 年 三月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/02"> 2015 年 二月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/01"> 2015 年 一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/12"> 2014 年 十二月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/11"> 2014 年 十一月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/10"> 2014 年 十月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/09"> 2014 年 九月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/08"> 2014 年 八月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/07"> 2014 年 七月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/05"> 2014 年 五月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/04"> 2014 年 四月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/03"> 2014 年 三月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/02"> 2014 年 二月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/01"> 2014 年 一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/12"> 2013 年 十二月 &nbsp;(6)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/11"> 2013 年 十一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/10"> 2013 年 十月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/09"> 2013 年 九月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/08"> 2013 年 八月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/07"> 2013 年 七月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/06"> 2013 年 六月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/05"> 2013 年 五月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/04"> 2013 年 四月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/03"> 2013 年 三月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/02"> 2013 年 二月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/01"> 2013 年 一月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/12"> 2012 年 十二月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/11"> 2012 年 十一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/10"> 2012 年 十月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/09"> 2012 年 九月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/08"> 2012 年 八月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/07"> 2012 年 七月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/06"> 2012 年 六月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/05"> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="https://web.archive.org/web/20171006113234/http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/web/20171006113234js_/http://tech.mozilla.com.tw/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/web/20171006113234js_/http://tech.mozilla.com.tw/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/web/20171006113234js_/http://tech.mozilla.com.tw/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/web/20171006113234js_/http://tech.mozilla.com.tw/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://web.archive.org/web/20171006113234js_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://web.archive.org/web/20171006113234js_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//web.archive.org/web/20171006113234/http://connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://web.archive.org/web/20171006113234/https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://web.archive.org/web/20171006113234js_/https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>
+<!--
+     FILE ARCHIVED ON 11:32:34 Oct 06, 2017 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 11:47:49 May 09, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 0.615
+  exclusion.robots: 0.063
+  exclusion.robots.policy: 0.052
+  esindex: 0.011
+  cdx.remote: 11.682
+  LoadShardBlock: 164.156 (3)
+  PetaboxLoader3.resolve: 390.6 (4)
+  PetaboxLoader3.datanode: 92.259 (4)
+  load_resource: 352.429
+  nav: 0.146 (6)
+-->

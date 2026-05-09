@@ -9,226 +9,319 @@
     "Firefox OS(B2G)",
     "Javascript"
   ],
-  "tags": [],
+  "tags": [
+    "Firefox OS(B2G)",
+    "Javascript"
+  ],
   "author": "sku",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=3330",
-  "archive_url": "https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/?p=3330",
-  "wayback_timestamp": "20200919192724",
-  "content_html": "<div class=\"entry-content close\">\n\t\t<p><a href=\"http://www.123rf.com/photo_8515474_3d-abstract-digital-code-connection.html\"><img class=\"alignnone size-medium wp-image-3329\" alt=\"8515474-3d-abstract-digital-code-connection\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg\" width=\"300\" height=\"225\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg 300w, https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-1024x768.jpg 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection.jpg 1200w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a> [1]</p>\n<p><!-- P { margin-bottom: 0.08in; } --><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">問：</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">常常我們會收到某些 </span></span>Gecko <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">的問題，但卻是 </span></span>log <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">不足或是可能需要在手機上摹擬某些特殊</span></span>/<span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">額外的資訊才有可能重現問題。而我們又確定這個問題，大概會從 </span></span>Gecko<span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\"> 的 JavaScript </span></span><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">檔案下手。但是，我又不想抓</span></span>/編譯程式碼<span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">，這個症狀可有解？</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">答：</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">有的！！的確是有方法可以透過不抓</span></span>/編譯程式碼<span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">的手續就可以把想做的事情達成的。</span></span></p>\n<p>(記得拿出一台 firefox OS 的機器邊看邊操作嘿，(啥，沒機器？？ 那就去\"買\"一台啊！！！！))</p>\n<p>&nbsp;</p>\n<p>首先，我們先確認一下，你所想看的部份的 log 有沒有打開 [2]。</p>\n<p>舉個 RIL (Radio Interface Layer) [3] 的例子來說，</p>\n<p>1. ril_consts.js</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f665b9c3687a469070352\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n// Set to true to debug all RIL layers\r\nthis.DEBUG_ALL = false;</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f665b9c3687a469070352-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b9c3687a469070352-2\">2</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f665b9c3687a469070352-1\"><span class=\"crayon-c\">// Set to true to debug all RIL layers</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b9c3687a469070352-2\"><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">DEBUG_ALL</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">false</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p>2. RadioInterfaceLayer.js</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f665b9c36884668663436\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n// Read debug setting from pref\r\nlet debugPref = false;\r\ntry {\r\n  debugPref = Services.prefs.getBoolPref(\"ril.debugging.enabled\");\r\n} catch(e) {\r\n  debugPref = false;\r\n}\r\nDEBUG = RIL.DEBUG_RIL || debugPref;</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f665b9c36884668663436-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b9c36884668663436-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f665b9c36884668663436-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b9c36884668663436-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f665b9c36884668663436-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b9c36884668663436-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f665b9c36884668663436-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b9c36884668663436-8\">8</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f665b9c36884668663436-1\"><span class=\"crayon-c\">// Read debug setting from pref</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b9c36884668663436-2\"><span class=\"crayon-e\">let </span><span class=\"crayon-v\">debugPref</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">false</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f665b9c36884668663436-3\"><span class=\"crayon-st\">try</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b9c36884668663436-4\"> <span class=\"crayon-h\"> </span><span class=\"crayon-v\">debugPref</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">Services</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">prefs</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">getBoolPref</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"ril.debugging.enabled\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f665b9c36884668663436-5\"><span class=\"crayon-sy\">}</span><span class=\"crayon-h\"> </span><span class=\"crayon-st\">catch</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b9c36884668663436-6\"> <span class=\"crayon-h\"> </span><span class=\"crayon-v\">debugPref</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">false</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f665b9c36884668663436-7\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b9c36884668663436-8\"><span class=\"crayon-v\">DEBUG</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">RIL</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">DEBUG_RIL</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">||</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">debugPref</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0003 seconds] -->\r\n<p>喔喔！ ril 相關的 log 沒開！！！！</p>\n<p>可是，還好有 preference 可以手動的去打開它。</p>\n<p>來吧~我們就來動手把它給打開吧。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f665b9c36887839573249\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n1.1 adb pull /system/b2g/defaults/pref/user.js /tmp\r\n1.2 把 ril.debugging.enabled 這個值修改成 true.\r\n      pref(\"ril.debugging.enabled\", true);\r\n1.3 adb remount\r\n1.3 adb push /tmp/user.js /system/b2g/defaults/pref/\r\n1.4 adb reboot</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f665b9c36887839573249-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b9c36887839573249-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f665b9c36887839573249-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b9c36887839573249-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f665b9c36887839573249-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b9c36887839573249-6\">6</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f665b9c36887839573249-1\"><span class=\"crayon-cn\">1.1</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-v\">pull</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">system</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">b2g</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">defaults</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">pref</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">user</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">js</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">tmp</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b9c36887839573249-2\"><span class=\"crayon-cn\">1.2</span><span class=\"crayon-h\"> </span>把<span class=\"crayon-h\"> </span><span class=\"crayon-v\">ril</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">debugging</span><span class=\"crayon-sy\">.</span><span class=\"crayon-i\">enabled</span><span class=\"crayon-h\"> </span>這個值修改成<span class=\"crayon-h\"> </span><span class=\"crayon-t\">true</span><span class=\"crayon-sy\">.</span></div><div class=\"crayon-line\" id=\"crayon-5f665b9c36887839573249-3\">     <span class=\"crayon-h\"> </span><span class=\"crayon-e\">pref</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"ril.debugging.enabled\"</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">true</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b9c36887839573249-4\"><span class=\"crayon-cn\">1.3</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-i\">remount</span></div><div class=\"crayon-line\" id=\"crayon-5f665b9c36887839573249-5\"><span class=\"crayon-cn\">1.3</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-v\">push</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">tmp</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">user</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">js</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">system</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">b2g</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">defaults</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">pref</span><span class=\"crayon-o\">/</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b9c36887839573249-6\"><span class=\"crayon-cn\">1.4</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-v\">reboot</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0003 seconds] -->\r\n<p>adb logcat 來看一下，是不是可以看到 &#8220;RadioInterfaceLayer\" 這個關鍵字出現在 log 裏面了呢(如下面的範例)？</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f665b9c3688a463350794\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nI/Gecko   (  107): -*- RadioInterfaceLayer: Registered mobileconnection target: [object ChromeMessageSender]\r\nI/Gecko   (  107): -*- RadioInterfaceLayer: Received 'RIL:RegisterIccMsg' message from content process\r\nI/Gecko   (  107): -*- RadioInterfaceLayer: Registered icc target: [object ChromeMessageSender]\r\nI/Gecko   (  107): -*- RadioInterfaceLayer: Received 'RIL:GetRilContext' message from content process\r\nI/Gecko   (  107): -*- RadioInterface[0]: Received message from worker: {\"voice\":{\"signalStrength\":-53,\"relSignalStrength\":100},\"data\":{\"signalStrength\":-53,\"relSignalStrength\":100},\"rilMessageType\":\"signalstrengthchange\"}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f665b9c3688a463350794-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b9c3688a463350794-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f665b9c3688a463350794-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b9c3688a463350794-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f665b9c3688a463350794-5\">5</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f665b9c3688a463350794-1\"><span class=\"crayon-v\">I</span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">Gecko</span>  <span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span> <span class=\"crayon-h\"> </span><span class=\"crayon-cn\">107</span><span class=\"crayon-sy\">)</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-o\">*</span><span class=\"crayon-o\">-</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">RadioInterfaceLayer</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">Registered </span><span class=\"crayon-e\">mobileconnection </span><span class=\"crayon-v\">target</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">[</span><span class=\"crayon-t\">object</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">ChromeMessageSender</span><span class=\"crayon-sy\">]</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b9c3688a463350794-2\"><span class=\"crayon-v\">I</span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">Gecko</span>  <span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span> <span class=\"crayon-h\"> </span><span class=\"crayon-cn\">107</span><span class=\"crayon-sy\">)</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-o\">*</span><span class=\"crayon-o\">-</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">RadioInterfaceLayer</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-i\">Received</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">'RIL:RegisterIccMsg'</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">message </span><span class=\"crayon-e\">from </span><span class=\"crayon-e\">content </span><span class=\"crayon-i\">process</span></div><div class=\"crayon-line\" id=\"crayon-5f665b9c3688a463350794-3\"><span class=\"crayon-v\">I</span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">Gecko</span>  <span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span> <span class=\"crayon-h\"> </span><span class=\"crayon-cn\">107</span><span class=\"crayon-sy\">)</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-o\">*</span><span class=\"crayon-o\">-</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">RadioInterfaceLayer</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">Registered </span><span class=\"crayon-e\">icc </span><span class=\"crayon-v\">target</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">[</span><span class=\"crayon-t\">object</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">ChromeMessageSender</span><span class=\"crayon-sy\">]</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b9c3688a463350794-4\"><span class=\"crayon-v\">I</span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">Gecko</span>  <span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span> <span class=\"crayon-h\"> </span><span class=\"crayon-cn\">107</span><span class=\"crayon-sy\">)</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-o\">*</span><span class=\"crayon-o\">-</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">RadioInterfaceLayer</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-i\">Received</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">'RIL:GetRilContext'</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">message </span><span class=\"crayon-e\">from </span><span class=\"crayon-e\">content </span><span class=\"crayon-i\">process</span></div><div class=\"crayon-line\" id=\"crayon-5f665b9c3688a463350794-5\"><span class=\"crayon-v\">I</span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">Gecko</span>  <span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span> <span class=\"crayon-h\"> </span><span class=\"crayon-cn\">107</span><span class=\"crayon-sy\">)</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-o\">*</span><span class=\"crayon-o\">-</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">RadioInterface</span><span class=\"crayon-sy\">[</span><span class=\"crayon-cn\">0</span><span class=\"crayon-sy\">]</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">Received </span><span class=\"crayon-e\">message </span><span class=\"crayon-e\">from </span><span class=\"crayon-v\">worker</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span><span class=\"crayon-s\">\"voice\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-sy\">{</span><span class=\"crayon-s\">\"signalStrength\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-o\">-</span><span class=\"crayon-cn\">53</span><span class=\"crayon-sy\">,</span><span class=\"crayon-s\">\"relSignalStrength\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">100</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span><span class=\"crayon-s\">\"data\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-sy\">{</span><span class=\"crayon-s\">\"signalStrength\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-o\">-</span><span class=\"crayon-cn\">53</span><span class=\"crayon-sy\">,</span><span class=\"crayon-s\">\"relSignalStrength\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">100</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span><span class=\"crayon-s\">\"rilMessageType\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-s\">\"signalstrengthchange\"</span><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0007 seconds] -->\r\n<p>&nbsp;</p>\n<p>這時候，你會問說，可是 我需要的資訊不是現有的 log 裏面就包含的。 那我該怎麼辦？？？</p>\n<p>我有沒有辦法不去編譯程式碼，同時變造一些資料好讓我可以做一些測試？</p>\n<p>那我們就來看下一個例子囉！！</p>\n<p>&nbsp;</p>\n<p><strong>舉個偽IMEI來當作範例。</strong></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">1. 確認當前 IMEI 為何。<br />\n</span></span></p>\n<p>進撥號畫面，輸入<strong>*#06#</strong> [4]，查看一下當下手機告訴你這台機器的 IMEI 是什麼！</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03.png\"><img class=\"alignnone size-medium wp-image-3331\" alt=\"2013-10-30-00-57-03\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03-200x300.png\" width=\"200\" height=\"300\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03-200x300.png 200w, https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03.png 320w\" sizes=\"(max-width: 200px) 100vw, 200px\" /></a></p>\n<p>2. 從手機中把需要的檔案拉出來：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f665b9c3688d839115406\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n 2.1 adb pull /system/b2g/omni.ja /tmp\r\n 2.2 cd tmp\r\n 2.3 unzip omni.ja\r\n 2.4 cd omni\r\n 2.5 find -name ril_worker.js</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f665b9c3688d839115406-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b9c3688d839115406-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f665b9c3688d839115406-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b9c3688d839115406-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f665b9c3688d839115406-5\">5</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f665b9c3688d839115406-1\"><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">2.1</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-v\">pull</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">system</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">b2g</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">omni</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">ja</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">tmp</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b9c3688d839115406-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">2.2</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">cd </span><span class=\"crayon-i\">tmp</span></div><div class=\"crayon-line\" id=\"crayon-5f665b9c3688d839115406-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">2.3</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">unzip </span><span class=\"crayon-v\">omni</span><span class=\"crayon-sy\">.</span><span class=\"crayon-i\">ja</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b9c3688d839115406-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">2.4</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">cd </span><span class=\"crayon-i\">omni</span></div><div class=\"crayon-line\" id=\"crayon-5f665b9c3688d839115406-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">2.5</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">find</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-e\">name </span><span class=\"crayon-v\">ril_worker</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">js</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0003 seconds] -->\r\n<p>&nbsp;</p>\n<p>3. 修改步驟2.5中所找到的檔案，將 IMEI 偽造成我們想要的資料：</p>\n<p>在此，我們將 IMEI 假造成為\"123456789012345&#8243;。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified.png\"><img class=\"alignnone size-medium wp-image-3332\" alt=\"modified\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified-300x100.png\" width=\"300\" height=\"100\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified-300x100.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified.png 767w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a></p>\n<p>&nbsp;</p>\n<p>4. 打包/跟新檔案：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f665b9c36890679474040\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n4.1 zip -r omni.ja *\r\n4.2 adb remount\r\n4.3 adb push omni.ja /system/b2g\r\n4.3 adb reboot</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f665b9c36890679474040-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b9c36890679474040-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f665b9c36890679474040-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665b9c36890679474040-4\">4</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f665b9c36890679474040-1\"><span class=\"crayon-cn\">4.1</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">zip</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-i\">r</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">omni</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e \">ja *</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b9c36890679474040-2\"><span class=\"crayon-cn\">4.2</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-i\">remount</span></div><div class=\"crayon-line\" id=\"crayon-5f665b9c36890679474040-3\"><span class=\"crayon-cn\">4.3</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-e\">push </span><span class=\"crayon-v\">omni</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">ja</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">system</span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">b2g</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665b9c36890679474040-4\"><span class=\"crayon-cn\">4.3</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-v\">reboot</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>&nbsp;</p>\n<p>5. 重新查詢 IMEI ：<br />\n<a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53.png\"><img class=\"alignnone size-medium wp-image-3344\" alt=\"2013-10-30-13-32-53\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53-200x300.png\" width=\"200\" height=\"300\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53-200x300.png 200w, https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53.png 320w\" sizes=\"(max-width: 200px) 100vw, 200px\" /></a></p>\n<p>完成了。。。 IMEI 被我們偽造成123456789012345了。</p>\n<p>修改 Gecko 裏面的 JavaScript 檔案，卻不重新 build code ，是不是相當的簡單呢？</p>\n<p>&nbsp;</p>\n<p>有沒有想試試看的東西了？</p>\n<p>還等什麼？快點去試一把吧！！</p>\n<p>&nbsp;</p>\n<p>註：</p>\n<p>請確定你所使用的機器是開發者的版本，並且取得 root 的權限，上面的步驟才玩的下去喔。</p>\n<p>參考資料：<br />\n[1] <a href=\"//www.123rf.com/photo_8515474_3d-abstract-digital-code-connection.html\">圖片來源 &#8211; http://www.123rf.com/photo_8515474_3d-abstract-digital-code-connection.html</a><br />\n[2] <a href=\"https://wiki.mozilla.org/B2G/QA/Tips_And_Tricks#Changing_preferences\">https://wiki.mozilla.org/B2G/QA/Tips_And_Tricks#Changing_preferences</a><br />\n[3] <a href=\"https://wiki.mozilla.org/B2G/RIL\">https://wiki.mozilla.org/B2G/RIL</a><br />\n[4] 3GPP TS 22.030 version 11.0.0 Release 11, 6.7 Presentation of IMEI</p>\n\t\t\t</div>",
+  "archive_url": "https://web.archive.org/web/20160325043716/https://tech.mozilla.com.tw/posts/3330/gecko-javascript-%e4%b9%8b-%e6%94%b9-code-%e5%8d%bb%e4%b8%8d-build-code-%e5%b0%8f%e5%be%91%e3%80%82",
+  "wayback_timestamp": "20160325043716",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p><a href=\"https://web.archive.org/web/20160325043716/http://www.123rf.com/photo_8515474_3d-abstract-digital-code-connection.html\"><img class=\"alignnone size-medium wp-image-3329\" alt=\"8515474-3d-abstract-digital-code-connection\" src=\"https://web.archive.org/web/20160325043716im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg\" width=\"300\" height=\"225\" srcset=\"https://web.archive.org/web/20160325043716im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg 300w, https://web.archive.org/web/20160325043716im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-1024x768.jpg 1024w, https://web.archive.org/web/20160325043716im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection.jpg 1200w\" sizes=\"(max-width: 300px) 100vw, 300px\"/></a> [1]</p>\n<p><!-- P { margin-bottom: 0.08in; } --><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">問：</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">常常我們會收到某些 </span></span>Gecko <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">的問題，但卻是 </span></span>log <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">不足或是可能需要在手機上摹擬某些特殊</span></span>/<span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">額外的資訊才有可能重現問題。而我們又確定這個問題，大概會從 </span></span>Gecko<span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\"> 的 JavaScript </span></span><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">檔案下手。但是，我又不想抓</span></span>/編譯程式碼<span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">，這個症狀可有解？</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">答：</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">有的！！的確是有方法可以透過不抓</span></span>/編譯程式碼<span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">的手續就可以把想做的事情達成的。</span></span></p>\n<p>(記得拿出一台 firefox OS 的機器邊看邊操作嘿，(啥，沒機器？？ 那就去\"買\"一台啊！！！！))</p>\n<p>&nbsp;</p>\n<p>首先，我們先確認一下，你所想看的部份的 log 有沒有打開 [2]。</p>\n<p>舉個 RIL (Radio Interface Layer) [3] 的例子來說，</p>\n<p>1. ril_consts.js</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-56f4c07cbcb74481757990\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n// Set to true to debug all RIL layers\nthis.DEBUG_ALL = false;</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcb74481757990-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56f4c07cbcb74481757990-2\">2</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-56f4c07cbcb74481757990-1\"><span class=\"crayon-c\">// Set to true to debug all RIL layers</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56f4c07cbcb74481757990-2\"><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">DEBUG_ALL</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">false</span><span class=\"crayon-sy\">;</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0006 seconds] -->\n<p>2. RadioInterfaceLayer.js</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-56f4c07cbcb84782458688\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n// Read debug setting from pref\nlet debugPref = false;\ntry {\n  debugPref = Services.prefs.getBoolPref(\"ril.debugging.enabled\");\n} catch(e) {\n  debugPref = false;\n}\nDEBUG = RIL.DEBUG_RIL || debugPref;</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcb84782458688-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56f4c07cbcb84782458688-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcb84782458688-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56f4c07cbcb84782458688-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcb84782458688-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56f4c07cbcb84782458688-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcb84782458688-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56f4c07cbcb84782458688-8\">8</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-56f4c07cbcb84782458688-1\"><span class=\"crayon-c\">// Read debug setting from pref</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56f4c07cbcb84782458688-2\"><span class=\"crayon-e\">let </span><span class=\"crayon-v\">debugPref</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">false</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-56f4c07cbcb84782458688-3\"><span class=\"crayon-st\">try</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56f4c07cbcb84782458688-4\"> <span class=\"crayon-h\"> </span><span class=\"crayon-v\">debugPref</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">Services</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">prefs</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">getBoolPref</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"ril.debugging.enabled\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-56f4c07cbcb84782458688-5\"><span class=\"crayon-sy\">}</span><span class=\"crayon-h\"> </span><span class=\"crayon-st\">catch</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56f4c07cbcb84782458688-6\"> <span class=\"crayon-h\"> </span><span class=\"crayon-v\">debugPref</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">false</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-56f4c07cbcb84782458688-7\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56f4c07cbcb84782458688-8\"><span class=\"crayon-v\">DEBUG</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">RIL</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">DEBUG_RIL</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">||</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">debugPref</span><span class=\"crayon-sy\">;</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0019 seconds] -->\n<p>喔喔！ ril 相關的 log 沒開！！！！</p>\n<p>可是，還好有 preference 可以手動的去打開它。</p>\n<p>來吧~我們就來動手把它給打開吧。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-56f4c07cbcb8f454830004\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n1.1 adb pull /system/b2g/defaults/pref/user.js /tmp\n1.2 把 ril.debugging.enabled 這個值修改成 true.\n      pref(\"ril.debugging.enabled\", true);\n1.3 adb remount\n1.3 adb push /tmp/user.js /system/b2g/defaults/pref/\n1.4 adb reboot</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcb8f454830004-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56f4c07cbcb8f454830004-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcb8f454830004-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56f4c07cbcb8f454830004-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcb8f454830004-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56f4c07cbcb8f454830004-6\">6</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-56f4c07cbcb8f454830004-1\"><span class=\"crayon-cn\">1.1</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-v\">pull</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">system</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">b2g</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">defaults</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">pref</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">user</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">js</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">tmp</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56f4c07cbcb8f454830004-2\"><span class=\"crayon-cn\">1.2</span><span class=\"crayon-h\"> </span>把<span class=\"crayon-h\"> </span><span class=\"crayon-v\">ril</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">debugging</span><span class=\"crayon-sy\">.</span><span class=\"crayon-i\">enabled</span><span class=\"crayon-h\"> </span>這個值修改成<span class=\"crayon-h\"> </span><span class=\"crayon-t\">true</span><span class=\"crayon-sy\">.</span></div><div class=\"crayon-line\" id=\"crayon-56f4c07cbcb8f454830004-3\">     <span class=\"crayon-h\"> </span><span class=\"crayon-e\">pref</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"ril.debugging.enabled\"</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">true</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56f4c07cbcb8f454830004-4\"><span class=\"crayon-cn\">1.3</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-i\">remount</span></div><div class=\"crayon-line\" id=\"crayon-56f4c07cbcb8f454830004-5\"><span class=\"crayon-cn\">1.3</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-v\">push</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">tmp</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">user</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">js</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">system</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">b2g</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">defaults</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">pref</span><span class=\"crayon-o\">/</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56f4c07cbcb8f454830004-6\"><span class=\"crayon-cn\">1.4</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-v\">reboot</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0025 seconds] -->\n<p>adb logcat 來看一下，是不是可以看到 &#8220;RadioInterfaceLayer\" 這個關鍵字出現在 log 裏面了呢(如下面的範例)？</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-56f4c07cbcb97914941328\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nI/Gecko   (  107): -*- RadioInterfaceLayer: Registered mobileconnection target: [object ChromeMessageSender]\nI/Gecko   (  107): -*- RadioInterfaceLayer: Received 'RIL:RegisterIccMsg' message from content process\nI/Gecko   (  107): -*- RadioInterfaceLayer: Registered icc target: [object ChromeMessageSender]\nI/Gecko   (  107): -*- RadioInterfaceLayer: Received 'RIL:GetRilContext' message from content process\nI/Gecko   (  107): -*- RadioInterface[0]: Received message from worker: {\"voice\":{\"signalStrength\":-53,\"relSignalStrength\":100},\"data\":{\"signalStrength\":-53,\"relSignalStrength\":100},\"rilMessageType\":\"signalstrengthchange\"}</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcb97914941328-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56f4c07cbcb97914941328-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcb97914941328-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56f4c07cbcb97914941328-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcb97914941328-5\">5</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-56f4c07cbcb97914941328-1\"><span class=\"crayon-v\">I</span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">Gecko</span>  <span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span> <span class=\"crayon-h\"> </span><span class=\"crayon-cn\">107</span><span class=\"crayon-sy\">)</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-o\">*</span><span class=\"crayon-o\">-</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">RadioInterfaceLayer</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">Registered </span><span class=\"crayon-e\">mobileconnection </span><span class=\"crayon-v\">target</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">[</span><span class=\"crayon-t\">object</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">ChromeMessageSender</span><span class=\"crayon-sy\">]</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56f4c07cbcb97914941328-2\"><span class=\"crayon-v\">I</span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">Gecko</span>  <span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span> <span class=\"crayon-h\"> </span><span class=\"crayon-cn\">107</span><span class=\"crayon-sy\">)</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-o\">*</span><span class=\"crayon-o\">-</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">RadioInterfaceLayer</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-i\">Received</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">'RIL:RegisterIccMsg'</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">message </span><span class=\"crayon-e\">from </span><span class=\"crayon-e\">content </span><span class=\"crayon-i\">process</span></div><div class=\"crayon-line\" id=\"crayon-56f4c07cbcb97914941328-3\"><span class=\"crayon-v\">I</span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">Gecko</span>  <span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span> <span class=\"crayon-h\"> </span><span class=\"crayon-cn\">107</span><span class=\"crayon-sy\">)</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-o\">*</span><span class=\"crayon-o\">-</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">RadioInterfaceLayer</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">Registered </span><span class=\"crayon-e\">icc </span><span class=\"crayon-v\">target</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">[</span><span class=\"crayon-t\">object</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">ChromeMessageSender</span><span class=\"crayon-sy\">]</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56f4c07cbcb97914941328-4\"><span class=\"crayon-v\">I</span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">Gecko</span>  <span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span> <span class=\"crayon-h\"> </span><span class=\"crayon-cn\">107</span><span class=\"crayon-sy\">)</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-o\">*</span><span class=\"crayon-o\">-</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">RadioInterfaceLayer</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-i\">Received</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">'RIL:GetRilContext'</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">message </span><span class=\"crayon-e\">from </span><span class=\"crayon-e\">content </span><span class=\"crayon-i\">process</span></div><div class=\"crayon-line\" id=\"crayon-56f4c07cbcb97914941328-5\"><span class=\"crayon-v\">I</span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">Gecko</span>  <span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span> <span class=\"crayon-h\"> </span><span class=\"crayon-cn\">107</span><span class=\"crayon-sy\">)</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-o\">*</span><span class=\"crayon-o\">-</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">RadioInterface</span><span class=\"crayon-sy\">[</span><span class=\"crayon-cn\">0</span><span class=\"crayon-sy\">]</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">Received </span><span class=\"crayon-e\">message </span><span class=\"crayon-e\">from </span><span class=\"crayon-v\">worker</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span><span class=\"crayon-s\">\"voice\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-sy\">{</span><span class=\"crayon-s\">\"signalStrength\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-o\">-</span><span class=\"crayon-cn\">53</span><span class=\"crayon-sy\">,</span><span class=\"crayon-s\">\"relSignalStrength\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">100</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span><span class=\"crayon-s\">\"data\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-sy\">{</span><span class=\"crayon-s\">\"signalStrength\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-o\">-</span><span class=\"crayon-cn\">53</span><span class=\"crayon-sy\">,</span><span class=\"crayon-s\">\"relSignalStrength\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">100</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span><span class=\"crayon-s\">\"rilMessageType\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-s\">\"signalstrengthchange\"</span><span class=\"crayon-sy\">}</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0054 seconds] -->\n<p>&nbsp;</p>\n<p>這時候，你會問說，可是 我需要的資訊不是現有的 log 裏面就包含的。 那我該怎麼辦？？？</p>\n<p>我有沒有辦法不去編譯程式碼，同時變造一些資料好讓我可以做一些測試？</p>\n<p>那我們就來看下一個例子囉！！</p>\n<p>&nbsp;</p>\n<p><strong>舉個偽IMEI來當作範例。</strong></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">1. 確認當前 IMEI 為何。<br/>\n</span></span></p>\n<p>進撥號畫面，輸入<strong>*#06#</strong> [4]，查看一下當下手機告訴你這台機器的 IMEI 是什麼！</p>\n<p><a href=\"https://web.archive.org/web/20160325043716/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03.png\"><img class=\"alignnone size-medium wp-image-3331\" alt=\"2013-10-30-00-57-03\" src=\"https://web.archive.org/web/20160325043716im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03-200x300.png\" width=\"200\" height=\"300\" srcset=\"https://web.archive.org/web/20160325043716im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03-200x300.png 200w, https://web.archive.org/web/20160325043716im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03.png 320w\" sizes=\"(max-width: 200px) 100vw, 200px\"/></a></p>\n<p>2. 從手機中把需要的檔案拉出來：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-56f4c07cbcba0757042505\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n 2.1 adb pull /system/b2g/omni.ja /tmp\n 2.2 cd tmp\n 2.3 unzip omni.ja\n 2.4 cd omni\n 2.5 find -name ril_worker.js</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcba0757042505-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56f4c07cbcba0757042505-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcba0757042505-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56f4c07cbcba0757042505-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcba0757042505-5\">5</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-56f4c07cbcba0757042505-1\"><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">2.1</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-v\">pull</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">system</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">b2g</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">omni</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">ja</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">tmp</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56f4c07cbcba0757042505-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">2.2</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">cd </span><span class=\"crayon-i\">tmp</span></div><div class=\"crayon-line\" id=\"crayon-56f4c07cbcba0757042505-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">2.3</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">unzip </span><span class=\"crayon-v\">omni</span><span class=\"crayon-sy\">.</span><span class=\"crayon-i\">ja</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56f4c07cbcba0757042505-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">2.4</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">cd </span><span class=\"crayon-i\">omni</span></div><div class=\"crayon-line\" id=\"crayon-56f4c07cbcba0757042505-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">2.5</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">find</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-e\">name </span><span class=\"crayon-v\">ril_worker</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">js</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0017 seconds] -->\n<p>&nbsp;</p>\n<p>3. 修改步驟2.5中所找到的檔案，將 IMEI 偽造成我們想要的資料：</p>\n<p>在此，我們將 IMEI 假造成為\"123456789012345&#8243;。</p>\n<p><a href=\"https://web.archive.org/web/20160325043716/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified.png\"><img class=\"alignnone size-medium wp-image-3332\" alt=\"modified\" src=\"https://web.archive.org/web/20160325043716im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified-300x100.png\" width=\"300\" height=\"100\"/></a></p>\n<p>&nbsp;</p>\n<p>4. 打包/跟新檔案：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-56f4c07cbcba8253877994\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n4.1 zip -r omni.ja *\n4.2 adb remount\n4.3 adb push omni.ja /system/b2g\n4.3 adb reboot</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcba8253877994-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56f4c07cbcba8253877994-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-56f4c07cbcba8253877994-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56f4c07cbcba8253877994-4\">4</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-56f4c07cbcba8253877994-1\"><span class=\"crayon-cn\">4.1</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">zip</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-i\">r</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">omni</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e \">ja *</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56f4c07cbcba8253877994-2\"><span class=\"crayon-cn\">4.2</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-i\">remount</span></div><div class=\"crayon-line\" id=\"crayon-56f4c07cbcba8253877994-3\"><span class=\"crayon-cn\">4.3</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-e\">push </span><span class=\"crayon-v\">omni</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">ja</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">system</span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">b2g</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56f4c07cbcba8253877994-4\"><span class=\"crayon-cn\">4.3</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">adb </span><span class=\"crayon-v\">reboot</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0013 seconds] -->\n<p>&nbsp;</p>\n<p>5. 重新查詢 IMEI ：<br/>\n<a href=\"https://web.archive.org/web/20160325043716/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53.png\"><img class=\"alignnone size-medium wp-image-3344\" alt=\"2013-10-30-13-32-53\" src=\"https://web.archive.org/web/20160325043716im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53-200x300.png\" width=\"200\" height=\"300\" srcset=\"https://web.archive.org/web/20160325043716im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53-200x300.png 200w, https://web.archive.org/web/20160325043716im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53.png 320w\" sizes=\"(max-width: 200px) 100vw, 200px\"/></a></p>\n<p>完成了。。。 IMEI 被我們偽造成123456789012345了。</p>\n<p>修改 Gecko 裏面的 JavaScript 檔案，卻不重新 build code ，是不是相當的簡單呢？</p>\n<p>&nbsp;</p>\n<p>有沒有想試試看的東西了？</p>\n<p>還等什麼？快點去試一把吧！！</p>\n<p>&nbsp;</p>\n<p>註：</p>\n<p>請確定你所使用的機器是開發者的版本，並且取得 root 的權限，上面的步驟才玩的下去喔。</p>\n<p>參考資料：<br/>\n[1] <a href=\"//web.archive.org/web/20160325043716/http://www.123rf.com/photo_8515474_3d-abstract-digital-code-connection.html\">圖片來源 &#8211; http://www.123rf.com/photo_8515474_3d-abstract-digital-code-connection.html</a><br/>\n[2] <a href=\"https://web.archive.org/web/20160325043716/https://wiki.mozilla.org/B2G/QA/Tips_And_Tricks#Changing_preferences\">https://wiki.mozilla.org/B2G/QA/Tips_And_Tricks#Changing_preferences</a><br/>\n[3] <a href=\"https://web.archive.org/web/20160325043716/https://wiki.mozilla.org/B2G/RIL\">https://wiki.mozilla.org/B2G/RIL</a><br/>\n[4] 3GPP TS 22.030 version 11.0.0 Release 11, 6.7 Presentation of IMEI</p>\n\t\t\t</div>",
   "content_text": "[1] 問： 常常我們會收到某些 Gecko 的問題，但卻是 log 不足或是可能需要在手機上摹擬某些特殊 / 額外的資訊才有可能重現問題。而我們又確定這個問題，大概會從 Gecko 的 JavaScript 檔案下手。但是，我又不想抓 /編譯程式碼 ，這個症狀可有解？ 答： 有的！！的確是有方法可以透過不抓 /編譯程式碼 的手續就可以把想做的事情達成的。 (記得拿出一台 firefox OS 的機器邊看邊操作嘿，(啥，沒機器？？ 那就去\"買\"一台啊！！！！)) 首先，我們先確認一下，你所想看的部份的 log 有沒有打開 [2]。 舉個 RIL (Radio Interface Layer) [3] 的例子來說， 1. ril_consts.js // Set to true to debug all RIL layers this.DEBUG_ALL = false; 1 2 // Set to true to debug all RIL layers this . DEBUG_ALL = false ; 2. RadioInterfaceLayer.js // Read debug setting from pref let debugPref = false; try { debugPref = Services.prefs.getBoolPref(\"ril.debugging.enabled\"); } catch(e) { debugPref = false; } DEBUG = RIL.DEBUG_RIL || debugPref; 1 2 3 4 5 6 7 8 // Read debug setting from pref let debugPref = false ; try { debugPref = Services . prefs . getBoolPref ( \"ril.debugging.enabled\" ) ; } catch ( e ) { debugPref = false ; } DEBUG = RIL . DEBUG_RIL || debugPref ; 喔喔！ ril 相關的 log 沒開！！！！ 可是，還好有 preference 可以手動的去打開它。 來吧~我們就來動手把它給打開吧。 1.1 adb pull /system/b2g/defaults/pref/user.js /tmp 1.2 把 ril.debugging.enabled 這個值修改成 true. pref(\"ril.debugging.enabled\", true); 1.3 adb remount 1.3 adb push /tmp/user.js /system/b2g/defaults/pref/ 1.4 adb reboot 1 2 3 4 5 6 1.1 adb pull / system / b2g / defaults / pref / user . js / tmp 1.2 把 ril . debugging . enabled 這個值修改成 true . pref ( \"ril.debugging.enabled\" , true ) ; 1.3 adb remount 1.3 adb push / tmp / user . js / system / b2g / defaults / pref / 1.4 adb reboot adb logcat 來看一下，是不是可以看到 “RadioInterfaceLayer\" 這個關鍵字出現在 log 裏面了呢(如下面的範例)？ I/Gecko ( 107): -*- RadioInterfaceLayer: Registered mobileconnection target: [object ChromeMessageSender] I/Gecko ( 107): -*- RadioInterfaceLayer: Received 'RIL:RegisterIccMsg' message from content process I/Gecko ( 107): -*- RadioInterfaceLayer: Registered icc target: [object ChromeMessageSender] I/Gecko ( 107): -*- RadioInterfaceLayer: Received 'RIL:GetRilContext' message from content process I/Gecko ( 107): -*- RadioInterface[0]: Received message from worker: {\"voice\":{\"signalStrength\":-53,\"relSignalStrength\":100},\"data\":{\"signalStrength\":-53,\"relSignalStrength\":100},\"rilMessageType\":\"signalstrengthchange\"} 1 2 3 4 5 I / Gecko ( 107 ) : - * - RadioInterfaceLayer : Registered mobileconnection target : [ object ChromeMessageSender ] I / Gecko ( 107 ) : - * - RadioInterfaceLayer : Received 'RIL:RegisterIccMsg' message from content process I / Gecko ( 107 ) : - * - RadioInterfaceLayer : Registered icc target : [ object ChromeMessageSender ] I / Gecko ( 107 ) : - * - RadioInterfaceLayer : Received 'RIL:GetRilContext' message from content process I / Gecko ( 107 ) : - * - RadioInterface [ 0 ] : Received message from worker : { \"voice\" : { \"signalStrength\" : - 53 , \"relSignalStrength\" : 100 } , \"data\" : { \"signalStrength\" : - 53 , \"relSignalStrength\" : 100 } , \"rilMessageType\" : \"signalstrengthchange\" } 這時候，你會問說，可是 我需要的資訊不是現有的 log 裏面就包含的。 那我該怎麼辦？？？ 我有沒有辦法不去編譯程式碼，同時變造一些資料好讓我可以做一些測試？ 那我們就來看下一個例子囉！！ 舉個偽IMEI來當作範例。 1. 確認當前 IMEI 為何。 進撥號畫面，輸入 *#06# [4]，查看一下當下手機告訴你這台機器的 IMEI 是什麼！ 2. 從手機中把需要的檔案拉出來： 2.1 adb pull /system/b2g/omni.ja /tmp 2.2 cd tmp 2.3 unzip omni.ja 2.4 cd omni 2.5 find -name ril_worker.js 1 2 3 4 5 2.1 adb pull / system / b2g / omni . ja / tmp 2.2 cd tmp 2.3 unzip omni . ja 2.4 cd omni 2.5 find - name ril_worker . js 3. 修改步驟2.5中所找到的檔案，將 IMEI 偽造成我們想要的資料： 在此，我們將 IMEI 假造成為\"123456789012345″。 4. 打包/跟新檔案： 4.1 zip -r omni.ja * 4.2 adb remount 4.3 adb push omni.ja /system/b2g 4.3 adb reboot 1 2 3 4 4.1 zip - r omni . ja * 4.2 adb remount 4.3 adb push omni . ja / system / b2g 4.3 adb reboot 5. 重新查詢 IMEI ： 完成了。。。 IMEI 被我們偽造成123456789012345了。 修改 Gecko 裏面的 JavaScript 檔案，卻不重新 build code ，是不是相當的簡單呢？ 有沒有想試試看的東西了？ 還等什麼？快點去試一把吧！！ 註： 請確定你所使用的機器是開發者的版本，並且取得 root 的權限，上面的步驟才玩的下去喔。 參考資料： [1] 圖片來源 – http://www.123rf.com/photo_8515474_3d-abstract-digital-code-connection.html [2] https://wiki.mozilla.org/B2G/QA/Tips_And_Tricks#Changing_preferences [3] https://wiki.mozilla.org/B2G/RIL [4] 3GPP TS 22.030 version 11.0.0 Release 11, 6.7 Presentation of IMEI",
   "images": [
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20160325043716im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/yDglA-150x150.jpg",
+      "alt": "犀牛",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56-150x150.png",
+      "alt": "Nightly Debugger",
+      "kind": "image",
+      "source": "img"
+    },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
       "alt": "8515474-3d-abstract-digital-code-connection",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3330/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "markdown_path": "../assets/3330/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "wayback_timestamp": "20200919192724",
-      "asset_archive_url": "https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-1024x768.jpg",
       "alt": "8515474-3d-abstract-digital-code-connection",
       "kind": "image",
-      "source": "img-srcset",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "archive_path": "assets/3330/008-b6eb46f9e744.jpg",
-      "markdown_path": "../assets/3330/008-b6eb46f9e744.jpg",
-      "wayback_timestamp": "20140122200248",
-      "asset_archive_url": "https://web.archive.org/web/20140122200248id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "content_type": "image/jpeg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection.jpg",
       "alt": "8515474-3d-abstract-digital-code-connection",
       "kind": "image",
-      "source": "img-srcset",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "archive_path": "assets/3330/009-b6eb46f9e744.jpg",
-      "markdown_path": "../assets/3330/009-b6eb46f9e744.jpg",
-      "wayback_timestamp": "20140122200248",
-      "asset_archive_url": "https://web.archive.org/web/20140122200248id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "content_type": "image/jpeg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03-200x300.png",
       "alt": "2013-10-30-00-57-03",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3330/wp-content/uploads/2013/10/2013-10-30-00-57-03-200x300.png",
-      "markdown_path": "../assets/3330/wp-content/uploads/2013/10/2013-10-30-00-57-03-200x300.png",
-      "wayback_timestamp": "20200919192724",
-      "asset_archive_url": "https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03-200x300.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03.png",
       "alt": "2013-10-30-00-57-03",
       "kind": "image",
-      "source": "img-srcset",
-      "archive_path": "assets/3330/wp-content/uploads/2013/10/2013-10-30-00-57-03.png",
-      "markdown_path": "../assets/3330/wp-content/uploads/2013/10/2013-10-30-00-57-03.png",
-      "wayback_timestamp": "20200919192724",
-      "asset_archive_url": "https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified-300x100.png",
       "alt": "modified",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3330/wp-content/uploads/2013/10/modified-300x100.png",
-      "markdown_path": "../assets/3330/wp-content/uploads/2013/10/modified-300x100.png",
-      "wayback_timestamp": "20200919192724",
-      "asset_archive_url": "https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified-300x100.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified.png",
-      "alt": "modified",
-      "kind": "image",
-      "source": "img-srcset",
-      "archive_path": "assets/3330/wp-content/uploads/2013/10/modified.png",
-      "markdown_path": "../assets/3330/wp-content/uploads/2013/10/modified.png",
-      "wayback_timestamp": "20200919192724",
-      "asset_archive_url": "https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53-200x300.png",
       "alt": "2013-10-30-13-32-53",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3330/wp-content/uploads/2013/10/2013-10-30-13-32-53-200x300.png",
-      "markdown_path": "../assets/3330/wp-content/uploads/2013/10/2013-10-30-13-32-53-200x300.png",
-      "wayback_timestamp": "20200919192724",
-      "asset_archive_url": "https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53-200x300.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53.png",
       "alt": "2013-10-30-13-32-53",
       "kind": "image",
-      "source": "img-srcset",
-      "archive_path": "assets/3330/wp-content/uploads/2013/10/2013-10-30-13-32-53.png",
-      "markdown_path": "../assets/3330/wp-content/uploads/2013/10/2013-10-30-13-32-53.png",
-      "wayback_timestamp": "20200919192724",
-      "asset_archive_url": "https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified.png",
+      "alt": "",
+      "kind": "image",
+      "source": "a-href"
     }
   ],
   "media": [
     {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20160325043716im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/yDglA-150x150.jpg",
+      "alt": "犀牛",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56-150x150.png",
+      "alt": "Nightly Debugger",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
       "alt": "8515474-3d-abstract-digital-code-connection",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3330/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "markdown_path": "../assets/3330/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "wayback_timestamp": "20200919192724",
-      "asset_archive_url": "https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-1024x768.jpg",
       "alt": "8515474-3d-abstract-digital-code-connection",
       "kind": "image",
-      "source": "img-srcset",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "archive_path": "assets/3330/008-b6eb46f9e744.jpg",
-      "markdown_path": "../assets/3330/008-b6eb46f9e744.jpg",
-      "wayback_timestamp": "20140122200248",
-      "asset_archive_url": "https://web.archive.org/web/20140122200248id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "content_type": "image/jpeg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection.jpg",
       "alt": "8515474-3d-abstract-digital-code-connection",
       "kind": "image",
-      "source": "img-srcset",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "archive_path": "assets/3330/009-b6eb46f9e744.jpg",
-      "markdown_path": "../assets/3330/009-b6eb46f9e744.jpg",
-      "wayback_timestamp": "20140122200248",
-      "asset_archive_url": "https://web.archive.org/web/20140122200248id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-300x225.jpg",
-      "content_type": "image/jpeg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03-200x300.png",
       "alt": "2013-10-30-00-57-03",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3330/wp-content/uploads/2013/10/2013-10-30-00-57-03-200x300.png",
-      "markdown_path": "../assets/3330/wp-content/uploads/2013/10/2013-10-30-00-57-03-200x300.png",
-      "wayback_timestamp": "20200919192724",
-      "asset_archive_url": "https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03-200x300.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03.png",
       "alt": "2013-10-30-00-57-03",
       "kind": "image",
-      "source": "img-srcset",
-      "archive_path": "assets/3330/wp-content/uploads/2013/10/2013-10-30-00-57-03.png",
-      "markdown_path": "../assets/3330/wp-content/uploads/2013/10/2013-10-30-00-57-03.png",
-      "wayback_timestamp": "20200919192724",
-      "asset_archive_url": "https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-00-57-03.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified-300x100.png",
       "alt": "modified",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3330/wp-content/uploads/2013/10/modified-300x100.png",
-      "markdown_path": "../assets/3330/wp-content/uploads/2013/10/modified-300x100.png",
-      "wayback_timestamp": "20200919192724",
-      "asset_archive_url": "https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified-300x100.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified.png",
-      "alt": "modified",
-      "kind": "image",
-      "source": "img-srcset",
-      "archive_path": "assets/3330/wp-content/uploads/2013/10/modified.png",
-      "markdown_path": "../assets/3330/wp-content/uploads/2013/10/modified.png",
-      "wayback_timestamp": "20200919192724",
-      "asset_archive_url": "https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53-200x300.png",
       "alt": "2013-10-30-13-32-53",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3330/wp-content/uploads/2013/10/2013-10-30-13-32-53-200x300.png",
-      "markdown_path": "../assets/3330/wp-content/uploads/2013/10/2013-10-30-13-32-53-200x300.png",
-      "wayback_timestamp": "20200919192724",
-      "asset_archive_url": "https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53-200x300.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53.png",
       "alt": "2013-10-30-13-32-53",
       "kind": "image",
-      "source": "img-srcset",
-      "archive_path": "assets/3330/wp-content/uploads/2013/10/2013-10-30-13-32-53.png",
-      "markdown_path": "../assets/3330/wp-content/uploads/2013/10/2013-10-30-13-32-53.png",
-      "wayback_timestamp": "20200919192724",
-      "asset_archive_url": "https://web.archive.org/web/20200919192724id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/10/2013-10-30-13-32-53.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/modified.png",
+      "alt": "",
+      "kind": "image",
+      "source": "a-href"
     }
   ],
   "links": [
@@ -249,7 +342,7 @@
       "text": ""
     },
     {
-      "url": "https://www.123rf.com/photo_8515474_3d-abstract-digital-code-connection.html",
+      "url": "https://web.archive.org/web/20160325043716/http://www.123rf.com/photo_8515474_3d-abstract-digital-code-connection.html",
       "text": "圖片來源 – http://www.123rf.com/photo_8515474_3d-abstract-digital-code-connection.html"
     },
     {
@@ -262,6 +355,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

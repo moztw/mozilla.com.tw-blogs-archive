@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head><script src="//archive.org/includes/athena.js" type="text/javascript"></script>
+<script type="text/javascript">window.addEventListener('DOMContentLoaded',function(){var v=archive_analytics.values;v.service='wb';v.server_name='wwwb-app220.us.archive.org';v.server_ms=834;archive_analytics.send_pageview({});});</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/bundle-playback.js?v=oZ57VlYl" charset="utf-8"></script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script>window.RufflePlayer=window.RufflePlayer||{};window.RufflePlayer.config={"autoplay":"on","unmuteOverlay":"hidden","showSwfDownload":true};</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/ruffle/ruffle.js"></script>
+<script type="text/javascript">
+    __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://tech.mozilla.com.tw:80/posts/2748/%E7%94%A8-moztrap-%E4%BE%86%E7%AE%A1%E7%90%86%E4%BD%A0%E7%9A%84%E6%B8%AC%E8%A9%A6","20171007192048","https://web.archive.org/","web","https://web-static.archive.org/_static/",
+	      "1507404048");
+</script>
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3" />
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv" />
+<!-- End Wayback Rewrite JS Include -->
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。"/>
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA"/>
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78"/>
+<title>
+
+用 MozTrap 來管理你的測試 | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://web.archive.org/web/20171007192048im_/https://mozilla.com/favicon.ico"/>
+<meta property="og:url" content="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/2748/%e7%94%a8-moztrap-%e4%be%86%e7%ae%a1%e7%90%86%e4%bd%a0%e7%9a%84%e6%b8%ac%e8%a9%a6"/><meta property="og:image" content="https://web.archive.org/web/20171007192048im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/螢幕快照-2013-10-21-下午4.04.141-1024x802.png"/>
+
+<link rel="stylesheet" type="text/css" media="all" href="https://web.archive.org/web/20171007192048cs_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="https://web.archive.org/web/20171007192048cs_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css"/><!--<link rel="pingback" href="http://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="http://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/","urlLoginRedirect":"https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=bf4b136cb6","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel="dns-prefetch" href="//web.archive.org/web/20171007192048/http://s.w.org/">
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 »" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/feed"/>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 » 迴響" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/comments/feed"/>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 » 用 MozTrap 來管理你的測試 迴響" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/2748/%e7%94%a8-moztrap-%e4%be%86%e7%ae%a1%e7%90%86%e4%bd%a0%e7%9a%84%e6%b8%ac%e8%a9%a6/feed"/>
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/web.archive.org\/web\/20171007192048\/https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/web.archive.org\/web\/20171007192048\/https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/web.archive.org\/web\/20171007192048\/http:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="crayon-css" href="https://web.archive.org/web/20171007192048cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="crayon-theme-arduino-ide-css" href="https://web.archive.org/web/20171007192048cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="crayon-font-monaco-css" href="https://web.archive.org/web/20171007192048cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="advanced-responsive-video-embedder-css" href="https://web.archive.org/web/20171007192048cs_/http://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0" type="text/css" media="all"/>
+<link rel="stylesheet" id="persona-style-css" href="https://web.archive.org/web/20171007192048cs_/http://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46" type="text/css" media="all"/>
+<script type="text/javascript" src="https://web.archive.org/web/20171007192048js_/http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20171007192048js_/http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/web.archive.org\/web\/20171007192048\/http:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://web.archive.org/web/20171007192048js_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta"></script>
+<link rel="https://api.w.org/" href="http://tech.mozilla.com.tw/wp-json/"/>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://tech.mozilla.com.tw/xmlrpc.php?rsd"/>
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml"/> 
+<link rel="prev" title="Firefox OS 測試流程大揭秘" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/3060/firefox-os-%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e5%a4%a7%e6%8f%ad%e7%a7%98"/>
+<link rel="next" title="一個打十個 – 讓 Gaia 網頁應用（webapp）支援多重設備（一：像素密度）" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/2835/%e4%b8%80%e5%80%8b%e6%89%93%e5%8d%81%e5%80%8b-%e8%ae%93-gaia-%e7%b6%b2%e9%a0%81%e6%87%89%e7%94%a8%ef%bc%88webapp%ef%bc%89%e6%94%af%e6%8f%b4%e5%a4%9a%e9%87%8d%e8%a8%ad%e5%82%99%ef%bc%88%e4%b8%80"/>
+<meta name="generator" content="WordPress 4.6"/>
+<link rel="canonical" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/2748/%e7%94%a8-moztrap-%e4%be%86%e7%ae%a1%e7%90%86%e4%bd%a0%e7%9a%84%e6%b8%ac%e8%a9%a6"/>
+<link rel="shortlink" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/?p=2748"/>
+<link rel="alternate" type="application/json+oembed" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/wp-json/oembed/1.0/embed?url=http%3A%2F%2Ftech.mozilla.com.tw%2Fposts%2F2748%2F%25e7%2594%25a8-moztrap-%25e4%25be%2586%25e7%25ae%25a1%25e7%2590%2586%25e4%25bd%25a0%25e7%259a%2584%25e6%25b8%25ac%25e8%25a9%25a6"/>
+<link rel="stylesheet" href="https://web.archive.org/web/20171007192048cs_/http://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen"/>	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://web.archive.org/web/20171007192048/https://ssl' : 'https://web.archive.org/web/20171007192048/http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-2748 single-format-standard sand"><!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script>__wm.rw(0);</script>
+<div id="wm-ipp-base" lang="en" style="display:none;direction:ltr;" toolbar-mode="auto">
+<div id="wm-ipp" style="position:fixed;left:0;top:0;right:0;">
+<div id="donato" style="position:relative;width:100%;height:0;">
+  <div id="donato-base">
+    <iframe id="donato-if" src="https://archive.org/includes/donate.php?as_page=1&amp;platform=wb&amp;referer=https%3A//web.archive.org/web/20171007192048/http%3A//tech.mozilla.com.tw/posts/2748/%E7%94%A8-moztrap-%E4%BE%86%E7%AE%A1%E7%90%86%E4%BD%A0%E7%9A%84%E6%B8%AC%E8%A9%A6"
+	    scrolling="no" frameborder="0" style="width:100%; height:100%">
+    </iframe>
+  </div>
+</div><div id="wm-ipp-inside">
+  <div id="wm-toolbar" style="position:relative;display:flex;flex-flow:row nowrap;justify-content:space-between;" nav="async">
+    <div id="wm-logo" style="/*width:110px;*/padding-top:12px;">
+      <a href="/web/" title="Wayback Machine home page"><img src="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png" srcset="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png 1.5x, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png 2x" alt="Wayback Machine" style="width:100px" border="0" /></a>
+    </div>
+    <div class="c" style="display:flex;flex-flow:column nowrap;justify-content:space-between;flex:1;">
+      <form class="u" style="display:flex;flex-direction:row;flex-wrap:nowrap;" target="_top" method="get" action="/web/submit" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="http://tech.mozilla.com.tw/posts/2748/%E7%94%A8-moztrap-%E4%BE%86%E7%AE%A1%E7%90%86%E4%BD%A0%E7%9A%84%E6%B8%AC%E8%A9%A6" onfocus="this.focus();this.select();" style="flex:1;"/><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20171007192048" /><input type="submit" value="Go" />
+      </form>
+      <div style="display:flex;flex-flow:row nowrap;align-items:flex-end;">
+                <div class="s" id="wm-nav-captures" style="flex:1;">
+                    <a class="t" href="/web/20171007192048*/http://tech.mozilla.com.tw/posts/2748/%E7%94%A8-moztrap-%E4%BE%86%E7%AE%A1%E7%90%86%E4%BD%A0%E7%9A%84%E6%B8%AC%E8%A9%A6" title="See a list of every capture for this URL">10 captures</a>
+          <div class="r" title="Timespan for captures of this URL">30 Oct 2013 - 07 Oct 2017</div>
+          </div>
+        <div class="k">
+          <a href="" id="wm-graph-anchor">
+            <div id="wm-ipp-sparkline" title="Explore captures for this URL" style="position: relative">
+              <canvas id="wm-sparkline-canvas" width="775" height="27" border="0"></canvas>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="n">
+      <table>
+        <tbody>
+          <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+          <tr class="m">
+            <td class="b" nowrap="nowrap">Sep</td>
+            <td class="c" id="displayMonthEl" title="You are here: 19:20:48 Oct 07, 2017">OCT</td>
+            <td class="f" nowrap="nowrap">Nov</td>
+          </tr>
+          <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+          <tr class="d">
+            <td class="b" nowrap="nowrap"><span class="ta"></span></td>
+            <td class="c" id="displayDayEl" style="width:34px;font-size:22px;white-space:nowrap;" title="You are here: 19:20:48 Oct 07, 2017">07</td>
+            <td class="f" nowrap="nowrap"><span class="ta"></span></td>
+          </tr>
+          <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+          <tr class="y">
+            <td class="b" nowrap="nowrap">2016</td>
+            <td class="c" id="displayYearEl" title="You are here: 19:20:48 Oct 07, 2017">2017</td>
+            <td class="f" nowrap="nowrap">2018</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="r" style="display:flex;flex-flow:column nowrap;align-items:flex-end;justify-content:space-between;">
+      <div id="wm-btns" style="text-align:right;height:23px;">
+                <span class="xxs">
+          <div id="wm-save-snapshot-success">success</div>
+          <div id="wm-save-snapshot-fail">fail</div>
+          <a id="wm-save-snapshot-open" href="#" title="Share via My Web Archive" >
+            <span class="iconochive-web"></span>
+          </a>
+          <a href="https://archive.org/account/login.php" title="Sign In" id="wm-sign-in">
+            <span class="iconochive-person"></span>
+          </a>
+          <span id="wm-save-snapshot-in-progress" class="iconochive-web"></span>
+        </span>
+                <a class="xxs" href="https://help.archive.org/help/category/the-wayback-machine/" title="Get some help using the Wayback Machine" style="top:-6px;"><span class="iconochive-question" style="color:rgb(87,186,244);font-size:160%;"></span></a>
+        <a id="wm-tb-close" href="#close" style="top:-2px;" title="Close the toolbar"><span class="iconochive-remove-circle" style="color:#888888;font-size:240%;"></span></a>
+      </div>
+      <div id="wm-share" class="xxs">
+        <a href="/web/20171007192048/http://web.archive.org/screenshot/http://tech.mozilla.com.tw/posts/2748/%E7%94%A8-moztrap-%E4%BE%86%E7%AE%A1%E7%90%86%E4%BD%A0%E7%9A%84%E6%B8%AC%E8%A9%A6"
+           id="wm-screenshot"
+           title="screenshot">
+          <span class="wm-icon-screen-shot"></span>
+        </a>
+        <a href="#" id="wm-video" title="video">
+          <span class="iconochive-movies"></span>
+        </a>
+        <a id="wm-share-facebook" href="#" data-url="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw:80/posts/2748/%E7%94%A8-moztrap-%E4%BE%86%E7%AE%A1%E7%90%86%E4%BD%A0%E7%9A%84%E6%B8%AC%E8%A9%A6" title="Share on Facebook" style="margin-right:5px;" target="_blank"><span class="iconochive-facebook" style="color:#3b5998;font-size:160%;"></span></a>
+        <a id="wm-share-twitter" href="#" data-url="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw:80/posts/2748/%E7%94%A8-moztrap-%E4%BE%86%E7%AE%A1%E7%90%86%E4%BD%A0%E7%9A%84%E6%B8%AC%E8%A9%A6" title="Share on Twitter" style="margin-right:5px;" target="_blank"><span class="iconochive-twitter" style="color:#1dcaff;font-size:160%;"></span></a>
+      </div>
+      <div style="padding-right:2px;text-align:right;white-space:nowrap;">
+        <a id="wm-expand" class="wm-btn wm-closed" href="#expand"><span id="wm-expand-icon" class="iconochive-down-solid"></span> <span class="xxs" style="font-size:80%;">About this capture</span></a>
+      </div>
+    </div>
+  </div>
+    <div id="wm-capinfo" style="border-top:1px solid #777;display:none; overflow: hidden">
+        <div id="wm-capinfo-notice" source="api"></div>
+                <div id="wm-capinfo-collected-by">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;">COLLECTED BY</div>
+    <div style="padding:3px;position:relative" id="wm-collected-by-content">
+            <div style="display:inline-block;vertical-align:top;width:50%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls);"></span>
+		Organization: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+      <div style="display:inline-block;vertical-align:top;width:49%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls)"></span>
+		<div>Collection: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a></div>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+    </div>
+    </div>
+    <div id="wm-capinfo-timestamps">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;" title="Timestamps for the elements of this page">TIMESTAMPS</div>
+    <div>
+      <div id="wm-capresources" style="margin:0 5px 5px 5px;max-height:250px;overflow-y:scroll !important"></div>
+      <div id="wm-capresources-loading" style="text-align:left;margin:0 20px 5px 5px;display:none"><img src="https://web-static.archive.org/_static/images/loading.gif" alt="loading" /></div>
+    </div>
+    </div>
+  </div></div></div></div><div id="wm-ipp-print">The Wayback Machine - https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw:80/posts/2748/%E7%94%A8-moztrap-%E4%BE%86%E7%AE%A1%E7%90%86%E4%BD%A0%E7%9A%84%E6%B8%AC%E8%A9%A6</div>
+<script type="text/javascript">//<![CDATA[
+__wm.bt(775,27,25,2,"web","http://tech.mozilla.com.tw/posts/2748/%E7%94%A8-moztrap-%E4%BE%86%E7%AE%A1%E7%90%86%E4%BD%A0%E7%9A%84%E6%B8%AC%E8%A9%A6","20171007192048",1996,"https://web-static.archive.org/_static/",["https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3","https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv"], false);
+  __wm.rw(1);
+//]]></script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+ 
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//web.archive.org/web/20171007192048/http://mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//web.archive.org/web/20171007192048/http://mozilla.com.tw/" title="回首頁" class="close">
+              <img src="/web/20171007192048im_/http://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href="//web.archive.org/web/20171007192048/http://mozilla.com.tw/" class="home">Home</a>
+            <b>&raquo;</b>
+            <a href="//web.archive.org/web/20171007192048/http://mozilla.com.tw/news/">訊息中心</a>
+            <b>&raquo;</b>
+                          <a href="//web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/">謀智台客</a><b>&raquo;</b>
+              <span>用 MozTrap 來管理你的測試</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="http://tech.mozilla.com.tw/posts/2748/%e7%94%a8-moztrap-%e4%be%86%e7%ae%a1%e7%90%86%e4%bd%a0%e7%9a%84%e6%b8%ac%e8%a9%a6" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="http://tech.mozilla.com.tw/posts/2748/%e7%94%a8-moztrap-%e4%be%86%e7%ae%a1%e7%90%86%e4%bd%a0%e7%9a%84%e6%b8%ac%e8%a9%a6"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="https://web.archive.org/web/20171007192048/http://pinterest.com/pin/create/button/?url=http://tech.mozilla.com.tw/posts/2748/%e7%94%a8-moztrap-%e4%be%86%e7%ae%a1%e7%90%86%e4%bd%a0%e7%9a%84%e6%b8%ac%e8%a9%a6&amp;media=http://tech.mozilla.com.tw/wp-content/uploads/2013/10/螢幕快照-2013-10-21-下午4.04.141-150x150.png" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//web.archive.org/web/20171007192048im_/http://assets.pinterest.com/images/PinExt.png" title="Pin It"/></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('https://web.archive.org/web/20171007192048/http://www.plurk.com/?qualifier=shares&amp;status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('(') .concat(encodeURIComponent(document.title)) .concat(')')));">
+	        <img src="https://web.archive.org/web/20171007192048im_/https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">0</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/3060/firefox-os-%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e5%a4%a7%e6%8f%ad%e7%a7%98"><div class="post-tip"><img width="48" height="48" src="https://web.archive.org/web/20171007192048im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/fxos-150x150.jpg" class="attachment-48x48 size-48x48 wp-post-image" alt="fxos"/><span class="meta-nav">Firefox OS 測試流程大揭秘</span></div></a></div>		
+							<div class="nav-next"><a href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/2835/%e4%b8%80%e5%80%8b%e6%89%93%e5%8d%81%e5%80%8b-%e8%ae%93-gaia-%e7%b6%b2%e9%a0%81%e6%87%89%e7%94%a8%ef%bc%88webapp%ef%bc%89%e6%94%af%e6%8f%b4%e5%a4%9a%e9%87%8d%e8%a8%ad%e5%82%99%ef%bc%88%e4%b8%80"><div class="post-tip"><img width="48" height="48" src="https://web.archive.org/web/20171007192048im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/Da_Vinci_Vitruve_Luc_Viatour-150x150.jpg" class="attachment-48x48 size-48x48 wp-post-image" alt="Da_Vinci_Vitruve_Luc_Viatour"/><span class="meta-nav">一個打十個 - 讓 Gaia 網頁應用（webapp）支援多重設備（一：像素密度）</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-2748" class="post-2748 post type-post status-publish format-standard has-post-thumbnail hentry category-b2g">
+	 	<header class="entry-header">
+		<h1 class="entry-title">用 MozTrap 來管理你的測試</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/date/2013/10" class="posted-month">10月</a>
+	        <span class="posted-date">21</span>
+	        <a title="See all posts from 2014" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/date/2013" class="posted-year">2013</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="59">
+		  	<a href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/author/pyangmozilla-com">
+	          <img src="https://web.archive.org/web/20171007192048im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg" alt="" class="avatar user-59-avatar" width="24" height="24"/><!--
+	       --><div class="author-info">PPPaul</div><!--
+	       --><div class="author-title">&nbsp;- QA Team 編輯</div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p>身為測試工程師，想要管理你的測試項目也是合情合理的。在 Mozilla 使用 bugzilla 來追蹤程式問題以及待辦事項，但如何發現並且驗證這些，便需要測試工程師分析功能以及使用者行為，轉化為測試項目並執行了。隨著時間推進、功能增加，測試項目並非只要將其逐一執行即達到目標，我們需要更好的工具讓不同目的的測試能夠容易的找到對應的測項，好的界面以便執行以及輸出結果。對於這樣的需求， Mozilla 推出了 MozTrap 。</p>
+<h4>什麼是 MozTrap ？</h4>
+<p>MozTrap 是一個測試項目管理系統（ Test Case Manager ），以 Django 和 MySQL 打造而成。小y 的文章<a title="想學-pythondjango-就從-mozilla-網站專案開始吧！" href="tech.mozilla.com.tw/posts/2390/想學-pythondjango-就從-mozilla-網站專案開始吧！">想學-pythondjango-就從-mozilla-網站專案開始吧！</a> 介紹了 Django。MozTrap 是完全開源的，你可以下載他並且使用於自己 project 的測試中。<br/>
+先來看看他的界面吧！你可以透過這個<a title="測試網站" href="https://web.archive.org/web/20171007192048/https://moztrap.allizom.org/results/runs/">測試網站</a>來瀏覽 MozTrap 的部份操作。</p>
+<div><a href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/螢幕快照-2013-10-21-下午4.04.14.png"><img class="aligncenter size-large wp-image-3289" alt="螢幕快照 2013-10-21 下午4.04.14" src="https://web.archive.org/web/20171007192048im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/螢幕快照-2013-10-21-下午4.04.14-1024x802.png" width="556" height="435" srcset="https://web.archive.org/web/20171007192048im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/螢幕快照-2013-10-21-下午4.04.14-1024x802.png 1024w, https://web.archive.org/web/20171007192048im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/螢幕快照-2013-10-21-下午4.04.14-300x235.png 300w, https://web.archive.org/web/20171007192048im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/螢幕快照-2013-10-21-下午4.04.14.png 1087w" sizes="(max-width: 556px) 100vw, 556px"/></a></div>
+<h4>安裝 MozTrap</h4>
+<p>Mozilla 安裝說明裡有<a href="https://web.archive.org/web/20171007192048/https://moztrap.readthedocs.org/en/1.4.6/installation.html">詳細的步驟</a>，如果你只想使用 MozTrap ，可以參考以下的步驟。</p>
+<ul>
+<li>建議準備一台 Linux 平台的電腦，Mac 亦可</li>
+<li>檢查你的環境是否安裝了以下的軟體， Python 2.6/2.7 、MySQL 5.1+ 、git、virtualenv、virtualenvwrapper</li>
+<li>執行以下的腳本：<br/>
+<!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-59d928dc3d36e940507611" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+git clone --recursive git://github.com/mozilla/moztrap
+cd moztrap
+mkvirtualenv moztrap
+bin/install-reqs
+echo "CREATE DATABASE moztrap CHARACTER SET utf8" | mysql
+
+./manage.py syncdb --migrate
+./manage.py create_default_roles
+./manage.py runserver</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-59d928dc3d36e940507611-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d928dc3d36e940507611-2">2</div><div class="crayon-num" data-line="crayon-59d928dc3d36e940507611-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d928dc3d36e940507611-4">4</div><div class="crayon-num" data-line="crayon-59d928dc3d36e940507611-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d928dc3d36e940507611-6">6</div><div class="crayon-num" data-line="crayon-59d928dc3d36e940507611-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-59d928dc3d36e940507611-8">8</div><div class="crayon-num" data-line="crayon-59d928dc3d36e940507611-9">9</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-59d928dc3d36e940507611-1"><span class="crayon-e">git </span><span class="crayon-r">clone</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-e">recursive </span><span class="crayon-v">git</span><span class="crayon-o">:</span><span class="crayon-c">//github.com/mozilla/moztrap</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d928dc3d36e940507611-2"><span class="crayon-e">cd </span><span class="crayon-e">moztrap</span></div><div class="crayon-line" id="crayon-59d928dc3d36e940507611-3"><span class="crayon-e">mkvirtualenv </span><span class="crayon-e">moztrap</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d928dc3d36e940507611-4"><span class="crayon-v">bin</span><span class="crayon-o">/</span><span class="crayon-v">install</span><span class="crayon-o">-</span><span class="crayon-e">reqs</span></div><div class="crayon-line" id="crayon-59d928dc3d36e940507611-5"><span class="crayon-i">echo</span><span class="crayon-h"> </span><span class="crayon-s">"CREATE DATABASE moztrap CHARACTER SET utf8"</span><span class="crayon-h"> </span><span class="crayon-o">|</span><span class="crayon-h"> </span><span class="crayon-i">mysql</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d928dc3d36e940507611-6">&nbsp;</div><div class="crayon-line" id="crayon-59d928dc3d36e940507611-7"><span class="crayon-sy">.</span><span class="crayon-o">/</span><span class="crayon-v">manage</span><span class="crayon-sy">.</span><span class="crayon-e">py </span><span class="crayon-v">syncdb</span><span class="crayon-h"> </span><span class="crayon-o">--</span><span class="crayon-i">migrate</span></div><div class="crayon-line crayon-striped-line" id="crayon-59d928dc3d36e940507611-8"><span class="crayon-sy">.</span><span class="crayon-o">/</span><span class="crayon-v">manage</span><span class="crayon-sy">.</span><span class="crayon-e">py </span><span class="crayon-v">create_default</span><span class="crayon-sy">_</span>roles</div><div class="crayon-line" id="crayon-59d928dc3d36e940507611-9"><span class="crayon-sy">.</span><span class="crayon-o">/</span><span class="crayon-v">manage</span><span class="crayon-sy">.</span><span class="crayon-e">py </span><span class="crayon-v">runserver</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0005 seconds] -->
+
+</li>
+<li>用你的瀏覽器造訪 http://localhost:8000 ，可以看到登入畫面的話，恭喜你！</li>
+</ul>
+<h4><strong>管理者界面</strong></h4>
+<p>目前大部分的相關文件都可以在 MozTrap 官網上面看到，我們簡單敘述一些使用方法。注意，想要操作管理者界面，你必須有 admin 權限。</p>
+<p><strong>管理使用者</strong></p>
+<ul>使用者管理須經由 Navigator bar → Manage → Users 開啟。並且需要有最高管理權限。你可以在此作使用者的新增，刪除，啟用，關閉，以及賦予角色（角色與權限相關）</ul>
+<p><strong>管理專案版本（Product Version）</strong></p>
+<ul>每個專案都會產生許多版本，而版本號碼是測項的一個重要性質。想像沒有版本的測項，測試者無從得知版本便無法知道應有的測試步驟以及前置步驟。建立一個新版本時，該專案底下所有測試項目都會增加一個對應該版本的測試項目。版本號碼本身以點符號隔開，分別可以排序。特別要注意有些特別字串提供不同的排序規則。正式版本定義上與 pre-release 相同，也就是 2.1a ， 2.1alpha ， 2.1beta 在排序上會在 2.1 之前。而 rc ， pre ， Release ， Pre-release 這些詞與 c 是等價的（同時可以想到， 2.1g 這樣的版本可以被考慮是 release 之後的版本）。最特別是 dev 會被排在所有詞之前， 像是 2.1a ， 2.1b 將要排在 2.1dev 之後。</ul>
+<p><strong>管理測試集（ Test Suite）</strong></p>
+<ul>進行 test suite 管理，可以從 Navigator bar 找到 Manage → Suites 。 Test suite 是一個測試項目的集合，並且是匯入大量測試項目的唯一方法。管理 test suite 方法是藉由篩選並挑出適合的測試項目，再匯入至所選的 test suite 。移除也是透過同樣的界面，在 suite 中尋找並移除。</ul>
+<p><strong>管理環境</strong></p>
+<ul>環境是指測試的一種配置。在 MozTrap 裡，可以分為 Element 以及 Category 。 Element 包含各種獨立的環境因素，例如平台，可以為 windows XP，而 Category 是同一種 Element 的集合，像是 windows 98 ， windows XP ， linux 形成三個元素的 Category。 Environment profile 則是蒐集許多 Environment 參數所得。一個 project 可以使用不同的 profile 而一個 profile 也可能為多個 project 所用。這可能是 MozTrap 中最複雜的一個功能，可以在找到更詳細的說明。</ul>
+<p><strong>管理 Test Run</strong></p>
+<ul>Test Run 即是一次的執行測試，他包含了測試項目在某種環境設定下的集合。同樣透過 Navigator bar 找到 Manage → Runs 。</ul>
+<ul>撰寫與管理測試項目需要登入才能夠開始。 MozTrap 支援 Open ID ， WordPress Login ， Mozilla Persona 以及直接在 MozTrap 系統註冊。前面的步驟完成，就可以開始編寫測試項目。趕快試試看吧！</ul>
+<p>MozTrap 目前版本到 1.4.7，歡迎對測試管理有興趣的人使用，也可以參加開發以加入你的巧思！</p>
+<h4>參考資源</h4>
+<ul>
+<li>首頁: https://moztrap.readthedocs.org/en/latest/#</li>
+<li>Forum: https://groups.google.com/forum/?fromgroups#!forum/moztrap</li>
+<li>github: https://github.com/mozilla/moztrap/</li>
+<li>回報問題: https://bugzilla.mozilla.org/enter_bug.cgi?component=MozTrap&amp;product=Mozilla%20QA</li>
+</ul>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/category/b2g" rel="category tag">Firefox OS(B2G)</a>      </div>
+    </footer> 
+    </article><!-- #post-2748 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&amp;hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+			<h3 id="comments-title">
+			共 0 則讀者回應
+		</h3>
+
+		
+		<ol class="commentlist">
+				<li class="comment even thread-even depth-1" id="li-comment-965">
+		<article id="comment-965" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img width="40" height="40" class="avatar avatar-40 photo" src="https://web.archive.org/web/20171007192048im_/https://graph.facebook.com/1659674174/picture" alt="">										<cite class="fn"><a href="https://web.archive.org/web/20171007192048/http://facebook.com/1659674174" rel="external nofollow" class="url">Shih-Chiang Chien</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/2748/%e7%94%a8-moztrap-%e4%be%86%e7%ae%a1%e7%90%86%e4%bd%a0%e7%9a%84%e6%b8%ac%e8%a9%a6#comment-965"><time pubdate datetime="2014-02-26T18:30:45+00:00">
+					2014 年 02 月 26 日 下午 06:30					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>想到前公司做測試時都是用excel來管理testcase, 交接時還要把檔案傳來傳去的，如果當初就有這種測試管理系統不曉得該有多好&#8230;</p>
+</div>
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/2748/%e7%94%a8-moztrap-%e4%be%86%e7%ae%a1%e7%90%86%e4%bd%a0%e7%9a%84%e6%b8%ac%e8%a9%a6?replytocom=965#respond" onclick="return addComment.moveForm( &quot;comment-965&quot;, &quot;965&quot;, &quot;respond&quot;, &quot;2748&quot; )" aria-label="回覆 Shih-Chiang Chien">回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+		</ol>
+
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/web/20171007192048/http://tech.mozilla.com.tw/posts/2748/%E7%94%A8-moztrap-%E4%BE%86%E7%AE%A1%E7%90%86%E4%BD%A0%E7%9A%84%E6%B8%AC%E8%A9%A6#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required="true" required="required"/></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required="true" required="required"/></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200"/></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表"/> <input type="hidden" name="comment_post_ID" value="2748" id="comment_post_ID"/>
+<input type="hidden" name="comment_parent" id="comment_parent" value="0"/>
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="c274c3a20f"/></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="13"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class="name-title"><a class="profile-link" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/author/pyangmozilla-com"><span class="gravatar left"><img src="https://web.archive.org/web/20171007192048im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg" alt="" class="avatar user-59-avatar" width="48" height="48"/></span><span class="name">PPPaul</span></a></span><pre class="bio no-style">軟體測試經驗豐富，
+現任 Firefox OS 測試工程師</pre><p class="contact"></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="59" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/author/pyangmozilla-com"><img src="https://web.archive.org/web/20171007192048im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg" alt="" class="avatar user-59-avatar" width="96" height="96"/></a><a data-author-id="90" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/author/hchangmozilla-com"><img src="https://web.archive.org/web/20171007192048im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg" alt="" class="avatar user-90-avatar" width="96" height="96"/></a><a data-author-id="60" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/author/gasolinmozilla-com"><img src="https://web.archive.org/web/20171007192048im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg" alt="" class="avatar user-60-avatar" width="96" height="96"/></a><a data-author-id="33" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/author/pwangmozilla-com"><img src="https://web.archive.org/web/20171007192048im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg" alt="" class="avatar user-33-avatar" width="96" height="96"/></a><a data-author-id="41" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/author/rlinmozilla-com"><img src="https://web.archive.org/web/20171007192048im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg" alt="" class="avatar user-41-avatar" width="96" height="96"/></a><a data-author-id="52" href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/author/etsengmozilla-com"><img src="https://web.archive.org/web/20171007192048im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg" alt="" class="avatar user-52-avatar" width="96" height="96"/></a></div><a class="more" href="/web/20171007192048/http://tech.mozilla.com.tw/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s"/>
+					<input type="submit" id="searchsubmit" value="搜尋"/>
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://web.archive.org/web/20171007192048if_/https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&amp;opaque=True&amp;hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://web.archive.org/web/20171007192048/https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://web.archive.org/web/20171007192048/https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="https://web.archive.org/web/20171007192048/http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="https://web.archive.org/web/20171007192048/http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="https://web.archive.org/web/20171007192048/http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/category/css">CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/category/firefox">Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/category/b2g">Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/category/interaction-design">Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/category/javascript">Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/category/life-at-mozilla">Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/category/mozilla">Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/category/open-source">Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://web.archive.org/web/20171007192048/http://tech.mozilla.com.tw/posts/category/ux">UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;">
+			
+			<option value="">選擇月份</option>
+				<option value="http://tech.mozilla.com.tw/posts/date/2016/05"> 2016 年 五月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2016/02"> 2016 年 二月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/07"> 2015 年 七月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/06"> 2015 年 六月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/05"> 2015 年 五月 &nbsp;(2)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/04"> 2015 年 四月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/03"> 2015 年 三月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/02"> 2015 年 二月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/01"> 2015 年 一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/12"> 2014 年 十二月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/11"> 2014 年 十一月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/10"> 2014 年 十月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/09"> 2014 年 九月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/08"> 2014 年 八月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/07"> 2014 年 七月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/05"> 2014 年 五月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/04"> 2014 年 四月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/03"> 2014 年 三月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/02"> 2014 年 二月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/01"> 2014 年 一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/12"> 2013 年 十二月 &nbsp;(6)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/11"> 2013 年 十一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/10"> 2013 年 十月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/09"> 2013 年 九月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/08"> 2013 年 八月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/07"> 2013 年 七月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/06"> 2013 年 六月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/05"> 2013 年 五月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/04"> 2013 年 四月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/03"> 2013 年 三月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/02"> 2013 年 二月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/01"> 2013 年 一月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/12"> 2012 年 十二月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/11"> 2012 年 十一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/10"> 2012 年 十月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/09"> 2012 年 九月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/08"> 2012 年 八月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/07"> 2012 年 七月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/06"> 2012 年 六月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/05"> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="https://web.archive.org/web/20171007192048/http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/web/20171007192048js_/http://tech.mozilla.com.tw/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/web/20171007192048js_/http://tech.mozilla.com.tw/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/web/20171007192048js_/http://tech.mozilla.com.tw/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/web/20171007192048js_/http://tech.mozilla.com.tw/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://web.archive.org/web/20171007192048js_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://web.archive.org/web/20171007192048js_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//web.archive.org/web/20171007192048/http://connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://web.archive.org/web/20171007192048/https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://web.archive.org/web/20171007192048js_/https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>
+<!--
+     FILE ARCHIVED ON 19:20:48 Oct 07, 2017 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 11:40:13 May 09, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 0.515
+  exclusion.robots: 0.057
+  exclusion.robots.policy: 0.05
+  esindex: 0.006
+  cdx.remote: 144.462
+  LoadShardBlock: 146.184 (3)
+  PetaboxLoader3.resolve: 512.335 (4)
+  PetaboxLoader3.datanode: 95.53 (4)
+  load_resource: 518.69
+  nav: 0.105 (6)
+-->

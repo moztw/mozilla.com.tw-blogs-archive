@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head><script src="//archive.org/includes/athena.js" type="text/javascript"></script>
+<script type="text/javascript">window.addEventListener('DOMContentLoaded',function(){var v=archive_analytics.values;v.service='wb';v.server_name='wwwb-app254.us.archive.org';v.server_ms=657;archive_analytics.send_pageview({});});</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/bundle-playback.js?v=oZ57VlYl" charset="utf-8"></script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script>window.RufflePlayer=window.RufflePlayer||{};window.RufflePlayer.config={"autoplay":"on","unmuteOverlay":"hidden","showSwfDownload":true};</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/ruffle/ruffle.js"></script>
+<script type="text/javascript">
+    __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://tech.mozilla.com.tw:80/posts/4664/%E5%A5%B3%E5%AA%A7%EF%BC%8C%E5%9C%A8-fxos-%E8%A3%A1%E6%8D%8F-process","20181105084024","https://web.archive.org/","web","https://web-static.archive.org/_static/",
+	      "1541407224");
+</script>
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3" />
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv" />
+<!-- End Wayback Rewrite JS Include -->
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。"/>
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA"/>
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78"/>
+<title>
+
+女媧，在 FxOS 裡捏 process | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://web.archive.org/web/20181105084024im_/https://mozilla.com/favicon.ico"/>
+<meta property="og:url" content="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/4664/%e5%a5%b3%e5%aa%a7%ef%bc%8c%e5%9c%a8-fxos-%e8%a3%a1%e6%8d%8f-process"/><meta property="og:image" content="https://web.archive.org/web/20181105084024im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/06/recreate.png"/>
+
+<link rel="stylesheet" type="text/css" media="all" href="https://web.archive.org/web/20181105084024cs_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="https://web.archive.org/web/20181105084024cs_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css"/><!--<link rel="pingback" href="http://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="http://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/","urlLoginRedirect":"https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=f682dfa3da","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel="dns-prefetch" href="//web.archive.org/web/20181105084024/http://s.w.org/">
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 »" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/feed"/>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 » 迴響" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/comments/feed"/>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 » 女媧，在 FxOS 裡捏 process 迴響" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/4664/%e5%a5%b3%e5%aa%a7%ef%bc%8c%e5%9c%a8-fxos-%e8%a3%a1%e6%8d%8f-process/feed"/>
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/web.archive.org\/web\/20181105084024\/https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/web.archive.org\/web\/20181105084024\/https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/web.archive.org\/web\/20181105084024\/http:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="crayon-css" href="https://web.archive.org/web/20181105084024cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="crayon-theme-arduino-ide-css" href="https://web.archive.org/web/20181105084024cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="crayon-font-monaco-css" href="https://web.archive.org/web/20181105084024cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="advanced-responsive-video-embedder-css" href="https://web.archive.org/web/20181105084024cs_/http://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0" type="text/css" media="all"/>
+<link rel="stylesheet" id="persona-style-css" href="https://web.archive.org/web/20181105084024cs_/http://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46" type="text/css" media="all"/>
+<script type="text/javascript" src="https://web.archive.org/web/20181105084024js_/http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20181105084024js_/http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/web.archive.org\/web\/20181105084024\/http:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://web.archive.org/web/20181105084024js_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta"></script>
+<link rel="https://api.w.org/" href="http://tech.mozilla.com.tw/wp-json/"/>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://tech.mozilla.com.tw/xmlrpc.php?rsd"/>
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml"/> 
+<link rel="prev" title="平價智慧手機大解密－Firefox OS 記憶體管理與優化" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/4667/%e5%b9%b3%e5%83%b9%e6%99%ba%e6%85%a7%e6%89%8b%e6%a9%9f%e5%a4%a7%e8%a7%a3%e5%af%86%ef%bc%8dfirefox-os-%e8%a8%98%e6%86%b6%e9%ab%94%e7%ae%a1%e7%90%86%e8%88%87%e5%84%aa%e5%8c%96"/>
+<link rel="next" title="像原生應用程式一樣的 WebApp？趕快學起來！" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/4803/%e5%83%8f%e5%8e%9f%e7%94%9f%e6%87%89%e7%94%a8%e7%a8%8b%e5%bc%8f%e4%b8%80%e6%a8%a3%e7%9a%84-webapp%ef%bc%9f%e8%b6%95%e5%bf%ab%e5%ad%b8%e8%b5%b7%e4%be%86%ef%bc%81"/>
+<meta name="generator" content="WordPress 4.6"/>
+<link rel="canonical" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/4664/%e5%a5%b3%e5%aa%a7%ef%bc%8c%e5%9c%a8-fxos-%e8%a3%a1%e6%8d%8f-process"/>
+<link rel="shortlink" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/?p=4664"/>
+<link rel="alternate" type="application/json+oembed" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/wp-json/oembed/1.0/embed?url=http%3A%2F%2Ftech.mozilla.com.tw%2Fposts%2F4664%2F%25e5%25a5%25b3%25e5%25aa%25a7%25ef%25bc%258c%25e5%259c%25a8-fxos-%25e8%25a3%25a1%25e6%258d%258f-process"/>
+<link rel="stylesheet" href="https://web.archive.org/web/20181105084024cs_/http://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen"/>	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://web.archive.org/web/20181105084024/https://ssl' : 'https://web.archive.org/web/20181105084024/http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-4664 single-format-standard sand"><!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script>__wm.rw(0);</script>
+<div id="wm-ipp-base" lang="en" style="display:none;direction:ltr;" toolbar-mode="auto">
+<div id="wm-ipp" style="position:fixed;left:0;top:0;right:0;">
+<div id="donato" style="position:relative;width:100%;height:0;">
+  <div id="donato-base">
+    <iframe id="donato-if" src="https://archive.org/includes/donate.php?as_page=1&amp;platform=wb&amp;referer=https%3A//web.archive.org/web/20181105084024/http%3A//tech.mozilla.com.tw/posts/4664/%E5%A5%B3%E5%AA%A7%EF%BC%8C%E5%9C%A8-fxos-%E8%A3%A1%E6%8D%8F-process"
+	    scrolling="no" frameborder="0" style="width:100%; height:100%">
+    </iframe>
+  </div>
+</div><div id="wm-ipp-inside">
+  <div id="wm-toolbar" style="position:relative;display:flex;flex-flow:row nowrap;justify-content:space-between;" nav="async">
+    <div id="wm-logo" style="/*width:110px;*/padding-top:12px;">
+      <a href="/web/" title="Wayback Machine home page"><img src="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png" srcset="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png 1.5x, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png 2x" alt="Wayback Machine" style="width:100px" border="0" /></a>
+    </div>
+    <div class="c" style="display:flex;flex-flow:column nowrap;justify-content:space-between;flex:1;">
+      <form class="u" style="display:flex;flex-direction:row;flex-wrap:nowrap;" target="_top" method="get" action="/web/submit" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="http://tech.mozilla.com.tw/posts/4664/%E5%A5%B3%E5%AA%A7%EF%BC%8C%E5%9C%A8-fxos-%E8%A3%A1%E6%8D%8F-process" onfocus="this.focus();this.select();" style="flex:1;"/><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20181105084024" /><input type="submit" value="Go" />
+      </form>
+      <div style="display:flex;flex-flow:row nowrap;align-items:flex-end;">
+                <div class="s" id="wm-nav-captures" style="flex:1;">
+                    <a class="t" href="/web/20181105084024*/http://tech.mozilla.com.tw/posts/4664/%E5%A5%B3%E5%AA%A7%EF%BC%8C%E5%9C%A8-fxos-%E8%A3%A1%E6%8D%8F-process" title="See a list of every capture for this URL">7 captures</a>
+          <div class="r" title="Timespan for captures of this URL">14 Jul 2014 - 05 Nov 2018</div>
+          </div>
+        <div class="k">
+          <a href="" id="wm-graph-anchor">
+            <div id="wm-ipp-sparkline" title="Explore captures for this URL" style="position: relative">
+              <canvas id="wm-sparkline-canvas" width="775" height="27" border="0"></canvas>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="n">
+      <table>
+        <tbody>
+          <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+          <tr class="m">
+            <td class="b" nowrap="nowrap">Oct</td>
+            <td class="c" id="displayMonthEl" title="You are here: 08:40:24 Nov 05, 2018">NOV</td>
+            <td class="f" nowrap="nowrap">Dec</td>
+          </tr>
+          <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+          <tr class="d">
+            <td class="b" nowrap="nowrap"><span class="ta"></span></td>
+            <td class="c" id="displayDayEl" style="width:34px;font-size:22px;white-space:nowrap;" title="You are here: 08:40:24 Nov 05, 2018">05</td>
+            <td class="f" nowrap="nowrap"><span class="ta"></span></td>
+          </tr>
+          <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+          <tr class="y">
+            <td class="b" nowrap="nowrap">2017</td>
+            <td class="c" id="displayYearEl" title="You are here: 08:40:24 Nov 05, 2018">2018</td>
+            <td class="f" nowrap="nowrap">2019</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="r" style="display:flex;flex-flow:column nowrap;align-items:flex-end;justify-content:space-between;">
+      <div id="wm-btns" style="text-align:right;height:23px;">
+                <span class="xxs">
+          <div id="wm-save-snapshot-success">success</div>
+          <div id="wm-save-snapshot-fail">fail</div>
+          <a id="wm-save-snapshot-open" href="#" title="Share via My Web Archive" >
+            <span class="iconochive-web"></span>
+          </a>
+          <a href="https://archive.org/account/login.php" title="Sign In" id="wm-sign-in">
+            <span class="iconochive-person"></span>
+          </a>
+          <span id="wm-save-snapshot-in-progress" class="iconochive-web"></span>
+        </span>
+                <a class="xxs" href="https://help.archive.org/help/category/the-wayback-machine/" title="Get some help using the Wayback Machine" style="top:-6px;"><span class="iconochive-question" style="color:rgb(87,186,244);font-size:160%;"></span></a>
+        <a id="wm-tb-close" href="#close" style="top:-2px;" title="Close the toolbar"><span class="iconochive-remove-circle" style="color:#888888;font-size:240%;"></span></a>
+      </div>
+      <div id="wm-share" class="xxs">
+        <a href="/web/20181105084024/http://web.archive.org/screenshot/http://tech.mozilla.com.tw/posts/4664/%E5%A5%B3%E5%AA%A7%EF%BC%8C%E5%9C%A8-fxos-%E8%A3%A1%E6%8D%8F-process"
+           id="wm-screenshot"
+           title="screenshot">
+          <span class="wm-icon-screen-shot"></span>
+        </a>
+        <a href="#" id="wm-video" title="video">
+          <span class="iconochive-movies"></span>
+        </a>
+        <a id="wm-share-facebook" href="#" data-url="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw:80/posts/4664/%E5%A5%B3%E5%AA%A7%EF%BC%8C%E5%9C%A8-fxos-%E8%A3%A1%E6%8D%8F-process" title="Share on Facebook" style="margin-right:5px;" target="_blank"><span class="iconochive-facebook" style="color:#3b5998;font-size:160%;"></span></a>
+        <a id="wm-share-twitter" href="#" data-url="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw:80/posts/4664/%E5%A5%B3%E5%AA%A7%EF%BC%8C%E5%9C%A8-fxos-%E8%A3%A1%E6%8D%8F-process" title="Share on Twitter" style="margin-right:5px;" target="_blank"><span class="iconochive-twitter" style="color:#1dcaff;font-size:160%;"></span></a>
+      </div>
+      <div style="padding-right:2px;text-align:right;white-space:nowrap;">
+        <a id="wm-expand" class="wm-btn wm-closed" href="#expand"><span id="wm-expand-icon" class="iconochive-down-solid"></span> <span class="xxs" style="font-size:80%;">About this capture</span></a>
+      </div>
+    </div>
+  </div>
+    <div id="wm-capinfo" style="border-top:1px solid #777;display:none; overflow: hidden">
+        <div id="wm-capinfo-notice" source="api"></div>
+                <div id="wm-capinfo-collected-by">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;">COLLECTED BY</div>
+    <div style="padding:3px;position:relative" id="wm-collected-by-content">
+            <div style="display:inline-block;vertical-align:top;width:50%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls);"></span>
+		Organization: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+      <div style="display:inline-block;vertical-align:top;width:49%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls)"></span>
+		<div>Collection: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a></div>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+    </div>
+    </div>
+    <div id="wm-capinfo-timestamps">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;" title="Timestamps for the elements of this page">TIMESTAMPS</div>
+    <div>
+      <div id="wm-capresources" style="margin:0 5px 5px 5px;max-height:250px;overflow-y:scroll !important"></div>
+      <div id="wm-capresources-loading" style="text-align:left;margin:0 20px 5px 5px;display:none"><img src="https://web-static.archive.org/_static/images/loading.gif" alt="loading" /></div>
+    </div>
+    </div>
+  </div></div></div></div><div id="wm-ipp-print">The Wayback Machine - https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw:80/posts/4664/%E5%A5%B3%E5%AA%A7%EF%BC%8C%E5%9C%A8-fxos-%E8%A3%A1%E6%8D%8F-process</div>
+<script type="text/javascript">//<![CDATA[
+__wm.bt(775,27,25,2,"web","http://tech.mozilla.com.tw/posts/4664/%E5%A5%B3%E5%AA%A7%EF%BC%8C%E5%9C%A8-fxos-%E8%A3%A1%E6%8D%8F-process","20181105084024",1996,"https://web-static.archive.org/_static/",["https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3","https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv"], false);
+  __wm.rw(1);
+//]]></script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+ 
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//web.archive.org/web/20181105084024/http://mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//web.archive.org/web/20181105084024/http://mozilla.com.tw/" title="回首頁" class="close">
+              <img src="/web/20181105084024im_/http://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href="//web.archive.org/web/20181105084024/http://mozilla.com.tw/" class="home">Home</a>
+            <b>&raquo;</b>
+            <a href="//web.archive.org/web/20181105084024/http://mozilla.com.tw/news/">訊息中心</a>
+            <b>&raquo;</b>
+                          <a href="//web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/">謀智台客</a><b>&raquo;</b>
+              <span>女媧，在 FxOS 裡捏 process</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="http://tech.mozilla.com.tw/posts/4664/%e5%a5%b3%e5%aa%a7%ef%bc%8c%e5%9c%a8-fxos-%e8%a3%a1%e6%8d%8f-process" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="http://tech.mozilla.com.tw/posts/4664/%e5%a5%b3%e5%aa%a7%ef%bc%8c%e5%9c%a8-fxos-%e8%a3%a1%e6%8d%8f-process"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="https://web.archive.org/web/20181105084024/http://pinterest.com/pin/create/button/?url=http://tech.mozilla.com.tw/posts/4664/%e5%a5%b3%e5%aa%a7%ef%bc%8c%e5%9c%a8-fxos-%e8%a3%a1%e6%8d%8f-process&amp;media=http://tech.mozilla.com.tw/wp-content/uploads/2014/06/recreate-150x150.png" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//web.archive.org/web/20181105084024im_/http://assets.pinterest.com/images/PinExt.png" title="Pin It"/></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('https://web.archive.org/web/20181105084024/http://www.plurk.com/?qualifier=shares&amp;status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('(') .concat(encodeURIComponent(document.title)) .concat(')')));">
+	        <img src="https://web.archive.org/web/20181105084024im_/https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">0</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/4667/%e5%b9%b3%e5%83%b9%e6%99%ba%e6%85%a7%e6%89%8b%e6%a9%9f%e5%a4%a7%e8%a7%a3%e5%af%86%ef%bc%8dfirefox-os-%e8%a8%98%e6%86%b6%e9%ab%94%e7%ae%a1%e7%90%86%e8%88%87%e5%84%aa%e5%8c%96"><div class="post-tip"><img width="48" height="48" src="https://web.archive.org/web/20181105084024im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/06/oom_adj-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="oom_adj"/><span class="meta-nav">平價智慧手機大解密－Firefox OS 記憶體管理與優化</span></div></a></div>		
+							<div class="nav-next"><a href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/4803/%e5%83%8f%e5%8e%9f%e7%94%9f%e6%87%89%e7%94%a8%e7%a8%8b%e5%bc%8f%e4%b8%80%e6%a8%a3%e7%9a%84-webapp%ef%bc%9f%e8%b6%95%e5%bf%ab%e5%ad%b8%e8%b5%b7%e4%be%86%ef%bc%81"><div class="post-tip"><img width="48" height="48" src="https://web.archive.org/web/20181105084024im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/07/螢幕快照-2014-07-10-下午6.04.20-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="app_uninstall"/><span class="meta-nav">像原生應用程式一樣的 WebApp？趕快學起來！</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-4664" class="post-4664 post type-post status-publish format-standard has-post-thumbnail hentry category-b2g">
+	 	<header class="entry-header">
+		<h1 class="entry-title">女媧，在 FxOS 裡捏 process</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/date/2014/07" class="posted-month">7月</a>
+	        <span class="posted-date">14</span>
+	        <a title="See all posts from 2014" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/date/2014" class="posted-year">2014</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="120">
+		  	<a href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/author/tchoumozilla-com">
+	          <img src="https://web.archive.org/web/20181105084024im_/http://www.gravatar.com/avatar/37b2a6dcd77c6c33a67b784d876e8c24?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=24" alt="" class="avatar user-120-avatar" width="24" height="24"/><!--
+	       --><div class="author-info">Ting-Yu Chou</div><!--
+	       --><div class="author-title"></div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p>在 Firefox OS 中，有一個類似 Android Zygote 的 process，利用 
+			<span id="crayon-5be001f797e1c774331527" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">fork</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  複製出應用程序並在這些應用程序間透過 copy-on-write 共享記憶體分頁。這麼做有助於降低記憶體用量和更快速的啟動應用程式。她的名字叫 Nuwa – 女媧 <a href="#r1">[1]</a><a href="#r2">[2]</a>。</p>
+<p>不過，
+			<span id="crayon-5be001f797e27420391107" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">fork</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  有一個限制是只有呼叫 
+			<span id="crayon-5be001f797e2a028853351" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">fork</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  的 thread 會被保留下來，可是 FxOS 是 multi-threaded，那究竟女媧是怎麼"捏"出 process 來的呢？讓我們一起來看看。</p>
+<p>首先，FxOS 透過 ld 的 wrap 功能 <a href="#r3">[3]</a> 包裝了某些函式。例如，所有對 
+			<span id="crayon-5be001f797e2b410778654" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">pthread_create</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  的呼叫，實際上會呼叫定義在 Nuwa.cpp <a href="#r4">[4]</a> 裡的 
+			<span id="crayon-5be001f797e2d324153109" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">__wrap_pthread_create</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 。這樣一來，我們可以對這些函式增加額外的行為，且不影響原本使用這些函式的程式。</p>
+<p>在更深入以前，我想先解釋一下大致上的概念。FxOS 會讓需要被重建的 threads 在 Nuwa process 裡暫停下來，並記錄下它們暫停前的狀態。稍後在 fork 出來的 child process 裡重建新的 threads 後，讓它們從剛剛暫停前的狀態繼續往下執行。沒錯，我們將會用上 
+			<span id="crayon-5be001f797e2f704519856" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">setjmp</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  / 
+			<span id="crayon-5be001f797e31582280867" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">longjmp</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  來記錄並繼續，讓我們接著往下看。</p>
+<h2>準備動作</h2>
+<p>當 
+			<span id="crayon-5be001f797e32275117266" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">pthread_create</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  在女媧 process 裡被呼叫時，
+			<span id="crayon-5be001f797e33559934796" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">__wrap_pthread_create</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  會 new 出一個 thread info structure 來儲存相關資訊，並把它加入一個 sAllThreads 的 linked list 中。除此之外，還會 
+			<span id="crayon-5be001f797e35767020815" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">malloc</span></span></span>  一個 stack 給即將被創建的 thread 使用。這個 stack 是必須的，假設我們沒有自己 
+			<span id="crayon-5be001f797e36478833025" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">malloc</span></span></span>  一個 stack 的話，在 
+			<span id="crayon-5be001f797e38220670694" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">fork</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  後的 child process 裡，這個 thread 的 stack 會消失，我們就沒有辦法讓它在 child process 裡繼續接著往下執行了。實際的 thread 函式稍後會在 
+			<span id="crayon-5be001f797e39021692049" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">_thread_create_startup</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  中呼叫。</p>
+<h2>暫停</h2>
+<p>當 thread 開始執行並呼叫 
+			<span id="crayon-5be001f797e3b184165177" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">epoll_wait</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> , 
+			<span id="crayon-5be001f797e3c070581682" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">poll</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> , 
+			<span id="crayon-5be001f797e3d899521167" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">pthread_mutex_lock</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> , 
+			<span id="crayon-5be001f797e3f076768244" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">pthread_cond_wait</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> , 和 
+			<span id="crayon-5be001f797e40103588927" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">pthread_cond_timedwait</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  其中任一函式時，它會執行 
+			<span id="crayon-5be001f797e41312633634" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">setjmp</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  並對一個已經被 locked 的 mutex 呼叫 
+			<span id="crayon-5be001f797e43524558528" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">pthread_mutex_lock</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  讓整個 thread 暫停下來。這些動作在對應的 wrapper 函式中，由 macro 
+			<span id="crayon-5be001f797e44501197889" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e ">THREAD_FREEZE_POINT*</span></span></span>  完成。</p>
+<h2>fork() 並繼續</h2>
+<p>稍後當一個 child process 從女媧 
+			<span id="crayon-5be001f797e46715707482" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">fork</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  出來，
+			<span id="crayon-5be001f797e47669285765" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">RecreateThreads</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  會在 child process 中被呼叫，並對 sAllThreads 中每一個有 
+			<span id="crayon-5be001f797e49356157399" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">TINFO_FLAG_NUWA_SUPPORT</span></span></span>  flag 的 thread 進行重建。注意 thread 的 stack 會被指定是我們剛解釋過的 malloc&#8217;d stack。在這裡，thread 函式是 
+			<span id="crayon-5be001f797e4b525719442" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">thread_recreate_startup</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> ，它將重設 thread 的名字，紀錄重建後的 pthread ID 和 native thread ID，呼叫 
+			<span id="crayon-5be001f797e4c844933661" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">setjmp</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> ，接著 
+			<span id="crayon-5be001f797e4e433194021" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">longjmp</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  回到稍早該 thread 在女媧 process 裡 
+			<span id="crayon-5be001f797e4f070201331" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">setjmp</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  的地方，繼續往下執行。當原始的 thread 函式結束後，接著會回到 
+			<span id="crayon-5be001f797e51521881340" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">thread_create_startup</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  再 
+			<span id="crayon-5be001f797e52454786024" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">longjmp</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  回到剛剛在 
+			<span id="crayon-5be001f797e53258123437" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">thread_recreate_startup</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  設下的 
+			<span id="crayon-5be001f797e55232577722" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">setjmp</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 。透過下圖我們可以更清楚的了解整個準備-暫停-繼續的流程：<br/>
+<a href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/wp-content/uploads/2014/06/recreate.png"><img class="alignnone size-full wp-image-4693" src="https://web.archive.org/web/20181105084024im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/06/recreate.png" alt="recreate" width="763" height="437" srcset="https://web.archive.org/web/20181105084024im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/06/recreate.png 763w, https://web.archive.org/web/20181105084024im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/06/recreate-300x171.png 300w" sizes="(max-width: 763px) 100vw, 763px"/></a></p>
+<p>也許眼尖的網友會注意到還有一些其他的 pthread 函式也被包裝，例如：
+			<span id="crayon-5be001f797e56620466300" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">pthread_join</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 。這是因為在女媧 process 裡創建的 thread，其 ID 可能被儲存在某個變數中而被 child process 繼承。如果在 child process 中呼叫 
+			<span id="crayon-5be001f797e58950104076" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">pthread_join</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  且傳入該 ID，它需要被替換成重建後的 pthread ID，否則將會產生錯誤，因此 
+			<span id="crayon-5be001f797e59182166625" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">pthread_join</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span>  才會也被包裝。</p>
+<p>希望這篇文章能讓大家對女媧的運作有些許的了解。:)</p>
+<p>[1] <a id="r1" href="https://web.archive.org/web/20181105084024/http://en.wikipedia.org/wiki/N%C3%BCwa">http://en.wikipedia.org/wiki/N%C3%BCwa</a><br/>
+[2] <a id="r2" href="https://web.archive.org/web/20181105084024/https://bugzilla.mozilla.org/show_bug.cgi?id=771765">https://bugzilla.mozilla.org/show_bug.cgi?id=771765</a><br/>
+[3] <a id="r3" href="https://web.archive.org/web/20181105084024/http://ftp.gnu.org/pub/old-gnu/Manuals/ld-2.9.1/html_node/ld_3.html">http://ftp.gnu.org/pub/old-gnu/Manuals/ld-2.9.1/html_node/ld_3.html</a><br/>
+[4] <a id="r4" href="https://web.archive.org/web/20181105084024/http://hg.mozilla.org/mozilla-central/file/7297cfffd91c/mozglue/build/Nuwa.cpp">http://hg.mozilla.org/mozilla-central/file/7297cfffd91c/mozglue/build/Nuwa.cpp</a></p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/category/b2g" rel="category tag">Firefox OS(B2G)</a>      </div>
+    </footer> 
+    </article><!-- #post-4664 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&amp;hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/web/20181105084024/http://tech.mozilla.com.tw/posts/4664/%E5%A5%B3%E5%AA%A7%EF%BC%8C%E5%9C%A8-fxos-%E8%A3%A1%E6%8D%8F-process#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required="true" required="required"/></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required="true" required="required"/></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200"/></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表"/> <input type="hidden" name="comment_post_ID" value="4664" id="comment_post_ID"/>
+<input type="hidden" name="comment_parent" id="comment_parent" value="0"/>
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="589e888d41"/></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="64"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class="name-title"><a class="profile-link" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/author/tchoumozilla-com"><span class="gravatar left"><img src="https://web.archive.org/web/20181105084024im_/http://www.gravatar.com/avatar/37b2a6dcd77c6c33a67b784d876e8c24?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=48" alt="" class="avatar user-120-avatar" width="48" height="48"/></span><span class="name">Ting-Yu Chou</span></a></span><p class="contact"></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="52" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/author/etsengmozilla-com"><img src="https://web.archive.org/web/20181105084024im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg" alt="" class="avatar user-52-avatar" width="96" height="96"/></a><a data-author-id="18" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/author/cyumozilla-com"><img src="https://web.archive.org/web/20181105084024im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg" alt="" class="avatar user-18-avatar" width="96" height="96"/></a><a data-author-id="43" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/author/atsaimozilla-com"><img src="https://web.archive.org/web/20181105084024im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg" alt="" class="avatar user-43-avatar" width="96" height="96"/></a><a data-author-id="70" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/author/szchenmozilla-com"><img src="https://web.archive.org/web/20181105084024im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg" alt="" class="avatar user-70-avatar" width="96" height="96"/></a><a data-author-id="60" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/author/gasolinmozilla-com"><img src="https://web.archive.org/web/20181105084024im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg" alt="" class="avatar user-60-avatar" width="96" height="96"/></a><a data-author-id="103" href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/author/jaliumozilla-com"><img src="https://web.archive.org/web/20181105084024im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg" alt="" class="avatar user-103-avatar" width="96" height="96"/></a></div><a class="more" href="/web/20181105084024/http://tech.mozilla.com.tw/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s"/>
+					<input type="submit" id="searchsubmit" value="搜尋"/>
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://web.archive.org/web/20181105084024if_/https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&amp;opaque=True&amp;hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://web.archive.org/web/20181105084024/https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://web.archive.org/web/20181105084024/https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="https://web.archive.org/web/20181105084024/http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="https://web.archive.org/web/20181105084024/http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="https://web.archive.org/web/20181105084024/http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/category/css">CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/category/firefox">Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/category/b2g">Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/category/interaction-design">Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/category/javascript">Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/category/life-at-mozilla">Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/category/mozilla">Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/category/open-source">Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://web.archive.org/web/20181105084024/http://tech.mozilla.com.tw/posts/category/ux">UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;">
+			
+			<option value="">選擇月份</option>
+				<option value="http://tech.mozilla.com.tw/posts/date/2016/05"> 2016 年 五月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2016/02"> 2016 年 二月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/07"> 2015 年 七月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/06"> 2015 年 六月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/05"> 2015 年 五月 &nbsp;(2)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/04"> 2015 年 四月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/03"> 2015 年 三月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/02"> 2015 年 二月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/01"> 2015 年 一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/12"> 2014 年 十二月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/11"> 2014 年 十一月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/10"> 2014 年 十月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/09"> 2014 年 九月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/08"> 2014 年 八月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/07"> 2014 年 七月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/05"> 2014 年 五月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/04"> 2014 年 四月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/03"> 2014 年 三月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/02"> 2014 年 二月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/01"> 2014 年 一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/12"> 2013 年 十二月 &nbsp;(6)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/11"> 2013 年 十一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/10"> 2013 年 十月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/09"> 2013 年 九月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/08"> 2013 年 八月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/07"> 2013 年 七月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/06"> 2013 年 六月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/05"> 2013 年 五月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/04"> 2013 年 四月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/03"> 2013 年 三月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/02"> 2013 年 二月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/01"> 2013 年 一月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/12"> 2012 年 十二月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/11"> 2012 年 十一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/10"> 2012 年 十月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/09"> 2012 年 九月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/08"> 2012 年 八月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/07"> 2012 年 七月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/06"> 2012 年 六月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/05"> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="https://web.archive.org/web/20181105084024/http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/web/20181105084024js_/http://tech.mozilla.com.tw/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/web/20181105084024js_/http://tech.mozilla.com.tw/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/web/20181105084024js_/http://tech.mozilla.com.tw/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/web/20181105084024js_/http://tech.mozilla.com.tw/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://web.archive.org/web/20181105084024js_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://web.archive.org/web/20181105084024js_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//web.archive.org/web/20181105084024/http://connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://web.archive.org/web/20181105084024/https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://web.archive.org/web/20181105084024js_/https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>
+<!--
+     FILE ARCHIVED ON 08:40:24 Nov 05, 2018 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 11:49:46 May 09, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 0.659
+  exclusion.robots: 0.072
+  exclusion.robots.policy: 0.06
+  esindex: 0.01
+  cdx.remote: 26.214
+  LoadShardBlock: 139.208 (3)
+  PetaboxLoader3.datanode: 214.203 (4)
+  PetaboxLoader3.resolve: 324.174 (2)
+  load_resource: 446.792
+  nav: 0.242 (6)
+-->

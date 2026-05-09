@@ -13,96 +13,192 @@
   "author": "Kilik",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=5593",
-  "archive_url": "https://web.archive.org/web/20200919183830id_/https://tech.mozilla.com.tw/?p=5593",
+  "archive_url": "https://web.archive.org/web/20200919183830/https://tech.mozilla.com.tw/?p=5593",
   "wayback_timestamp": "20200919183830",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p>相信大家多多少少玩過 iOS 手機上的 Siri 或是 Android 手機上的 Google Now！ 等語音辨識功能。  也或許有經驗因為長時間低頭滑手機太累而利用系統中的朗讀功能來\"聽\"文章。  而這兩種功能 1. Automated Speech Recognition. （ASR） 2. Text to Speech （TTS）/ Speech Synthesis ～目前究竟隱藏在 Firefox OS 的什麼地方， 以及如何達成功能的呢？ 就讓我們繼續看下去 ～</p>\n<p>簡單來說，ASR 就是利用 Microphone 或其他 Capture device 將輸入的聲音，透過語音語意辨識引擎轉換成文字或預先設定好的指令集，再往更上層的介面傳遞。 而 TTS 則將一段被選取的文字當作輸入，透過語音合成引擎包裝成 Audio Segment 再交由媒體系統去播放。</p>\n<p>好的！</p>\n<p>目前 ASR 與 TTS 的程式碼放置在 <a href=\"http://dxr.mozilla.org/mozilla-central/source/dom/media/webspeech/\">mozilla-central/dom/media/webspeech/</a>，然而由於缺乏開放且強大的語音語意辨識引擎，目前 ASR 在 Firefox OS 中只實作了 Speech API [1] 接口部分以及一個主要流程控制的狀態機 [2]，所以我們在這暫且不對 ASR 做深入介紹。  讓我們把聚光燈投向另一個主角 TTS ！！</p>\n<h2>Speech Synthesis 相關介面</h2>\n<p>先來看一眼 Speech Synthesis 的 Interface [3] 吧 ！</p>\n<p>首先你可以透過 SpeechSyntheis 所提供的幾個 method 做操作</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f66502671614603739493\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\ninterface SpeechSynthesis {\r\n      readonly attribute boolean pending;\r\n      readonly attribute boolean speaking;\r\n      readonly attribute boolean paused;\r\n      void speak(SpeechSynthesisUtterance utterance);\r\n      void cancel();\r\n      void pause();\r\n      void resume();\r\n      SpeechSynthesisVoiceList getVoices();\r\n};</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f66502671614603739493-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66502671614603739493-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f66502671614603739493-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66502671614603739493-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f66502671614603739493-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66502671614603739493-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f66502671614603739493-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66502671614603739493-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f66502671614603739493-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66502671614603739493-10\">10</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f66502671614603739493-1\"><span class=\"crayon-t\">interface</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">SpeechSynthesis</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66502671614603739493-2\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">readonly </span><span class=\"crayon-e\">attribute </span><span class=\"crayon-t\">boolean</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">pending</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f66502671614603739493-3\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">readonly </span><span class=\"crayon-e\">attribute </span><span class=\"crayon-t\">boolean</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">speaking</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66502671614603739493-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">readonly </span><span class=\"crayon-e\">attribute </span><span class=\"crayon-t\">boolean</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">paused</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f66502671614603739493-5\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">speak</span><span class=\"crayon-sy\">(</span><span class=\"crayon-e\">SpeechSynthesisUtterance </span><span class=\"crayon-v\">utterance</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66502671614603739493-6\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">cancel</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f66502671614603739493-7\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">pause</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66502671614603739493-8\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">resume</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f66502671614603739493-9\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">SpeechSynthesisVoiceList </span><span class=\"crayon-e\">getVoices</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66502671614603739493-10\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0004 seconds] -->\r\n<p>你發現 speak() / cancel() / pause() / resume() 似乎跟播放狀態有著密切關係，但⋯⋯我們這個是 Text to speech 的功能啊！最重要的 Text 在哪兒呢 ？ 眼尖的讀者應該有注意到另一個 interface</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f6650267161d110386957\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\ninterface SpeechSynthesisUtterance : EventTarget {\r\n      attribute DOMString text;\r\n      attribute DOMString lang;\r\n      attribute DOMString voiceURI;\r\n      attribute float volume;\r\n      attribute float rate;\r\n      attribute float pitch;\r\n      attribute EventHandler onstart;\r\n      attribute EventHandler onend;\r\n      attribute EventHandler onerror;\r\n      attribute EventHandler onpause;\r\n      attribute EventHandler onresume;\r\n      attribute EventHandler onmark;\r\n      attribute EventHandler onboundary;\r\n    };</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f6650267161d110386957-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650267161d110386957-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f6650267161d110386957-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650267161d110386957-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f6650267161d110386957-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650267161d110386957-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f6650267161d110386957-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650267161d110386957-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f6650267161d110386957-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650267161d110386957-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5f6650267161d110386957-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650267161d110386957-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-5f6650267161d110386957-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650267161d110386957-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-5f6650267161d110386957-15\">15</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f6650267161d110386957-1\"><span class=\"crayon-t\">interface</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">SpeechSynthesisUtterance</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">EventTarget</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650267161d110386957-2\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">attribute </span><span class=\"crayon-e\">DOMString </span><span class=\"crayon-v\">text</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650267161d110386957-3\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">attribute </span><span class=\"crayon-e\">DOMString </span><span class=\"crayon-v\">lang</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650267161d110386957-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">attribute </span><span class=\"crayon-e\">DOMString </span><span class=\"crayon-v\">voiceURI</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650267161d110386957-5\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">attribute </span><span class=\"crayon-t\">float</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">volume</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650267161d110386957-6\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">attribute </span><span class=\"crayon-t\">float</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">rate</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650267161d110386957-7\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">attribute </span><span class=\"crayon-t\">float</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">pitch</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650267161d110386957-8\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">attribute </span><span class=\"crayon-e\">EventHandler </span><span class=\"crayon-v\">onstart</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650267161d110386957-9\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">attribute </span><span class=\"crayon-e\">EventHandler </span><span class=\"crayon-v\">onend</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650267161d110386957-10\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">attribute </span><span class=\"crayon-e\">EventHandler </span><span class=\"crayon-v\">onerror</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650267161d110386957-11\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">attribute </span><span class=\"crayon-e\">EventHandler </span><span class=\"crayon-v\">onpause</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650267161d110386957-12\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">attribute </span><span class=\"crayon-e\">EventHandler </span><span class=\"crayon-v\">onresume</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650267161d110386957-13\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">attribute </span><span class=\"crayon-e\">EventHandler </span><span class=\"crayon-v\">onmark</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650267161d110386957-14\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">attribute </span><span class=\"crayon-e\">EventHandler </span><span class=\"crayon-v\">onboundary</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650267161d110386957-15\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0004 seconds] -->\r\n<p>沒錯！ 我們可以透過將所想要朗讀的文字塞入這個 interface 中的 DOMString text，並且指定對應的 language、voiceURI 等 attributes， 這樣便把所有想要語音合成的資訊都準備妥當了！</p>\n<p>咦！？ 慢著，我怎麼知道目前 Firefox OS 支援哪些語系以及語調（男聲/女聲）？</p>\n<p>喔喔，我們似乎漏看了這段程式碼以及以下兩個 Interfaces</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f66502671620475580499\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nSpeechSynthesisVoiceList getVoices();</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f66502671620475580499-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f66502671620475580499-1\"><span class=\"crayon-e\">SpeechSynthesisVoiceList </span><span class=\"crayon-e\">getVoices</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f66502671623413871153\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\ninterface SpeechSynthesisVoice {\r\n      readonly attribute DOMString voiceURI;\r\n      readonly attribute DOMString name;\r\n      readonly attribute DOMString lang;\r\n      readonly attribute boolean localService;\r\n      readonly attribute boolean default;\r\n};\r\ninterface SpeechSynthesisVoiceList {\r\n      readonly attribute unsigned long length;\r\n      getter SpeechSynthesisVoice item(in unsigned long index);\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f66502671623413871153-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66502671623413871153-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f66502671623413871153-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66502671623413871153-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f66502671623413871153-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66502671623413871153-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f66502671623413871153-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66502671623413871153-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f66502671623413871153-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f66502671623413871153-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5f66502671623413871153-11\">11</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f66502671623413871153-1\"><span class=\"crayon-t\">interface</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">SpeechSynthesisVoice</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66502671623413871153-2\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">readonly </span><span class=\"crayon-e\">attribute </span><span class=\"crayon-e\">DOMString </span><span class=\"crayon-v\">voiceURI</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f66502671623413871153-3\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">readonly </span><span class=\"crayon-e\">attribute </span><span class=\"crayon-e\">DOMString </span><span class=\"crayon-v\">name</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66502671623413871153-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">readonly </span><span class=\"crayon-e\">attribute </span><span class=\"crayon-e\">DOMString </span><span class=\"crayon-v\">lang</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f66502671623413871153-5\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">readonly </span><span class=\"crayon-e\">attribute </span><span class=\"crayon-t\">boolean</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">localService</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66502671623413871153-6\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">readonly </span><span class=\"crayon-e\">attribute </span><span class=\"crayon-t\">boolean</span><span class=\"crayon-h\"> </span><span class=\"crayon-st\">default</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f66502671623413871153-7\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66502671623413871153-8\"><span class=\"crayon-t\">interface</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">SpeechSynthesisVoiceList</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f66502671623413871153-9\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">readonly </span><span class=\"crayon-e\">attribute </span><span class=\"crayon-t\">unsigned</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">long</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">length</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f66502671623413871153-10\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-e\">getter </span><span class=\"crayon-e\">SpeechSynthesisVoice </span><span class=\"crayon-e\">item</span><span class=\"crayon-sy\">(</span><span class=\"crayon-st\">in</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">unsigned</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">long</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">index</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f66502671623413871153-11\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0003 seconds] -->\r\n<p>原來 Speech API [4] 裏早就定義好相關的介面與結構，所以 Firefox OS 在實作 SpeechSynthesis 時也設計了一個對應的 <a href=\"http://dxr.mozilla.org/mozilla-central/source/dom/media/webspeech/synth/nsISynthVoiceRegistry.idl\">XPCOM &#8211; nsISynthVoiceRegistry.idl</a> 元件讓系統註冊語音合成引擎，於是 Firefox OS 在起動時便能將搭載的語音合成引擎 Pico [4] 註冊起來，接著上層 UI 便能透過 API 取得目前 Pico 引擎內支援的語系，以及聲調來當作朗讀的參數傳入引擎！</p>\n<h2>Speech Synthesis 流程架構</h2>\n<p>接著來介紹簡單的流程架構圖吧～（以下為在 Firefox OS 中多程序架構流程）</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture.png\"><img class=\"alignleft  wp-image-5599\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-1024x571.png\" alt=\"TTS_Architecture\" width=\"572\" height=\"318\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-1024x571.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-300x167.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture.png 1584w\" sizes=\"(max-width: 572px) 100vw, 572px\" /></a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>1) 使用者在網頁上選取了一段文字，在 javascript 中 建立一個 SpeechSynthesisUtterance Object 並從 SpeechSynthesis interface 的 Speak() 傳入。   而被傳入的 SpeechSynthesisUtterance 會先被加入一個 Queue 中，之後一個一個被處理。</p>\n<p>2) 被處理的 SpeechSynthesisUtterance 透過 nsSynthVoiceRegistry 的 SpeakUtterance() 將自己傳入 nsSynthVoiceRegistry 中。</p>\n<p>3) 這階段分為兩種可能的方式，第一種是在 Firefox OS 下的情況，每一個 Utterance object 建立一個對應的 IPC request child-parent channel，讓要準備合成的文字透過 channel 被傳送到 chrome process。（對 IPC 不熟 ？ 快來<a href=\"http://tech.mozilla.com.tw/posts/2296/%E5%BF%AB%E4%BE%86%E5%B9%AB%E5%BF%99%E6%89%BE%EF%BC%8Cipdl%E5%9C%A8%E5%93%AA%E8%A3%A1%EF%BC%9F\">參考這篇</a>。）  第二種則是在尚未開啟 <a href=\"https://wiki.mozilla.org/Electrolysis\">Firefox e10s</a> 功能前的單執行程序應用情境，Utterance object 並不需要建立 IPC channel 便能直接將自己傳入 nsSynthVoiceRegistry 內。</p>\n<p>4) 在 chrome process 裏的 nsSynthVoiceRegistry 透過自己的 Speak() 將資訊準備成 Voice data 隨後交給 nsPicoService。</p>\n<p>5) nsPicoService 會產生 PicoCallbackRunnable task 來 asynchronously 執行與更底層 Pico Module （實際上真正將 Text 轉換成 Synthesized buffer block 的地方） 的互動。</p>\n<p>6) 隨後再將合成好的資料利用 PicoSynthDataRunnable 所持有在 step 3 建立的 nsSpeechTask 的 Setup() 與 SendAudioNative() 與 MediaStreamGraph 建立 Notifier-Listener 關係，且將 Synthesized data 包裝成 Audio segment 交給 MediaStreamGraph 進行播放功能。</p>\n<p>7) Audio segment 被傳入 MediaStreamGraph 的 Track 裏進行消化，而 MediaStreamGraph 會依據進行的程度作通知，例如：NotifyFinished 、NotifyBlockingChanged⋯⋯etc，而這些通知隨後便會透過 ipc 傳送狀態回 content process。</p>\n<p>8) 當 audio 的 playback status 透過 ipc 傳回 content process 後，SpeechTaskChild 會利用持有的 utterance object 的 DispatchSpeechSynthsisEvent() 將狀態發送出去。</p>\n<p>9) 傳送 state event 給上層的 DOM listener。</p>\n<p>這就是簡單的 Speech Synthesis 流程架構。  至於遺珠之憾 ASR 呢，我們下回再做更深入的介紹～</p>\n<h2>參考資料</h2>\n<p>[1] <a title=\"Web Speech API - Speech Recognition\" href=\"https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html#speechreco-section\">https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html#speechreco-section</a></p>\n<p>[2] <a title=\"Mozilla-central Speech Recognition\" href=\"http://dxr.mozilla.org/mozilla-central/source/dom/media/webspeech/recognition/SpeechRecognition.cpp#179\">http://dxr.mozilla.org/mozilla-central/source/dom/media/webspeech/recognition/SpeechRecognition.cpp#179</a></p>\n<p>[3] <a title=\"Web Speech API - Speech Synthesis\" href=\"https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html#tts-section\">https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html#tts-section</a></p>\n<p>[4] <a title=\"Mozilla-central Pico Service\" href=\"http://dxr.mozilla.org/mozilla-central/source/dom/media/webspeech/synth/pico\">http://dxr.mozilla.org/mozilla-central/source/dom/media/webspeech/synth/pico</a></p>\n\t\t\t</div>",
   "content_text": "相信大家多多少少玩過 iOS 手機上的 Siri 或是 Android 手機上的 Google Now！ 等語音辨識功能。 也或許有經驗因為長時間低頭滑手機太累而利用系統中的朗讀功能來\"聽\"文章。 而這兩種功能 1. Automated Speech Recognition. （ASR） 2. Text to Speech （TTS）/ Speech Synthesis ～目前究竟隱藏在 Firefox OS 的什麼地方， 以及如何達成功能的呢？ 就讓我們繼續看下去 ～ 簡單來說，ASR 就是利用 Microphone 或其他 Capture device 將輸入的聲音，透過語音語意辨識引擎轉換成文字或預先設定好的指令集，再往更上層的介面傳遞。 而 TTS 則將一段被選取的文字當作輸入，透過語音合成引擎包裝成 Audio Segment 再交由媒體系統去播放。 好的！ 目前 ASR 與 TTS 的程式碼放置在 mozilla-central/dom/media/webspeech/ ，然而由於缺乏開放且強大的語音語意辨識引擎，目前 ASR 在 Firefox OS 中只實作了 Speech API [1] 接口部分以及一個主要流程控制的狀態機 [2]，所以我們在這暫且不對 ASR 做深入介紹。 讓我們把聚光燈投向另一個主角 TTS ！！ Speech Synthesis 相關介面 先來看一眼 Speech Synthesis 的 Interface [3] 吧 ！ 首先你可以透過 SpeechSyntheis 所提供的幾個 method 做操作 interface SpeechSynthesis { readonly attribute boolean pending; readonly attribute boolean speaking; readonly attribute boolean paused; void speak(SpeechSynthesisUtterance utterance); void cancel(); void pause(); void resume(); SpeechSynthesisVoiceList getVoices(); }; 1 2 3 4 5 6 7 8 9 10 interface SpeechSynthesis { readonly attribute boolean pending ; readonly attribute boolean speaking ; readonly attribute boolean paused ; void speak ( SpeechSynthesisUtterance utterance ) ; void cancel ( ) ; void pause ( ) ; void resume ( ) ; SpeechSynthesisVoiceList getVoices ( ) ; } ; 你發現 speak() / cancel() / pause() / resume() 似乎跟播放狀態有著密切關係，但⋯⋯我們這個是 Text to speech 的功能啊！最重要的 Text 在哪兒呢 ？ 眼尖的讀者應該有注意到另一個 interface interface SpeechSynthesisUtterance : EventTarget { attribute DOMString text; attribute DOMString lang; attribute DOMString voiceURI; attribute float volume; attribute float rate; attribute float pitch; attribute EventHandler onstart; attribute EventHandler onend; attribute EventHandler onerror; attribute EventHandler onpause; attribute EventHandler onresume; attribute EventHandler onmark; attribute EventHandler onboundary; }; 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 interface SpeechSynthesisUtterance : EventTarget { attribute DOMString text ; attribute DOMString lang ; attribute DOMString voiceURI ; attribute float volume ; attribute float rate ; attribute float pitch ; attribute EventHandler onstart ; attribute EventHandler onend ; attribute EventHandler onerror ; attribute EventHandler onpause ; attribute EventHandler onresume ; attribute EventHandler onmark ; attribute EventHandler onboundary ; } ; 沒錯！ 我們可以透過將所想要朗讀的文字塞入這個 interface 中的 DOMString text，並且指定對應的 language、voiceURI 等 attributes， 這樣便把所有想要語音合成的資訊都準備妥當了！ 咦！？ 慢著，我怎麼知道目前 Firefox OS 支援哪些語系以及語調（男聲/女聲）？ 喔喔，我們似乎漏看了這段程式碼以及以下兩個 Interfaces SpeechSynthesisVoiceList getVoices(); 1 SpeechSynthesisVoiceList getVoices ( ) ; interface SpeechSynthesisVoice { readonly attribute DOMString voiceURI; readonly attribute DOMString name; readonly attribute DOMString lang; readonly attribute boolean localService; readonly attribute boolean default; }; interface SpeechSynthesisVoiceList { readonly attribute unsigned long length; getter SpeechSynthesisVoice item(in unsigned long index); } 1 2 3 4 5 6 7 8 9 10 11 interface SpeechSynthesisVoice { readonly attribute DOMString voiceURI ; readonly attribute DOMString name ; readonly attribute DOMString lang ; readonly attribute boolean localService ; readonly attribute boolean default ; } ; interface SpeechSynthesisVoiceList { readonly attribute unsigned long length ; getter SpeechSynthesisVoice item ( in unsigned long index ) ; } 原來 Speech API [4] 裏早就定義好相關的介面與結構，所以 Firefox OS 在實作 SpeechSynthesis 時也設計了一個對應的 XPCOM – nsISynthVoiceRegistry.idl 元件讓系統註冊語音合成引擎，於是 Firefox OS 在起動時便能將搭載的語音合成引擎 Pico [4] 註冊起來，接著上層 UI 便能透過 API 取得目前 Pico 引擎內支援的語系，以及聲調來當作朗讀的參數傳入引擎！ Speech Synthesis 流程架構 接著來介紹簡單的流程架構圖吧～（以下為在 Firefox OS 中多程序架構流程） 1) 使用者在網頁上選取了一段文字，在 javascript 中 建立一個 SpeechSynthesisUtterance Object 並從 SpeechSynthesis interface 的 Speak() 傳入。 而被傳入的 SpeechSynthesisUtterance 會先被加入一個 Queue 中，之後一個一個被處理。 2) 被處理的 SpeechSynthesisUtterance 透過 nsSynthVoiceRegistry 的 SpeakUtterance() 將自己傳入 nsSynthVoiceRegistry 中。 3) 這階段分為兩種可能的方式，第一種是在 Firefox OS 下的情況，每一個 Utterance object 建立一個對應的 IPC request child-parent channel，讓要準備合成的文字透過 channel 被傳送到 chrome process。（對 IPC 不熟 ？ 快來 參考這篇 。） 第二種則是在尚未開啟 Firefox e10s 功能前的單執行程序應用情境，Utterance object 並不需要建立 IPC channel 便能直接將自己傳入 nsSynthVoiceRegistry 內。 4) 在 chrome process 裏的 nsSynthVoiceRegistry 透過自己的 Speak() 將資訊準備成 Voice data 隨後交給 nsPicoService。 5) nsPicoService 會產生 PicoCallbackRunnable task 來 asynchronously 執行與更底層 Pico Module （實際上真正將 Text 轉換成 Synthesized buffer block 的地方） 的互動。 6) 隨後再將合成好的資料利用 PicoSynthDataRunnable 所持有在 step 3 建立的 nsSpeechTask 的 Setup() 與 SendAudioNative() 與 MediaStreamGraph 建立 Notifier-Listener 關係，且將 Synthesized data 包裝成 Audio segment 交給 MediaStreamGraph 進行播放功能。 7) Audio segment 被傳入 MediaStreamGraph 的 Track 裏進行消化，而 MediaStreamGraph 會依據進行的程度作通知，例如：NotifyFinished 、NotifyBlockingChanged⋯⋯etc，而這些通知隨後便會透過 ipc 傳送狀態回 content process。 8) 當 audio 的 playback status 透過 ipc 傳回 content process 後，SpeechTaskChild 會利用持有的 utterance object 的 DispatchSpeechSynthsisEvent() 將狀態發送出去。 9) 傳送 state event 給上層的 DOM listener。 這就是簡單的 Speech Synthesis 流程架構。 至於遺珠之憾 ASR 呢，我們下回再做更深入的介紹～ 參考資料 [1] https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html#speechreco-section [2] http://dxr.mozilla.org/mozilla-central/source/dom/media/webspeech/recognition/SpeechRecognition.cpp#179 [3] https://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html#tts-section [4] http://dxr.mozilla.org/mozilla-central/source/dom/media/webspeech/synth/pico",
   "images": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/t-50x50.jpg",
+      "alt": "t",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/t-150x150.jpg",
+      "alt": "t",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/09/head-150x150.png",
+      "alt": "Mercurial Queue",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-1024x571.png",
       "alt": "TTS_Architecture",
       "kind": "image",
-      "source": "img",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "archive_path": "assets/5593/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "markdown_path": "../assets/5593/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "wayback_timestamp": "20150322034318",
-      "asset_archive_url": "https://web.archive.org/web/20150322034318id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "archive_path": "assets/5593/003-bd2edc1f993b.png",
-      "markdown_path": "../assets/5593/003-bd2edc1f993b.png",
-      "wayback_timestamp": "20150322034318",
-      "asset_archive_url": "https://web.archive.org/web/20150322034318id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-300x167.png",
+      "alt": "TTS_Architecture",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture.png",
+      "alt": "TTS_Architecture",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
       "alt": "",
       "kind": "image",
-      "source": "img",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "archive_path": "assets/5593/002-bd2edc1f993b.png",
-      "markdown_path": "../assets/5593/002-bd2edc1f993b.png",
-      "wayback_timestamp": "20150322034318",
-      "asset_archive_url": "https://web.archive.org/web/20150322034318id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "media": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/t-50x50.jpg",
+      "alt": "t",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/t-150x150.jpg",
+      "alt": "t",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/09/head-150x150.png",
+      "alt": "Mercurial Queue",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-1024x571.png",
       "alt": "TTS_Architecture",
       "kind": "image",
-      "source": "img",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "archive_path": "assets/5593/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "markdown_path": "../assets/5593/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "wayback_timestamp": "20150322034318",
-      "asset_archive_url": "https://web.archive.org/web/20150322034318id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "archive_path": "assets/5593/003-bd2edc1f993b.png",
-      "markdown_path": "../assets/5593/003-bd2edc1f993b.png",
-      "wayback_timestamp": "20150322034318",
-      "asset_archive_url": "https://web.archive.org/web/20150322034318id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-300x167.png",
+      "alt": "TTS_Architecture",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture.png",
+      "alt": "TTS_Architecture",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
       "alt": "",
       "kind": "image",
-      "source": "img",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "archive_path": "assets/5593/002-bd2edc1f993b.png",
-      "markdown_path": "../assets/5593/002-bd2edc1f993b.png",
-      "wayback_timestamp": "20150322034318",
-      "asset_archive_url": "https://web.archive.org/web/20150322034318id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/10/TTS_Architecture-150x150.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -144,6 +240,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

@@ -13,48 +13,148 @@
   "author": "kk1fff",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=828",
-  "archive_url": "https://web.archive.org/web/20200919193116id_/https://tech.mozilla.com.tw/?p=828",
+  "archive_url": "https://web.archive.org/web/20200919193116/https://tech.mozilla.com.tw/?p=828",
   "wayback_timestamp": "20200919193116",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p>有看過 Gecko 的 C++ Source code 的人，一定見過這個東西：nsCOMPtr，有很多物件的指標都會被儲存到這類物件裡面，也猜得到他和指標有關係，但這東西到底意義何在？其實他就是 Gecko 裡面眾多 smart pointer 的一種。</p>\n<p>C 和 C++ 語言中，令人頭痛的問題之一，就是沒有辦法自動回收 Heap 內的記憶體（也就是說，C++ 預設是沒有 Garbage collector 的）。只要是 new 出來的東西，就一定要 delete（或是 malloc 出來，就一定要 free）。雖然說一般狀況下，只要清楚的指定物件的所有權，寫明要誰來負責刪除記憶體區塊，再仔細的去抓 leak，這個問題會漸漸穩定。但近代的龐大專案，例如 Gecko 裡面，這樣做就會有他的難度，因為一個物件常常被許多其他物件、函數同時使用到，指標也會在不同的函數中傳遞，很難確保說誰必須負責在使用完這個物件後把他刪除，如果錯殺了這個物件，那下場常常是整個程式 crash，所以設計一個垃圾回收機制是必須的。</p>\n<p>一個最簡單的作法，那就是我們在每個物件裡面保留一個欄位。這個欄位負責紀錄他被多少人參考到，每次有哪段程式需要用到這個物件，就把這個欄位的數目加一，當這段程式用完這個物件，就把這個欄位的數目減一，減一以後，如果發現這個欄位降到了零，那就表示，已經沒有人在用這個物件了，那他就可以安穩的被刪除。在 Gecko 的 code 裡面，物件會實作加一和減一的的函數：AddRef 和 Release 這兩個函數。雖然只是兩個函數，但巧妙各有不同。實作的方面，有一些是可以讓物件同時被兩個不同 Thread 的程式擁有，有一些則不行，諸如此類。nsISupportsImpl.h 內部就有許多 NS_IMPL_*_ADDREF 的巨集可供使用。</p>\n<p>一般來說，使用一個 nsCOMPtr 就跟一個普通指標沒什麼兩樣：都有 -&gt; Operator，可以呼叫指標所指物件的方法和存取屬性。可以用等號來進行指派，而且會自動呼叫前一個被 Assign 的物件的 Release() 方法。也就是說，沒意外的話，他可以自己釋放記憶體，我們不需要用 delete 去刪除物件，但也因為如此，在某些狀況下使用 nsCOMPtr 要特別注意：</p>\n<ol>\n<li>傳入「指標的指標」時。也就是函數從取出指標值的時候，要使用 getter_AddRefs 函數。當 nsCOMPtr 被透過 getter_AddRefs() cast 成 T** 時，原本的 nsCOMPtr 內容會先被 Release。</li>\n<li>透過 getter_AddRefs() 也是有副作用的，比方說，使用 linked-list 時，常常會出現類似的寫法：<br />\n<!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f665c846a473517862982\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\np-&gt;GetNext(&amp;p);</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f665c846a473517862982-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f665c846a473517862982-1\"><span class=\"crayon-v\">p</span><span class=\"crayon-o\">-&gt;</span><span class=\"crayon-e\">GetNext</span><span class=\"crayon-sy\">(</span><span class=\"crayon-o\">&amp;</span><span class=\"crayon-v\">p</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<br />\n如果用 nsCOMPtr 的寫法，則會成為<br />\n<!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f665c846a47f128075422\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\np-&gt;GetNext(getter_AddRefs(p));</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f665c846a47f128075422-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f665c846a47f128075422-1\"><span class=\"crayon-v\">p</span><span class=\"crayon-o\">-&gt;</span><span class=\"crayon-e\">GetNext</span><span class=\"crayon-sy\">(</span><span class=\"crayon-e\">getter_AddRefs</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">p</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<br />\n在這種狀況下，getter_AddRefs(p) 會先執行，等到 cast 成 T** 的時候，p 早已經釋放了，於是我們就等於呼叫一個 NULL 的方法，這種事情的後果&#8230;真是不堪設想（還好 nsCOMPtr 會對這種情況 Assert，不致於直接 Crash）。所以，這種時候要分解動作。<br />\n<!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f665c846a483646364215\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nwhile ( p )\r\n{\r\n  nsIDOMNode* next;\r\n  p-&gt;GetNext(&amp;next);\r\n  p = dont_AddRef(next);\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f665c846a483646364215-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665c846a483646364215-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f665c846a483646364215-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665c846a483646364215-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f665c846a483646364215-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f665c846a483646364215-6\">6</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f665c846a483646364215-1\"><span class=\"crayon-st\">while</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-h\"> </span><span class=\"crayon-i\">p</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">)</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665c846a483646364215-2\"><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f665c846a483646364215-3\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-e \">nsIDOMNode*</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">next</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665c846a483646364215-4\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">p</span><span class=\"crayon-o\">-&gt;</span><span class=\"crayon-e\">GetNext</span><span class=\"crayon-sy\">(</span><span class=\"crayon-o\">&amp;</span><span class=\"crayon-v\">next</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f665c846a483646364215-5\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">p</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">dont_AddRef</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">next</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f665c846a483646364215-6\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<br />\n這樣 next 在經過 p-&gt;GetNext(&amp;next); 之後，會指向一個已經有被執行過 &#8220;AddRef\" 的物件，再用 dont_AddRef 去指派他，這樣就不會增加一次參考。</li>\n<li>環狀參照：是個 Reference-counted 非常常見而且有時候很棘手的問題，狀況就是當 A 物件透過 nsCOMPtr 持有一個 B 物件的指標，而 B 物件又透過 nsCOMPtr 持有一個 A 物件的指標。因為 nsCOMPtr 是強指標，只要透過 nsCOMPtr 持有的物件都不會被銷毀，這種環狀參照的情形，會讓 A 和 B 兩個物件都不會被刪除。<br />\n解決的方法就是使用弱指標，弱指標有點像是普通的指標，這種指標只會指向某個物件，但不會防止某個物件被刪除。但使用 Weak Reference 的好處就是，假如所指向的物件被刪除了，我們會知道這件事情。<br />\n假如一個物件有繼承 nsSupportsWeakReference，就表示他支援 Weak Reference，我們就可以用這種方法取得他的 Weak Reference。<br />\n<!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f665c846a487809022163\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nnsWeakPtr weakPtr = do_GetWeakReference(aFooPtr);</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f665c846a487809022163-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f665c846a487809022163-1\"><span class=\"crayon-e\">nsWeakPtr </span><span class=\"crayon-v\">weakPtr</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">do_GetWeakReference</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">aFooPtr</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<br />\n接著我們就可以心安理得的把 weakPtr 儲存下來，不用擔心我們參照的物件，會因為 weakPtr 而無法刪除。當我們要使用這個物件的時候，只要使用 do_QueryReferent() 可以把他暫時變成 nsCOMPtr<br />\n<!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f665c846a48a980644129\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nnsCOMPtr tempFooPtr = do_QueryReferent(weakPtr);</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f665c846a48a980644129-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f665c846a48a980644129-1\"><span class=\"crayon-e\">nsCOMPtr </span><span class=\"crayon-v\">tempFooPtr</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">do_QueryReferent</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">weakPtr</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<br />\n我們就可以暫時使用強指標指向這個物件，但當 tempFooPtr 的生命週期結束以後，aFooPtr 的指標又會只剩下 weakPtr 在參照。如果 do_QureyReferent 的物件實際上已經被刪除了，那我們取得的 tempFooPtr 就會是 nsnull。所以在使用前記得先檢查一下囉！</li>\n</ol>\n<h3>Reference</h3>\n<ul>\n<li>https://developer.mozilla.org/en-US/docs/Using_nsCOMPtr/Reference_Manual</li>\n<li>https://developer.mozilla.org/en-US/docs/Weak_reference</li>\n</ul>\n\t\t\t</div>",
   "content_text": "有看過 Gecko 的 C++ Source code 的人，一定見過這個東西：nsCOMPtr，有很多物件的指標都會被儲存到這類物件裡面，也猜得到他和指標有關係，但這東西到底意義何在？其實他就是 Gecko 裡面眾多 smart pointer 的一種。 C 和 C++ 語言中，令人頭痛的問題之一，就是沒有辦法自動回收 Heap 內的記憶體（也就是說，C++ 預設是沒有 Garbage collector 的）。只要是 new 出來的東西，就一定要 delete（或是 malloc 出來，就一定要 free）。雖然說一般狀況下，只要清楚的指定物件的所有權，寫明要誰來負責刪除記憶體區塊，再仔細的去抓 leak，這個問題會漸漸穩定。但近代的龐大專案，例如 Gecko 裡面，這樣做就會有他的難度，因為一個物件常常被許多其他物件、函數同時使用到，指標也會在不同的函數中傳遞，很難確保說誰必須負責在使用完這個物件後把他刪除，如果錯殺了這個物件，那下場常常是整個程式 crash，所以設計一個垃圾回收機制是必須的。 一個最簡單的作法，那就是我們在每個物件裡面保留一個欄位。這個欄位負責紀錄他被多少人參考到，每次有哪段程式需要用到這個物件，就把這個欄位的數目加一，當這段程式用完這個物件，就把這個欄位的數目減一，減一以後，如果發現這個欄位降到了零，那就表示，已經沒有人在用這個物件了，那他就可以安穩的被刪除。在 Gecko 的 code 裡面，物件會實作加一和減一的的函數：AddRef 和 Release 這兩個函數。雖然只是兩個函數，但巧妙各有不同。實作的方面，有一些是可以讓物件同時被兩個不同 Thread 的程式擁有，有一些則不行，諸如此類。nsISupportsImpl.h 內部就有許多 NS_IMPL_*_ADDREF 的巨集可供使用。 一般來說，使用一個 nsCOMPtr 就跟一個普通指標沒什麼兩樣：都有 -> Operator，可以呼叫指標所指物件的方法和存取屬性。可以用等號來進行指派，而且會自動呼叫前一個被 Assign 的物件的 Release() 方法。也就是說，沒意外的話，他可以自己釋放記憶體，我們不需要用 delete 去刪除物件，但也因為如此，在某些狀況下使用 nsCOMPtr 要特別注意： 傳入「指標的指標」時。也就是函數從取出指標值的時候，要使用 getter_AddRefs 函數。當 nsCOMPtr 被透過 getter_AddRefs() cast 成 T** 時，原本的 nsCOMPtr 內容會先被 Release。 透過 getter_AddRefs() 也是有副作用的，比方說，使用 linked-list 時，常常會出現類似的寫法： p->GetNext(&p); 1 p -> GetNext ( & p ) ; 如果用 nsCOMPtr 的寫法，則會成為 p->GetNext(getter_AddRefs(p)); 1 p -> GetNext ( getter_AddRefs ( p ) ) ; 在這種狀況下，getter_AddRefs(p) 會先執行，等到 cast 成 T** 的時候，p 早已經釋放了，於是我們就等於呼叫一個 NULL 的方法，這種事情的後果…真是不堪設想（還好 nsCOMPtr 會對這種情況 Assert，不致於直接 Crash）。所以，這種時候要分解動作。 while ( p ) { nsIDOMNode* next; p->GetNext(&next); p = dont_AddRef(next); } 1 2 3 4 5 6 while ( p ) { nsIDOMNode* next ; p -> GetNext ( & next ) ; p = dont_AddRef ( next ) ; } 這樣 next 在經過 p->GetNext(&next); 之後，會指向一個已經有被執行過 “AddRef\" 的物件，再用 dont_AddRef 去指派他，這樣就不會增加一次參考。 環狀參照：是個 Reference-counted 非常常見而且有時候很棘手的問題，狀況就是當 A 物件透過 nsCOMPtr 持有一個 B 物件的指標，而 B 物件又透過 nsCOMPtr 持有一個 A 物件的指標。因為 nsCOMPtr 是強指標，只要透過 nsCOMPtr 持有的物件都不會被銷毀，這種環狀參照的情形，會讓 A 和 B 兩個物件都不會被刪除。 解決的方法就是使用弱指標，弱指標有點像是普通的指標，這種指標只會指向某個物件，但不會防止某個物件被刪除。但使用 Weak Reference 的好處就是，假如所指向的物件被刪除了，我們會知道這件事情。 假如一個物件有繼承 nsSupportsWeakReference，就表示他支援 Weak Reference，我們就可以用這種方法取得他的 Weak Reference。 nsWeakPtr weakPtr = do_GetWeakReference(aFooPtr); 1 nsWeakPtr weakPtr = do_GetWeakReference ( aFooPtr ) ; 接著我們就可以心安理得的把 weakPtr 儲存下來，不用擔心我們參照的物件，會因為 weakPtr 而無法刪除。當我們要使用這個物件的時候，只要使用 do_QueryReferent() 可以把他暫時變成 nsCOMPtr nsCOMPtr tempFooPtr = do_QueryReferent(weakPtr); 1 nsCOMPtr tempFooPtr = do_QueryReferent ( weakPtr ) ; 我們就可以暫時使用強指標指向這個物件，但當 tempFooPtr 的生命週期結束以後，aFooPtr 的指標又會只剩下 weakPtr 在參照。如果 do_QureyReferent 的物件實際上已經被刪除了，那我們取得的 tempFooPtr 就會是 nsnull。所以在使用前記得先檢查一下囉！ Reference https://developer.mozilla.org/en-US/docs/Using_nsCOMPtr/Reference_Manual https://developer.mozilla.org/en-US/docs/Weak_reference",
   "images": [
     {
-      "post_id": 828,
-      "page_type": "post",
-      "title": "說說 nsCOMPtr 這東西",
-      "page_timestamp": "20200919193116",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
-      "source": "img",
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
-      "archive_path": "assets/828/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
-      "markdown_path": "../assets/828/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
-      "wayback_timestamp": "20181117174245",
-      "asset_archive_url": "https://web.archive.org/web/20181117174245id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/channels-firefox.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
     }
   ],
   "media": [
     {
-      "post_id": 828,
-      "page_type": "post",
-      "title": "說說 nsCOMPtr 這東西",
-      "page_timestamp": "20200919193116",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
-      "source": "img",
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
-      "archive_path": "assets/828/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
-      "markdown_path": "../assets/828/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
-      "wayback_timestamp": "20181117174245",
-      "asset_archive_url": "https://web.archive.org/web/20181117174245id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/channels-firefox.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
     }
   ],
   "links": [],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

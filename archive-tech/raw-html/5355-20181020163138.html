@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head><script src="//archive.org/includes/athena.js" type="text/javascript"></script>
+<script type="text/javascript">window.addEventListener('DOMContentLoaded',function(){var v=archive_analytics.values;v.service='wb';v.server_name='wwwb-app254.us.archive.org';v.server_ms=658;archive_analytics.send_pageview({});});</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/bundle-playback.js?v=oZ57VlYl" charset="utf-8"></script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script>window.RufflePlayer=window.RufflePlayer||{};window.RufflePlayer.config={"autoplay":"on","unmuteOverlay":"hidden","showSwfDownload":true};</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/ruffle/ruffle.js"></script>
+<script type="text/javascript">
+    __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://tech.mozilla.com.tw:80/posts/5355/%E5%9C%A8-firefox-os-%E5%8F%96%E5%9C%96%E7%89%87%E8%89%B2%E5%BD%A9%E5%B9%B3%E5%9D%87%E5%80%BC%E4%B9%8B%E4%BA%8C%E4%B8%89%E4%BA%8B","20181020163138","https://web.archive.org/","web","https://web-static.archive.org/_static/",
+	      "1540053098");
+</script>
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3" />
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv" />
+<!-- End Wayback Rewrite JS Include -->
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。"/>
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA"/>
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78"/>
+<title>
+
+在 Firefox OS 取圖片色彩平均值之二三事 | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://web.archive.org/web/20181020163138im_/https://mozilla.com/favicon.ico"/>
+<meta property="og:url" content="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/5355/%e5%9c%a8-firefox-os-%e5%8f%96%e5%9c%96%e7%89%87%e8%89%b2%e5%bd%a9%e5%b9%b3%e5%9d%87%e5%80%bc%e4%b9%8b%e4%ba%8c%e4%b8%89%e4%ba%8b"/><meta property="og:image" content="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/NewLockscreenWithNotification.png"/>
+
+<link rel="stylesheet" type="text/css" media="all" href="https://web.archive.org/web/20181020163138cs_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="https://web.archive.org/web/20181020163138cs_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css"/><!--<link rel="pingback" href="http://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="http://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/","urlLoginRedirect":"https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=0f4d6605a0","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel="dns-prefetch" href="//web.archive.org/web/20181020163138/http://s.w.org/">
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 »" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/feed"/>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 » 迴響" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/comments/feed"/>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 » 在 Firefox OS 取圖片色彩平均值之二三事 迴響" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/5355/%e5%9c%a8-firefox-os-%e5%8f%96%e5%9c%96%e7%89%87%e8%89%b2%e5%bd%a9%e5%b9%b3%e5%9d%87%e5%80%bc%e4%b9%8b%e4%ba%8c%e4%b8%89%e4%ba%8b/feed"/>
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/web.archive.org\/web\/20181020163138\/https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/web.archive.org\/web\/20181020163138\/https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/web.archive.org\/web\/20181020163138\/http:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="crayon-css" href="https://web.archive.org/web/20181020163138cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="crayon-theme-arduino-ide-css" href="https://web.archive.org/web/20181020163138cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="crayon-font-monaco-css" href="https://web.archive.org/web/20181020163138cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="advanced-responsive-video-embedder-css" href="https://web.archive.org/web/20181020163138cs_/http://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0" type="text/css" media="all"/>
+<link rel="stylesheet" id="persona-style-css" href="https://web.archive.org/web/20181020163138cs_/http://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46" type="text/css" media="all"/>
+<script type="text/javascript" src="https://web.archive.org/web/20181020163138js_/http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20181020163138js_/http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/web.archive.org\/web\/20181020163138\/http:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://web.archive.org/web/20181020163138js_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta"></script>
+<link rel="https://api.w.org/" href="http://tech.mozilla.com.tw/wp-json/"/>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://tech.mozilla.com.tw/xmlrpc.php?rsd"/>
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml"/> 
+<link rel="prev" title="打造專屬於你的 Git 工作流程 — Alias、Commands、Hooks" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/5306/%e6%89%93%e9%80%a0%e5%b0%88%e5%b1%ac%e6%96%bc%e4%bd%a0%e7%9a%84-git-%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b-alias%e3%80%81commands%e3%80%81hooks"/>
+<link rel="next" title="更快更安全的 Web － SPDY" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/5538/%e6%9b%b4%e5%bf%ab%e6%9b%b4%e5%ae%89%e5%85%a8%e7%9a%84-web-spdy"/>
+<meta name="generator" content="WordPress 4.6"/>
+<link rel="canonical" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/5355/%e5%9c%a8-firefox-os-%e5%8f%96%e5%9c%96%e7%89%87%e8%89%b2%e5%bd%a9%e5%b9%b3%e5%9d%87%e5%80%bc%e4%b9%8b%e4%ba%8c%e4%b8%89%e4%ba%8b"/>
+<link rel="shortlink" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/?p=5355"/>
+<link rel="alternate" type="application/json+oembed" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/wp-json/oembed/1.0/embed?url=http%3A%2F%2Ftech.mozilla.com.tw%2Fposts%2F5355%2F%25e5%259c%25a8-firefox-os-%25e5%258f%2596%25e5%259c%2596%25e7%2589%2587%25e8%2589%25b2%25e5%25bd%25a9%25e5%25b9%25b3%25e5%259d%2587%25e5%2580%25bc%25e4%25b9%258b%25e4%25ba%258c%25e4%25b8%2589%25e4%25ba%258b"/>
+<link rel="stylesheet" href="https://web.archive.org/web/20181020163138cs_/http://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen"/>	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://web.archive.org/web/20181020163138/https://ssl' : 'https://web.archive.org/web/20181020163138/http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-5355 single-format-standard sand"><!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script>__wm.rw(0);</script>
+<div id="wm-ipp-base" lang="en" style="display:none;direction:ltr;" toolbar-mode="auto">
+<div id="wm-ipp" style="position:fixed;left:0;top:0;right:0;">
+<div id="donato" style="position:relative;width:100%;height:0;">
+  <div id="donato-base">
+    <iframe id="donato-if" src="https://archive.org/includes/donate.php?as_page=1&amp;platform=wb&amp;referer=https%3A//web.archive.org/web/20181020163138/http%3A//tech.mozilla.com.tw/posts/5355/%E5%9C%A8-firefox-os-%E5%8F%96%E5%9C%96%E7%89%87%E8%89%B2%E5%BD%A9%E5%B9%B3%E5%9D%87%E5%80%BC%E4%B9%8B%E4%BA%8C%E4%B8%89%E4%BA%8B"
+	    scrolling="no" frameborder="0" style="width:100%; height:100%">
+    </iframe>
+  </div>
+</div><div id="wm-ipp-inside">
+  <div id="wm-toolbar" style="position:relative;display:flex;flex-flow:row nowrap;justify-content:space-between;" nav="async">
+    <div id="wm-logo" style="/*width:110px;*/padding-top:12px;">
+      <a href="/web/" title="Wayback Machine home page"><img src="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png" srcset="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png 1.5x, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png 2x" alt="Wayback Machine" style="width:100px" border="0" /></a>
+    </div>
+    <div class="c" style="display:flex;flex-flow:column nowrap;justify-content:space-between;flex:1;">
+      <form class="u" style="display:flex;flex-direction:row;flex-wrap:nowrap;" target="_top" method="get" action="/web/submit" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="http://tech.mozilla.com.tw/posts/5355/%E5%9C%A8-firefox-os-%E5%8F%96%E5%9C%96%E7%89%87%E8%89%B2%E5%BD%A9%E5%B9%B3%E5%9D%87%E5%80%BC%E4%B9%8B%E4%BA%8C%E4%B8%89%E4%BA%8B" onfocus="this.focus();this.select();" style="flex:1;"/><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20181020163138" /><input type="submit" value="Go" />
+      </form>
+      <div style="display:flex;flex-flow:row nowrap;align-items:flex-end;">
+                <div class="s" id="wm-nav-captures" style="flex:1;">
+                    <a class="t" href="/web/20181020163138*/http://tech.mozilla.com.tw/posts/5355/%E5%9C%A8-firefox-os-%E5%8F%96%E5%9C%96%E7%89%87%E8%89%B2%E5%BD%A9%E5%B9%B3%E5%9D%87%E5%80%BC%E4%B9%8B%E4%BA%8C%E4%B8%89%E4%BA%8B" title="See a list of every capture for this URL">7 captures</a>
+          <div class="r" title="Timespan for captures of this URL">08 Oct 2014 - 20 Oct 2018</div>
+          </div>
+        <div class="k">
+          <a href="" id="wm-graph-anchor">
+            <div id="wm-ipp-sparkline" title="Explore captures for this URL" style="position: relative">
+              <canvas id="wm-sparkline-canvas" width="775" height="27" border="0"></canvas>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="n">
+      <table>
+        <tbody>
+          <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+          <tr class="m">
+            <td class="b" nowrap="nowrap">Sep</td>
+            <td class="c" id="displayMonthEl" title="You are here: 16:31:38 Oct 20, 2018">OCT</td>
+            <td class="f" nowrap="nowrap">Nov</td>
+          </tr>
+          <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+          <tr class="d">
+            <td class="b" nowrap="nowrap"><span class="ta"></span></td>
+            <td class="c" id="displayDayEl" style="width:34px;font-size:22px;white-space:nowrap;" title="You are here: 16:31:38 Oct 20, 2018">20</td>
+            <td class="f" nowrap="nowrap"><span class="ta"></span></td>
+          </tr>
+          <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+          <tr class="y">
+            <td class="b" nowrap="nowrap">2017</td>
+            <td class="c" id="displayYearEl" title="You are here: 16:31:38 Oct 20, 2018">2018</td>
+            <td class="f" nowrap="nowrap">2019</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="r" style="display:flex;flex-flow:column nowrap;align-items:flex-end;justify-content:space-between;">
+      <div id="wm-btns" style="text-align:right;height:23px;">
+                <span class="xxs">
+          <div id="wm-save-snapshot-success">success</div>
+          <div id="wm-save-snapshot-fail">fail</div>
+          <a id="wm-save-snapshot-open" href="#" title="Share via My Web Archive" >
+            <span class="iconochive-web"></span>
+          </a>
+          <a href="https://archive.org/account/login.php" title="Sign In" id="wm-sign-in">
+            <span class="iconochive-person"></span>
+          </a>
+          <span id="wm-save-snapshot-in-progress" class="iconochive-web"></span>
+        </span>
+                <a class="xxs" href="https://help.archive.org/help/category/the-wayback-machine/" title="Get some help using the Wayback Machine" style="top:-6px;"><span class="iconochive-question" style="color:rgb(87,186,244);font-size:160%;"></span></a>
+        <a id="wm-tb-close" href="#close" style="top:-2px;" title="Close the toolbar"><span class="iconochive-remove-circle" style="color:#888888;font-size:240%;"></span></a>
+      </div>
+      <div id="wm-share" class="xxs">
+        <a href="/web/20181020163138/http://web.archive.org/screenshot/http://tech.mozilla.com.tw/posts/5355/%E5%9C%A8-firefox-os-%E5%8F%96%E5%9C%96%E7%89%87%E8%89%B2%E5%BD%A9%E5%B9%B3%E5%9D%87%E5%80%BC%E4%B9%8B%E4%BA%8C%E4%B8%89%E4%BA%8B"
+           id="wm-screenshot"
+           title="screenshot">
+          <span class="wm-icon-screen-shot"></span>
+        </a>
+        <a href="#" id="wm-video" title="video">
+          <span class="iconochive-movies"></span>
+        </a>
+        <a id="wm-share-facebook" href="#" data-url="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw:80/posts/5355/%E5%9C%A8-firefox-os-%E5%8F%96%E5%9C%96%E7%89%87%E8%89%B2%E5%BD%A9%E5%B9%B3%E5%9D%87%E5%80%BC%E4%B9%8B%E4%BA%8C%E4%B8%89%E4%BA%8B" title="Share on Facebook" style="margin-right:5px;" target="_blank"><span class="iconochive-facebook" style="color:#3b5998;font-size:160%;"></span></a>
+        <a id="wm-share-twitter" href="#" data-url="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw:80/posts/5355/%E5%9C%A8-firefox-os-%E5%8F%96%E5%9C%96%E7%89%87%E8%89%B2%E5%BD%A9%E5%B9%B3%E5%9D%87%E5%80%BC%E4%B9%8B%E4%BA%8C%E4%B8%89%E4%BA%8B" title="Share on Twitter" style="margin-right:5px;" target="_blank"><span class="iconochive-twitter" style="color:#1dcaff;font-size:160%;"></span></a>
+      </div>
+      <div style="padding-right:2px;text-align:right;white-space:nowrap;">
+        <a id="wm-expand" class="wm-btn wm-closed" href="#expand"><span id="wm-expand-icon" class="iconochive-down-solid"></span> <span class="xxs" style="font-size:80%;">About this capture</span></a>
+      </div>
+    </div>
+  </div>
+    <div id="wm-capinfo" style="border-top:1px solid #777;display:none; overflow: hidden">
+        <div id="wm-capinfo-notice" source="api"></div>
+                <div id="wm-capinfo-collected-by">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;">COLLECTED BY</div>
+    <div style="padding:3px;position:relative" id="wm-collected-by-content">
+            <div style="display:inline-block;vertical-align:top;width:50%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls);"></span>
+		Organization: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+      <div style="display:inline-block;vertical-align:top;width:49%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls)"></span>
+		<div>Collection: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a></div>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+    </div>
+    </div>
+    <div id="wm-capinfo-timestamps">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;" title="Timestamps for the elements of this page">TIMESTAMPS</div>
+    <div>
+      <div id="wm-capresources" style="margin:0 5px 5px 5px;max-height:250px;overflow-y:scroll !important"></div>
+      <div id="wm-capresources-loading" style="text-align:left;margin:0 20px 5px 5px;display:none"><img src="https://web-static.archive.org/_static/images/loading.gif" alt="loading" /></div>
+    </div>
+    </div>
+  </div></div></div></div><div id="wm-ipp-print">The Wayback Machine - https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw:80/posts/5355/%E5%9C%A8-firefox-os-%E5%8F%96%E5%9C%96%E7%89%87%E8%89%B2%E5%BD%A9%E5%B9%B3%E5%9D%87%E5%80%BC%E4%B9%8B%E4%BA%8C%E4%B8%89%E4%BA%8B</div>
+<script type="text/javascript">//<![CDATA[
+__wm.bt(775,27,25,2,"web","http://tech.mozilla.com.tw/posts/5355/%E5%9C%A8-firefox-os-%E5%8F%96%E5%9C%96%E7%89%87%E8%89%B2%E5%BD%A9%E5%B9%B3%E5%9D%87%E5%80%BC%E4%B9%8B%E4%BA%8C%E4%B8%89%E4%BA%8B","20181020163138",1996,"https://web-static.archive.org/_static/",["https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3","https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv"], false);
+  __wm.rw(1);
+//]]></script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+ 
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//web.archive.org/web/20181020163138/http://mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//web.archive.org/web/20181020163138/http://mozilla.com.tw/" title="回首頁" class="close">
+              <img src="/web/20181020163138im_/http://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href="//web.archive.org/web/20181020163138/http://mozilla.com.tw/" class="home">Home</a>
+            <b>&raquo;</b>
+            <a href="//web.archive.org/web/20181020163138/http://mozilla.com.tw/news/">訊息中心</a>
+            <b>&raquo;</b>
+                          <a href="//web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/">謀智台客</a><b>&raquo;</b>
+              <span>在 Firefox OS 取圖片色彩平均值之二三事</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="http://tech.mozilla.com.tw/posts/5355/%e5%9c%a8-firefox-os-%e5%8f%96%e5%9c%96%e7%89%87%e8%89%b2%e5%bd%a9%e5%b9%b3%e5%9d%87%e5%80%bc%e4%b9%8b%e4%ba%8c%e4%b8%89%e4%ba%8b" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="http://tech.mozilla.com.tw/posts/5355/%e5%9c%a8-firefox-os-%e5%8f%96%e5%9c%96%e7%89%87%e8%89%b2%e5%bd%a9%e5%b9%b3%e5%9d%87%e5%80%bc%e4%b9%8b%e4%ba%8c%e4%b8%89%e4%ba%8b"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="https://web.archive.org/web/20181020163138/http://pinterest.com/pin/create/button/?url=http://tech.mozilla.com.tw/posts/5355/%e5%9c%a8-firefox-os-%e5%8f%96%e5%9c%96%e7%89%87%e8%89%b2%e5%bd%a9%e5%b9%b3%e5%9d%87%e5%80%bc%e4%b9%8b%e4%ba%8c%e4%b8%89%e4%ba%8b&amp;media=http://tech.mozilla.com.tw/wp-content/uploads/2014/09/NewLockscreenWithNotification-150x150.png" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//web.archive.org/web/20181020163138im_/http://assets.pinterest.com/images/PinExt.png" title="Pin It"/></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('https://web.archive.org/web/20181020163138/http://www.plurk.com/?qualifier=shares&amp;status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('(') .concat(encodeURIComponent(document.title)) .concat(')')));">
+	        <img src="https://web.archive.org/web/20181020163138im_/https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">0</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/5306/%e6%89%93%e9%80%a0%e5%b0%88%e5%b1%ac%e6%96%bc%e4%bd%a0%e7%9a%84-git-%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b-alias%e3%80%81commands%e3%80%81hooks"><div class="post-tip"><img width="48" height="48" src="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/Krita-building_for-cats_010-git-update_by-deevad-50x50.jpg" class="attachment-48x48 size-48x48 wp-post-image" alt="Krita-building_for-cats_010-git-update_by-deevad" srcset="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/Krita-building_for-cats_010-git-update_by-deevad-50x50.jpg 50w, https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/Krita-building_for-cats_010-git-update_by-deevad-150x150.jpg 150w" sizes="(max-width: 48px) 100vw, 48px"/><span class="meta-nav">打造專屬於你的 Git 工作流程 -- Alias、Commands、Hooks</span></div></a></div>		
+							<div class="nav-next"><a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/5538/%e6%9b%b4%e5%bf%ab%e6%9b%b4%e5%ae%89%e5%85%a8%e7%9a%84-web-spdy"><div class="post-tip"><img width="48" height="48" src="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/Sonicriders_tails02-50x50.png" class="attachment-48x48 size-48x48 wp-post-image" alt="Sonicriders_tails02" srcset="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/Sonicriders_tails02-50x50.png 50w, https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/Sonicriders_tails02-150x150.png 150w" sizes="(max-width: 48px) 100vw, 48px"/><span class="meta-nav">更快更安全的 Web － SPDY</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-5355" class="post-5355 post type-post status-publish format-standard has-post-thumbnail hentry category-b2g category-javascript">
+	 	<header class="entry-header">
+		<h1 class="entry-title">在 Firefox OS 取圖片色彩平均值之二三事</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/date/2014/10" class="posted-month">10月</a>
+	        <span class="posted-date">06</span>
+	        <a title="See all posts from 2014" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/date/2014" class="posted-year">2014</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="129">
+		  	<a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/author/jlumozilla-com">
+	          <img src="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/129/250105a87a5f4f4d16fcc5ae37d5a1e0-bpthumb.jpg" alt="" class="avatar user-129-avatar" width="24" height="24"/><!--
+	       --><div class="author-info">Mnjul</div><!--
+	       --><div class="author-title"></div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p>在 Mozilla 開發 Firefox OS 的歷程中，使用者體驗是我們非常著重的項目。在近期開發的 Firefox OS 版本（2.0）上，我們大幅修改了鎖定畫面（Lock Screen，或稱螢幕鎖）的外觀。下圖左是舊版畫面，圖右是新版畫面。</p>
+<div style="text-align: center"><a style="margin-right: 28px" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/OldNotification.png"><img class="alignnone size-medium wp-image-5399" src="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/OldNotification-168x300.png" alt="OldNotification" width="112" height="200" srcset="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/OldNotification-168x300.png 168w, https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/OldNotification.png 480w" sizes="(max-width: 112px) 100vw, 112px"/></a> <a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/NewLockscreen.png"><img class="alignnone size-medium wp-image-5397" src="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/NewLockscreen-168x300.png" alt="NewLockscreen" width="112" height="200" srcset="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/NewLockscreen-168x300.png 168w, https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/NewLockscreen.png 480w" sizes="(max-width: 112px) 100vw, 112px"/></a></div>
+<p>在新版的鎖定畫面中，當手機收到通知（簡訊、未接來電等等）並將之顯示於鎖定畫面時，我們會在鎖定畫面上覆蓋一層半透明的純色圖層，用來強調這些通知訊息，也讓通知文字更容易閱讀。這個圖層的純色是由桌面背景圖片的顏色平均出來。例如，左上的鎖定畫面背景，算出來的平均色為 <span style="background-color: #7d6a8a">    </span> <code>#7D6A8A</code> 或 <code>hsl(275, 13%, 48%)</code>，而右上圖背景的顏色則為 <span style="background-color: #496a3f">    </span> <code>#496A3F</code> 或 <code>hsl(106, 25%, 33%)</code>。下圖是右上圖的手機收到通知時，蓋上純色圖層的範例。</p>
+<p><a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/NewLockscreenWithNotification.png"><img class="aligncenter size-medium wp-image-5398" src="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/NewLockscreenWithNotification-168x300.png" alt="NewLockscreenWithNotification" width="112" height="200" srcset="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/NewLockscreenWithNotification-168x300.png 168w, https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/NewLockscreenWithNotification.png 480w" sizes="(max-width: 112px) 100vw, 112px"/></a></p>
+<h2>取得一張圖片的平均顏色值</h2>
+<p>假設變數 
+			<span id="crayon-5bcb586a34a6f003253818" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">img</span></span></span> 已經為存有一張圖片的 
+			<span id="crayon-5bcb586a34a81061218257" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">HTMLImageElement</span></span></span>，也就是一個 
+			<span id="crayon-5bcb586a34a84742264969" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-r ">&lt;img </span><span class="crayon-e ">alt</span><span class="crayon-o">=</span><span class="crayon-s ">""</span><span class="crayon-r "> /&gt;</span></span></span>。則我們使用以下的 JavaScript 程式碼，搭配動態產生的 Canvas 元素及它提供的各種函式，來取得這張圖片的每一個像素值：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5bcb586a34a87846278535" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+var canvas = document.createElement('canvas');
+canvas.width = img.width;
+canvas.height = img.height;
+
+// 把圖片畫到 Canvas 上面
+var context = canvas.getContext('2d');
+context.drawImage(img, 0, 0, img.width, img.height);
+
+// 取得畫好的圖片的像素資料
+var data = context.getImageData(0, 0, img.width, img.height).data;
+var r = 0, g = 0, b = 0;
+
+// 取所有像素的平均值（每個像素的值域為 0 到 255）
+for (var row = 0; row &lt; img.height; row++) {
+  for (var col = 0; col &lt; img.width; col++) {
+    r += data[((img.width * row) + col) * 4];
+    g += data[((img.width * row) + col) * 4 + 1];
+    b += data[((img.width * row) + col) * 4 + 2];
+  }
+}
+
+r /= (img.width * img.height);
+g /= (img.width * img.height);
+b /= (img.width * img.height);
+
+r = Math.round(r);
+g = Math.round(g);
+b = Math.round(b);
+
+// 最後的 CSS 屬性值
+var cssColor = 'rgb(' + r + ', ' + g + ', ' + b + ')';</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a87846278535-2">2</div><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a87846278535-4">4</div><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a87846278535-6">6</div><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a87846278535-8">8</div><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a87846278535-10">10</div><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a87846278535-12">12</div><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a87846278535-14">14</div><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a87846278535-16">16</div><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a87846278535-18">18</div><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a87846278535-20">20</div><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a87846278535-22">22</div><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a87846278535-24">24</div><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-25">25</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a87846278535-26">26</div><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-27">27</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a87846278535-28">28</div><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-29">29</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a87846278535-30">30</div><div class="crayon-num" data-line="crayon-5bcb586a34a87846278535-31">31</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5bcb586a34a87846278535-1"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">canvas</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">document</span><span class="crayon-sy">.</span><span class="crayon-e">createElement</span><span class="crayon-sy">(</span><span class="crayon-s">'canvas'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a87846278535-2"><span class="crayon-v">canvas</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a87846278535-3"><span class="crayon-v">canvas</span><span class="crayon-sy">.</span><span class="crayon-v">height</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">height</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a87846278535-4">&nbsp;</div><div class="crayon-line" id="crayon-5bcb586a34a87846278535-5"><span class="crayon-c">// 把圖片畫到 Canvas 上面</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a87846278535-6"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">context</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">canvas</span><span class="crayon-sy">.</span><span class="crayon-e">getContext</span><span class="crayon-sy">(</span><span class="crayon-s">'2d'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a87846278535-7"><span class="crayon-v">context</span><span class="crayon-sy">.</span><span class="crayon-e">drawImage</span><span class="crayon-sy">(</span><span class="crayon-v">img</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">height</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a87846278535-8">&nbsp;</div><div class="crayon-line" id="crayon-5bcb586a34a87846278535-9"><span class="crayon-c">// 取得畫好的圖片的像素資料</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a87846278535-10"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">data</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">context</span><span class="crayon-sy">.</span><span class="crayon-e">getImageData</span><span class="crayon-sy">(</span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">height</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-v">data</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a87846278535-11"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">r</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">g</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">b</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a87846278535-12">&nbsp;</div><div class="crayon-line" id="crayon-5bcb586a34a87846278535-13"><span class="crayon-c">// 取所有像素的平均值（每個像素的值域為 0 到 255）</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a87846278535-14"><span class="crayon-st">for</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">row</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-v">row</span><span class="crayon-h"> </span><span class="crayon-o">&lt;</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">height</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-v">row</span><span class="crayon-o">++</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5bcb586a34a87846278535-15"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">for</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">col</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-v">col</span><span class="crayon-h"> </span><span class="crayon-o">&lt;</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-v">col</span><span class="crayon-o">++</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a87846278535-16"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">r</span><span class="crayon-h"> </span><span class="crayon-o">+=</span><span class="crayon-h"> </span><span class="crayon-v">data</span><span class="crayon-sy">[</span><span class="crayon-sy">(</span><span class="crayon-sy">(</span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-v">row</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">col</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-cn">4</span><span class="crayon-sy">]</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a87846278535-17"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">g</span><span class="crayon-h"> </span><span class="crayon-o">+=</span><span class="crayon-h"> </span><span class="crayon-v">data</span><span class="crayon-sy">[</span><span class="crayon-sy">(</span><span class="crayon-sy">(</span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-v">row</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">col</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-cn">4</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-cn">1</span><span class="crayon-sy">]</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a87846278535-18"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">b</span><span class="crayon-h"> </span><span class="crayon-o">+=</span><span class="crayon-h"> </span><span class="crayon-v">data</span><span class="crayon-sy">[</span><span class="crayon-sy">(</span><span class="crayon-sy">(</span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-v">row</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">col</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-cn">4</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-cn">2</span><span class="crayon-sy">]</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a87846278535-19"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a87846278535-20"><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5bcb586a34a87846278535-21">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a87846278535-22"><span class="crayon-v">r</span><span class="crayon-h"> </span><span class="crayon-o">/=</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">height</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a87846278535-23"><span class="crayon-v">g</span><span class="crayon-h"> </span><span class="crayon-o">/=</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">height</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a87846278535-24"><span class="crayon-v">b</span><span class="crayon-h"> </span><span class="crayon-o">/=</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">height</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a87846278535-25">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a87846278535-26"><span class="crayon-v">r</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">Math</span><span class="crayon-sy">.</span><span class="crayon-e">round</span><span class="crayon-sy">(</span><span class="crayon-v">r</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a87846278535-27"><span class="crayon-v">g</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">Math</span><span class="crayon-sy">.</span><span class="crayon-e">round</span><span class="crayon-sy">(</span><span class="crayon-v">g</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a87846278535-28"><span class="crayon-v">b</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">Math</span><span class="crayon-sy">.</span><span class="crayon-e">round</span><span class="crayon-sy">(</span><span class="crayon-v">b</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a87846278535-29">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a87846278535-30"><span class="crayon-c">// 最後的 CSS 屬性值</span></div><div class="crayon-line" id="crayon-5bcb586a34a87846278535-31"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-e ">cssColor</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-s">'rgb('</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">r</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-s">', '</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">g</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-s">', '</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">b</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-s">')'</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0020 seconds] -->
+<p>在上面這段程式碼中，我們使用 
+			<span id="crayon-5bcb586a34a8b166984614" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">CanvasRenderingContext2D</span><span class="crayon-o">::</span><span class="crayon-e">drawImage</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 將 
+			<span id="crayon-5bcb586a34a8e680390545" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">img</span></span></span> 的圖片畫到 Canvas 上面，再使用 
+			<span id="crayon-5bcb586a34a90350959951" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">CanvasRenderingContext2D</span><span class="crayon-o">::</span><span class="crayon-e">getImageData</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 取得 Canvas 上面的每個像素的 R、G 、B、A 值（這次的目的並沒有使用到透明度（alpha）的 A 值）。我們再針對這些 R、G、B 值取算數平均，便可取得整張圖的平均顏色。</p>
+<h2>繞個路－－轉為 HSL 色彩空間</h2>
+<p>接下來， 因為 Firefox OS 的 UX 設計師要求算出來的顏色還要再調整其飽和度和明度，所以我們還要將取好平均的 R、G、B 值由 RGB 色彩空間轉為 HSL 色彩空間（使用<a href="https://web.archive.org/web/20181020163138/http://en.wikipedia.org/wiki/HSL_and_HSV#Hue_and_chroma" target="_blank">維基百科提供之公式</a>）：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5bcb586a34a93567723698" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+// 公式所用的 r、g、b、s、l 值域為 0 到 1，
+// 所以我們剛剛從 Canvas 取得的像素資料要先除以 255
+r /= 255;
+g /= 255;
+b /= 255;
+
+var M = Math.max(r, g, b);
+var m = Math.min(r, g, b);
+var C = M - m;
+var h, s, l;
+
+l = 0.5 * (M + m);
+if (C === 0) {
+  h = s = 0; // 色度是 0，是灰階照片。那就設飽和度為 0，而且任意設個色相是 0 度吧！
+} else {
+  switch (M) {
+    case r:
+      h = ((g - b) / C) % 6;
+      break;
+    case g:
+      h = ((b - r) / C) + 2;
+      break;
+    case b:
+      h = ((r - g) / C) + 4;
+      break;
+  }
+  h *= 60;
+  h = (h + 360) % 360;
+  s = C / (1 - Math.abs(2 * l - 1));
+}
+
+/* 在這邊，我們做一些 UX 要求的飽和度、明度調整。實際的調整內容就省略囉 */
+
+// 如前所述，公式所用的 s、l 值域為 0 到 1，
+// 但 CSS 屬性值域為 0% 到 100%，所以還要轉換一下。
+h = Math.ceil(h);
+s = Math.ceil(s * 100) + '%';
+l = Math.ceil(l * 100) + '%';
+
+// 最後的 CSS 屬性值
+var cssColor = 'hsl(' + h + ', ' + s + ', ' + l + ')';</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-2">2</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-4">4</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-6">6</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-8">8</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-10">10</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-12">12</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-14">14</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-16">16</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-18">18</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-20">20</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-22">22</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-24">24</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-25">25</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-26">26</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-27">27</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-28">28</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-29">29</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-30">30</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-31">31</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-32">32</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-33">33</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-34">34</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-35">35</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-36">36</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-37">37</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-38">38</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-39">39</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a93567723698-40">40</div><div class="crayon-num" data-line="crayon-5bcb586a34a93567723698-41">41</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5bcb586a34a93567723698-1"><span class="crayon-c">// 公式所用的 r、g、b、s、l 值域為 0 到 1，</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-2"><span class="crayon-c">// 所以我們剛剛從 Canvas 取得的像素資料要先除以 255</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-3"><span class="crayon-v">r</span><span class="crayon-h"> </span><span class="crayon-o">/=</span><span class="crayon-h"> </span><span class="crayon-cn">255</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-4"><span class="crayon-v">g</span><span class="crayon-h"> </span><span class="crayon-o">/=</span><span class="crayon-h"> </span><span class="crayon-cn">255</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-5"><span class="crayon-v">b</span><span class="crayon-h"> </span><span class="crayon-o">/=</span><span class="crayon-h"> </span><span class="crayon-cn">255</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-6">&nbsp;</div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-7"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">M</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">Math</span><span class="crayon-sy">.</span><span class="crayon-e">max</span><span class="crayon-sy">(</span><span class="crayon-v">r</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">g</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">b</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-8"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">m</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">Math</span><span class="crayon-sy">.</span><span class="crayon-e">min</span><span class="crayon-sy">(</span><span class="crayon-v">r</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">g</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">b</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-9"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">C</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">M</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-v">m</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-10"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">h</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">s</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">l</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-11">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-12"><span class="crayon-v">l</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-cn">0.5</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">M</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">m</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-13"><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">C</span><span class="crayon-h"> </span><span class="crayon-o">===</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-14"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">h</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">s</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">;</span><span class="crayon-h"> </span><span class="crayon-c">// 色度是 0，是灰階照片。那就設飽和度為 0，而且任意設個色相是 0 度吧！</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-15"><span class="crayon-sy">}</span><span class="crayon-h"> </span><span class="crayon-st">else</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-16"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-st">switch</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">M</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-17"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">case</span><span class="crayon-v"> r:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-18"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">h</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">(</span><span class="crayon-v">g</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-v">b</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-h"> </span><span class="crayon-v">C</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-cn">6</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-19"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">break</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-20"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">case</span><span class="crayon-v"> g:</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-21"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">h</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">(</span><span class="crayon-v">b</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-v">r</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-h"> </span><span class="crayon-v">C</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-cn">2</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-22"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">break</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-23"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">case</span><span class="crayon-v"> b:</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-24"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">h</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">(</span><span class="crayon-v">r</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-v">g</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-h"> </span><span class="crayon-v">C</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-cn">4</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-25"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-st">break</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-26"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-27"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">h</span><span class="crayon-h"> </span><span class="crayon-o">*=</span><span class="crayon-h"> </span><span class="crayon-cn">60</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-28"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">h</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">h</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-cn">360</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-cn">360</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-29"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">s</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">C</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-cn">1</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-v">Math</span><span class="crayon-sy">.</span><span class="crayon-e">abs</span><span class="crayon-sy">(</span><span class="crayon-cn">2</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-v">l</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-cn">1</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-30"><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-31">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-32"><span class="crayon-c">/* 在這邊，我們做一些 UX 要求的飽和度、明度調整。實際的調整內容就省略囉 */</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-33">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-34"><span class="crayon-c">// 如前所述，公式所用的 s、l 值域為 0 到 1，</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-35"><span class="crayon-c">// 但 CSS 屬性值域為 0% 到 100%，所以還要轉換一下。</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-36"><span class="crayon-v">h</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">Math</span><span class="crayon-sy">.</span><span class="crayon-e">ceil</span><span class="crayon-sy">(</span><span class="crayon-v">h</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-37"><span class="crayon-v">s</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">Math</span><span class="crayon-sy">.</span><span class="crayon-e">ceil</span><span class="crayon-sy">(</span><span class="crayon-v">s</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-cn">100</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-s">'%'</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-38"><span class="crayon-v">l</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">Math</span><span class="crayon-sy">.</span><span class="crayon-e">ceil</span><span class="crayon-sy">(</span><span class="crayon-v">l</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-cn">100</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-s">'%'</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-39">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a93567723698-40"><span class="crayon-c">// 最後的 CSS 屬性值</span></div><div class="crayon-line" id="crayon-5bcb586a34a93567723698-41"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-e ">cssColor</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-s">'hsl('</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">h</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-s">', '</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">s</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-s">', '</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">l</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-s">')'</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0019 seconds] -->
+<p>由於 CSS 可以援使用 HSL 色彩空間指定色彩，所以將最後算好的顏色放到圖層的 CSS 時，不用再轉回 RGB 色彩空間囉！</p>
+<h2>在手機平台上改善效能，又不會太失真</h2>
+<p>實際上在 Firefox OS 手機實作取均色的演算法，由於現有行動裝置的運算效能較為受限，所以我們可以使用縮減取樣（downsampling），縮減畫上 Canvas 的圖案大小，並減少取出 Canvas 當中像素的數目，藉以降低運算時間。下面程式碼會將短邊縮成 100px 長（假設圖片的短邊長已經超過 100px了）：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-5bcb586a34a99083335586" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+var SAMPLE_IMAGE_SIZE_BASE = 100;
+
+var sampleImageWidth;
+var sampleImageHeight;
+
+if (img.height &gt; img.width) {
+  sampleImageWidth =
+    Math.floor(SAMPLE_IMAGE_SIZE_BASE * window.devicePixelRatio);
+  sampleImageHeight =
+    Math.floor(sampleImageWidth * (img.height / img.width));
+} else {
+  sampleImageHeight =
+    Math.floor(SAMPLE_IMAGE_SIZE_BASE * window.devicePixelRatio);
+  sampleImageWidth =
+    Math.floor(sampleImageHeight * (img.width / img.height));
+}
+// 接下來我們都用sampleImageWidth 和 sampleImageHeight
+// 來取代前面平均值演算當中的 img.width 和 img.height，
+// 然後繼續前面的平均值演算</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-5bcb586a34a99083335586-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a99083335586-2">2</div><div class="crayon-num" data-line="crayon-5bcb586a34a99083335586-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a99083335586-4">4</div><div class="crayon-num" data-line="crayon-5bcb586a34a99083335586-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a99083335586-6">6</div><div class="crayon-num" data-line="crayon-5bcb586a34a99083335586-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a99083335586-8">8</div><div class="crayon-num" data-line="crayon-5bcb586a34a99083335586-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a99083335586-10">10</div><div class="crayon-num" data-line="crayon-5bcb586a34a99083335586-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a99083335586-12">12</div><div class="crayon-num" data-line="crayon-5bcb586a34a99083335586-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a99083335586-14">14</div><div class="crayon-num" data-line="crayon-5bcb586a34a99083335586-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a99083335586-16">16</div><div class="crayon-num" data-line="crayon-5bcb586a34a99083335586-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-5bcb586a34a99083335586-18">18</div><div class="crayon-num" data-line="crayon-5bcb586a34a99083335586-19">19</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-5bcb586a34a99083335586-1"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">SAMPLE_IMAGE_SIZE_BASE</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-cn">100</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a99083335586-2">&nbsp;</div><div class="crayon-line" id="crayon-5bcb586a34a99083335586-3"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">sampleImageWidth</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a99083335586-4"><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">sampleImageHeight</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a99083335586-5">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a99083335586-6"><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">height</span><span class="crayon-h"> </span><span class="crayon-o">&gt;</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-5bcb586a34a99083335586-7"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">sampleImageWidth</span><span class="crayon-h"> </span><span class="crayon-o">=</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a99083335586-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">Math</span><span class="crayon-sy">.</span><span class="crayon-e">floor</span><span class="crayon-sy">(</span><span class="crayon-v">SAMPLE_IMAGE_SIZE_BASE</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-v">window</span><span class="crayon-sy">.</span><span class="crayon-v">devicePixelRatio</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a99083335586-9"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">sampleImageHeight</span><span class="crayon-h"> </span><span class="crayon-o">=</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a99083335586-10"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">Math</span><span class="crayon-sy">.</span><span class="crayon-e">floor</span><span class="crayon-sy">(</span><span class="crayon-v">sampleImageWidth</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">height</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-5bcb586a34a99083335586-11"><span class="crayon-sy">}</span><span class="crayon-h"> </span><span class="crayon-st">else</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a99083335586-12"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">sampleImageHeight</span><span class="crayon-h"> </span><span class="crayon-o">=</span></div><div class="crayon-line" id="crayon-5bcb586a34a99083335586-13"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">Math</span><span class="crayon-sy">.</span><span class="crayon-e">floor</span><span class="crayon-sy">(</span><span class="crayon-v">SAMPLE_IMAGE_SIZE_BASE</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-v">window</span><span class="crayon-sy">.</span><span class="crayon-v">devicePixelRatio</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a99083335586-14"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">sampleImageWidth</span><span class="crayon-h"> </span><span class="crayon-o">=</span></div><div class="crayon-line" id="crayon-5bcb586a34a99083335586-15"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">Math</span><span class="crayon-sy">.</span><span class="crayon-e">floor</span><span class="crayon-sy">(</span><span class="crayon-v">sampleImageHeight</span><span class="crayon-h"> </span><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">width</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-h"> </span><span class="crayon-v">img</span><span class="crayon-sy">.</span><span class="crayon-v">height</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a99083335586-16"><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-5bcb586a34a99083335586-17"><span class="crayon-c">// 接下來我們都用sampleImageWidth 和 sampleImageHeight</span></div><div class="crayon-line crayon-striped-line" id="crayon-5bcb586a34a99083335586-18"><span class="crayon-c">// 來取代前面平均值演算當中的 img.width 和 img.height，</span></div><div class="crayon-line" id="crayon-5bcb586a34a99083335586-19"><span class="crayon-c">// 然後繼續前面的平均值演算</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0006 seconds] -->
+<p>依據我們一開始取平均色的需求，我們並不用取非常精確的平均色數值；而 100px 是一個在「誤差值」和「增進效能」的取捨當中，一個不錯的數字。</p>
+<h2>結語及參考資料</h2>
+<p>或許有人想嘗試如果直接在 
+			<span id="crayon-5bcb586a34a9d267862232" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">CanvasRenderingContext2D</span><span class="crayon-o">::</span><span class="crayon-e">drawImage</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 設定 1px 的 
+			<span id="crayon-5bcb586a34aa0941136796" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">dw</span></span></span> 和 
+			<span id="crayon-5bcb586a34aa2068092169" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">dh</span></span></span> 參數，是否底層 Gecko 會幫我們直接畫一個「圖片顏色平均值」的像素？可惜不會。像是<a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/wp-content/uploads/2014/09/CenteredRedInBlue.png">這張 480&#215;854 大的範例圖</a>，只有正中央長寬 6px 的一小塊是 <span style="background-color: #ff0000">    </span> <code>#ff0000</code> 紅色，其他都是 <span style="background-color: #0000ff">    </span> <code>#0000ff</code> 藍色，而 Gecko 在 1px 的 
+			<span id="crayon-5bcb586a34aa5755775091" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">dw</span></span></span> 跟 
+			<span id="crayon-5bcb586a34aa8127534340" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">dh</span></span></span> 參數之下，
+			<span id="crayon-5bcb586a34aab961837206" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">drawImage</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></span></span> 會畫出 1px 的 <span style="background-color: #ff0000">    </span> <code>#ff0000</code> 紅色，不符我們對平均色的要求。如果你有興趣了解 Gecko 在這方面的底層行為，可以參考<a href="https://web.archive.org/web/20181020163138/http://dxr.mozilla.org/mozilla-central/source/gfx/2d/image_operations.cpp#224" target="_blank"><code>ResizeFilter::ComputeFilters</code> 原始碼</a>。</p>
+<p>想知道更多 Canvas 和 CanvasRenderingContext2D 物件的內容：請參考 MDN 上的 <a href="https://web.archive.org/web/20181020163138/http://developer.mozilla.org/en-US/docs/Web/HTML/Canvas" target="_blank">Canvas 說明文件</a>，還有 <a href="https://web.archive.org/web/20181020163138/http://developer.mozilla.org/en-US/docs/Web/HTML/Canvas" target="_blank">CanvasRenderingContext2D 說明文件</a>。關於 <a href="https://web.archive.org/web/20181020163138/https://best-horoscope.com/">horscope</a> Leo promises interesting contacts, flirtation and a pleasant society for single people, and those looking for romantic adventures. Firefox OS 鎖定畫面的完整原始碼，請參考 GitHub 上面 B2G Gaia 專案的 <a href="https://web.archive.org/web/20181020163138/https://github.com/mozilla-b2g/gaia/blob/master/apps/system/js/lockscreen.js" target="_blank">lockscreen.js</a>。</p>
+<p>另外，<a href="https://web.archive.org/web/20181020163138/http://dev.w3.org/csswg/css-color/" target="_blank">CSS Color Module Level 4</a> 定義了像是 <a href="https://web.archive.org/web/20181020163138/http://dev.w3.org/csswg/css-color/#api-HSLColor" target="_blank">HSLColor</a>、<a href="https://web.archive.org/web/20181020163138/http://dev.w3.org/csswg/css-color/#api-RGBColor" target="_blank">RGBColor</a> 的介面，並可轉換至多種色彩空間，或許不久的將來，我們就不用自己用 JavaScript 寫這些轉換色彩空間的程式碼囉！</p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/category/b2g" rel="category tag">Firefox OS(B2G)</a>、<a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/category/javascript" rel="category tag">Javascript</a>      </div>
+    </footer> 
+    </article><!-- #post-5355 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&amp;hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/web/20181020163138/http://tech.mozilla.com.tw/posts/5355/%E5%9C%A8-firefox-os-%E5%8F%96%E5%9C%96%E7%89%87%E8%89%B2%E5%BD%A9%E5%B9%B3%E5%9D%87%E5%80%BC%E4%B9%8B%E4%BA%8C%E4%B8%89%E4%BA%8B#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required="true" required="required"/></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required="true" required="required"/></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200"/></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表"/> <input type="hidden" name="comment_post_ID" value="5355" id="comment_post_ID"/>
+<input type="hidden" name="comment_parent" id="comment_parent" value="0"/>
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="138ba8e3da"/></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="152"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class="name-title"><a class="profile-link" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/author/jlumozilla-com"><span class="gravatar left"><img src="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/129/250105a87a5f4f4d16fcc5ae37d5a1e0-bpthumb.jpg" alt="" class="avatar user-129-avatar" width="48" height="48"/></span><span class="name">Mnjul</span></a></span><p class="contact"><span class="web"><strong>網站：</strong><a href="https://web.archive.org/web/20181020163138/http://minzhong.lu/">http://minzhong.lu/</a></span></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="18" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/author/cyumozilla-com"><img src="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg" alt="" class="avatar user-18-avatar" width="96" height="96"/></a><a data-author-id="70" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/author/szchenmozilla-com"><img src="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg" alt="" class="avatar user-70-avatar" width="96" height="96"/></a><a data-author-id="43" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/author/atsaimozilla-com"><img src="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg" alt="" class="avatar user-43-avatar" width="96" height="96"/></a><a data-author-id="41" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/author/rlinmozilla-com"><img src="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg" alt="" class="avatar user-41-avatar" width="96" height="96"/></a><a data-author-id="103" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/author/jaliumozilla-com"><img src="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg" alt="" class="avatar user-103-avatar" width="96" height="96"/></a><a data-author-id="133" href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/author/ofengmozilla-com"><img src="https://web.archive.org/web/20181020163138im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg" alt="" class="avatar user-133-avatar" width="96" height="96"/></a></div><a class="more" href="/web/20181020163138/http://tech.mozilla.com.tw/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s"/>
+					<input type="submit" id="searchsubmit" value="搜尋"/>
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://web.archive.org/web/20181020163138if_/https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&amp;opaque=True&amp;hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://web.archive.org/web/20181020163138/https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://web.archive.org/web/20181020163138/https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="https://web.archive.org/web/20181020163138/http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="https://web.archive.org/web/20181020163138/http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="https://web.archive.org/web/20181020163138/http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/category/css">CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/category/firefox">Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/category/b2g">Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/category/interaction-design">Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/category/javascript">Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/category/life-at-mozilla">Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/category/mozilla">Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/category/open-source">Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://web.archive.org/web/20181020163138/http://tech.mozilla.com.tw/posts/category/ux">UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;">
+			
+			<option value="">選擇月份</option>
+				<option value="http://tech.mozilla.com.tw/posts/date/2016/05"> 2016 年 五月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2016/02"> 2016 年 二月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/07"> 2015 年 七月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/06"> 2015 年 六月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/05"> 2015 年 五月 &nbsp;(2)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/04"> 2015 年 四月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/03"> 2015 年 三月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/02"> 2015 年 二月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/01"> 2015 年 一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/12"> 2014 年 十二月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/11"> 2014 年 十一月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/10"> 2014 年 十月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/09"> 2014 年 九月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/08"> 2014 年 八月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/07"> 2014 年 七月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/05"> 2014 年 五月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/04"> 2014 年 四月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/03"> 2014 年 三月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/02"> 2014 年 二月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/01"> 2014 年 一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/12"> 2013 年 十二月 &nbsp;(6)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/11"> 2013 年 十一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/10"> 2013 年 十月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/09"> 2013 年 九月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/08"> 2013 年 八月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/07"> 2013 年 七月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/06"> 2013 年 六月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/05"> 2013 年 五月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/04"> 2013 年 四月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/03"> 2013 年 三月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/02"> 2013 年 二月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/01"> 2013 年 一月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/12"> 2012 年 十二月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/11"> 2012 年 十一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/10"> 2012 年 十月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/09"> 2012 年 九月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/08"> 2012 年 八月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/07"> 2012 年 七月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/06"> 2012 年 六月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/05"> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="https://web.archive.org/web/20181020163138/http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/web/20181020163138js_/http://tech.mozilla.com.tw/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/web/20181020163138js_/http://tech.mozilla.com.tw/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/web/20181020163138js_/http://tech.mozilla.com.tw/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/web/20181020163138js_/http://tech.mozilla.com.tw/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://web.archive.org/web/20181020163138js_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://web.archive.org/web/20181020163138js_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//web.archive.org/web/20181020163138/http://connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://web.archive.org/web/20181020163138/https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://web.archive.org/web/20181020163138js_/https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>
+<!--
+     FILE ARCHIVED ON 16:31:38 Oct 20, 2018 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 11:55:31 May 09, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 0.593
+  exclusion.robots: 0.086
+  exclusion.robots.policy: 0.076
+  esindex: 0.011
+  cdx.remote: 31.032
+  LoadShardBlock: 141.611 (3)
+  PetaboxLoader3.datanode: 278.775 (4)
+  PetaboxLoader3.resolve: 174.092 (2)
+  load_resource: 447.291
+  nav: 0.135 (6)
+-->

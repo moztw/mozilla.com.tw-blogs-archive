@@ -14,34 +14,168 @@
   "author": "阿信",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=3388",
-  "archive_url": "https://web.archive.org/web/20191118133804id_/https://tech.mozilla.com.tw/?p=3388",
+  "archive_url": "https://web.archive.org/web/20191118133804/https://tech.mozilla.com.tw/?p=3388",
   "wayback_timestamp": "20191118133804",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p><img alt=\"Rhino Art\" src=\"http://i.imgur.com/yDglA.jpg\" /></p>\n<p>Firefox OS 裡的 Gecko 層，主要是由 C 和 JavaScript 兩種程式語言編寫而成。不過 Gecko 裡的 JS 程式碼長相和我們常見的 client-side JS 非常不一樣。剛開始閱讀程式碼時，常常會看到一些奇妙的玩意。<br />\n比方說，JS 裡頭竟然會有 #ifdef ！？</p>\n<p>原來這是 Mozilla 程式師在內部施展的一點小魔法，讓工程師在 Gecko 層撰寫 JS 程式碼時，能如同寫 C/C 一樣，直覺地使用 #ifdef/#endif 來決定編譯的區塊。這麼一來，不僅寫法簡單，而且讓 C 和 JS 原始碼能共用相同的識別符號 (identifier)，實在是非常方便。</p>\n<p>以下就一個簡單的例子，分享在 Gecko JS 裡面使用 #ifdef 的小撇步。</p>\n<h2>在 JavaScript 裡加入 #ifdef/#endif</h2>\n<p>當時我的一個任務是修改 DOM API 的 TCPSocket，每當有 TCP 流量傳送時，必須呼叫 networkStatsServiceProxy 提供的 API 把流量統計給記錄下來。問題是，networkStatsServiceProxy 是 B2G 獨有的服務元件，在桌面版並沒有這個元件。此時，我們的作法就是在 JavaScript 裡面用 #ifdef/#endif 把這段程式碼給包起來，以確保 Mozilla 程式庫在其他平台上 build 不會失敗。</p>\n<p>以下是在 dom/network/src/TCPSocket.js （簡化過的）程式碼片段，重點在於這段程式是在 JS 裡面，用 #ifdef/#endif 括起來的：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5dd29ebbdf6b9359033148\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n#ifdef MOZ_WIDGET_GONK\r\n _saveNetworkStats: function ts_saveNetworkStats() {\r\n let nssProxy = Cc[\"@mozilla.org/networkstatsServiceProxy;1\"]\r\n .getService(Ci.nsINetworkStatsServiceProxy);\r\n nssProxy.saveAppStats(this._appId, this._activeNetwork, Date.now(),\r\n this._rxBytes, this._txBytes);\r\n // Reset the counters once the statistics is saved.\r\n this._txBytes = this._rxBytes = 0;\r\n }, \r\n#endif</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5dd29ebbdf6b9359033148-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29ebbdf6b9359033148-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5dd29ebbdf6b9359033148-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29ebbdf6b9359033148-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5dd29ebbdf6b9359033148-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29ebbdf6b9359033148-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5dd29ebbdf6b9359033148-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29ebbdf6b9359033148-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5dd29ebbdf6b9359033148-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29ebbdf6b9359033148-10\">10</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5dd29ebbdf6b9359033148-1\"><span class=\"crayon-p\">#ifdef MOZ_WIDGET_GONK</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29ebbdf6b9359033148-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">_saveNetworkStats</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">ts_saveNetworkStats</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5dd29ebbdf6b9359033148-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-e\">let </span><span class=\"crayon-v\">nssProxy</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">Cc</span><span class=\"crayon-sy\">[</span><span class=\"crayon-s\">\"@mozilla.org/networkstatsServiceProxy;1\"</span><span class=\"crayon-sy\">]</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29ebbdf6b9359033148-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">getService</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">Ci</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">nsINetworkStatsServiceProxy</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5dd29ebbdf6b9359033148-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">nssProxy</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">saveAppStats</span><span class=\"crayon-sy\">(</span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">_appId</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">_activeNetwork</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">Date</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">now</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29ebbdf6b9359033148-6\"><span class=\"crayon-h\"> </span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">_rxBytes</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">_txBytes</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5dd29ebbdf6b9359033148-7\"><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// Reset the counters once the statistics is saved.</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29ebbdf6b9359033148-8\"><span class=\"crayon-h\"> </span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">_txBytes</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">_rxBytes</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">0</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5dd29ebbdf6b9359033148-9\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29ebbdf6b9359033148-10\"><span class=\"crayon-p\">#endif</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0005 seconds] -->\r\n<p></p>\n<h2>在 moz.build 裡面加入 EXTRA_PP_COMPONENTS</h2>\n<p>嗯，很好，#ifdef/#endif 的寫法看起來和 C/C 完全沒兩樣。然後我們要如何讓這個前置處理指令發揮效用呢？非常簡單，只要修改相同目錄下的 moz.build，加入一個特殊的 EXTRA_PP_COMPONENTS 區塊即可。<br />\n以 TCPSocket.js 的例子而言，此時我們只要修改 dom/network/src/moz.build，加入以下幾行就可以囉！</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5dd29ebbdf6c9984356157\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nEXTRA_PP_COMPONENTS = [\r\n \"TCPSocket.js\",\r\n]</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5dd29ebbdf6c9984356157-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29ebbdf6c9984356157-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5dd29ebbdf6c9984356157-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5dd29ebbdf6c9984356157-1\"><span class=\"crayon-v\">EXTRA_PP_COMPONENTS</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">[</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29ebbdf6c9984356157-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"TCPSocket.js\"</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-5dd29ebbdf6c9984356157-3\"><span class=\"crayon-sy\">]</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p>That\"s it！此時我們的 TCPSocket.js 就具有能夠使用前置處理指令 #ifdef/#endif 的能力了（當然也可以用 #ifndef, #elif）。可是，你是否仍然疑惑，JavaScript <a href=\"http://www.svenskkasinon.com/\">casino online</a>  沒有編譯階段更沒有前置處理階段呀，這一切是怎麼辦到的？<br />\n其實 JavaScript 程式碼仍舊是在執行期間時，直譯器 (interpreter) 才會去解析的。這個小魔法是在 build 階段，當 builder 發現 JavaScript 原始檔被宣告在 EXTRA_PP_COMPONENTS 裡面時，就會自動去修改原本的 JavaScript 原始碼的內容。</p>\n<h2>檢查 JavaScript 原始碼是否有被修改過</h2>\n<p>在 build.sh [gecko] 指令執行完之後，我們可以到 [obj_dir]/dist/bin/components 目錄下查看 JS 檔案。一般來說，此目錄下的 JS 檔案只是 soft link，指到原本程式庫裡真正的原始碼檔案。但是經過 builder &#8220;前置處理\" 過的 JavaScript 檔案，就變成此目錄下的實體檔案而非連結檔了。以上述的例子而言，只有 TCPSocket.js 不是連結檔。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5dd29ebbdf6cd145814823\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n$ cd /dist/bin/components\r\n$ ls -l *TCP*\r\n 75 10:37 TCPServerSocket.js -&gt; /dom/network/src/TCPServerSocket.js\r\n29082 10:37 TCPSocket.js\r\n 75 10:37 TCPSocket.manifest -&gt; /dom/network/src/TCPSocket.manifest\r\n 87 10:37 TCPSocketParentIntermediary.js -&gt; /dom/network/src/TCPSocketParentIntermediary.js</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5dd29ebbdf6cd145814823-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29ebbdf6cd145814823-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5dd29ebbdf6cd145814823-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29ebbdf6cd145814823-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5dd29ebbdf6cd145814823-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29ebbdf6cd145814823-6\">6</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5dd29ebbdf6cd145814823-1\"><span class=\"crayon-sy\">$</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">cd</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">dist</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">bin</span><span class=\"crayon-o\">/</span><span class=\"crayon-i\">components</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29ebbdf6cd145814823-2\"><span class=\"crayon-sy\">$</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">ls</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-e \">l *</span><span class=\"crayon-e \">TCP*</span></div><div class=\"crayon-line\" id=\"crayon-5dd29ebbdf6cd145814823-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">75</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">10</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">37</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">TCPServerSocket</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">js</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">dom</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">network</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">src</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">TCPServerSocket</span><span class=\"crayon-sy\">.</span><span class=\"crayon-i\">js</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29ebbdf6cd145814823-4\"><span class=\"crayon-cn\">29082</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">10</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">37</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">TCPSocket</span><span class=\"crayon-sy\">.</span><span class=\"crayon-i\">js</span></div><div class=\"crayon-line\" id=\"crayon-5dd29ebbdf6cd145814823-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">75</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">10</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">37</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">TCPSocket</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">manifest</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">dom</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">network</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">src</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">TCPSocket</span><span class=\"crayon-sy\">.</span><span class=\"crayon-i\">manifest</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29ebbdf6cd145814823-6\"><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">87</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">10</span><span class=\"crayon-o\">:</span><span class=\"crayon-cn\">37</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">TCPSocketParentIntermediary</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">js</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">dom</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">network</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">src</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">TCPSocketParentIntermediary</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">js</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0004 seconds] -->\r\n<p>此時打開 TCPSocket.js，會發現原本宣告為 #ifdef/#endif 的兩行程式碼，已被自動置換成註解囉。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5dd29ebbdf6d1981315465\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n//@line 328 \"/home/ethan/workspace/hg/mozilla-central/dom/network/src/TCPSocket.js\"\r\n _saveNetworkStats: function ts_saveNetworkStats(enforce) {\r\n let nssProxy = Cc[\"@mozilla.org/networkstatsServiceProxy;1\"]\r\n .getService(Ci.nsINetworkStatsServiceProxy);\r\n nssProxy.saveAppStats(this._appId, this._activeNetwork, Date.now(),\r\n this._rxBytes, this._txBytes);\r\n // Reset the counters once the statistics is saved to NetworkStatsServiceProxy.\r\n this._txBytes = this._rxBytes = 0;\r\n },\r\n//@line 358 \"/home/ethan/workspace/hg/mozilla-central/dom/network/src/TCPSocket.js\"</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5dd29ebbdf6d1981315465-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29ebbdf6d1981315465-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5dd29ebbdf6d1981315465-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29ebbdf6d1981315465-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5dd29ebbdf6d1981315465-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29ebbdf6d1981315465-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5dd29ebbdf6d1981315465-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29ebbdf6d1981315465-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5dd29ebbdf6d1981315465-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29ebbdf6d1981315465-10\">10</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5dd29ebbdf6d1981315465-1\"><span class=\"crayon-c\">//@line 328 \"/home/ethan/workspace/hg/mozilla-central/dom/network/src/TCPSocket.js\"</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29ebbdf6d1981315465-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">_saveNetworkStats</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">ts_saveNetworkStats</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">enforce</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5dd29ebbdf6d1981315465-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-e\">let </span><span class=\"crayon-v\">nssProxy</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">Cc</span><span class=\"crayon-sy\">[</span><span class=\"crayon-s\">\"@mozilla.org/networkstatsServiceProxy;1\"</span><span class=\"crayon-sy\">]</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29ebbdf6d1981315465-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">getService</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">Ci</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">nsINetworkStatsServiceProxy</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5dd29ebbdf6d1981315465-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">nssProxy</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">saveAppStats</span><span class=\"crayon-sy\">(</span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">_appId</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">_activeNetwork</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">Date</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">now</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29ebbdf6d1981315465-6\"><span class=\"crayon-h\"> </span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">_rxBytes</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">_txBytes</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5dd29ebbdf6d1981315465-7\"><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// Reset the counters once the statistics is saved to NetworkStatsServiceProxy.</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29ebbdf6d1981315465-8\"><span class=\"crayon-h\"> </span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">_txBytes</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">_rxBytes</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">0</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5dd29ebbdf6d1981315465-9\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29ebbdf6d1981315465-10\"><span class=\"crayon-c\">//@line 358 \"/home/ethan/workspace/hg/mozilla-central/dom/network/src/TCPSocket.js\"</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0004 seconds] -->\r\n<p></p>\n\t\t\t</div>",
   "content_text": "Firefox OS 裡的 Gecko 層，主要是由 C 和 JavaScript 兩種程式語言編寫而成。不過 Gecko 裡的 JS 程式碼長相和我們常見的 client-side JS 非常不一樣。剛開始閱讀程式碼時，常常會看到一些奇妙的玩意。 比方說，JS 裡頭竟然會有 #ifdef ！？ 原來這是 Mozilla 程式師在內部施展的一點小魔法，讓工程師在 Gecko 層撰寫 JS 程式碼時，能如同寫 C/C 一樣，直覺地使用 #ifdef/#endif 來決定編譯的區塊。這麼一來，不僅寫法簡單，而且讓 C 和 JS 原始碼能共用相同的識別符號 (identifier)，實在是非常方便。 以下就一個簡單的例子，分享在 Gecko JS 裡面使用 #ifdef 的小撇步。 在 JavaScript 裡加入 #ifdef/#endif 當時我的一個任務是修改 DOM API 的 TCPSocket，每當有 TCP 流量傳送時，必須呼叫 networkStatsServiceProxy 提供的 API 把流量統計給記錄下來。問題是，networkStatsServiceProxy 是 B2G 獨有的服務元件，在桌面版並沒有這個元件。此時，我們的作法就是在 JavaScript 裡面用 #ifdef/#endif 把這段程式碼給包起來，以確保 Mozilla 程式庫在其他平台上 build 不會失敗。 以下是在 dom/network/src/TCPSocket.js （簡化過的）程式碼片段，重點在於這段程式是在 JS 裡面，用 #ifdef/#endif 括起來的： #ifdef MOZ_WIDGET_GONK _saveNetworkStats: function ts_saveNetworkStats() { let nssProxy = Cc[\"@mozilla.org/networkstatsServiceProxy;1\"] .getService(Ci.nsINetworkStatsServiceProxy); nssProxy.saveAppStats(this._appId, this._activeNetwork, Date.now(), this._rxBytes, this._txBytes); // Reset the counters once the statistics is saved. this._txBytes = this._rxBytes = 0; }, #endif 1 2 3 4 5 6 7 8 9 10 #ifdef MOZ_WIDGET_GONK _saveNetworkStats : function ts_saveNetworkStats ( ) { let nssProxy = Cc [ \"@mozilla.org/networkstatsServiceProxy;1\" ] . getService ( Ci . nsINetworkStatsServiceProxy ) ; nssProxy . saveAppStats ( this . _appId , this . _activeNetwork , Date . now ( ) , this . _rxBytes , this . _txBytes ) ; // Reset the counters once the statistics is saved. this . _txBytes = this . _rxBytes = 0 ; } , #endif 在 moz.build 裡面加入 EXTRA_PP_COMPONENTS 嗯，很好，#ifdef/#endif 的寫法看起來和 C/C 完全沒兩樣。然後我們要如何讓這個前置處理指令發揮效用呢？非常簡單，只要修改相同目錄下的 moz.build，加入一個特殊的 EXTRA_PP_COMPONENTS 區塊即可。 以 TCPSocket.js 的例子而言，此時我們只要修改 dom/network/src/moz.build，加入以下幾行就可以囉！ EXTRA_PP_COMPONENTS = [ \"TCPSocket.js\", ] 1 2 3 EXTRA_PP_COMPONENTS = [ \"TCPSocket.js\" , ] That\"s it！此時我們的 TCPSocket.js 就具有能夠使用前置處理指令 #ifdef/#endif 的能力了（當然也可以用 #ifndef, #elif）。可是，你是否仍然疑惑，JavaScript casino online 沒有編譯階段更沒有前置處理階段呀，這一切是怎麼辦到的？ 其實 JavaScript 程式碼仍舊是在執行期間時，直譯器 (interpreter) 才會去解析的。這個小魔法是在 build 階段，當 builder 發現 JavaScript 原始檔被宣告在 EXTRA_PP_COMPONENTS 裡面時，就會自動去修改原本的 JavaScript 原始碼的內容。 檢查 JavaScript 原始碼是否有被修改過 在 build.sh [gecko] 指令執行完之後，我們可以到 [obj_dir]/dist/bin/components 目錄下查看 JS 檔案。一般來說，此目錄下的 JS 檔案只是 soft link，指到原本程式庫裡真正的原始碼檔案。但是經過 builder “前置處理\" 過的 JavaScript 檔案，就變成此目錄下的實體檔案而非連結檔了。以上述的例子而言，只有 TCPSocket.js 不是連結檔。 $ cd /dist/bin/components $ ls -l *TCP* 75 10:37 TCPServerSocket.js -> /dom/network/src/TCPServerSocket.js 29082 10:37 TCPSocket.js 75 10:37 TCPSocket.manifest -> /dom/network/src/TCPSocket.manifest 87 10:37 TCPSocketParentIntermediary.js -> /dom/network/src/TCPSocketParentIntermediary.js 1 2 3 4 5 6 $ cd / dist / bin / components $ ls - l * TCP* 75 10 : 37 TCPServerSocket . js -> / dom / network / src / TCPServerSocket . js 29082 10 : 37 TCPSocket . js 75 10 : 37 TCPSocket . manifest -> / dom / network / src / TCPSocket . manifest 87 10 : 37 TCPSocketParentIntermediary . js -> / dom / network / src / TCPSocketParentIntermediary . js 此時打開 TCPSocket.js，會發現原本宣告為 #ifdef/#endif 的兩行程式碼，已被自動置換成註解囉。 //@line 328 \"/home/ethan/workspace/hg/mozilla-central/dom/network/src/TCPSocket.js\" _saveNetworkStats: function ts_saveNetworkStats(enforce) { let nssProxy = Cc[\"@mozilla.org/networkstatsServiceProxy;1\"] .getService(Ci.nsINetworkStatsServiceProxy); nssProxy.saveAppStats(this._appId, this._activeNetwork, Date.now(), this._rxBytes, this._txBytes); // Reset the counters once the statistics is saved to NetworkStatsServiceProxy. this._txBytes = this._rxBytes = 0; }, //@line 358 \"/home/ethan/workspace/hg/mozilla-central/dom/network/src/TCPSocket.js\" 1 2 3 4 5 6 7 8 9 10 //@line 328 \"/home/ethan/workspace/hg/mozilla-central/dom/network/src/TCPSocket.js\" _saveNetworkStats : function ts_saveNetworkStats ( enforce ) { let nssProxy = Cc [ \"@mozilla.org/networkstatsServiceProxy;1\" ] . getService ( Ci . nsINetworkStatsServiceProxy ) ; nssProxy . saveAppStats ( this . _appId , this . _activeNetwork , Date . now ( ) , this . _rxBytes , this . _txBytes ) ; // Reset the counters once the statistics is saved to NetworkStatsServiceProxy. this . _txBytes = this . _rxBytes = 0 ; } , //@line 358 \"/home/ethan/workspace/hg/mozilla-central/dom/network/src/TCPSocket.js\"",
   "images": [
     {
-      "url": "https://i.imgur.com/yDglA.jpg",
-      "alt": "Rhino Art",
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3388/001-395770de220f.jpg",
-      "markdown_path": "../assets/3388/001-395770de220f.jpg",
-      "wayback_timestamp": "20191118133804",
-      "asset_archive_url": "https://web.archive.org/web/20191118133804id_/https://i.imgur.com/yDglA.jpg",
-      "content_type": "image/jpeg"
-    }
-  ],
-  "media": [
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52-150x150.png",
+      "alt": "Pinyin IME Screenshot",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-150x150.jpg",
+      "alt": "8515474-3d-abstract-digital-code-connection",
+      "kind": "image",
+      "source": "img"
+    },
     {
       "url": "https://i.imgur.com/yDglA.jpg",
       "alt": "Rhino Art",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3388/001-395770de220f.jpg",
-      "markdown_path": "../assets/3388/001-395770de220f.jpg",
-      "wayback_timestamp": "20191118133804",
-      "asset_archive_url": "https://web.archive.org/web/20191118133804id_/https://i.imgur.com/yDglA.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/yDglA.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52-150x150.png",
+      "alt": "Pinyin IME Screenshot",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-150x150.jpg",
+      "alt": "8515474-3d-abstract-digital-code-connection",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://i.imgur.com/yDglA.jpg",
+      "alt": "Rhino Art",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/yDglA.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
     }
   ],
   "links": [
@@ -51,6 +185,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

@@ -13,198 +13,240 @@
   "author": "小圭",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=4116",
-  "archive_url": "https://web.archive.org/web/20191214105300id_/https://tech.mozilla.com.tw/?p=4116",
+  "archive_url": "https://web.archive.org/web/20191214105300/https://tech.mozilla.com.tw/?p=4116",
   "wayback_timestamp": "20191214105300",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian.png\"><img class=\"wp-image-4125 alignleft\" alt=\"mozillian\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian.png\" width=\"200\" height=\"191\" /></a></p>\n<p>看了這麼<a href=\"http://www.youtube.com/watch?v=LuyBGkbzTjs\">熱血的影片</a>，想必你也迫不及待想成為個 mozillian 吧？！只要有心，人人都能成為 mozillian，如果坐在電腦前的你是個 developer 那就更適合不過了！</p>\n<p>這篇就來告訴你如何貢獻到 mozilla 的 code base。</p>\n<h2>Step 1：新增 Bugzilla 帳號</h2>\n<p>首先，你需要<a href=\"https://bugzilla.mozilla.org/createaccount.cgi\">新增一個 Bugzilla 帳號</a>。Bugzilla 是一套追蹤 bug 的系統，mozilla 幾乎所有的程式碼修改都記錄在 <a href=\"https://bugzilla.mozilla.org/\">Bugzilla@Mozilla</a> 上，上 code 時也需要在 Bugzilla 經過審核（review）才能真的進到 mozilla code base。因此這個 Bugzilla 帳號是不可或缺的！當然，若你發現任何問題，也可以在 Bugzilla 上回報。</p>\n<h2>Step 2：抓 code</h2>\n<p>下一步就是抓 code 囉！這部分可以參考<a title=\"超簡單！三步驟 build 好 Firefox OS！\" href=\"http://tech.mozilla.com.tw/posts/2786/easy-3-steps-to-build-firefox-os\">先前的文章</a>，不過實際上 code 到 mozilla 需要用到 <em>mercurial（hg）</em> 這套版本管理工具。如果你習慣使用 <em>git</em>，也可以用 <em>git</em> 準備好 patch 再 import 到<em> hg</em> 或直接<a href=\"https://github.com/jlebar/moz-git-tools/blob/master/git-patch-to-hg-patch\">轉換</a>成 <em>hg</em>  格式。<em>mercurial（hg）</em>的使用方式這邊就不贅述，詳細請參考 [1]。</p>\n<h2>Step 3：認養 + 解 bug</h2>\n<p>接下來就可以在 Bugzilla 上認養 bug 了！如果不知道從何下手，可以從 <a href=\"https://bugzil.la/sw:%5Bgood%20first%20bug%5D\">Good first bugs</a>（適合新手的 bugs）或是 <a href=\"https://bugzilla.mozilla.org/buglist.cgi?quicksearch=mentor&amp;list_id=9369471\">Mentored bugs</a>（有指導員幫忙的 bugs）開始。mozilla 還貼心的準備了<a href=\"http://bit.ly/mentor-lang-zh\">有中文指導員的 bugs</a> 喔！如何解決問題就是你大展身手的時候了。當你找到解決 bug 的方法後，請回到 Bugzilla 的 bug 上選擇 「Add an attachment」把準備好的 patch 上傳到 bug 上。別忘了，patch 需要是 <strong>hg 的格式</strong>。</p>\n<div id=\"attachment_4119\" style=\"width: 310px\" class=\"wp-caption aligncenter\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/02/create_attachment.png\"><img class=\"wp-image-4119 \" title=\"上傳附件（patch）\" alt=\"create_attachment\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/02/create_attachment-300x115.png\" width=\"300\" height=\"115\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/02/create_attachment-300x115.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/02/create_attachment.png 591w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a><p class=\"wp-caption-text\">Create attachemnt (patch)</p></div>\n<p style=\"text-align: center;\">\n<h2>Step 4：審核</h2>\n<p>上到 mozilla code base 的 patch 需經過 reviewer 給「<strong> r+</strong> 」才能夠 checkin。邀請 reviewer 審核請到上一步驟 attachment 的「 Details」頁面，在「 review」欄位選擇「<strong></strong>？」並輸入 reviewer 的 email 或 Bugzilla id 。如果不知道請誰 review，可以到<a href=\"https://wiki.mozilla.org/Modules/All\">這邊</a>找相關的 owner 和 peers 幫忙。Reviewer 可能不會第一次就給「 r+ 」，這時不要灰心，這是必經之路，只要依照 reviewer 給的建議或是和 reviewer 討論後，修改 patch 再重複審核過程，「 r+ 」很快就會是你的。<br />\n如果 code 改動的幅度較大，像是修改了原有的架構、API、modules 間的互動方式 等，那麼除了 reviewer 以外還要邀請 <a href=\"http://www.mozilla.org/hacking/reviewers.html#the-super-reviewers\">super-reviewer</a> 來審核，保險起見 reviewer 和 super-reviewer 不能是同一個人。邀請 super-reviewer 的方法與邀請 reviewer 類似，只是改使用「 superreview」欄位。</p>\n<div id=\"attachment_4122\" style=\"width: 310px\" class=\"wp-caption aligncenter\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review.png\"><img class=\"size-medium wp-image-4122 \" alt=\"ask_for_review\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review-300x300.png\" width=\"300\" height=\"300\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review-300x300.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review-150x150.png 150w, https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review.png 397w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a><p class=\"wp-caption-text\">Ask for review</p></div>\n<p style=\"text-align: center;\">\n<h2>Step 5：跑自動測試</h2>\n<p>patches 上到 code base 前（或邀請 review 前）請<strong>務必先丟到 <a href=\"https://wiki.mozilla.org/ReleaseEngineering/TryServer\">mozilla try server</a> 跑過測試</strong>，確保你的 patch 不會造成新的問題。mozilla try server 是一套自動測試系統，讓你在不用 check-in patch 的情況下就能跑過所有的測試。<br />\n要丟到 try server 跑測試需要有 mozilla hg（level 1）的帳號。申請步驟稍微繁雜一點點，但主要的 actions 可分為三個：</p>\n<ol>\n<li>在 Bugzilla 的「Repository Account Requests」component 下，新增一個 bug，主旨為「Commit Access (Level 1) for Xxxx Xxxx」，提供你要使用的 email address， 並在 bug 上附上你的 SSH public key（附檔名為「.pub」的檔案）。</li>\n<li>詳讀並填妥 <a href=\"http://www.mozilla.org/hacking/notification/\">Committer&#8217;s Agreement</a> 後， 郵寄／傳真／email 給相關人士，並在 bug 上告知已將 Committer’s Agreement 寄出。</li>\n<li>找 voucher（s）到 bug 上替你喊一聲做擔保。</li>\n</ol>\n<p>剩下就交給 mozillla IT 了！申請進度都會在 bug 上更新。可參考 <a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=706248\">Bug 706248</a> 作為範例，詳細步驟請參考 [2]。<br />\n申請完就能將 patch（es）透過<em> hg</em> 丟到 try server 跑測試了：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5df4bf0b9b3d9101222056\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nhg qref --message \"try: -b do -p all -u all -t none\"\r\nhg push -f ssh://hg.mozilla.org/try/</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5df4bf0b9b3d9101222056-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5df4bf0b9b3d9101222056-2\">2</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5df4bf0b9b3d9101222056-1\"><span class=\"crayon-e\">hg </span><span class=\"crayon-v\">qref</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">--</span><span class=\"crayon-i\">message</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"try: -b do -p all -u all -t none\"</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5df4bf0b9b3d9101222056-2\"><span class=\"crayon-e\">hg </span><span class=\"crayon-v\">push</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-i\">f</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">ssh</span><span class=\"crayon-o\">:</span><span class=\"crayon-c\">//hg.mozilla.org/try/</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0009 seconds] -->\r\n<p>以上指令會將你的 commit message 改成 <a href=\"https://wiki.mozilla.org/Build:TryChooser#Syntax_Builder\">try syntax</a>，記得跑完再用第一個指令將 commit message 改回來。</p>\n<h2>Step 6：完成！</h2>\n<p>若你的 patch（es）跑完 try server 後沒有什麼問題，就可以在 bug 上的 keyword 選擇 <strong><em>checkin-needed</em></strong>，會有善心人士幫你的 bug merge 進 code base 裡。而當 patch 被 merge 進 main branch，bug 也會隨之被標為「resolved」。</p>\n<div id=\"attachment_4123\" style=\"width: 310px\" class=\"wp-caption aligncenter\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/02/checkin_needed.png\"><img class=\"size-medium wp-image-4123 \" alt=\"checkin_needed\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/02/checkin_needed-300x72.png\" width=\"300\" height=\"72\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/02/checkin_needed-300x72.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/02/checkin_needed.png 601w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a><p class=\"wp-caption-text\">Checkin-needed</p></div>\n<p>恭喜你！這樣你的第一個 bug 就完成了。Happy Hacking！</p>\n<p>註：B2G 非 gecko 的 projects 需使用到 github，步驟會有些不同。</p>\n<p>&nbsp;</p>\n<p>[1] <a href=\"https://developer.mozilla.org/en/docs/Mercurial_FAQ\">Using Mercurial</a><br />\n[2] <a href=\"http://www.mozilla.org/hacking/committer/\">Becoming a Mozilla Committer</a></p>\n<p>&nbsp;</p>\n<p><strong>參考資料：</strong></p>\n<ul>\n<li><a href=\"https://developer.mozilla.org/en/docs/Introduction\">Contributing to the Mozilla codebase</a></li>\n<li><a href=\"https://developer.mozilla.org/en/docs/Introduction\">How to Submit a Patch</a></li>\n</ul>\n\t\t\t</div>",
   "content_text": "看了這麼 熱血的影片 ，想必你也迫不及待想成為個 mozillian 吧？！只要有心，人人都能成為 mozillian，如果坐在電腦前的你是個 developer 那就更適合不過了！ 這篇就來告訴你如何貢獻到 mozilla 的 code base。 Step 1：新增 Bugzilla 帳號 首先，你需要 新增一個 Bugzilla 帳號 。Bugzilla 是一套追蹤 bug 的系統，mozilla 幾乎所有的程式碼修改都記錄在 Bugzilla@Mozilla 上，上 code 時也需要在 Bugzilla 經過審核（review）才能真的進到 mozilla code base。因此這個 Bugzilla 帳號是不可或缺的！當然，若你發現任何問題，也可以在 Bugzilla 上回報。 Step 2：抓 code 下一步就是抓 code 囉！這部分可以參考 先前的文章 ，不過實際上 code 到 mozilla 需要用到 mercurial（hg） 這套版本管理工具。如果你習慣使用 git ，也可以用 git 準備好 patch 再 import 到 hg 或直接 轉換 成 hg 格式。 mercurial（hg） 的使用方式這邊就不贅述，詳細請參考 [1]。 Step 3：認養 + 解 bug 接下來就可以在 Bugzilla 上認養 bug 了！如果不知道從何下手，可以從 Good first bugs （適合新手的 bugs）或是 Mentored bugs （有指導員幫忙的 bugs）開始。mozilla 還貼心的準備了 有中文指導員的 bugs 喔！如何解決問題就是你大展身手的時候了。當你找到解決 bug 的方法後，請回到 Bugzilla 的 bug 上選擇 「Add an attachment」把準備好的 patch 上傳到 bug 上。別忘了，patch 需要是 hg 的格式 。 Create attachemnt (patch) Step 4：審核 上到 mozilla code base 的 patch 需經過 reviewer 給「 r+ 」才能夠 checkin。邀請 reviewer 審核請到上一步驟 attachment 的「 Details」頁面，在「 review」欄位選擇「 ？」並輸入 reviewer 的 email 或 Bugzilla id 。如果不知道請誰 review，可以到 這邊 找相關的 owner 和 peers 幫忙。Reviewer 可能不會第一次就給「 r+ 」，這時不要灰心，這是必經之路，只要依照 reviewer 給的建議或是和 reviewer 討論後，修改 patch 再重複審核過程，「 r+ 」很快就會是你的。 如果 code 改動的幅度較大，像是修改了原有的架構、API、modules 間的互動方式 等，那麼除了 reviewer 以外還要邀請 super-reviewer 來審核，保險起見 reviewer 和 super-reviewer 不能是同一個人。邀請 super-reviewer 的方法與邀請 reviewer 類似，只是改使用「 superreview」欄位。 Ask for review Step 5：跑自動測試 patches 上到 code base 前（或邀請 review 前）請 務必先丟到 mozilla try server 跑過測試 ，確保你的 patch 不會造成新的問題。mozilla try server 是一套自動測試系統，讓你在不用 check-in patch 的情況下就能跑過所有的測試。 要丟到 try server 跑測試需要有 mozilla hg（level 1）的帳號。申請步驟稍微繁雜一點點，但主要的 actions 可分為三個： 在 Bugzilla 的「Repository Account Requests」component 下，新增一個 bug，主旨為「Commit Access (Level 1) for Xxxx Xxxx」，提供你要使用的 email address， 並在 bug 上附上你的 SSH public key（附檔名為「.pub」的檔案）。 詳讀並填妥 Committer’s Agreement 後， 郵寄／傳真／email 給相關人士，並在 bug 上告知已將 Committer’s Agreement 寄出。 找 voucher（s）到 bug 上替你喊一聲做擔保。 剩下就交給 mozillla IT 了！申請進度都會在 bug 上更新。可參考 Bug 706248 作為範例，詳細步驟請參考 [2]。 申請完就能將 patch（es）透過 hg 丟到 try server 跑測試了： hg qref --message \"try: -b do -p all -u all -t none\" hg push -f ssh://hg.mozilla.org/try/ 1 2 hg qref -- message \"try: -b do -p all -u all -t none\" hg push - f ssh : //hg.mozilla.org/try/ 以上指令會將你的 commit message 改成 try syntax ，記得跑完再用第一個指令將 commit message 改回來。 Step 6：完成！ 若你的 patch（es）跑完 try server 後沒有什麼問題，就可以在 bug 上的 keyword 選擇 checkin-needed ，會有善心人士幫你的 bug merge 進 code base 裡。而當 patch 被 merge 進 main branch，bug 也會隨之被標為「resolved」。 Checkin-needed 恭喜你！這樣你的第一個 bug 就完成了。Happy Hacking！ 註：B2G 非 gecko 的 projects 需使用到 github，步驟會有些不同。 [1] Using Mercurial [2] Becoming a Mozilla Committer 參考資料： Contributing to the Mozilla codebase How to Submit a Patch",
   "images": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-12-14-%E4%B8%8B%E5%8D%883.58.39-150x150.png",
+      "alt": "Mozart",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/Geckos-Media-Framework-150x150.png",
+      "alt": "Gecko's Media Framework",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian.png",
       "alt": "mozillian",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4116/wp-content/uploads/2014/02/mozillian.png",
-      "markdown_path": "../assets/4116/wp-content/uploads/2014/02/mozillian.png",
-      "wayback_timestamp": "20191214105300",
-      "asset_archive_url": "https://web.archive.org/web/20191214105300id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/create_attachment-300x115.png",
       "alt": "create_attachment",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4116/wp-content/uploads/2014/02/create_attachment-300x115.png",
-      "markdown_path": "../assets/4116/wp-content/uploads/2014/02/create_attachment-300x115.png",
-      "wayback_timestamp": "20191214105300",
-      "asset_archive_url": "https://web.archive.org/web/20191214105300id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/create_attachment-300x115.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/create_attachment.png",
+      "alt": "create_attachment",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review-300x300.png",
       "alt": "ask_for_review",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4116/wp-content/uploads/2014/02/ask_for_review-300x300.png",
-      "markdown_path": "../assets/4116/wp-content/uploads/2014/02/ask_for_review-300x300.png",
-      "wayback_timestamp": "20191214105300",
-      "asset_archive_url": "https://web.archive.org/web/20191214105300id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review-300x300.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review-150x150.png",
+      "alt": "ask_for_review",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review.png",
+      "alt": "ask_for_review",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/checkin_needed-300x72.png",
       "alt": "checkin_needed",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4116/wp-content/uploads/2014/02/checkin_needed-300x72.png",
-      "markdown_path": "../assets/4116/wp-content/uploads/2014/02/checkin_needed-300x72.png",
-      "wayback_timestamp": "20191214105300",
-      "asset_archive_url": "https://web.archive.org/web/20191214105300id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/checkin_needed-300x72.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/create_attachment.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/4116/wp-content/uploads/2014/02/create_attachment.png",
-      "markdown_path": "../assets/4116/wp-content/uploads/2014/02/create_attachment.png",
-      "wayback_timestamp": "20191214105300",
-      "asset_archive_url": "https://web.archive.org/web/20191214105300id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/create_attachment.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/4116/wp-content/uploads/2014/02/ask_for_review.png",
-      "markdown_path": "../assets/4116/wp-content/uploads/2014/02/ask_for_review.png",
-      "wayback_timestamp": "20191214105300",
-      "asset_archive_url": "https://web.archive.org/web/20191214105300id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/checkin_needed.png",
-      "alt": "",
+      "alt": "checkin_needed",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/4116/wp-content/uploads/2014/02/checkin_needed.png",
-      "markdown_path": "../assets/4116/wp-content/uploads/2014/02/checkin_needed.png",
-      "wayback_timestamp": "20191214105300",
-      "asset_archive_url": "https://web.archive.org/web/20191214105300id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/checkin_needed.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
     },
     {
-      "post_id": 4116,
-      "page_type": "post",
-      "title": "我也想成為 mozillian！教你如何貢獻到 mozilla code base",
-      "page_timestamp": "20191214105300",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review-150x150.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 4,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review.png",
-      "archive_path": "assets/4116/005-7dc64e08520b.png",
-      "markdown_path": "../assets/4116/005-7dc64e08520b.png",
-      "wayback_timestamp": "20160817083940",
-      "asset_archive_url": "https://web.archive.org/web/20160817083940id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "media": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-12-14-%E4%B8%8B%E5%8D%883.58.39-150x150.png",
+      "alt": "Mozart",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/Geckos-Media-Framework-150x150.png",
+      "alt": "Gecko's Media Framework",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian.png",
       "alt": "mozillian",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4116/wp-content/uploads/2014/02/mozillian.png",
-      "markdown_path": "../assets/4116/wp-content/uploads/2014/02/mozillian.png",
-      "wayback_timestamp": "20191214105300",
-      "asset_archive_url": "https://web.archive.org/web/20191214105300id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/create_attachment-300x115.png",
       "alt": "create_attachment",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4116/wp-content/uploads/2014/02/create_attachment-300x115.png",
-      "markdown_path": "../assets/4116/wp-content/uploads/2014/02/create_attachment-300x115.png",
-      "wayback_timestamp": "20191214105300",
-      "asset_archive_url": "https://web.archive.org/web/20191214105300id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/create_attachment-300x115.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/create_attachment.png",
+      "alt": "create_attachment",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review-300x300.png",
       "alt": "ask_for_review",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4116/wp-content/uploads/2014/02/ask_for_review-300x300.png",
-      "markdown_path": "../assets/4116/wp-content/uploads/2014/02/ask_for_review-300x300.png",
-      "wayback_timestamp": "20191214105300",
-      "asset_archive_url": "https://web.archive.org/web/20191214105300id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review-300x300.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review-150x150.png",
+      "alt": "ask_for_review",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review.png",
+      "alt": "ask_for_review",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/checkin_needed-300x72.png",
       "alt": "checkin_needed",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/4116/wp-content/uploads/2014/02/checkin_needed-300x72.png",
-      "markdown_path": "../assets/4116/wp-content/uploads/2014/02/checkin_needed-300x72.png",
-      "wayback_timestamp": "20191214105300",
-      "asset_archive_url": "https://web.archive.org/web/20191214105300id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/checkin_needed-300x72.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/create_attachment.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/4116/wp-content/uploads/2014/02/create_attachment.png",
-      "markdown_path": "../assets/4116/wp-content/uploads/2014/02/create_attachment.png",
-      "wayback_timestamp": "20191214105300",
-      "asset_archive_url": "https://web.archive.org/web/20191214105300id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/create_attachment.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/4116/wp-content/uploads/2014/02/ask_for_review.png",
-      "markdown_path": "../assets/4116/wp-content/uploads/2014/02/ask_for_review.png",
-      "wayback_timestamp": "20191214105300",
-      "asset_archive_url": "https://web.archive.org/web/20191214105300id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/checkin_needed.png",
-      "alt": "",
+      "alt": "checkin_needed",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/4116/wp-content/uploads/2014/02/checkin_needed.png",
-      "markdown_path": "../assets/4116/wp-content/uploads/2014/02/checkin_needed.png",
-      "wayback_timestamp": "20191214105300",
-      "asset_archive_url": "https://web.archive.org/web/20191214105300id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/02/checkin_needed.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
     },
     {
-      "post_id": 4116,
-      "page_type": "post",
-      "title": "我也想成為 mozillian！教你如何貢獻到 mozilla code base",
-      "page_timestamp": "20191214105300",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review-150x150.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 4,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review.png",
-      "archive_path": "assets/4116/005-7dc64e08520b.png",
-      "markdown_path": "../assets/4116/005-7dc64e08520b.png",
-      "wayback_timestamp": "20160817083940",
-      "asset_archive_url": "https://web.archive.org/web/20160817083940id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/02/ask_for_review.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -298,6 +340,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

@@ -5,12 +5,14 @@
   "year": 2012,
   "month": 12,
   "day": 5,
-  "categories": [],
+  "categories": [
+    "Firefox OS(B2G)"
+  ],
   "tags": [],
   "author": "Vincet Chang",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=1158",
-  "archive_url": "https://web.archive.org/web/20130530152914id_/https://tech.mozilla.com.tw/?p=1158",
+  "archive_url": "https://web.archive.org/web/20130530152914/https://tech.mozilla.com.tw/posts/1158/%e5%9c%a8firefox-os-%e8%a3%a1-%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8-built-in-profiler-2",
   "wayback_timestamp": "20130530152914",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p style=\"text-align: justify;\">Profiling 這個技術可以提供系統執行時的歷程，讓我們評估並找出系統效能的瓶頸。Firefox OS 目前提供了 built-in profiler， 我們可以利用 profile.sh 這個 script 來幫助我們從 device 擷取 profiling information，並且利用 cleopatra 這個工具來分析 profiling information。在我們開始使用 profiler 之前，我們需要 Firefox OS 的 local build，並且需要將你的 device 接到電腦上，並確定你可以使用 ADB 這個工具從 device 上傳和下載資料。一切就緒後，就讓我們開始使用 profile.sh 來擷取系統的 profiling information 吧。</p>\n<p style=\"text-align: justify;\">我們可以在 Firefox OS 原始碼的根目錄下找到 profile.sh，這個 script 目前提供了下列這些功能：</p>\n<pre>./profile.sh start \r\n./profile.sh ps \r\n./profile.sh capture [pid or name] \r\n./profile.sh stop \r\n./profile.sh ls \r\n./profile.sh signal [pid] \r\n./profile.sh pull pid [NAME [HHMM]] \r\n./profile.sh symbolicate filename \r\n./profile.sh help</pre>\n<p style=\"text-align: justify;\">我們可以利用 profile.sh help 這個指令來取得詳細的說明。</p>\n<p style=\"text-align: justify;\">在這些指令當中，最常用的就是 profile.sh start 及 profile.sh capture 指令。profile.sh start 指令可以重新啟動 Firefox OS 並且開始記錄系統執行時的歷程，當我們下了這個指令後，FireFox OS 就會啟動 built-in profiler，然後記錄系統執行時的 profiling information (program counter (PC), stack pointer (SP) , frame pointer (FP) 及 timestamp) 。利用這些資訊及 symbol table，我們就可以知道系統執行過那些 functions 及其執行的次數。目前 built-in profiler 是利用 Periodically Sampling 及 Static Instrument 這兩種方式來記錄系統執行的歷程。Periodically Sampling 的方式跟 Oprofile 的想法是類似的，Firefox OS 在啟動 built-in profiler 時會產生一個新的 Thread，這個 Thread 會定期的產生 SIGPROF signal 給 Firefox OS process， Firefox OS process 收到 SIGPROF signal 後，透過 signal handler來記錄 profiling information。我們也可以利用 Static Instrument 的方式，在 performance critical 的 function 加上 SAMPLE_LABEL (name space, function name) 來記錄 profiling information。在得到了 profiling information 後，我們可以利用 profile.sh capture 這個指令將 profiling information 從電話拷貝到 host PC。其命名格式為 profile_HHMM_PID_NAME.txt。接下來我們需要利用分析工具來幫助我們分析 profiling information。我們可以將 profiling information 上傳到下面這個網址。</p>\n<p>http://people.mozilla.com/~bgirard/cleopatra/</p>\n<p>接下來，我們就可以得到 cleopatra 分析的結果了。</p>\n<p style=\"text-align: center;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543.png\"><img class=\"aligncenter  wp-image-1123\" title=\"Profiling Information\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543-1024x482.png\" alt=\"\" width=\"570\" height=\"267\" /></a></p>\n<p>我們還可以針對可能的 performance bottleneck 作細部的分析如下圖，</p>\n<p style=\"text-align: center;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1345021.png\"><img class=\"aligncenter  wp-image-1126\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1345021.png\" alt=\"\" width=\"561\" height=\"316\" /></a></p>\n<p>眼尖的讀者可能會發現，我們的 profiling information 還有包括 Javascript 喔，是不是很 Cool 呢 ？</p>\n<p>[1] <a href=\"https://developer.mozilla.org/en-US/docs/Performance/Profiling_with_the_Built-in_Profiler\" target=\"_blank\">https://developer.mozilla.org/en-US/docs/Performance/Profiling_with_the_Built-in_Profiler</a></p>\n\t\t\t</div>",
   "content_text": "Profiling 這個技術可以提供系統執行時的歷程，讓我們評估並找出系統效能的瓶頸。Firefox OS 目前提供了 built-in profiler， 我們可以利用 profile.sh 這個 script 來幫助我們從 device 擷取 profiling information，並且利用 cleopatra 這個工具來分析 profiling information。在我們開始使用 profiler 之前，我們需要 Firefox OS 的 local build，並且需要將你的 device 接到電腦上，並確定你可以使用 ADB 這個工具從 device 上傳和下載資料。一切就緒後，就讓我們開始使用 profile.sh 來擷取系統的 profiling information 吧。 我們可以在 Firefox OS 原始碼的根目錄下找到 profile.sh，這個 script 目前提供了下列這些功能： ./profile.sh start ./profile.sh ps ./profile.sh capture [pid or name] ./profile.sh stop ./profile.sh ls ./profile.sh signal [pid] ./profile.sh pull pid [NAME [HHMM]] ./profile.sh symbolicate filename ./profile.sh help 我們可以利用 profile.sh help 這個指令來取得詳細的說明。 在這些指令當中，最常用的就是 profile.sh start 及 profile.sh capture 指令。profile.sh start 指令可以重新啟動 Firefox OS 並且開始記錄系統執行時的歷程，當我們下了這個指令後，FireFox OS 就會啟動 built-in profiler，然後記錄系統執行時的 profiling information (program counter (PC), stack pointer (SP) , frame pointer (FP) 及 timestamp) 。利用這些資訊及 symbol table，我們就可以知道系統執行過那些 functions 及其執行的次數。目前 built-in profiler 是利用 Periodically Sampling 及 Static Instrument 這兩種方式來記錄系統執行的歷程。Periodically Sampling 的方式跟 Oprofile 的想法是類似的，Firefox OS 在啟動 built-in profiler 時會產生一個新的 Thread，這個 Thread 會定期的產生 SIGPROF signal 給 Firefox OS process， Firefox OS process 收到 SIGPROF signal 後，透過 signal handler來記錄 profiling information。我們也可以利用 Static Instrument 的方式，在 performance critical 的 function 加上 SAMPLE_LABEL (name space, function name) 來記錄 profiling information。在得到了 profiling information 後，我們可以利用 profile.sh capture 這個指令將 profiling information 從電話拷貝到 host PC。其命名格式為 profile_HHMM_PID_NAME.txt。接下來我們需要利用分析工具來幫助我們分析 profiling information。我們可以將 profiling information 上傳到下面這個網址。 http://people.mozilla.com/~bgirard/cleopatra/ 接下來，我們就可以得到 cleopatra 分析的結果了。 我們還可以針對可能的 performance bottleneck 作細部的分析如下圖， 眼尖的讀者可能會發現，我們的 profiling information 還有包括 Javascript 喔，是不是很 Cool 呢 ？ [1] https://developer.mozilla.org/en-US/docs/Performance/Profiling_with_the_Built-in_Profiler",
@@ -25,25 +27,69 @@
       "url": "https://assets.pinterest.com/images/PinExt.png",
       "alt": "",
       "kind": "image",
-      "source": "img"
+      "source": "img",
+      "post_id": 1158,
+      "page_type": "post",
+      "title": "在 Firefox OS 裡 如何使用 built-in profiler",
+      "page_timestamp": "20130530152914",
+      "index": 0,
+      "recovered_url": "https://assets.pinterest.com/images/PinExt.png",
+      "archive_path": "assets/1158/001-8b909b0ca962.png",
+      "markdown_path": "../assets/1158/001-8b909b0ca962.png",
+      "wayback_timestamp": "20130530153527",
+      "asset_archive_url": "https://web.archive.org/web/20130530153527id_/http://assets.pinterest.com/images/PinExt.png",
+      "content_type": "image/png"
     },
     {
       "url": "https://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
       "alt": "plurk share",
       "kind": "image",
-      "source": "img"
+      "source": "img",
+      "post_id": 1158,
+      "page_type": "post",
+      "title": "在 Firefox OS 裡 如何使用 built-in profiler",
+      "page_timestamp": "20130530152914",
+      "index": 1,
+      "recovered_url": "https://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "archive_path": "assets/1158/002-10f9b405de01.png",
+      "markdown_path": "../assets/1158/002-10f9b405de01.png",
+      "wayback_timestamp": "20130508182617",
+      "asset_archive_url": "https://web.archive.org/web/20130508182617id_/http://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "content_type": "image/png"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543-1024x482.png",
       "alt": "",
       "kind": "image",
-      "source": "img"
+      "source": "img",
+      "post_id": 1158,
+      "page_type": "post",
+      "title": "在 Firefox OS 裡 如何使用 built-in profiler",
+      "page_timestamp": "20130530152914",
+      "index": 2,
+      "recovered_url": "http://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543-1024x482.png",
+      "archive_path": "assets/1158/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543-1024x482.png",
+      "markdown_path": "../assets/1158/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543-1024x482.png",
+      "wayback_timestamp": "20130530160451",
+      "asset_archive_url": "https://web.archive.org/web/20130530160451id_/http://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543-1024x482.png",
+      "content_type": "image/png"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1345021.png",
       "alt": "",
       "kind": "image",
-      "source": "img"
+      "source": "img",
+      "post_id": 1158,
+      "page_type": "post",
+      "title": "在 Firefox OS 裡 如何使用 built-in profiler",
+      "page_timestamp": "20130530152914",
+      "index": 3,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1345021.png",
+      "archive_path": "assets/1158/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1345021.png",
+      "markdown_path": "../assets/1158/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1345021.png",
+      "wayback_timestamp": "20130414150207",
+      "asset_archive_url": "https://web.archive.org/web/20130414150207id_/http://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1345021.png",
+      "content_type": "image/png"
     },
     {
       "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/footer-mozilla.png",
@@ -61,7 +107,18 @@
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543.png",
       "alt": "",
       "kind": "image",
-      "source": "a-href"
+      "source": "a-href",
+      "post_id": 1158,
+      "page_type": "post",
+      "title": "在 Firefox OS 裡 如何使用 built-in profiler",
+      "page_timestamp": "20130530152914",
+      "index": 4,
+      "recovered_url": "http://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543.png",
+      "archive_path": "assets/1158/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543.png",
+      "markdown_path": "../assets/1158/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543.png",
+      "wayback_timestamp": "20130414150107",
+      "asset_archive_url": "https://web.archive.org/web/20130414150107id_/http://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543.png",
+      "content_type": "image/png"
     }
   ],
   "media": [
@@ -75,25 +132,69 @@
       "url": "https://assets.pinterest.com/images/PinExt.png",
       "alt": "",
       "kind": "image",
-      "source": "img"
+      "source": "img",
+      "post_id": 1158,
+      "page_type": "post",
+      "title": "在 Firefox OS 裡 如何使用 built-in profiler",
+      "page_timestamp": "20130530152914",
+      "index": 0,
+      "recovered_url": "https://assets.pinterest.com/images/PinExt.png",
+      "archive_path": "assets/1158/001-8b909b0ca962.png",
+      "markdown_path": "../assets/1158/001-8b909b0ca962.png",
+      "wayback_timestamp": "20130530153527",
+      "asset_archive_url": "https://web.archive.org/web/20130530153527id_/http://assets.pinterest.com/images/PinExt.png",
+      "content_type": "image/png"
     },
     {
       "url": "https://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
       "alt": "plurk share",
       "kind": "image",
-      "source": "img"
+      "source": "img",
+      "post_id": 1158,
+      "page_type": "post",
+      "title": "在 Firefox OS 裡 如何使用 built-in profiler",
+      "page_timestamp": "20130530152914",
+      "index": 1,
+      "recovered_url": "https://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "archive_path": "assets/1158/002-10f9b405de01.png",
+      "markdown_path": "../assets/1158/002-10f9b405de01.png",
+      "wayback_timestamp": "20130508182617",
+      "asset_archive_url": "https://web.archive.org/web/20130508182617id_/http://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "content_type": "image/png"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543-1024x482.png",
       "alt": "",
       "kind": "image",
-      "source": "img"
+      "source": "img",
+      "post_id": 1158,
+      "page_type": "post",
+      "title": "在 Firefox OS 裡 如何使用 built-in profiler",
+      "page_timestamp": "20130530152914",
+      "index": 2,
+      "recovered_url": "http://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543-1024x482.png",
+      "archive_path": "assets/1158/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543-1024x482.png",
+      "markdown_path": "../assets/1158/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543-1024x482.png",
+      "wayback_timestamp": "20130530160451",
+      "asset_archive_url": "https://web.archive.org/web/20130530160451id_/http://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543-1024x482.png",
+      "content_type": "image/png"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1345021.png",
       "alt": "",
       "kind": "image",
-      "source": "img"
+      "source": "img",
+      "post_id": 1158,
+      "page_type": "post",
+      "title": "在 Firefox OS 裡 如何使用 built-in profiler",
+      "page_timestamp": "20130530152914",
+      "index": 3,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1345021.png",
+      "archive_path": "assets/1158/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1345021.png",
+      "markdown_path": "../assets/1158/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1345021.png",
+      "wayback_timestamp": "20130414150207",
+      "asset_archive_url": "https://web.archive.org/web/20130414150207id_/http://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1345021.png",
+      "content_type": "image/png"
     },
     {
       "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/footer-mozilla.png",
@@ -111,7 +212,18 @@
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543.png",
       "alt": "",
       "kind": "image",
-      "source": "a-href"
+      "source": "a-href",
+      "post_id": 1158,
+      "page_type": "post",
+      "title": "在 Firefox OS 裡 如何使用 built-in profiler",
+      "page_timestamp": "20130530152914",
+      "index": 4,
+      "recovered_url": "http://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543.png",
+      "archive_path": "assets/1158/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543.png",
+      "markdown_path": "../assets/1158/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543.png",
+      "wayback_timestamp": "20130414150107",
+      "asset_archive_url": "https://web.archive.org/web/20130414150107id_/http://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543.png",
+      "content_type": "image/png"
     }
   ],
   "links": [
@@ -129,6 +241,19 @@
     }
   ],
   "status": "ok",
-  "asset_status": "skipped",
-  "asset_errors": []
+  "asset_status": "partial_assets_failed",
+  "asset_errors": [
+    {
+      "url": "https://mozilla.com.tw/assets/pic/FirefoxforAndroid.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/footer-mozilla.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543-150x150.png",
+      "reason": "article_media_missing"
+    }
+  ]
 }

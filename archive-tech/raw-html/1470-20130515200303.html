@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width" />
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+缺它不可！靈活運用 Firefox OS Gaia 的單元測試 | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:image" content="http://tech.mozilla.com.tw/wp-content/uploads/2013/01/mock-showerrors2-150x150.png" />
+
+<link rel="stylesheet" type="text/css" media="all" href="http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<!--<link rel="pingback" href="http://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="http://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<link rel="alternate" type="application/rss+xml" title="Mozilla Tech | 謀智台客 &raquo; 源料" href="http://tech.mozilla.com.tw/feed" />
+<link rel="alternate" type="application/rss+xml" title="Mozilla Tech | 謀智台客 &raquo; 迴響源料" href="http://tech.mozilla.com.tw/comments/feed" />
+<script type='text/javascript' src='http://tech.mozilla.com.tw/wp-includes/js/comment-reply.js?ver=3.4.1'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='首度曝光 &#8211; 淺談 Firefox OS 顯示流程' href='http://tech.mozilla.com.tw/posts/1358/%e9%a6%96%e5%ba%a6%e6%9b%9d%e5%85%89-%e6%b7%ba%e8%ab%87-firefox-os-%e9%a1%af%e7%a4%ba%e6%b5%81%e7%a8%8b' />
+<link rel='next' title='左右為難：Web 標準 v.s UX (User Experience) ，你選哪一邊？' href='http://tech.mozilla.com.tw/posts/1506/%e5%b7%a6%e5%8f%b3%e7%82%ba%e9%9b%a3%ef%bc%9aweb-%e6%a8%99%e6%ba%96-v-s-ux-user-experience-%ef%bc%8c%e4%bd%a0%e9%81%b8%e5%93%aa%e4%b8%80%e9%82%8a%ef%bc%9f' />
+<meta name="generator" content="WordPress 3.4.1" />
+<link rel='canonical' href='http://tech.mozilla.com.tw/posts/1470/firefox-os-gaia-unit-testing' />
+<link rel='shortlink' href='http://tech.mozilla.com.tw/?p=1470' />
+<link rel="stylesheet" href="http://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/zh_TW/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+</script>
+
+<!-- Place this tag after the last +1 button tag. -->
+<script type="text/javascript">
+  window.___gcfg = {lang: 'zh-TW'};
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+</head>
+
+<body class="single single-post postid-1470 single-format-standard">
+      <div id="default-header">
+    <div class="header-promo">
+        <a href="https://play.google.com/store/apps/details?id=org.mozilla.firefox" onClick="_gaq.push(['_trackEvent', 'home-link', 'nav-firefox-mobile', '']);" target="_blank"><img src="https://mozilla.com.tw/assets/pic/FirefoxforAndroid.png" alt="Firefox for Android"></a>
+    </div>
+    <ul>
+<li class="sitemap">
+<a href="http://mozilla.com.tw/firefox/" title="下載 Mozilla Firefox 中文版">Firefox</a>
+<ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/features/" title="下載 Mozilla Firefox 中文桌面版">Firefox 桌面版</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/firefox/mobile/" title="Mozilla Firefox 行動版">Firefox 行動版</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/firefox/channel/" title="Mozilla Firefox 未來發行版">Firefox 未來發行版</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/firefoxos/" title="Firefox 行動作業系統">Firefox OS</a>
+</li>
+<li>
+<a href="https://addons.mozilla.org/zh-TW/firefox/" title="Firefox 附加元件">附加元件</a>
+</li>
+<li>
+<a href="https://support.mozilla.com/zh-TW/home" title="Firefox 說明文件、支援中心">支援中心</a>
+</li>
+</ul>
+</li>
+<li class="sitemap">
+<a href="http://mozilla.com.tw/community/" title="社群參與">社群參與</a>
+<ul>
+<li>
+<a href="http://firefox.club.tw/" title="Firefox 活力軍">Firefox 活力軍</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/community/student/" title="校園大使">校園大使</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/community/contribute/" title="社群專案">社群專案</a>
+</li>
+</ul>
+</li>
+<li class="sitemap">
+<a href="http://mozilla.com.tw/news/" title="訊息中心">訊息中心</a>
+<ul>
+<li>
+<a href="http://blog.mozilla.com.tw/main" title="部落格">部落格</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/news/press/" title="Mozilla 新聞">Mozilla 新聞</a>
+</li>
+<li>
+<a href="http://blog.mozilla.com.tw/events-list" title="活動訊息">活動訊息</a>
+</li>
+<li>
+<a href="http://tech.mozilla.com.tw/" title="謀智台客">謀智台客</a>
+</li>
+</ul>
+</li>
+<li class="sitemap">
+<a href="http://mozilla.com.tw/about/" title="關於我們">關於我們</a>
+<ul>
+<li>
+<a href="http://mozilla.com.tw/about/manifesto/" title="Mozilla 宣言">Mozilla 宣言</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/about/space/" title="Mozilla Space">Mozilla Space</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/about/careers/" title="工作機會">工作機會</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw/about/contact/" title="聯絡資訊">聯絡資訊</a>
+</li>
+<li>
+<a href="http://mozilla.com.tw//mozilla.org/en-US/" title="Mozilla (US)">Mozilla (US)</a>
+</li>
+</ul>
+</li>
+</ul>
+    </div>
+    <div id="outer-wrapper">
+    <div id="wrapper">
+       <div id="doc">
+        <!-- start header-->
+        <div id="header">
+          <header>
+          <p>
+            		<a href="http://mozilla.com.tw" title="回首頁" class="close">
+            			<span id="header_firefox">Mozilla Firefox|美商謀智</span>
+            		</a>
+            </p>
+          </header>
+            <a class="mozilla" href="http://mozilla.org/">mozilla</a>
+            <!-- start menu #nav-main -->
+            <div id="nav-main" role="navigation">
+              <nav>
+		            <ul role="menubar">
+<li class="topMenu" role="menuitem">
+<a tabindex="0" href="http://mozilla.com.tw/firefox/" title="下載 Mozilla Firefox 中文版">Firefox</a>
+<ul>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/firefox/features/" title="下載 Mozilla Firefox 中文桌面版">Firefox 桌面版</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/firefox/mobile/" title="Mozilla Firefox 行動版">Firefox 行動版</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/firefox/channel/" title="Mozilla Firefox 未來發行版">Firefox 未來發行版</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/firefoxos/" title="Firefox 行動作業系統">Firefox OS</a>
+</li>
+<li>
+<a tabindex="0" href="https://addons.mozilla.org/zh-TW/firefox/" title="Firefox 附加元件">附加元件</a>
+</li>
+<li>
+<a tabindex="0" href="https://support.mozilla.com/zh-TW/home" title="Firefox 說明文件、支援中心">支援中心</a>
+</li>
+</ul>
+</li>
+<li class="topMenu" role="menuitem">
+<a tabindex="0" href="http://mozilla.com.tw/community/" title="社群參與">社群參與</a>
+<ul>
+<li>
+<a tabindex="0" href="http://firefox.club.tw/" title="Firefox 活力軍">Firefox 活力軍</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/community/student/" title="校園大使">校園大使</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/community/contribute/" title="社群專案">社群專案</a>
+</li>
+</ul>
+</li>
+<li class="topMenu" role="menuitem">
+<a tabindex="0" href="http://mozilla.com.tw/news/" title="訊息中心">訊息中心</a>
+<ul>
+<li>
+<a tabindex="0" href="http://blog.mozilla.com.tw/main" title="部落格">部落格</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/news/press/" title="Mozilla 新聞">Mozilla 新聞</a>
+</li>
+<li>
+<a tabindex="0" href="http://blog.mozilla.com.tw/events-list" title="活動訊息">活動訊息</a>
+</li>
+<li>
+<a tabindex="0" href="http://tech.mozilla.com.tw/" title="謀智台客">謀智台客</a>
+</li>
+</ul>
+</li>
+<li class="topMenu" role="menuitem">
+<a tabindex="0" href="http://mozilla.com.tw/about/" title="關於我們">關於我們</a>
+<ul>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/about/manifesto/" title="Mozilla 宣言">Mozilla 宣言</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/about/space/" title="Mozilla Space">Mozilla Space</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/about/careers/" title="工作機會">工作機會</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw/about/contact/" title="聯絡資訊">聯絡資訊</a>
+</li>
+<li>
+<a tabindex="0" href="http://mozilla.com.tw//mozilla.org/en-US/" title="Mozilla (US)">Mozilla (US)</a>
+</li>
+</ul>
+</li>
+</ul>
+		          </nav>
+		          <div class="close"></div>
+            </div> <!-- end nav-->
+                    </div><!--end header-->
+        <div id="main">		<p id="breadcrumbs"><a href='http://mozilla.com.tw/' class='home'>Home</a><b>&raquo;</b><a href='http://blog.mozilla.com.tw/'>訊息中心</a><b>&raquo;</b><a href='http://tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>缺它不可！靈活運用 Firefox OS Gaia 的單元測試</p>
+		<div id="primary" role="main">
+			<div id="article">
+			
+					<nav id="nav-above">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+		<div class="nav-previous"><a href="http://tech.mozilla.com.tw/posts/1358/%e9%a6%96%e5%ba%a6%e6%9b%9d%e5%85%89-%e6%b7%ba%e8%ab%87-firefox-os-%e9%a1%af%e7%a4%ba%e6%b5%81%e7%a8%8b" rel="prev"><span class="meta-nav">&larr;</span> 首度曝光 &#8211; 淺談 Firefox OS 顯示流程</a></div>		<div class="nav-next"><a href="http://tech.mozilla.com.tw/posts/1506/%e5%b7%a6%e5%8f%b3%e7%82%ba%e9%9b%a3%ef%bc%9aweb-%e6%a8%99%e6%ba%96-v-s-ux-user-experience-%ef%bc%8c%e4%bd%a0%e9%81%b8%e5%93%aa%e4%b8%80%e9%82%8a%ef%bc%9f" rel="next">左右為難：Web 標準 v.s UX (User Experience) ，你選哪一邊？ <span class="meta-nav">&rarr;</span></a></div>
+	
+	</nav><!-- #nav-above -->
+	
+				
+<article id="post-1470" class="post-1470 post type-post status-publish format-standard hentry category-b2g category-javascript">
+	<header class="entry-header">
+		<div class="entry-meta">
+		  <div id="post-date">
+		    發表於：2013 年 01 月 22 日		  </div>
+		  <div id="author-meta">
+		    <div id="author-info">
+		      投稿者 <br />
+		      Yuren		    </div>
+		      <img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/39/a42c553344edcc827244e928b92e2729-bpthumb.jpg" alt="" class="avatar user-39-avatar" width='32' height='32' />		  </div>
+		</div><!-- .entry-meta -->
+		<h1 class="entry-title">缺它不可！靈活運用 Firefox OS Gaia 的單元測試</h1>
+		<div id="pintrest"><a href="http://pinterest.com/pin/create/button/?url=http://tech.mozilla.com.tw/posts/1470/firefox-os-gaia-unit-testing&media=http://tech.mozilla.com.tw/wp-content/uploads/2013/01/mock-showerrors2-150x150.png" class="pin-it-button" count-layout="none"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>    <div class="plurk-share">
+      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+        <img src="http://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+      </a>
+    </div>
+   <div class="fb-like" data-href="http://tech.mozilla.com.tw/posts/1470/firefox-os-gaia-unit-testing" data-send="false" data-layout="button_count" data-width="50" data-show-faces="false" data-font="arial"></div>   <!-- Place this tag where you want the +1 button to render. -->
+   <div class="g-plusone" data-size="small" data-annotation="inline" data-width="120" data-href="http://tech.mozilla.com.tw/posts/1470/firefox-os-gaia-unit-testing"></div>   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p>單元測試一直以來都是確保軟體品質的一種方式，在日益錯綜複雜的軟體中更是重要。Firefox OS 的應用層 Gaia 理所當然的也由單元測試來確保軟體品質。設置妥當後，當你打開任意編輯器對 Javascript 檔案編輯，並且按下『Save』的那一刻，unit test agent 就會默默的被喚起，針對您的修改一項項的進行檢測。當所有測試項目都妥當的通過之後，您將會看到一個優雅的圖示跳出來，告知你的測試均已通過。</p>
+<p><a href="http://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed.png"><img class="aligncenter size-medium wp-image-1473" src="http://tech.mozilla.com.tw/wp-content/uploads/2013/01/testing-passed-300x225.png" alt="" width="300" height="225" /></a></p>
+<p>Gaia 的單元測試將會針對修改的部份執行該部份的單元測試，可確保修改的時候所有的測項都可以通過。錯誤的時候當然也會跳出個讓你很難忽視的紅色圖示，提醒你本次修改沒有通過測試。</p>
+<p><img class="aligncenter size-full wp-image-1476" src="http://tech.mozilla.com.tw/wp-content/uploads/2013/01/螢幕擷圖存為-2013-01-15-162446.png" alt="" width="660" height="138" /></p>
+<p>要如何設置 Gaia 的單元測試環境呢？首先你會需要以下環境：</p>
+<ol>
+<li><a href="http://nodejs.org/" target="_blank"> node.js</a></li>
+<li><a href="http://nightly.mozilla.org/" target="_blank">Firefox nightly</a></li>
+<li><a href="https://wiki.mozilla.org/Gaia/Hacking" target="_blank">Gaia 開發環境</a></li>
+</ol>
+<p>因為本文重點是單元測試環境，上面環境的安裝方法就不再贅述。準備好上面的環境後，切換到 gaia 目錄，鍵入以下的指令即可執行 test agent server</p>
+<pre>$ make test-agent-server</pre>
+<p>接下來則需要建立 gaia 除錯環境，請開另外一個終端機視窗鍵入下面指令（本步驟將會建立 debug 版本的 gaia profile）</p>
+<pre>$ DEBUG=1 make</pre>
+<p>最後把 firefox nightly 套用由 DEBUG=1 make 生成的 profile 檔即可執行並完成設定</p>
+<pre>$ firefox-nightly -profile &lt;YOUR_GAIA_PROFILE&gt; http://test-agent.gaiamobile.org:8080/</pre>
+<p>注意！如果你在 Mac OS 上面開發，profile 目錄必須使用絕對路徑。</p>
+<p>這樣就設定完成了，你可以打開已經有撰寫單元測試的 javascript 檔案如 gaia/apps/calendar/js/app.js，修改之後儲存，就會看到相關的單元測試開始執行了！</p>
+<h2>如何運作？</h2>
+<p>其實運作原理很簡單。 gaia 利用 node.js 來監控檔案系統的變化，並且利用 websocket 通知 nightly browser 要執行哪個單元測試檔案，nightly 執行完畢後，再把結果回傳給 node.js。最後再由 node.js 發出 notification 後，就是使用者看到的通過或失敗的測試通知囉！</p>
+<p><a href="http://tech.mozilla.com.tw/wp-content/uploads/2013/01/test-agent1.png"><img class="aligncenter size-full wp-image-1528" src="http://tech.mozilla.com.tw/wp-content/uploads/2013/01/test-agent1.png" alt="" width="550" height="529" /></a></p>
+<p>既然 node.js 也是 javascript 的執行環境，為什麼不直接在 node.js 裡面執行單元測試呢？主要的原因是 Firefox Nightly 是一個接近 Firefox OS 的運行環境，也有些 API 在 Firefox nightly 才可以使用。所以在 Firefox nightly 裡面跑是比較合理的方式。</p>
+<h2>撰寫新的單元測試</h2>
+<p>看完了如何執行單元測試，那如果加了新功能要加入單元測試要怎麼作呢？正巧最近修改了 Gaia 的 Calendar app，為其加入 offline 的錯誤訊息的 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=809537" target="_blank">Bug 809537</a> 就需要為離線功能加入單元測試。在這個 bug 裡面我新增了兩個需要測試的部份：</p>
+<ol>
+<li>新的 <a href="https://github.com/yurenju/gaia/commit/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66#diff-4" target="_blank">Errors View</a>，用來顯示主頁的錯誤訊息</li>
+<li>在 <a href="https://github.com/yurenju/gaia/commit/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66#diff-3" target="_blank">caldav provider</a> 裡面的 getAccount, findCalendars, syncEvents, createEvent, updateEvent, deleteEvent 新增偵測離線狀態的功能，當離線時 callback 會帶一個錯誤訊息。</li>
+</ol>
+<p><a href="https://github.com/yurenju/gaia/blob/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66/apps/calendar/js/views/errors.js" target="_blank">Errors View</a> 繼承自 <a href="https://github.com/yurenju/gaia/blob/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66/apps/calendar/js/view.js" target="_blank">View</a> (js/view.js)，其中最主要的功能是對處理來自 syncController 的  &#8216;offline&#8217; event，當 handleEvent 收到 &#8216;offline&#8217; 之後，會採用繼承自 View 的 showErrors 來顯示錯誤訊息，摘要重要的源碼如下：</p>
+<pre>Calendar.ns('Views').Errors = (function() {
+
+  function Errors() {
+    Calendar.View.apply(this, arguments);
+    this.app.syncController.on('offline', this);
+  }
+
+  Errors.prototype = {
+    __proto__: Calendar.View.prototype,
+
+(ignore...)
+
+    handleEvent: function(event) {
+      switch (event.type) {
+        case 'offline':
+          this.showErrors([{name: 'offline'}]);
+          break;
+      }
+    }
+  }; (ignore...)
+}());</pre>
+<p>針對 caldav provider 的修改，則是新增了 bailWhenOffline 在 offline 的時候新增一個 Error 並且作為 callback 的參數傳回。比如說下面的 findCalendars 就會先確認如果目前是 offline 就不會 request service。</p>
+<pre>findCalendars: function(account, callback) {
+  if (this.bailWhenOffline(callback)) {
+    return;
+  }
+  this.service.request('caldav', 'findCalendars', account, callback);
+},
+
+(ignore...)
+
+bailWhenOffline: function(callback) {
+  if (!this.offlineMessage &amp;&amp; 'mozL10n' in window.navigator) {
+    this.offlineMessage = window.navigator.mozL10n.get('error-offline');
+  }
+
+  var ret = this.app.offline() &amp;&amp; callback;
+  if (ret) {
+    var error = new Error();
+    error.name = 'offline';
+    error.message = this.offlineMessage;
+    callback(error);
+  }
+  return ret;
+}</pre>
+<p>在 <a href="https://github.com/yurenju/gaia/blob/bf672ba6dbf9175d5b83743724da7b1fdd2bbb66/apps/calendar/js/views/errors.js" target="_blank">Erros View</a> 裡面，最需要測試的是 handleEvent 到 showErrors 是否正確的傳入了 { name: &#8220;offline&#8221; }，而 showErrors 已經在 view_test.js 裡面測試過了不需要重複測試，所以測試的方法是作一個 Mock 的 showErrors function 塞入原本的 Errors View 物件內，如下圖所示</p>
+<p><a href="http://tech.mozilla.com.tw/wp-content/uploads/2013/01/mock-showerrors2.png"><img class="aligncenter size-full wp-image-1542" src="http://tech.mozilla.com.tw/wp-content/uploads/2013/01/mock-showerrors2.png" alt="" width="569" height="395" /></a></p>
+<p>原本的 showErrors 會在手機上顯示錯誤訊息，但我們用 Mock 的 showErrors 之後就只會把傳入的 error name 直接 assign 到 errorName 裡面，如此一來我們對 syncController 發出 &#8220;offline&#8221; 事件，再確認 errorName 最後是不是拿到了 &#8220;offline&#8221; 來判斷 handleEvent 是否正常的運行。</p>
+<pre>requireApp('calendar/test/unit/helper.js', function() {
+  requireLib('views/errors.js');
+});
+
+suite('views/errors', function() {
+  var subject, app, errorName;
+
+  setup(function() {
+    app = testSupport.calendar.app();
+    subject = new Calendar.Views.Errors({
+      app: app
+    });
+
+    subject.showErrors = function(list) {
+      errorName = list[0].name;
+    }
+  });
+
+  test('offline event', function() {
+    subject.app.syncController.emit('offline');
+    assert.deepEqual(errorName, 'offline');
+  });
+});</pre>
+<p>至於 offline 訊息基本上是從 navigator.onLine 這個屬性得知的，所以在撰寫程式的時候我們把偵測 offline 的功能封裝在 app:offline() 裡面：</p>
+<pre>/**
+* Returns the offline status.
+*/
+offline: function() {
+  return (navigator &amp;&amp; 'onLine' in navigator) ? !navigator.onLine : true;
+}</pre>
+<p>在執行單元測試的時候動態的把原本的 offline 儲存到 realOffline，接著塞一個每次都會回傳 true 的 offline()，如此一來就可以測試離線狀況時上述的 function 如 getAccount, findCalendar 會不會在 callback 裡面帶入 offline error 的錯誤，舉個測試 getAccount 離線狀況的例子：</p>
+<pre>test('offline handling', function(done) {
+  var realOffline = app.offline;
+  app.offline = function() { return true };
+  subject.getAccount(input, function cb(cbError, cbResult) {
+    done(function() {
+      app.offline = realOffline;
+      assert.equal(cbError.name, 'offline');
+    })
+  })
+});</pre>
+<p>我們將 Mock 的 offline function 替換進去，並且執行 getAcount，並且確定 cbError.name 是 offline 就可以確認我們加入的功能是可以正常運作的了。</p>
+<p>感謝單元測試以及 Javascript 的動態特性！</p>
+<p>我們可以在測試的時候非常容易的替換一些 Mock 物件進去來達到單元測試的效果。而且可別小看這些單元測試，當你的程式日益複雜的時候，這些單元測試就是保證軟體品質的第一道防線，也會讓開發的時候感到更加安心喔。</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+			</div><!-- .entry-content -->
+	
+	<footer class="entry-meta">
+   <div class="fb-like" data-href="http://tech.mozilla.com.tw/posts/1470/firefox-os-gaia-unit-testing" data-send="false" data-width="350" data-show-faces="false" data-font="arial"></div>	 <br />	</footer><!-- .entry-meta -->
+</article><!-- #post-1470 -->
+<div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團
+	 
+
+					<nav id="nav-below">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+		<div class="nav-previous"><a href="http://tech.mozilla.com.tw/posts/1358/%e9%a6%96%e5%ba%a6%e6%9b%9d%e5%85%89-%e6%b7%ba%e8%ab%87-firefox-os-%e9%a1%af%e7%a4%ba%e6%b5%81%e7%a8%8b" rel="prev"><span class="meta-nav">&larr;</span> 首度曝光 &#8211; 淺談 Firefox OS 顯示流程</a></div>		<div class="nav-next"><a href="http://tech.mozilla.com.tw/posts/1506/%e5%b7%a6%e5%8f%b3%e7%82%ba%e9%9b%a3%ef%bc%9aweb-%e6%a8%99%e6%ba%96-v-s-ux-user-experience-%ef%bc%8c%e4%bd%a0%e9%81%b8%e5%93%aa%e4%b8%80%e9%82%8a%ef%bc%9f" rel="next">左右為難：Web 標準 v.s UX (User Experience) ，你選哪一邊？ <span class="meta-nav">&rarr;</span></a></div>
+	
+	</nav><!-- #nav-below -->
+					<span class='st_facebook_large' st_title='缺它不可！靈活運用 Firefox OS Gaia 的單元測試' st_url='http://tech.mozilla.com.tw/posts/1470/firefox-os-gaia-unit-testing' displayText='share'></span>
+				<span class='st_plusone_large' st_title='缺它不可！靈活運用 Firefox OS Gaia 的單元測試' st_url='http://tech.mozilla.com.tw/posts/1470/firefox-os-gaia-unit-testing' displayText='share'></span>
+				<span class='st_twitter_large' st_title='缺它不可！靈活運用 Firefox OS Gaia 的單元測試' st_url='http://tech.mozilla.com.tw/posts/1470/firefox-os-gaia-unit-testing' displayText='share'></span>
+				
+			      </div> <!-- #article--!>
+		</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" action="http://tech.mozilla.com.tw/" >
+	<div><label class="screen-reader-text" for="s">搜尋：</label>
+	<input type="text" value="" name="s" id="s" />
+	<input type="submit" id="searchsubmit" value="搜尋" />
+	</div>
+	</form></aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="http://tech.mozilla.com.tw/posts/category/css" title="觀看全部分類為「CSS」的文章">CSS</a>
+</li>
+	<li class="cat-item cat-item-4"><a href="http://tech.mozilla.com.tw/posts/category/firefox" title="觀看全部分類為「Firefox」的文章">Firefox</a>
+</li>
+	<li class="cat-item cat-item-3"><a href="http://tech.mozilla.com.tw/posts/category/b2g" title="觀看全部分類為「Firefox OS(B2G)」的文章">Firefox OS(B2G)</a>
+</li>
+	<li class="cat-item cat-item-9"><a href="http://tech.mozilla.com.tw/posts/category/javascript" title="觀看全部分類為「Javascript」的文章">Javascript</a>
+</li>
+	<li class="cat-item cat-item-5"><a href="http://tech.mozilla.com.tw/posts/category/mozilla" title="觀看全部分類為「Mozilla」的文章">Mozilla</a>
+</li>
+	<li class="cat-item cat-item-7"><a href="http://tech.mozilla.com.tw/posts/category/open-source" title="觀看全部分類為「Open Source」的文章">Open Source</a>
+</li>
+	<li class="cat-item cat-item-6"><a href="http://tech.mozilla.com.tw/posts/category/browser-id" title="觀看全部分類為「Persona」的文章">Persona</a>
+</li>
+	<li class="cat-item cat-item-1"><a href="http://tech.mozilla.com.tw/posts/category/%e6%9c%aa%e5%88%86%e9%a1%9e" title="觀看全部分類為「未分類」的文章">未分類</a>
+</li>
+		</ul>
+</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">相關連結</h1>			<div class="textwidget"><ul>
+<li id="footer-Facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="footer-Google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="footer-Plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="footer-Youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="footer-Flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <!-- start sub-footer-->
+    <div id="footer">  
+      <footer>
+        <div id="footer-wrapper">
+          <div id="footer-logo" class="footer-content">
+            <a href="http://mozilla.org/en-US/" target="_blank">
+              <img src="http://mozilla.com.tw/assets/css/img/mozcomtw/footer-mozilla.png" alt="mozilla" border="0" />
+            </a>
+          </div>
+          <div id="sub-footer" class="footer-content">
+           <div id="sub-footer-contents">
+            <strong>與我們為友</strong>
+            <ul>
+<li id="footer-Facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="footer-Google+">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google+</a>
+</li>
+<li id="footer-Plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="footer-Youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="footer-Flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+<li id="footer-電子報">
+<a href="http://mozilla.com.tw/join_us/">電子報</a>
+</li>
+<li class="close"></li></ul>
+          </div>
+         </div><!--end sub-footer-->
+          <div id="copyright" class="footer-content">
+            <p id="footer-links">
+              <a href="http://www.mozilla.org/zh-TW/privacy-policy.html">隱私資料政策</a> &nbsp;|&nbsp;
+              <a href="http://www.mozilla.org/zh-TW/about/legal.html">法律資訊</a> &nbsp;|&nbsp;
+              <a href="http://www.mozilla.org/zh-TW/legal/fraud-report/index.html">回報商標濫用</a>
+            </p>
+            <p>除另有<a href="http://www.mozilla.org/zh-TW/about/legal.html#site">註明</a>外，本站內容皆採用<br><a href="http://creativecommons.org/licenses/by-sa/3.0/">創用 CC 姓名標示—相同方式分享條款 3.0 </a>或更新版本授權大眾使用。</p>
+         </div><!-- end copyright-->
+         <div class='close'></div>
+        </div><!-- end footer-wrapper--!>
+     </footer>
+    </div><!-- end footer-->
+    <noscript>
+    </noscript>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+		<script type="text/javascript" src="http://tech.mozilla.com.tw/wp-content/themes/toolbox/js/main.js"></script>
+		
+		<script type="text/javascript">
+      $('.mozilla').click(function(e){
+        e.preventDefault();
+        if ($('.click_mozilla').is('*')){
+          $('.mozilla').removeClass('click_mozilla');
+            $('#default-header').css('height','0px');
+          
+        }else{
+          $('.mozilla').addClass('click_mozilla');
+          $('#default-header').css('height','150px');
+        }
+      });
+    </script>
+    <script type="text/javascript">
+		  $(function(){
+		    $('#pageTab a').bind('mouseenter', function() {
+		      var current='#'+$('ul#contentTab li').not('.default').children().attr('id');
+		      var show_content=$(this).attr('href');
+		      if(current!=show_content){
+            $('#pageTab li').removeClass('clicked');
+            $(this).parent().addClass('clicked');
+            $('ul#contentTab li').not('.default').addClass('default');
+            $(show_content).parent().removeClass('default');
+            $('.event-plugin li').removeClass('default');
+            $('#flickrFeed li').removeClass('default');
+          }
+        }).click( function (e){
+		        e.preventDefault();
+		    });
+		    
+		    if ( $('#postsyear').lenght!=0 ){
+		         $('#postsyear').change(function(){
+		          var url=location.protocol + '//' + location.host + location.pathname+'?y='+$('#postsyear').val();
+		          location.href=url;
+		         }); 
+		    }
+		  
+		  });
+		</script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

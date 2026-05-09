@@ -14,370 +14,336 @@
   "author": "Lyu Shing",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=5832",
-  "archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/?p=5832",
+  "archive_url": "https://web.archive.org/web/20200919174258/https://tech.mozilla.com.tw/?p=5832",
   "wayback_timestamp": "20200919174258",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p>Firefox 最受歡迎的特色之一就是量多而且質精的附加元件 (Add-on)，在 Firefox Add-ons 網站 <a href=\"#ref-1\">[1]</a> 您可以找到各式各樣的附加元件滿足您的各種上網需求。在這篇文章中我們將會介紹如何利用 Firefox Add-on SDK <a href=\"#ref-2\">[2]</a> 來撰寫簡單的附加元件。我們會教您如何利用附加元件來改變網頁的外觀與行為，即使不是自己架設的網站，我們也能隨心所欲的改善它們的使用經驗。</p>\n<h2>準備工作</h2>\n<p>為了減輕開發者的負擔，Mozilla 推出了 Add-on SDK <a href=\"#ref-2\">[2]</a> 來取代原來基於 XUL 技術 <a href=\"#ref-3\">[3]</a> 的附加元件框架。相較於傳統的 XUL， Add-on SDK 提供了更多簡單易用的 API 來簡化開發流程，另外也提供了許多新的使用者介面元素來配合新版的 Firefox 介面。</p>\n<p>為了能夠使用最新的 API，建議您先更新Firefox到最新版 <a href=\"#ref-4\">[4]</a> 。</p>\n<p>您還需要安裝最新版的 Add-on SDK <a href=\"#ref-5\">[5]</a>，以下將以 Linux 平台作為教學範例 ( OS X 也適用 )，若是使用 Windows 請參考 <a href=\"#ref-5\">[5]</a>。<br />\n首先下載最新版的 <a href=\"https://ftp.mozilla.org/pub/mozilla.org/labs/jetpack/jetpack-sdk-latest.zip\">Add-on SDK</a>，解壓縮以後執行裡面的 <code>activate 指令：<br />\n</code></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f664321968dd333513404\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nsource bin/activate #如果你用 bash\r\nbash bin/activate   #如果你用其他的 shell</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f664321968dd333513404-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f664321968dd333513404-2\">2</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f664321968dd333513404-1\"><span class=\"crayon-e\">source </span><span class=\"crayon-v\">bin</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">activate</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">#如果你用 bash</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f664321968dd333513404-2\"><span class=\"crayon-r\">bash</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">bin</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">activate</span><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-c\">#如果你用其他的 shell</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0009 seconds] -->\r\n<p>此時您會注意到您的 shell prompt 前面會出現以下字串：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f664321968e5709523975\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n(Add-on-sdk-1.17) $    #版本號可能不同</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f664321968e5709523975-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f664321968e5709523975-1\"><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">Add</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">on</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">sdk</span><span class=\"crayon-o\">-</span><span class=\"crayon-cn\">1.17</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">$</span><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-p\">#版本號可能不同</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p>這樣表示您已經在 Add-on SDK 的環境下了，您會得到一個新的指令 &#8212; <code>cfx</code>，我們將會仔細介紹它的用法。（註：當您關閉 shell 以後就會自動退出 Add-on SDK，當您下次要繼續使用時必須重新執行 <code>bin/activate。</code>）</p>\n<h2>初始化一個新的專案</h2>\n<p>Web 工程師都知道要學習 HTML, JavaScrprt, CSS 最好的資源就是 Mozilla Developer Network <a href=\"#ref-6\">[6]</a>。我們就試著用 Firefox Add-on 來把 MDN <del datetime=\"2014-12-22T08:27:50+00:00\">調教</del>改造成我們想要的樣子。我們會先示範如何插入 JavaScript 來改變 MDN的背景顏色，接著我們再示範如何在 MDN 的首頁上插入自己的按鈕，並且可以讓按鈕執行我們自己定義的 JavaScript。</p>\n<div id=\"attachment_5916\" style=\"width: 650px\" class=\"wp-caption aligncenter\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png\"><img class=\"wp-image-5916 size-large\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-1024x769.png\" alt=\"Original MDN\" width=\"640\" height=\"480\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-1024x769.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-300x225.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png 1080w\" sizes=\"(max-width: 640px) 100vw, 640px\" /></a><p class=\"wp-caption-text\">套用 Add-on 之前的 MDN 網站</p></div>\n<p>假設我們把這個新的專案叫作 mdn-mod ，第一步我們先讓 Add-on SDK 幫我們生成必要的檔案與目錄結構：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f664321968e9479906346\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nmkdir mdn-mod\r\ncd mdn-mod\r\ncfx init</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f664321968e9479906346-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f664321968e9479906346-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f664321968e9479906346-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f664321968e9479906346-1\"><span class=\"crayon-e\">mkdir </span><span class=\"crayon-v\">mdn</span><span class=\"crayon-o\">-</span><span class=\"crayon-e\">mod</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f664321968e9479906346-2\"><span class=\"crayon-e\">cd </span><span class=\"crayon-v\">mdn</span><span class=\"crayon-o\">-</span><span class=\"crayon-e\">mod</span></div><div class=\"crayon-line\" id=\"crayon-5f664321968e9479906346-3\"><span class=\"crayon-e\">cfx </span><span class=\"crayon-v\">init</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p>當執行完 <code>cfx init</code>之後，我們的 <code> mdn-mod</code> 資料夾就會出現以下的檔案：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f664321968ec558020951\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n.\r\n├── data   // Add-on 需要的資源檔案\r\n├── lib    // Add-on 主要的 JavaScript 程式碼\r\n│   └── main.js    // 程式的進入點\r\n├── package.json   // 定義這個 Add-on 的 metadata\r\n└── test   // 測試檔案，之後再介紹\r\n    └── test-main.js</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f664321968ec558020951-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f664321968ec558020951-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f664321968ec558020951-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f664321968ec558020951-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f664321968ec558020951-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f664321968ec558020951-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f664321968ec558020951-7\">7</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f664321968ec558020951-1\"><span class=\"crayon-sy\">.</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f664321968ec558020951-2\">├──<span class=\"crayon-h\"> </span><span class=\"crayon-v\">data</span><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-c\">// Add-on 需要的資源檔案</span></div><div class=\"crayon-line\" id=\"crayon-5f664321968ec558020951-3\">├──<span class=\"crayon-h\"> </span><span class=\"crayon-v\">lib</span><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// Add-on 主要的 JavaScript 程式碼</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f664321968ec558020951-4\">│<span class=\"crayon-h\">&nbsp;&nbsp; </span>└──<span class=\"crayon-h\"> </span><span class=\"crayon-v\">main</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">js</span><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// 程式的進入點</span></div><div class=\"crayon-line\" id=\"crayon-5f664321968ec558020951-5\">├──<span class=\"crayon-h\"> </span><span class=\"crayon-t\">package</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">json</span><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-c\">// 定義這個 Add-on 的 metadata</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f664321968ec558020951-6\">└──<span class=\"crayon-h\"> </span><span class=\"crayon-v\">test</span><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-c\">// 測試檔案，之後再介紹</span></div><div class=\"crayon-line\" id=\"crayon-5f664321968ec558020951-7\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span>└──<span class=\"crayon-h\"> </span><span class=\"crayon-v\">test</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">main</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">js</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>首先我們需要打開 <code>package.json</code> 填寫程式名稱、版本號、作者、授權條款等等資料，只要照著自動生成的欄位填入即可，若是有不清楚的可以參考這篇文件 <a href=\"#ref-7\">[7]</a>。</p>\n<h2>用 page-mod 插入 JavaScript 到指定網站</h2>\n<p>Add-on SDK 提供的一個實用 API 叫作 page-mod <a href=\"#ref-8\">[8]</a>，其用途是當 Firefox 開到指定的網站時，就插入一段自己的 JavaScript 到頁面上，因此可以改變特定網站的行為。</p>\n<p>首先我們打開 <code>lib/main.js</code>，加入以下幾行程式碼：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f664321968ef785896867\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nvar pageMod = require(\"sdk/page-mod\");\r\nvar data = require(\"sdk/self\").data;\r\n\r\npageMod.PageMod({\r\n    include: \"*.mozilla.org\",\r\n    contentScriptFile: data.url(\"my-script.js\")\r\n});</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f664321968ef785896867-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f664321968ef785896867-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f664321968ef785896867-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f664321968ef785896867-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f664321968ef785896867-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f664321968ef785896867-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f664321968ef785896867-7\">7</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f664321968ef785896867-1\"><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">pageMod</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">require</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"sdk/page-mod\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f664321968ef785896867-2\"><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">data</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">require</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"sdk/self\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">data</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f664321968ef785896867-3\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f664321968ef785896867-4\"><span class=\"crayon-v\">pageMod</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">PageMod</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f664321968ef785896867-5\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">include</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"*.mozilla.org\"</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f664321968ef785896867-6\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">contentScriptFile</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">data</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">url</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"my-script.js\"</span><span class=\"crayon-sy\">)</span></div><div class=\"crayon-line\" id=\"crayon-5f664321968ef785896867-7\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0003 seconds] -->\r\n<p>第五行的 <code>include: \"*.mozilla.org\"</code> 就是我們希望套用的網址（\"*\" 代表萬用字元），只要 Firefox 開啟的網址是 <code>mozilla.org</code> 結尾的，就會被插入 <code>contentScriptFile</code> 指定的 JavaScript 檔案。在這裡我們使用了 <code>data.url(\"my-script.js\")</code>，意思是放在 <code>data/</code> 資料夾下的 <code> my-script.js </code> 檔案。</p>\n<h2>改變 MDN 背景顏色</h2>\n<p>但是目前為止我們還沒真的定義 <code>my-script.js</code> 要執行什麼，所以我們馬上新增一個檔案 <code>data/my-script.js</code>，插入以下一行簡單的程式碼：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f664321968f2359376853\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\ndocument.body.style.background=\"red\";</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f664321968f2359376853-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f664321968f2359376853-1\"><span class=\"crayon-v\">document</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">body</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">style</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">background</span><span class=\"crayon-o\">=</span><span class=\"crayon-s\">\"red\"</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p>這行代碼把 body tag 的背景設成紅色，等同於以下這段 CSS 的效果：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f664321968f4159381492\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nbody {\r\n   background-color: red;\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f664321968f4159381492-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f664321968f4159381492-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f664321968f4159381492-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f664321968f4159381492-1\"><span class=\"crayon-e\">body</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f664321968f4159381492-2\"><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-v\">background</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">color</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">red</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f664321968f4159381492-3\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p></p>\n<h2>使用乾淨的瀏覽器進行測試</h2>\n<p>完成上述步驟以後，我們的 Add-on 已經可以準備測試了。但是我們日常使用的 Firefox 可能有很多個人設定，或是安裝了很多其他 Add-on，會干擾我們的測試。此時我們只要執行</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f664321968f6122479282\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\ncfx run</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f664321968f6122479282-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f664321968f6122479282-1\"><span class=\"crayon-e\">cfx </span><span class=\"crayon-v\">run</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p>Add-on SDK 就會幫我們開啟一個完全乾淨的 Firefox profile，讓我們可以在近乎出廠設定的 Firefox 底下測試我們的 Add-on。</p>\n<div id=\"attachment_5918\" style=\"width: 650px\" class=\"wp-caption aligncenter\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png\"><img class=\"wp-image-5918 size-large\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-1024x890.png\" alt=\"乾淨的 Firefox Profile \" width=\"640\" height=\"556\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-1024x890.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-300x261.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png 1077w\" sizes=\"(max-width: 640px) 100vw, 640px\" /></a><p class=\"wp-caption-text\">乾淨的 Firefox Profile</p></div>\n<p>當我們在新開的 Firefox 裡面開啟 <a href=\"http://developer.mozilla.org/\">http://developer.mozilla.org/</a>，毫不意外的 MDN 的背景就變成紅色了！</p>\n<div id=\"attachment_5917\" style=\"width: 650px\" class=\"wp-caption aligncenter\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/color.png\"><img class=\"wp-image-5917 size-large\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/color-1024x766.png\" alt=\"color\" width=\"640\" height=\"478\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color-1024x766.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color-300x224.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color.png 1084w\" sizes=\"(max-width: 640px) 100vw, 640px\" /></a><p class=\"wp-caption-text\">MDN 的背景已經被改成紅色</p></div>\n<h2>添加新按鈕</h2>\n<p>除了改變現有的頁面以外，我們也可以自由的插入任何自己想要的元件。讓我們再次打開<code>data/my-script.js</code>，加入以下程式碼：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f664321968f9921817922\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nvar button = \"&lt;button onClick='alert(\\\"Hi!\\\")'&gt;CLICK ME&lt;/button&gt;\";\r\ndocument.body.innerHTML = button + document.body.innerHTML;</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f664321968f9921817922-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f664321968f9921817922-2\">2</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f664321968f9921817922-1\"><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">button</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"&lt;button onClick='alert(\\\"Hi!\\\")'&gt;CLICK ME&lt;/button&gt;\"</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f664321968f9921817922-2\"><span class=\"crayon-v\">document</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">body</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">innerHTML</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">button</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">+</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">document</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">body</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">innerHTML</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>再這段程式碼裡面，我們定義了一個 html5 的按鈕，並且讓它被按下 (觸發 <code>onClick</code> 事件) 時會跳出一個訊息框說「Hi!」 ( <code>alert(\"Hi!\")</code> )。<br />\n下一行緊接著就把這個按鈕插入到 body tag 的最前面，於是當我們再次執行 <code> cfx run</code> 來瀏覽 MDN 時，就會看到畫面最上方出現了一個按鈕。</p>\n<div id=\"attachment_5919\" style=\"width: 356px\" class=\"wp-caption aligncenter\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png\"><img class=\"wp-image-5919 size-full\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png\" alt=\"button\" width=\"346\" height=\"227\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png 346w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/button-300x196.png 300w\" sizes=\"(max-width: 346px) 100vw, 346px\" /></a><p class=\"wp-caption-text\">出現了 CLICK ME 按鈕</p></div>\n<p>按下按鈕馬上跳出寫著「Hi!」的訊息框。</p>\n<div id=\"attachment_5920\" style=\"width: 650px\" class=\"wp-caption aligncenter\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert.png\"><img class=\"wp-image-5920 size-large\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert-1024x609.png\" alt=\"alert\" width=\"640\" height=\"380\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert-1024x609.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert-300x178.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert.png 1084w\" sizes=\"(max-width: 640px) 100vw, 640px\" /></a><p class=\"wp-caption-text\">跳出了寫著「Hi!」的訊息框</p></div>\n<h2>打包出貨</h2>\n<p>如此一來我們的 Add-on 就大功告成了！如果要把這個 Add-on 包裝成可以分享的 xpi <a href=\"#ref-9\">[9]</a> 格式，只要執行</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f664321968fc491985201\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\ncfx xpi</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f664321968fc491985201-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f664321968fc491985201-1\"><span class=\"crayon-e\">cfx </span><span class=\"crayon-v\">xpi</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p>即可。Add-on SDK 會生成一個副檔名為 <code>.xpi</code> 的安裝檔，不論是要直接傳給親朋好友或是拿去 Firefox 官方的附加元件商城 <a href=\"#ref-1\">[1]</a> 上架都可以！</p>\n<p>以上就是一個簡單的 Add-on 教學，在後續的文章中我們還會介紹如何讓您的附加元件可以有自己的設定頁面，以及如何增加工具列按鈕、右鍵選單等等更進階的技巧，下回分曉！</p>\n<p>&nbsp;</p>\n<h2>References</h2>\n<p id=\"ref-1\">[1] Firefox Add-on Gallery <a href=\"https://Add-ons.mozilla.org\">https://Add-ons.mozilla.org</a></p>\n<p id=\"ref-2\">[2] Firefox Add-on SDK (MDN) <a href=\"https://developer.mozilla.org/en-US/Add-ons/SDK\">https://developer.mozilla.org/en-US/Add-ons/SDK</a></p>\n<p id=\"ref-3\">[3] Overlay Extension using XUL <a href=\"https://developer.mozilla.org/en-US/Add-ons/Overlay_Extensions\">https://developer.mozilla.org/en-US/Add-ons/Overlay_Extensions</a></p>\n<p id=\"ref-4\">[4] Get Firefox <a href=\"http://moztw.org/firefox/\">http://moztw.org/firefox/</a></p>\n<p id=\"ref-5\">[5] Install the Add-on SDK <a href=\"https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Installation\">https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Installation</a></p>\n<p id=\"ref-6\">[6] MDN 中文版 <a href=\"https://developer.mozilla.org/zh-TW/\">https://developer.mozilla.org/zh-TW/</a></p>\n<p id=\"ref-7\">[7] package.json 格式說明 <a href=\"https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/package_json\">https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/package_json</a></p>\n<p id=\"ref-8\">[8] page-mod <a href=\"https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/page-mod\">https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/page-mod</a></p>\n<p id=\"ref-9\">[9] cfx xpi <a href=\"https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/cfx#cfx_xpi\">https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/cfx#cfx_xpi</a></p>\n\t\t\t</div>",
   "content_text": "Firefox 最受歡迎的特色之一就是量多而且質精的附加元件 (Add-on)，在 Firefox Add-ons 網站 [1] 您可以找到各式各樣的附加元件滿足您的各種上網需求。在這篇文章中我們將會介紹如何利用 Firefox Add-on SDK [2] 來撰寫簡單的附加元件。我們會教您如何利用附加元件來改變網頁的外觀與行為，即使不是自己架設的網站，我們也能隨心所欲的改善它們的使用經驗。 準備工作 為了減輕開發者的負擔，Mozilla 推出了 Add-on SDK [2] 來取代原來基於 XUL 技術 [3] 的附加元件框架。相較於傳統的 XUL， Add-on SDK 提供了更多簡單易用的 API 來簡化開發流程，另外也提供了許多新的使用者介面元素來配合新版的 Firefox 介面。 為了能夠使用最新的 API，建議您先更新Firefox到最新版 [4] 。 您還需要安裝最新版的 Add-on SDK [5] ，以下將以 Linux 平台作為教學範例 ( OS X 也適用 )，若是使用 Windows 請參考 [5] 。 首先下載最新版的 Add-on SDK ，解壓縮以後執行裡面的 activate 指令： source bin/activate #如果你用 bash bash bin/activate #如果你用其他的 shell 1 2 source bin / activate #如果你用 bash bash bin / activate #如果你用其他的 shell 此時您會注意到您的 shell prompt 前面會出現以下字串： (Add-on-sdk-1.17) $ #版本號可能不同 1 ( Add - on - sdk - 1.17 ) $ #版本號可能不同 這樣表示您已經在 Add-on SDK 的環境下了，您會得到一個新的指令 — cfx ，我們將會仔細介紹它的用法。（註：當您關閉 shell 以後就會自動退出 Add-on SDK，當您下次要繼續使用時必須重新執行 bin/activate。 ） 初始化一個新的專案 Web 工程師都知道要學習 HTML, JavaScrprt, CSS 最好的資源就是 Mozilla Developer Network [6] 。我們就試著用 Firefox Add-on 來把 MDN 調教 改造成我們想要的樣子。我們會先示範如何插入 JavaScript 來改變 MDN的背景顏色，接著我們再示範如何在 MDN 的首頁上插入自己的按鈕，並且可以讓按鈕執行我們自己定義的 JavaScript。 套用 Add-on 之前的 MDN 網站 假設我們把這個新的專案叫作 mdn-mod ，第一步我們先讓 Add-on SDK 幫我們生成必要的檔案與目錄結構： mkdir mdn-mod cd mdn-mod cfx init 1 2 3 mkdir mdn - mod cd mdn - mod cfx init 當執行完 cfx init 之後，我們的 mdn-mod 資料夾就會出現以下的檔案： . ├── data // Add-on 需要的資源檔案 ├── lib // Add-on 主要的 JavaScript 程式碼 │ └── main.js // 程式的進入點 ├── package.json // 定義這個 Add-on 的 metadata └── test // 測試檔案，之後再介紹 └── test-main.js 1 2 3 4 5 6 7 . ├── data // Add-on 需要的資源檔案 ├── lib // Add-on 主要的 JavaScript 程式碼 │ └── main . js // 程式的進入點 ├── package . json // 定義這個 Add-on 的 metadata └── test // 測試檔案，之後再介紹 └── test - main . js 首先我們需要打開 package.json 填寫程式名稱、版本號、作者、授權條款等等資料，只要照著自動生成的欄位填入即可，若是有不清楚的可以參考這篇文件 [7] 。 用 page-mod 插入 JavaScript 到指定網站 Add-on SDK 提供的一個實用 API 叫作 page-mod [8] ，其用途是當 Firefox 開到指定的網站時，就插入一段自己的 JavaScript 到頁面上，因此可以改變特定網站的行為。 首先我們打開 lib/main.js ，加入以下幾行程式碼： var pageMod = require(\"sdk/page-mod\"); var data = require(\"sdk/self\").data; pageMod.PageMod({ include: \"*.mozilla.org\", contentScriptFile: data.url(\"my-script.js\") }); 1 2 3 4 5 6 7 var pageMod = require ( \"sdk/page-mod\" ) ; var data = require ( \"sdk/self\" ) . data ; pageMod . PageMod ( { include : \"*.mozilla.org\" , contentScriptFile : data . url ( \"my-script.js\" ) } ) ; 第五行的 include: \"*.mozilla.org\" 就是我們希望套用的網址（\"*\" 代表萬用字元），只要 Firefox 開啟的網址是 mozilla.org 結尾的，就會被插入 contentScriptFile 指定的 JavaScript 檔案。在這裡我們使用了 data.url(\"my-script.js\") ，意思是放在 data/ 資料夾下的 my-script.js 檔案。 改變 MDN 背景顏色 但是目前為止我們還沒真的定義 my-script.js 要執行什麼，所以我們馬上新增一個檔案 data/my-script.js ，插入以下一行簡單的程式碼： document.body.style.background=\"red\"; 1 document . body . style . background = \"red\" ; 這行代碼把 body tag 的背景設成紅色，等同於以下這段 CSS 的效果： body { background-color: red; } 1 2 3 body { background - color : red ; } 使用乾淨的瀏覽器進行測試 完成上述步驟以後，我們的 Add-on 已經可以準備測試了。但是我們日常使用的 Firefox 可能有很多個人設定，或是安裝了很多其他 Add-on，會干擾我們的測試。此時我們只要執行 cfx run 1 cfx run Add-on SDK 就會幫我們開啟一個完全乾淨的 Firefox profile，讓我們可以在近乎出廠設定的 Firefox 底下測試我們的 Add-on。 乾淨的 Firefox Profile 當我們在新開的 Firefox 裡面開啟 http://developer.mozilla.org/ ，毫不意外的 MDN 的背景就變成紅色了！ MDN 的背景已經被改成紅色 添加新按鈕 除了改變現有的頁面以外，我們也可以自由的插入任何自己想要的元件。讓我們再次打開 data/my-script.js ，加入以下程式碼： var button = \"<button onClick='alert(\\\"Hi!\\\")'>CLICK ME</button>\"; document.body.innerHTML = button + document.body.innerHTML; 1 2 var button = \"<button onClick='alert(\\\"Hi!\\\")'>CLICK ME</button>\" ; document . body . innerHTML = button + document . body . innerHTML ; 再這段程式碼裡面，我們定義了一個 html5 的按鈕，並且讓它被按下 (觸發 onClick 事件) 時會跳出一個訊息框說「Hi!」 ( alert(\"Hi!\") )。 下一行緊接著就把這個按鈕插入到 body tag 的最前面，於是當我們再次執行 cfx run 來瀏覽 MDN 時，就會看到畫面最上方出現了一個按鈕。 出現了 CLICK ME 按鈕 按下按鈕馬上跳出寫著「Hi!」的訊息框。 跳出了寫著「Hi!」的訊息框 打包出貨 如此一來我們的 Add-on 就大功告成了！如果要把這個 Add-on 包裝成可以分享的 xpi [9] 格式，只要執行 cfx xpi 1 cfx xpi 即可。Add-on SDK 會生成一個副檔名為 .xpi 的安裝檔，不論是要直接傳給親朋好友或是拿去 Firefox 官方的附加元件商城 [1] 上架都可以！ 以上就是一個簡單的 Add-on 教學，在後續的文章中我們還會介紹如何讓您的附加元件可以有自己的設定頁面，以及如何增加工具列按鈕、右鍵選單等等更進階的技巧，下回分曉！ References [1] Firefox Add-on Gallery https://Add-ons.mozilla.org [2] Firefox Add-on SDK (MDN) https://developer.mozilla.org/en-US/Add-ons/SDK [3] Overlay Extension using XUL https://developer.mozilla.org/en-US/Add-ons/Overlay_Extensions [4] Get Firefox http://moztw.org/firefox/ [5] Install the Add-on SDK https://developer.mozilla.org/en-US/Add-ons/SDK/Tutorials/Installation [6] MDN 中文版 https://developer.mozilla.org/zh-TW/ [7] package.json 格式說明 https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/package_json [8] page-mod https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/page-mod [9] cfx xpi https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/cfx#cfx_xpi",
   "images": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-50x50.png",
+      "alt": "SystemMessage_SendMessage",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-150x150.png",
+      "alt": "SystemMessage_SendMessage",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/01/2960047774_6e39a980dc_m-50x50.jpg",
+      "alt": "octocat",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/01/2960047774_6e39a980dc_m-150x150.jpg",
+      "alt": "octocat",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-1024x769.png",
       "alt": "Original MDN",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-1024x769.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-1024x769.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-1024x769.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-300x225.png",
+      "alt": "Original MDN",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png",
+      "alt": "Original MDN",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-1024x890.png",
       "alt": "乾淨的 Firefox Profile",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-1024x890.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-1024x890.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-1024x890.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-300x261.png",
+      "alt": "乾淨的 Firefox Profile",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png",
+      "alt": "乾淨的 Firefox Profile",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color-1024x766.png",
       "alt": "color",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/color-1024x766.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/color-1024x766.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color-1024x766.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color-300x224.png",
+      "alt": "color",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color.png",
+      "alt": "color",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png",
       "alt": "button",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/button.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/button.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/button-300x196.png",
+      "alt": "button",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert-1024x609.png",
       "alt": "alert",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/alert-1024x609.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/alert-1024x609.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert-1024x609.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png",
-      "alt": "",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert-300x178.png",
+      "alt": "alert",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/color.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/color.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert.png",
+      "alt": "alert",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/alert.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/alert.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5832,
-      "page_type": "post",
-      "title": "自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件",
-      "page_timestamp": "20200919174258",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-300x225.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 1,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png",
-      "archive_path": "assets/5832/002-5515150a68d5.png",
-      "markdown_path": "../assets/5832/002-5515150a68d5.png",
-      "wayback_timestamp": "20171009182959",
-      "asset_archive_url": "https://web.archive.org/web/20171009182959id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5832,
-      "page_type": "post",
-      "title": "自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件",
-      "page_timestamp": "20200919174258",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-300x261.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 4,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png",
-      "archive_path": "assets/5832/005-ec840ff1e4f0.png",
-      "markdown_path": "../assets/5832/005-ec840ff1e4f0.png",
-      "wayback_timestamp": "20171009173041",
-      "asset_archive_url": "https://web.archive.org/web/20171009173041id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5832,
-      "page_type": "post",
-      "title": "自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件",
-      "page_timestamp": "20200919174258",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color-300x224.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 7,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color.png",
-      "archive_path": "assets/5832/008-b4fc4b6af049.png",
-      "markdown_path": "../assets/5832/008-b4fc4b6af049.png",
-      "wayback_timestamp": "20171009211008",
-      "asset_archive_url": "https://web.archive.org/web/20171009211008id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/color.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5832,
-      "page_type": "post",
-      "title": "自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件",
-      "page_timestamp": "20200919174258",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/button-300x196.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 10,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png",
-      "archive_path": "assets/5832/011-5f7674e0552f.png",
-      "markdown_path": "../assets/5832/011-5f7674e0552f.png",
-      "wayback_timestamp": "20171009231423",
-      "asset_archive_url": "https://web.archive.org/web/20171009231423id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5832,
-      "page_type": "post",
-      "title": "自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件",
-      "page_timestamp": "20200919174258",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert-300x178.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 12,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert.png",
-      "archive_path": "assets/5832/013-2454383272b6.png",
-      "markdown_path": "../assets/5832/013-2454383272b6.png",
-      "wayback_timestamp": "20171009180010",
-      "asset_archive_url": "https://web.archive.org/web/20171009180010id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert.png",
-      "content_type": "image/png"
+      "source": "img"
     }
   ],
   "media": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-50x50.png",
+      "alt": "SystemMessage_SendMessage",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-150x150.png",
+      "alt": "SystemMessage_SendMessage",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/01/2960047774_6e39a980dc_m-50x50.jpg",
+      "alt": "octocat",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/01/2960047774_6e39a980dc_m-150x150.jpg",
+      "alt": "octocat",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-1024x769.png",
       "alt": "Original MDN",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-1024x769.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-1024x769.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-1024x769.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-300x225.png",
+      "alt": "Original MDN",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png",
+      "alt": "Original MDN",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-1024x890.png",
       "alt": "乾淨的 Firefox Profile",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-1024x890.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-1024x890.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-1024x890.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-300x261.png",
+      "alt": "乾淨的 Firefox Profile",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png",
+      "alt": "乾淨的 Firefox Profile",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color-1024x766.png",
       "alt": "color",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/color-1024x766.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/color-1024x766.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color-1024x766.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color-300x224.png",
+      "alt": "color",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color.png",
+      "alt": "color",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png",
       "alt": "button",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/button.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/button.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/button-300x196.png",
+      "alt": "button",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert-1024x609.png",
       "alt": "alert",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/alert-1024x609.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/alert-1024x609.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert-1024x609.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png",
-      "alt": "",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert-300x178.png",
+      "alt": "alert",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/color.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/color.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert.png",
+      "alt": "alert",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5832/wp-content/uploads/2014/12/alert.png",
-      "markdown_path": "../assets/5832/wp-content/uploads/2014/12/alert.png",
-      "wayback_timestamp": "20200919174258",
-      "asset_archive_url": "https://web.archive.org/web/20200919174258id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5832,
-      "page_type": "post",
-      "title": "自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件",
-      "page_timestamp": "20200919174258",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650-300x225.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 1,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png",
-      "archive_path": "assets/5832/002-5515150a68d5.png",
-      "markdown_path": "../assets/5832/002-5515150a68d5.png",
-      "wayback_timestamp": "20171009182959",
-      "asset_archive_url": "https://web.archive.org/web/20171009182959id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165650.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5832,
-      "page_type": "post",
-      "title": "自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件",
-      "page_timestamp": "20200919174258",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-300x261.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 4,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png",
-      "archive_path": "assets/5832/005-ec840ff1e4f0.png",
-      "markdown_path": "../assets/5832/005-ec840ff1e4f0.png",
-      "wayback_timestamp": "20171009173041",
-      "asset_archive_url": "https://web.archive.org/web/20171009173041id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5832,
-      "page_type": "post",
-      "title": "自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件",
-      "page_timestamp": "20200919174258",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color-300x224.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 7,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/color.png",
-      "archive_path": "assets/5832/008-b4fc4b6af049.png",
-      "markdown_path": "../assets/5832/008-b4fc4b6af049.png",
-      "wayback_timestamp": "20171009211008",
-      "asset_archive_url": "https://web.archive.org/web/20171009211008id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/color.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5832,
-      "page_type": "post",
-      "title": "自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件",
-      "page_timestamp": "20200919174258",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/button-300x196.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 10,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png",
-      "archive_path": "assets/5832/011-5f7674e0552f.png",
-      "markdown_path": "../assets/5832/011-5f7674e0552f.png",
-      "wayback_timestamp": "20171009231423",
-      "asset_archive_url": "https://web.archive.org/web/20171009231423id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/button.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5832,
-      "page_type": "post",
-      "title": "自己的瀏覽器自己改 (Part I) －利用Firefox Addon SDK開發簡單的附加元件",
-      "page_timestamp": "20200919174258",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert-300x178.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 12,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert.png",
-      "archive_path": "assets/5832/013-2454383272b6.png",
-      "markdown_path": "../assets/5832/013-2454383272b6.png",
-      "wayback_timestamp": "20171009180010",
-      "asset_archive_url": "https://web.archive.org/web/20171009180010id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/alert.png",
-      "content_type": "image/png"
+      "source": "img"
     }
   ],
   "links": [
@@ -495,6 +461,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

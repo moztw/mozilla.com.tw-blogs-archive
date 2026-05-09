@@ -13,34 +13,192 @@
   "author": "Chun-Min Chang",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=6218",
-  "archive_url": "https://web.archive.org/web/20201019212745id_/https://tech.mozilla.com.tw/?p=6218",
+  "archive_url": "https://web.archive.org/web/20201019212745/https://tech.mozilla.com.tw/?p=6218",
   "wayback_timestamp": "20201019212745",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p>感測器元件是連接實體世界和數位世界的橋樑，將物理現象轉化為電子訊號帶入軟體的次元。感測器元件的存在更是人機互動體驗的必要條件，如利用加速規（accelerometer）、陀螺儀（gyroscope）等動作感測器把手機當方向盤的 <a href=\"https://www.youtube.com/watch?v=_oV3ksYrRyA#t=3m38s\" target=\"_blank\">REAL RACING</a>賽車遊戲、 利用<span class=\"st\">近距感測器（</span>proximity sensor）當伏地挺身計數器的 <a href=\"https://www.youtube.com/watch?v=6yW_D_Suj64#t=6m44s\" target=\"_blank\">Runtastic Fitness</a>、或是利用振動馬達（vibration motor）自動旋轉的全景相機 <a href=\"https://www.youtube.com/watch?v=Brfr7--6ESc\" target=\"_blank\">Cycloramic</a>，都是常見的應用範例，另外還有一些瘋狂的應用像 <a href=\"https://www.youtube.com/watch?v=pXr84w1cWIU#t=5s\" target=\"_blank\">Send Me To Heaven</a>。正因感測器扮演穿梭兩界的角色，所以制定它的界面也格外重要。接下來我們會先回顧目前的 W3C Sensor API，並參考 iOS與 Android上的 Sensor API設計，最後綜合討論下一代 W3C Sensor API可能的發展。</p>\n<p><span id=\"more-6218\"></span></p>\n<h2>回顧目前的 W3C Sensor API</h2>\n<p>如果我們想要藉由 W3C Sensor API來取得裝置的感測器資料，可以使用 DeviceMotion與 DeviceOrientation來實作。DeviceMotion可以藉由加速規與陀螺儀來讀取裝置的瞬間加速度，而 DeviceOrientation則可透過磁力計與地磁比較來取得裝置的旋轉角度。</p>\n<h3>DeviceMotion</h3>\n<p>DeviceMotion是一種 Event，固定的週期會讀取一次，我們可以透過事先設定的 Event Handler來拿到當前最新的資料：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8e04d0a80d5093620872\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nfunction handler(event) {\r\n\r\n    var x = event.acceleration.x;\r\n    var y = event.acceleration.y;\r\n    var z = event.acceleration.z;\r\n\r\n    // Process data here.\r\n}\r\n\r\nwindow.addEventListener(\"devicemotion\", handler, true);</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80d5093620872-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80d5093620872-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80d5093620872-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80d5093620872-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80d5093620872-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80d5093620872-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80d5093620872-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80d5093620872-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80d5093620872-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80d5093620872-10\">10</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80d5093620872-1\"><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">handler</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80d5093620872-2\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80d5093620872-3\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">x</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">acceleration</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">x</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80d5093620872-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">y</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">acceleration</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">y</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80d5093620872-5\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">z</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">acceleration</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">z</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80d5093620872-6\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80d5093620872-7\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// Process data here.</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80d5093620872-8\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80d5093620872-9\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80d5093620872-10\"><span class=\"crayon-v\">window</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">addEventListener</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"devicemotion\"</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">handler</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">true</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0004 seconds] -->\r\n<p></p>\n<h3>DeviceOrientation</h3>\n<p><img class=\"internal default\" src=\"https://developer.mozilla.org/@api/deki/files/5694/=axes.png\" alt=\"axes.png\" /><br />\n如 DeviceMotion，DeviceOrientation也是一種 Event，每次有新資料時就會觸發：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8e04d0a80e1177916323\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nfunction handler(event) {\r\n\r\n    // alpha: rotation around z-axis\r\n    var rotateDegrees = event.alpha;\r\n    // beta: rotation around x-axis\r\n    var frontToBack = event.beta;\r\n    // gamma: rotation around y-axis\r\n    var leftToRight = event.gamma;\r\n\r\n    // Process data here.\r\n}\r\n\r\nwindow.addEventListener(\"deviceorientation\", handler, true);</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e1177916323-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e1177916323-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e1177916323-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e1177916323-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e1177916323-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e1177916323-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e1177916323-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e1177916323-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e1177916323-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e1177916323-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e1177916323-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e1177916323-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e1177916323-13\">13</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e1177916323-1\"><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">handler</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e1177916323-2\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e1177916323-3\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// alpha: rotation around z-axis</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e1177916323-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">rotateDegrees</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">alpha</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e1177916323-5\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// beta: rotation around x-axis</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e1177916323-6\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">frontToBack</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">beta</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e1177916323-7\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// gamma: rotation around y-axis</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e1177916323-8\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">leftToRight</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">gamma</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e1177916323-9\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e1177916323-10\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// Process data here.</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e1177916323-11\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e1177916323-12\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e1177916323-13\"><span class=\"crayon-v\">window</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">addEventListener</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"deviceorientation\"</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">handler</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">true</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0004 seconds] -->\r\n<p></p>\n<h3>Sensor API目前的缺點</h3>\n<p>上面簡單的回顧目前的功能後，我們來看看目前的 API有哪些缺點。</p>\n<h4>無法取得 Sensor的 raw data</h4>\n<blockquote><p>…The information provided by the events is not raw sensor data, but rather high-level data which is agnostic to the underlying source of information. Common sources of information include gyroscopes, compasses and accelerometers.</p></blockquote>\n<p>從 <a href=\"http://w3c.github.io/deviceorientation/spec-source-orientation.html#introduction\" target=\"_blank\">Device API的介紹</a>來看，Low Level的 API並不存在，它的目的是為了提供 &#8220;rather high-level data\"，希望程式設計師可以忽略感測器的原始資料，直接得到計算後的旋轉角度、加速度等，更專注於開發上層的應用。而從負責制定 API的 <a href=\"http://www.w3.org/2009/dap/#mission\" target=\"_blank\">Device Working Group</a>的成立宗旨來看：</p>\n<blockquote><p>…enable the development of Web Applications and Web Widgets that interact with devices services such as Calendar, Contacts, Camera, etc.</p></blockquote>\n<p>W3C的目標更像是制定 Service而非 API。原始的作者之一 Jose Cantera曾經<a href=\"https://lists.w3.org/Archives/Public/public-geolocation/2011Oct/0000.html\" target=\"_blank\">向 W3C反應</a>過他當初的設計是希望有 Low level的 Sensor API，但似乎沒有獲得回應。雖然很感謝 W3C替程式設計師們著想，但這樣的設計反而會限制我們無法取得原始的感測器資料。</p>\n<h4>無法在任意的時間點拿到感測器資料</h4>\n<p>我們<a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=1057185\" target=\"_blank\">無法在任意的時間點拿到感測器資料</a>，只有在 Sensor Event的 Callback被觸發時才能拿到感測器的資料，而觸發的條件是感測器的值有改變或是週期到了。</p>\n<h2>iOS與 Android上的 Sensor api</h2>\n<blockquote><p>知己知彼，百戰不殆；不知彼而知己，一勝一負；不知彼不知己，每戰必殆。</p>\n<p>&#8212; 《孫子兵法》</p></blockquote>\n<p>初步了解現在 W3C Sensor API的問題和現況後，我們來看看 Sensor API在其他(<del>對手</del>)平台是如何運作的，借鏡他人的發展或許有助於下一代 W3C Sensor API的設計。</p>\n<ul>\n<li>iOS\n<ul>\n<li>從各別獨立的 UIXXX API(e.g. <a href=\"https://developer.apple.com/library/prerelease/ios/documentation/UIKit/Reference/UIAcceleration_Class/index.html\" target=\"_blank\">UIAcceleration</a>)邁向使用統一的 framework：<a href=\"https://developer.apple.com/library/ios/documentation/CoreMotion/Reference/CoreMotion_Reference/\" target=\"_blank\">CoreMotion</a>來取得感測器資料</li>\n<li>感測器都繼承同一個 base class：CMLogItem</li>\n<li>使用 CMMotionManager作為讀取所有動作感測器(accel , gyro, &#8230; )的界面</li>\n<li>每種感測器種類都有獨特的資料結構，讓資料處理變得更簡易</li>\n</ul>\n</li>\n<li>Android\n<ul>\n<li>有<a href=\"http://developer.android.com/guide/topics/sensors/sensors_overview.html#sensors-intro\" target=\"_blank\">好幾種 framework</a>可以選擇\n<ul>\n<li><a href=\"http://developer.android.com/reference/android/hardware/SensorManager.html\" target=\"_blank\">SensorManager</a>:支援各種類型的感測器，有多種讀取方式可供選擇</li>\n<li><a href=\"http://developer.android.com/reference/android/hardware/Sensor.html\" target=\"_blank\">Sensor</a>:提供數種方法讀取某一種類型的感測器</li>\n<li>&#8230;..</li>\n</ul>\n</li>\n<li>有 <a href=\"https://source.android.com/devices/sensors/batching.html\" target=\"_blank\">Batch mode</a>的機制</li>\n<li>各類感測器沒有獨特的資料結構，而是使用陣列(Array)來存取資料。與 iOS相比，這樣的設計更易於新增感測器種類，但缺點是在處理資料時需要額外的資訊。</li>\n</ul>\n</li>\n<li>兩個平台都可以提供感測器的原始資料及校正資料(<a href=\"http://en.wikipedia.org/wiki/Sensor_fusion\" target=\"_blank\">Sensor fusion</a>)。關於兩種資料的差異及使用時機可以看 Dave Edson寫的 <a href=\"http://blogs.windows.com/buildingapps/2010/09/08/using-the-accelerometer-on-windows-phone-7/\" target=\"_blank\">Using the Accelerometer on Windows Phone 7</a>來了解。</li>\n<li>兩個平台都可以設定感測器的讀取頻率</li>\n</ul>\n<p>W3C Sensor API未來的發展或許可以如 iOS般， 由各自獨立邁向使用統一的界面，並引進如 Android的Batch機制來減少 I/O，讓感測器更方便被管理。提供原始資料與提供 &#8220;rather high-level data\"這件事其實沒有衝突，Low Level API的消失也限制了使用者設定感測器的讀取頻率的能力，這些都是我們希望在下一代 Sensor API可以改善的地方。</p>\n<h2>下一代 Sensor API可能的發展</h2>\n<p>總結上面的問題與需求，想像中的下一代 W3C Sensor API會長得像:</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8e04d0a80e7670171720\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n// 確認裝置上有沒有加速規\r\nif (sensors.Accelerometer === undefined) {\r\n  console.error('No accelerometer found');\r\n  return;\r\n}\r\n\r\n\r\n// 創建加速規物件並設定讀取頻率和batch\r\nvar num = 10;\r\nvar accel = new sensors.Accelerometer({ frequency: 50 }, { batch: num });\r\n\r\n// 開始讀取加速規\r\naccel.start()\r\n\r\naccel.onupdate = function() {\r\n  // 讀取第n筆資料\r\n  for(var n = 0 ; n &lt; num ; n++) {\r\n    console.log(\"x-axis: \", accel.x[n]);\r\n    console.log(\"y-axis: \", accel.y[n]);\r\n    console.log(\"z-axis: \", accel.z[n]);\r\n  }\r\n};\r\n\r\n// 停止讀取加速規\r\nif (accel.isActive()) {\r\n  accel.stop()\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e7670171720-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e7670171720-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e7670171720-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e7670171720-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e7670171720-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e7670171720-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e7670171720-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e7670171720-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e7670171720-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e7670171720-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e7670171720-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e7670171720-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e7670171720-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e7670171720-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e7670171720-15\">15</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e7670171720-16\">16</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e7670171720-17\">17</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e7670171720-18\">18</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e7670171720-19\">19</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e7670171720-20\">20</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e7670171720-21\">21</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e7670171720-22\">22</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e7670171720-23\">23</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e7670171720-24\">24</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e7670171720-25\">25</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8e04d0a80e7670171720-26\">26</div><div class=\"crayon-num\" data-line=\"crayon-5f8e04d0a80e7670171720-27\">27</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e7670171720-1\"><span class=\"crayon-c\">// 確認裝置上有沒有加速規</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e7670171720-2\"><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">sensors</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">Accelerometer</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">===</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">undefined</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e7670171720-3\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">console</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">error</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'No accelerometer found'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e7670171720-4\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-st\">return</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e7670171720-5\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e7670171720-6\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e7670171720-7\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e7670171720-8\"><span class=\"crayon-c\">// 創建加速規物件並設定讀取頻率和batch</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e7670171720-9\"><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">num</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">10</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e7670171720-10\"><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">accel</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">new</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">sensors</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">Accelerometer</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">{</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">frequency</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">50</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">batch</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-i\">num</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e7670171720-11\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e7670171720-12\"><span class=\"crayon-c\">// 開始讀取加速規</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e7670171720-13\"><span class=\"crayon-v\">accel</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">start</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e7670171720-14\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e7670171720-15\"><span class=\"crayon-v\">accel</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">onupdate</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e7670171720-16\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-c\">// 讀取第n筆資料</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e7670171720-17\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-st\">for</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">n</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">0</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">n</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-i\">num</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">n</span><span class=\"crayon-o\">++</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e7670171720-18\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">console</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">log</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"x-axis: \"</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">accel</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">x</span><span class=\"crayon-sy\">[</span><span class=\"crayon-v\">n</span><span class=\"crayon-sy\">]</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e7670171720-19\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">console</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">log</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"y-axis: \"</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">accel</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">y</span><span class=\"crayon-sy\">[</span><span class=\"crayon-v\">n</span><span class=\"crayon-sy\">]</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e7670171720-20\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">console</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">log</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"z-axis: \"</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">accel</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">z</span><span class=\"crayon-sy\">[</span><span class=\"crayon-v\">n</span><span class=\"crayon-sy\">]</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e7670171720-21\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e7670171720-22\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e7670171720-23\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e7670171720-24\"><span class=\"crayon-c\">// 停止讀取加速規</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e7670171720-25\"><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">accel</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">isActive</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8e04d0a80e7670171720-26\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">accel</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">stop</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span></div><div class=\"crayon-line\" id=\"crayon-5f8e04d0a80e7670171720-27\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0009 seconds] -->\r\n<p>目前 W3C下一代 Sensor API的討論都有<a href=\"https://github.com/w3c/sensors\" target=\"_blank\">公開在Github</a>, 有興趣的讀者可以直接上去參與討論，一起為明天的Web貢獻一份心力。</p>\n<p>&nbsp;</p>\n<p>參考資料：<a href=\"http://smus.com/web-sensor-api/\" target=\"_blank\">http://smus.com/web-sensor-api/</a></p>\n\t\t\t</div>",
   "content_text": "感測器元件是連接實體世界和數位世界的橋樑，將物理現象轉化為電子訊號帶入軟體的次元。感測器元件的存在更是人機互動體驗的必要條件，如利用加速規（accelerometer）、陀螺儀（gyroscope）等動作感測器把手機當方向盤的 REAL RACING 賽車遊戲、 利用 近距感測器（ proximity sensor）當伏地挺身計數器的 Runtastic Fitness 、或是利用振動馬達（vibration motor）自動旋轉的全景相機 Cycloramic ，都是常見的應用範例，另外還有一些瘋狂的應用像 Send Me To Heaven 。正因感測器扮演穿梭兩界的角色，所以制定它的界面也格外重要。接下來我們會先回顧目前的 W3C Sensor API，並參考 iOS與 Android上的 Sensor API設計，最後綜合討論下一代 W3C Sensor API可能的發展。 回顧目前的 W3C Sensor API 如果我們想要藉由 W3C Sensor API來取得裝置的感測器資料，可以使用 DeviceMotion與 DeviceOrientation來實作。DeviceMotion可以藉由加速規與陀螺儀來讀取裝置的瞬間加速度，而 DeviceOrientation則可透過磁力計與地磁比較來取得裝置的旋轉角度。 DeviceMotion DeviceMotion是一種 Event，固定的週期會讀取一次，我們可以透過事先設定的 Event Handler來拿到當前最新的資料： function handler(event) { var x = event.acceleration.x; var y = event.acceleration.y; var z = event.acceleration.z; // Process data here. } window.addEventListener(\"devicemotion\", handler, true); 1 2 3 4 5 6 7 8 9 10 function handler ( event ) { var x = event . acceleration . x ; var y = event . acceleration . y ; var z = event . acceleration . z ; // Process data here. } window . addEventListener ( \"devicemotion\" , handler , true ) ; DeviceOrientation 如 DeviceMotion，DeviceOrientation也是一種 Event，每次有新資料時就會觸發： function handler(event) { // alpha: rotation around z-axis var rotateDegrees = event.alpha; // beta: rotation around x-axis var frontToBack = event.beta; // gamma: rotation around y-axis var leftToRight = event.gamma; // Process data here. } window.addEventListener(\"deviceorientation\", handler, true); 1 2 3 4 5 6 7 8 9 10 11 12 13 function handler ( event ) { // alpha: rotation around z-axis var rotateDegrees = event . alpha ; // beta: rotation around x-axis var frontToBack = event . beta ; // gamma: rotation around y-axis var leftToRight = event . gamma ; // Process data here. } window . addEventListener ( \"deviceorientation\" , handler , true ) ; Sensor API目前的缺點 上面簡單的回顧目前的功能後，我們來看看目前的 API有哪些缺點。 無法取得 Sensor的 raw data …The information provided by the events is not raw sensor data, but rather high-level data which is agnostic to the underlying source of information. Common sources of information include gyroscopes, compasses and accelerometers. 從 Device API的介紹 來看，Low Level的 API並不存在，它的目的是為了提供 “rather high-level data\"，希望程式設計師可以忽略感測器的原始資料，直接得到計算後的旋轉角度、加速度等，更專注於開發上層的應用。而從負責制定 API的 Device Working Group 的成立宗旨來看： …enable the development of Web Applications and Web Widgets that interact with devices services such as Calendar, Contacts, Camera, etc. W3C的目標更像是制定 Service而非 API。原始的作者之一 Jose Cantera曾經 向 W3C反應 過他當初的設計是希望有 Low level的 Sensor API，但似乎沒有獲得回應。雖然很感謝 W3C替程式設計師們著想，但這樣的設計反而會限制我們無法取得原始的感測器資料。 無法在任意的時間點拿到感測器資料 我們 無法在任意的時間點拿到感測器資料 ，只有在 Sensor Event的 Callback被觸發時才能拿到感測器的資料，而觸發的條件是感測器的值有改變或是週期到了。 iOS與 Android上的 Sensor api 知己知彼，百戰不殆；不知彼而知己，一勝一負；不知彼不知己，每戰必殆。 — 《孫子兵法》 初步了解現在 W3C Sensor API的問題和現況後，我們來看看 Sensor API在其他( 對手 )平台是如何運作的，借鏡他人的發展或許有助於下一代 W3C Sensor API的設計。 iOS 從各別獨立的 UIXXX API(e.g. UIAcceleration )邁向使用統一的 framework： CoreMotion 來取得感測器資料 感測器都繼承同一個 base class：CMLogItem 使用 CMMotionManager作為讀取所有動作感測器(accel , gyro, … )的界面 每種感測器種類都有獨特的資料結構，讓資料處理變得更簡易 Android 有 好幾種 framework 可以選擇 SensorManager :支援各種類型的感測器，有多種讀取方式可供選擇 Sensor :提供數種方法讀取某一種類型的感測器 ….. 有 Batch mode 的機制 各類感測器沒有獨特的資料結構，而是使用陣列(Array)來存取資料。與 iOS相比，這樣的設計更易於新增感測器種類，但缺點是在處理資料時需要額外的資訊。 兩個平台都可以提供感測器的原始資料及校正資料( Sensor fusion )。關於兩種資料的差異及使用時機可以看 Dave Edson寫的 Using the Accelerometer on Windows Phone 7 來了解。 兩個平台都可以設定感測器的讀取頻率 W3C Sensor API未來的發展或許可以如 iOS般， 由各自獨立邁向使用統一的界面，並引進如 Android的Batch機制來減少 I/O，讓感測器更方便被管理。提供原始資料與提供 “rather high-level data\"這件事其實沒有衝突，Low Level API的消失也限制了使用者設定感測器的讀取頻率的能力，這些都是我們希望在下一代 Sensor API可以改善的地方。 下一代 Sensor API可能的發展 總結上面的問題與需求，想像中的下一代 W3C Sensor API會長得像: // 確認裝置上有沒有加速規 if (sensors.Accelerometer === undefined) { console.error('No accelerometer found'); return; } // 創建加速規物件並設定讀取頻率和batch var num = 10; var accel = new sensors.Accelerometer({ frequency: 50 }, { batch: num }); // 開始讀取加速規 accel.start() accel.onupdate = function() { // 讀取第n筆資料 for(var n = 0 ; n < num ; n++) { console.log(\"x-axis: \", accel.x[n]); console.log(\"y-axis: \", accel.y[n]); console.log(\"z-axis: \", accel.z[n]); } }; // 停止讀取加速規 if (accel.isActive()) { accel.stop() } 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 // 確認裝置上有沒有加速規 if ( sensors . Accelerometer === undefined ) { console . error ( 'No accelerometer found' ) ; return ; } // 創建加速規物件並設定讀取頻率和batch var num = 10 ; var accel = new sensors . Accelerometer ( { frequency : 50 } , { batch : num } ) ; // 開始讀取加速規 accel . start ( ) accel . onupdate = function ( ) { // 讀取第n筆資料 for ( var n = 0 ; n < num ; n ++ ) { console . log ( \"x-axis: \" , accel . x [ n ] ) ; console . log ( \"y-axis: \" , accel . y [ n ] ) ; console . log ( \"z-axis: \" , accel . z [ n ] ) ; } } ; // 停止讀取加速規 if ( accel . isActive ( ) ) { accel . stop ( ) } 目前 W3C下一代 Sensor API的討論都有 公開在Github , 有興趣的讀者可以直接上去參與討論，一起為明天的Web貢獻一份心力。 參考資料： http://smus.com/web-sensor-api/",
   "images": [
     {
-      "url": "https://developer.mozilla.org/@api/deki/files/5694/=axes.png",
-      "alt": "axes.png",
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/6218/001-3b3c6d2dd11b.png",
-      "markdown_path": "../assets/6218/001-3b3c6d2dd11b.png",
-      "wayback_timestamp": "20201019212745",
-      "asset_archive_url": "https://web.archive.org/web/20201019212745id_/https://developer.mozilla.org/@api/deki/files/5694/=axes.png",
-      "content_type": "image/png"
-    }
-  ],
-  "media": [
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/06/5575089139_ffec7b5846_m-50x50.jpg",
+      "alt": "5575089139_ffec7b5846_m",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/06/5575089139_ffec7b5846_m-150x150.jpg",
+      "alt": "5575089139_ffec7b5846_m",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-12.03.57-PM-50x50.png",
+      "alt": "Screen Shot 2015-10-05 at 12.03.57 PM",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-12.03.57-PM-150x150.png",
+      "alt": "Screen Shot 2015-10-05 at 12.03.57 PM",
+      "kind": "image",
+      "source": "img-srcset"
+    },
     {
       "url": "https://developer.mozilla.org/@api/deki/files/5694/=axes.png",
       "alt": "axes.png",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/6218/001-3b3c6d2dd11b.png",
-      "markdown_path": "../assets/6218/001-3b3c6d2dd11b.png",
-      "wayback_timestamp": "20201019212745",
-      "asset_archive_url": "https://web.archive.org/web/20201019212745id_/https://developer.mozilla.org/@api/deki/files/5694/=axes.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/07/axes.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/06/5575089139_ffec7b5846_m-50x50.jpg",
+      "alt": "5575089139_ffec7b5846_m",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/06/5575089139_ffec7b5846_m-150x150.jpg",
+      "alt": "5575089139_ffec7b5846_m",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-12.03.57-PM-50x50.png",
+      "alt": "Screen Shot 2015-10-05 at 12.03.57 PM",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/10/Screen-Shot-2015-10-05-at-12.03.57-PM-150x150.png",
+      "alt": "Screen Shot 2015-10-05 at 12.03.57 PM",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://developer.mozilla.org/@api/deki/files/5694/=axes.png",
+      "alt": "axes.png",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/07/axes.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
     }
   ],
   "links": [
@@ -118,6 +276,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

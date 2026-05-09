@@ -13,122 +13,216 @@
   "author": "Rexboy",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=2360",
-  "archive_url": "https://web.archive.org/web/20191118145726id_/https://tech.mozilla.com.tw/?p=2360",
+  "archive_url": "https://web.archive.org/web/20191118145726/https://tech.mozilla.com.tw/?p=2360",
   "wayback_timestamp": "20191118145726",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p style=\"text-align: left;\">雖然 Firefox OS 以 Android 無法深入開拓的低階手機為第一波市場主打，但這可不表示 Firefox OS 只能在小螢幕上執行。目前 Firefox OS 已初步支援 HVGA (320×480)、WVGA (480×800)、qHD (540×960) 三種解析度。以 Web 技術作為使用者介面的 Firefox OS 如何實踐這些解析度的支援？讓我們來看一些在 Gaia 中實作的軌跡。</p>\n<p style=\"text-align: center;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221.jpg\"><img class=\"size-medium wp-image-2367 aligncenter\" alt=\"Firefox OS on Galaxy SII, WVGA, 480x800\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg\" width=\"225\" height=\"300\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg 225w, https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-768x1024.jpg 768w\" sizes=\"(max-width: 225px) 100vw, 225px\" /></a>Firefox OS on Galaxy S-II, 480 × 800 (WVGA)</p>\n<h5>HIDPI 參數</h5>\n<p>在高解析度下，就要有對應的高解析度圖片來獲得理想的畫質。在 Gaia 中可以看到很多圖片是成對的，舉例來說向左的箭頭有 arrow-left.png 跟 arrow-left@2x.png 兩個圖檔。聰明的讀者應該已經猜到，後面以 @2x 結尾的圖片就是用在高解析度螢幕，它的長寬各是前者的兩倍。當我們以 <code>HIDPI=1</code> 為環境變數安裝 Gaia 的時候：</p>\n<blockquote><p><code>$ HIDPI=1 make install-gaia</code></p></blockquote>\n<p>Makefile 就會自動將 @2x.png 的圖片置換進去，便是支援高解析度裝置的第一步。</p>\n<h5>字體與版面的縮放：rem</h5>\n<p>當裝置解析度改變，字體跟圖片也需要跟著縮放至合適的大小。為了將不同的大小套用至整個程式，直到不久之前的做法，是使用 <code>rem</code> 這個單位。 <code>rem</code> 是相對於 <code>&lt;html&gt;</code> 的字型大小，舉例來說，若我們設定&lt;html&gt;的 <code>font-size</code> 為 <code>10px</code> ，則 <code>1.5rem</code> 就是 <code>10px</code> × 5 = <code>15px</code> 。在 Gaia 中的 CSS 幾乎全部都是以 <code>rem</code> 為單位：</p>\n<blockquote><p><code><br />\n#scan-title {<br />\nposition: absolute;<br />\ntop: 3rem;<br />\nleft: 5rem;<br />\nright: 0;<br />\nheight: 2rem;<br />\nline-height: 1.9rem;<br />\npadding-left: .5rem;<br />\nfont-size: 1.4rem;<br />\n…<br />\n}<br />\n</code></p></blockquote>\n<p>這樣一來，只要改變 <code>&lt;html&gt;</code> 的 <code>font-size</code> 僅管使用 <code>rem</code> 是至今為止的作法，但如後面將說明的 CSS Pixel 跟的 Device Pixel Ratio 已正式實作之際，現已可不必特意全部使用 <code>rem</code>。</p>\n<h5>Background-size</h5>\n<p>另一方面，為了讓高解析度的圖片能在不同解析度上對應的尺寸都正確，圖片的大小也一律預先指定。像是如下的樣式：<br />\n<code>background: url(images/wallpaper_edit.png) no-repeat 25rem 11.5rem / 4.5rem;</code><br />\n後方的 <code>/ 4.5rem</code>，即 <code>background-size</code> 的縮略寫法，就是將圖片的大小預先指定好，好讓一份圖片在不同的裝置上能正確縮放到對應的大小，就算使用的圖片跟對應的螢幕的尺寸不一樣也沒關係。</p>\n<h5>Responsive.css</h5>\n<p>最後一步就是要得知該使用多大的 <code>font-size</code> 了。要判別不同解析度的螢幕，便是 Media Query 派上用場的時候。目前為止在 Gaia 上的 App 皆引入 Responsive.css 這個檔案來偵測 App 該使用的字型大小。舉一段例子：</p>\n<blockquote><p><code> /*Portrait*/<br />\n@media all and (min-device-width: 480px) and (max-device-width: 540px) and (max-device-aspect-ratio: 1/1) {<br />\nhtml { font-size: 94%!important; }<br />\n}<br />\n…<br />\n</code></p></blockquote>\n<p>上面所節錄的條件，是用來設定在解析介於 WVGA (480&#215;800) 但不到 qHD (540&#215;960) 的裝置的 font-size 為 15px (100%為16px，故取94%=15.04px) 。對應到的是垂直方向螢幕。這個檔案算是暫時的解決方案，往後透過下述的 CSS 像素比例跟密度支援，將不再需要引入這個檔案。</p>\n<h5>CSS 像素比例 (CSS Device Pixel Ratio) 與像素密度 (Device Pixel Density)</h5>\n<p>Gecko 偵測行動裝置 CSS 像素比例的能力在最近已經完成。意即 <code>1px</code> 實際對應到的長度，要視裝置的像素密度而定。譬如說，在 CSS 像素比例是 1.5 的 Galaxy SII 上，我們寫在 CSS 裡的 1 個 pixel ，實際上會在裝置上畫出 1.5 個 pixel 。 responsive.css 的存在，便是想在 Gecko 完成這個功能前代勞這件事，兩者是等價的。往後 Gaia 就能用更簡潔的方式來達成 Responsive Design，使用以往的 px 跟 background-size 即可，不再需要特地保留 <code>rem</code> 跟 responsive.css 。</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
   "content_text": "雖然 Firefox OS 以 Android 無法深入開拓的低階手機為第一波市場主打，但這可不表示 Firefox OS 只能在小螢幕上執行。目前 Firefox OS 已初步支援 HVGA (320×480)、WVGA (480×800)、qHD (540×960) 三種解析度。以 Web 技術作為使用者介面的 Firefox OS 如何實踐這些解析度的支援？讓我們來看一些在 Gaia 中實作的軌跡。 Firefox OS on Galaxy S-II, 480 × 800 (WVGA) HIDPI 參數 在高解析度下，就要有對應的高解析度圖片來獲得理想的畫質。在 Gaia 中可以看到很多圖片是成對的，舉例來說向左的箭頭有 arrow-left.png 跟 arrow-left@2x.png 兩個圖檔。聰明的讀者應該已經猜到，後面以 @2x 結尾的圖片就是用在高解析度螢幕，它的長寬各是前者的兩倍。當我們以 HIDPI=1 為環境變數安裝 Gaia 的時候： $ HIDPI=1 make install-gaia Makefile 就會自動將 @2x.png 的圖片置換進去，便是支援高解析度裝置的第一步。 字體與版面的縮放：rem 當裝置解析度改變，字體跟圖片也需要跟著縮放至合適的大小。為了將不同的大小套用至整個程式，直到不久之前的做法，是使用 rem 這個單位。 rem 是相對於 <html> 的字型大小，舉例來說，若我們設定<html>的 font-size 為 10px ，則 1.5rem 就是 10px × 5 = 15px 。在 Gaia 中的 CSS 幾乎全部都是以 rem 為單位： #scan-title { position: absolute; top: 3rem; left: 5rem; right: 0; height: 2rem; line-height: 1.9rem; padding-left: .5rem; font-size: 1.4rem; … } 這樣一來，只要改變 <html> 的 font-size 僅管使用 rem 是至今為止的作法，但如後面將說明的 CSS Pixel 跟的 Device Pixel Ratio 已正式實作之際，現已可不必特意全部使用 rem 。 Background-size 另一方面，為了讓高解析度的圖片能在不同解析度上對應的尺寸都正確，圖片的大小也一律預先指定。像是如下的樣式： background: url(images/wallpaper_edit.png) no-repeat 25rem 11.5rem / 4.5rem; 後方的 / 4.5rem ，即 background-size 的縮略寫法，就是將圖片的大小預先指定好，好讓一份圖片在不同的裝置上能正確縮放到對應的大小，就算使用的圖片跟對應的螢幕的尺寸不一樣也沒關係。 Responsive.css 最後一步就是要得知該使用多大的 font-size 了。要判別不同解析度的螢幕，便是 Media Query 派上用場的時候。目前為止在 Gaia 上的 App 皆引入 Responsive.css 這個檔案來偵測 App 該使用的字型大小。舉一段例子： /*Portrait*/ @media all and (min-device-width: 480px) and (max-device-width: 540px) and (max-device-aspect-ratio: 1/1) { html { font-size: 94%!important; } } … 上面所節錄的條件，是用來設定在解析介於 WVGA (480×800) 但不到 qHD (540×960) 的裝置的 font-size 為 15px (100%為16px，故取94%=15.04px) 。對應到的是垂直方向螢幕。這個檔案算是暫時的解決方案，往後透過下述的 CSS 像素比例跟密度支援，將不再需要引入這個檔案。 CSS 像素比例 (CSS Device Pixel Ratio) 與像素密度 (Device Pixel Density) Gecko 偵測行動裝置 CSS 像素比例的能力在最近已經完成。意即 1px 實際對應到的長度，要視裝置的像素密度而定。譬如說，在 CSS 像素比例是 1.5 的 Galaxy SII 上，我們寫在 CSS 裡的 1 個 pixel ，實際上會在裝置上畫出 1.5 個 pixel 。 responsive.css 的存在，便是想在 Gecko 完成這個功能前代勞這件事，兩者是等價的。往後 Gaia 就能用更簡潔的方式來達成 Responsive Design，使用以往的 px 跟 background-size 即可，不再需要特地保留 rem 跟 responsive.css 。",
   "images": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/Cool-150x150.jpg",
+      "alt": "Cool",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/Cool-300x300.jpg",
+      "alt": "Cool",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/Cool.jpg",
+      "alt": "Cool",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/602456_525500794175984_1995303978_n-150x150.jpg",
+      "alt": "602456_525500794175984_1995303978_n",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/42/434c31abfff8521ecd58c5f97f9646e7-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
       "alt": "Firefox OS on Galaxy SII, WVGA, 480x800",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2360/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "markdown_path": "../assets/2360/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "wayback_timestamp": "20191118145726",
-      "asset_archive_url": "https://web.archive.org/web/20191118145726id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-768x1024.jpg",
       "alt": "Firefox OS on Galaxy SII, WVGA, 480x800",
       "kind": "image",
-      "source": "img-srcset",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "archive_path": "assets/2360/003-aabe26a22195.jpg",
-      "markdown_path": "../assets/2360/003-aabe26a22195.jpg",
-      "wayback_timestamp": "20140724081220",
-      "asset_archive_url": "https://web.archive.org/web/20140724081220id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "content_type": "image/jpeg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "archive_path": "assets/2360/004-aabe26a22195.jpg",
-      "markdown_path": "../assets/2360/004-aabe26a22195.jpg",
-      "wayback_timestamp": "20140724081220",
-      "asset_archive_url": "https://web.archive.org/web/20140724081220id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "content_type": "image/jpeg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
-    },
-    {
-      "post_id": 2360,
-      "page_type": "post",
-      "title": "伸縮自如 – Gaia 的多解析度支援",
-      "page_timestamp": "20191118145726",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/42/434c31abfff8521ecd58c5f97f9646e7-bpthumb.jpg",
-      "source": "img",
-      "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/42/434c31abfff8521ecd58c5f97f9646e7-bpthumb.jpg",
-      "archive_path": "assets/2360/wp-content/uploads/avatars/42/434c31abfff8521ecd58c5f97f9646e7-bpthumb.jpg",
-      "markdown_path": "../assets/2360/wp-content/uploads/avatars/42/434c31abfff8521ecd58c5f97f9646e7-bpthumb.jpg",
-      "wayback_timestamp": "20180322155115",
-      "asset_archive_url": "https://web.archive.org/web/20180322155115id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/42/434c31abfff8521ecd58c5f97f9646e7-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "a-href"
     }
   ],
   "media": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/Cool-150x150.jpg",
+      "alt": "Cool",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/Cool-300x300.jpg",
+      "alt": "Cool",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/Cool.jpg",
+      "alt": "Cool",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/602456_525500794175984_1995303978_n-150x150.jpg",
+      "alt": "602456_525500794175984_1995303978_n",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/42/434c31abfff8521ecd58c5f97f9646e7-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
       "alt": "Firefox OS on Galaxy SII, WVGA, 480x800",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2360/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "markdown_path": "../assets/2360/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "wayback_timestamp": "20191118145726",
-      "asset_archive_url": "https://web.archive.org/web/20191118145726id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-768x1024.jpg",
       "alt": "Firefox OS on Galaxy SII, WVGA, 480x800",
       "kind": "image",
-      "source": "img-srcset",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "archive_path": "assets/2360/003-aabe26a22195.jpg",
-      "markdown_path": "../assets/2360/003-aabe26a22195.jpg",
-      "wayback_timestamp": "20140724081220",
-      "asset_archive_url": "https://web.archive.org/web/20140724081220id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "content_type": "image/jpeg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "archive_path": "assets/2360/004-aabe26a22195.jpg",
-      "markdown_path": "../assets/2360/004-aabe26a22195.jpg",
-      "wayback_timestamp": "20140724081220",
-      "asset_archive_url": "https://web.archive.org/web/20140724081220id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/06/IMG_20130613_174221-225x300.jpg",
-      "content_type": "image/jpeg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
-    },
-    {
-      "post_id": 2360,
-      "page_type": "post",
-      "title": "伸縮自如 – Gaia 的多解析度支援",
-      "page_timestamp": "20191118145726",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/42/434c31abfff8521ecd58c5f97f9646e7-bpthumb.jpg",
-      "source": "img",
-      "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/42/434c31abfff8521ecd58c5f97f9646e7-bpthumb.jpg",
-      "archive_path": "assets/2360/wp-content/uploads/avatars/42/434c31abfff8521ecd58c5f97f9646e7-bpthumb.jpg",
-      "markdown_path": "../assets/2360/wp-content/uploads/avatars/42/434c31abfff8521ecd58c5f97f9646e7-bpthumb.jpg",
-      "wayback_timestamp": "20180322155115",
-      "asset_archive_url": "https://web.archive.org/web/20180322155115id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/42/434c31abfff8521ecd58c5f97f9646e7-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "a-href"
     }
   ],
   "links": [
@@ -138,6 +232,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

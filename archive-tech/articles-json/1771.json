@@ -14,88 +14,264 @@
   "author": "Randy",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=1771",
-  "archive_url": "https://web.archive.org/web/20140727231210id_/https://tech.mozilla.com.tw/?p=1771",
-  "wayback_timestamp": "20140727231210",
-  "content_html": "<div class=\"entry-content close\">\n\t\t<p>目前 Gecko 已經有實作相當多的事件，可供一般 Web 程式開發者使用，但如果在開發 FireFox OS 應用程式時，需要在 DOM  物件中，傳遞新的事件給 web application，如系統電量變化、使用者開關螢幕、耳機插拔等等行為，開發者該如何用最有效率的方式，傳遞這些資訊給應用程式端呢？本篇技術分享將介紹如何在 DOM 物件，新增一個自定的 event 事件：在此以 MediaRecorder 的 dataavailable 為例。<br />\n1. 在物件的 webIDL 加入</p><!-- Crayon Syntax Highlighter v2.6.5 -->\r\n\r\n\t\t<div id=\"crayon-53dcdaf08b562534408969\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n[SetterThrows]\r\nattribute EventHandler ondataavailable;</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-53dcdaf08b562534408969-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53dcdaf08b562534408969-2\">2</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-line\" id=\"crayon-53dcdaf08b562534408969-1\"><span class=\"crayon-sy\">[</span><span class=\"crayon-v\">SetterThrows</span><span class=\"crayon-sy\">]</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53dcdaf08b562534408969-2\"><span class=\"crayon-e\">attribute </span><span class=\"crayon-e\">EventHandler </span><span class=\"crayon-v\">ondataavailable</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0006 seconds] -->\r\n<p>2. 因為 Event Handler 是以字串當作識別與 JavaScript Engine 溝通，如果新加的事件名稱在 EventNameList 沒有定義，則需要修改以下三個檔案<br />\ncontent/base/src/nsGkAtomList.h</p><!-- Crayon Syntax Highlighter v2.6.5 -->\r\n\r\n\t\t<div id=\"crayon-53dcdaf08b572457203695\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nGK_ATOM(ondataavailable, \"ondataavailable\")</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-53dcdaf08b572457203695-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-line\" id=\"crayon-53dcdaf08b572457203695-1\"><span class=\"crayon-e\">GK_ATOM</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">ondataavailable</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"ondataavailable\"</span><span class=\"crayon-sy\">)</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0005 seconds] -->\r\n<p>wizdget/nsGUIEvent.h</p><!-- Crayon Syntax Highlighter v2.6.5 -->\r\n\r\n\t\t<div id=\"crayon-53dcdaf08b57a796042203\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n#define NS_DATAAVAILABLE        (NS_MESSAGE_EVENT_START +1 )</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-53dcdaf08b57a796042203-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-line\" id=\"crayon-53dcdaf08b57a796042203-1\"><span class=\"crayon-p\">#define NS_DATAAVAILABLE        (NS_MESSAGE_EVENT_START +1 )</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0003 seconds] -->\r\n<p>content/events/public/nsEventNameList.h</p><!-- Crayon Syntax Highlighter v2.6.5 -->\r\n\r\n\t\t<div id=\"crayon-53dcdaf08b581578207704\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nNON_IDL_EVENT(dataavailable,\r\n  NS_DATAAVAILABLE,\r\n  EventNameType_None,\r\n  NS_EVENT)</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-53dcdaf08b581578207704-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53dcdaf08b581578207704-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-53dcdaf08b581578207704-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53dcdaf08b581578207704-4\">4</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-line\" id=\"crayon-53dcdaf08b581578207704-1\"><span class=\"crayon-e\">NON_IDL_EVENT</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">dataavailable</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53dcdaf08b581578207704-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">NS_DATAAVAILABLE</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-53dcdaf08b581578207704-3\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">EventNameType_None</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53dcdaf08b581578207704-4\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">NS_EVENT</span><span class=\"crayon-sy\">)</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0008 seconds] -->\r\n<p>3. 修改 DOM 物件<br />\n3.1 加入 nsDOMEventTargetHelper 繼承<br />\n3.2 在 public function 處，加入</p><!-- Crayon Syntax Highlighter v2.6.5 -->\r\n\r\n\t\t<div id=\"crayon-53dcdaf08b588589112035\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nIMPL_EVENT_HANDLER(dataavailable)</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-53dcdaf08b588589112035-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-line\" id=\"crayon-53dcdaf08b588589112035-1\"><span class=\"crayon-e\">IMPL_EVENT_HANDLER</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">dataavailable</span><span class=\"crayon-sy\">)</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0004 seconds] -->\r\n<p>3.3 在需要回傳 event 處，加入傳遞 event 的相關函式呼叫如下</p><!-- Crayon Syntax Highlighter v2.6.5 -->\r\n\r\n\t\t<div id=\"crayon-53dcdaf08b590059528438\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nNS_ABORT_IF_FALSE(NS_IsMainThread(), \"Not running on main thread\");\r\nnsresult rv = CheckInnerWindowCorrectness();\r\nif (NS_FAILED(rv)) {\r\n  return NS_OK;\r\n}\r\n\r\nnsCOMPtr&lt;nsIDOMEvent&gt; event;\r\nrv = NS_NewDOMEvent(getter_AddRefs(event), nullptr, nullptr);\r\nNS_ENSURE_SUCCESS(rv, rv);\r\n\r\nrv = event-&gt;InitEvent(NS_LITERAL_STRING(\"dataavailable\"), false, false);\r\nNS_ENSURE_SUCCESS(rv, rv);\r\n\r\nevent-&gt;SetTrusted(true);\r\n\r\nreturn DispatchDOMEvent(nullptr, event, nullptr, nullptr);</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-53dcdaf08b590059528438-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53dcdaf08b590059528438-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-53dcdaf08b590059528438-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53dcdaf08b590059528438-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-53dcdaf08b590059528438-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53dcdaf08b590059528438-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-53dcdaf08b590059528438-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53dcdaf08b590059528438-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-53dcdaf08b590059528438-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53dcdaf08b590059528438-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-53dcdaf08b590059528438-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53dcdaf08b590059528438-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-53dcdaf08b590059528438-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53dcdaf08b590059528438-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-53dcdaf08b590059528438-15\">15</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53dcdaf08b590059528438-16\">16</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-line\" id=\"crayon-53dcdaf08b590059528438-1\"><span class=\"crayon-e\">NS_ABORT_IF_FALSE</span><span class=\"crayon-sy\">(</span><span class=\"crayon-e\">NS_IsMainThread</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"Not running on main thread\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53dcdaf08b590059528438-2\"><span class=\"crayon-e\">nsresult </span><span class=\"crayon-v\">rv</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">CheckInnerWindowCorrectness</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-53dcdaf08b590059528438-3\"><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-e\">NS_FAILED</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">rv</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53dcdaf08b590059528438-4\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-st\">return</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">NS_OK</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-53dcdaf08b590059528438-5\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53dcdaf08b590059528438-6\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-53dcdaf08b590059528438-7\"><span class=\"crayon-v\">nsCOMPtr</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-v\">nsIDOMEvent</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53dcdaf08b590059528438-8\"><span class=\"crayon-v\">rv</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">NS_NewDOMEvent</span><span class=\"crayon-sy\">(</span><span class=\"crayon-e\">getter_AddRefs</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">nullptr</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">nullptr</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-53dcdaf08b590059528438-9\"><span class=\"crayon-e\">NS_ENSURE_SUCCESS</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">rv</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">rv</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53dcdaf08b590059528438-10\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-53dcdaf08b590059528438-11\"><span class=\"crayon-v\">rv</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">event</span><span class=\"crayon-o\">-&gt;</span><span class=\"crayon-e\">InitEvent</span><span class=\"crayon-sy\">(</span><span class=\"crayon-e\">NS_LITERAL_STRING</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"dataavailable\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">false</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">false</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53dcdaf08b590059528438-12\"><span class=\"crayon-e\">NS_ENSURE_SUCCESS</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">rv</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">rv</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-53dcdaf08b590059528438-13\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53dcdaf08b590059528438-14\"><span class=\"crayon-v\">event</span><span class=\"crayon-o\">-&gt;</span><span class=\"crayon-e\">SetTrusted</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">true</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-53dcdaf08b590059528438-15\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53dcdaf08b590059528438-16\"><span class=\"crayon-st\">return</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">DispatchDOMEvent</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">nullptr</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">nullptr</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">nullptr</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0043 seconds] -->\r\n<p>在應用程式端，則可以用 object.ondataavailable = func(e) 去捕捉此事件並實作相對應的處理<br />\n需要注意的是<br />\n1. 在實作擲回 Event 的 DOM 物件中，必須能夠取得 Context 物件，並在主程序中執行<br />\n，否則事件無法被正確擲回<br />\n2. 以上實作範例只有通知上層目前有一個 dataavailable 事件發生，但傳遞的事件本身並無夾帶額外資訊，如果需要夾帶資訊，則需要使用相對應的的 NS_NewDOMXXXEvent (如NewDOMMessageEvent/NewBlobEvent)，在應用程式端則在事件處理函式中，藉由取得 e.data 屬性來取得 DOM 物件所傳遞資料內容。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-數位時代_0313_3.jpg\"><img class=\"aligncenter  wp-image-1915\" title=\"TO 數位時代_0313_3\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-數位時代_0313_3-682x1024.jpg\" alt=\"\" width=\"288\" height=\"432\" /></a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
-  "content_text": "目前 Gecko 已經有實作相當多的事件，可供一般 Web 程式開發者使用，但如果在開發 FireFox OS 應用程式時，需要在 DOM 物件中，傳遞新的事件給 web application，如系統電量變化、使用者開關螢幕、耳機插拔等等行為，開發者該如何用最有效率的方式，傳遞這些資訊給應用程式端呢？本篇技術分享將介紹如何在 DOM 物件，新增一個自定的 event 事件：在此以 MediaRecorder 的 dataavailable 為例。 1. 在物件的 webIDL 加入 [SetterThrows] attribute EventHandler ondataavailable; 1 2 [ SetterThrows ] attribute EventHandler ondataavailable ; 2. 因為 Event Handler 是以字串當作識別與 JavaScript Engine 溝通，如果新加的事件名稱在 EventNameList 沒有定義，則需要修改以下三個檔案 content/base/src/nsGkAtomList.h GK_ATOM(ondataavailable, \"ondataavailable\") 1 GK_ATOM ( ondataavailable , \"ondataavailable\" ) wizdget/nsGUIEvent.h #define NS_DATAAVAILABLE (NS_MESSAGE_EVENT_START +1 ) 1 #define NS_DATAAVAILABLE (NS_MESSAGE_EVENT_START +1 ) content/events/public/nsEventNameList.h NON_IDL_EVENT(dataavailable, NS_DATAAVAILABLE, EventNameType_None, NS_EVENT) 1 2 3 4 NON_IDL_EVENT ( dataavailable , NS_DATAAVAILABLE , EventNameType_None , NS_EVENT ) 3. 修改 DOM 物件 3.1 加入 nsDOMEventTargetHelper 繼承 3.2 在 public function 處，加入 IMPL_EVENT_HANDLER(dataavailable) 1 IMPL_EVENT_HANDLER ( dataavailable ) 3.3 在需要回傳 event 處，加入傳遞 event 的相關函式呼叫如下 NS_ABORT_IF_FALSE(NS_IsMainThread(), \"Not running on main thread\"); nsresult rv = CheckInnerWindowCorrectness(); if (NS_FAILED(rv)) { return NS_OK; } nsCOMPtr<nsIDOMEvent> event; rv = NS_NewDOMEvent(getter_AddRefs(event), nullptr, nullptr); NS_ENSURE_SUCCESS(rv, rv); rv = event->InitEvent(NS_LITERAL_STRING(\"dataavailable\"), false, false); NS_ENSURE_SUCCESS(rv, rv); event->SetTrusted(true); return DispatchDOMEvent(nullptr, event, nullptr, nullptr); 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 NS_ABORT_IF_FALSE ( NS_IsMainThread ( ) , \"Not running on main thread\" ) ; nsresult rv = CheckInnerWindowCorrectness ( ) ; if ( NS_FAILED ( rv ) ) { return NS_OK ; } nsCOMPtr < nsIDOMEvent > event ; rv = NS_NewDOMEvent ( getter_AddRefs ( event ) , nullptr , nullptr ) ; NS_ENSURE_SUCCESS ( rv , rv ) ; rv = event -> InitEvent ( NS_LITERAL_STRING ( \"dataavailable\" ) , false , false ) ; NS_ENSURE_SUCCESS ( rv , rv ) ; event -> SetTrusted ( true ) ; return DispatchDOMEvent ( nullptr , event , nullptr , nullptr ) ; 在應用程式端，則可以用 object.ondataavailable = func(e) 去捕捉此事件並實作相對應的處理 需要注意的是 1. 在實作擲回 Event 的 DOM 物件中，必須能夠取得 Context 物件，並在主程序中執行 ，否則事件無法被正確擲回 2. 以上實作範例只有通知上層目前有一個 dataavailable 事件發生，但傳遞的事件本身並無夾帶額外資訊，如果需要夾帶資訊，則需要使用相對應的的 NS_NewDOMXXXEvent (如NewDOMMessageEvent/NewBlobEvent)，在應用程式端則在事件處理函式中，藉由取得 e.data 屬性來取得 DOM 物件所傳遞資料內容。",
+  "archive_url": "https://web.archive.org/web/20171119190011/https://tech.mozilla.com.tw/posts/1771/%E8%80%B3%E7%9B%AE%E4%B8%80%E6%96%B0%EF%BC%8D%E8%87%AA%E5%AE%9A-event-handler%EF%BC%81",
+  "wayback_timestamp": "20171119190011",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>目前 Gecko 已經有實作相當多的事件，可供一般 Web 程式開發者使用，但如果在開發 FireFox OS 應用程式時，需要在 DOM  物件中，傳遞新的事件給 web application，如系統電量變化、使用者開關螢幕、耳機插拔等等行為，開發者該如何用最有效率的方式，傳遞這些資訊給應用程式端呢？本篇技術分享將介紹如何在 DOM 物件，新增一個自定的 event 事件：在此以 MediaRecorder 的 dataavailable 為例。<br/>\n1. 在物件的 webIDL 加入</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-5a11d47d4ae88520301494\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n[SetterThrows]\nattribute EventHandler ondataavailable;</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5a11d47d4ae88520301494-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5a11d47d4ae88520301494-2\">2</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5a11d47d4ae88520301494-1\"><span class=\"crayon-sy\">[</span><span class=\"crayon-v\">SetterThrows</span><span class=\"crayon-sy\">]</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5a11d47d4ae88520301494-2\"><span class=\"crayon-e\">attribute </span><span class=\"crayon-e\">EventHandler </span><span class=\"crayon-v\">ondataavailable</span><span class=\"crayon-sy\">;</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0002 seconds] -->\n<p>2. 因為 Event Handler 是以字串當作識別與 JavaScript Engine 溝通，如果新加的事件名稱在 EventNameList 沒有定義，則需要修改以下三個檔案<br/>\ncontent/base/src/nsGkAtomList.h</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-5a11d47d4ae95796298535\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nGK_ATOM(ondataavailable, \"ondataavailable\")</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5a11d47d4ae95796298535-1\">1</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5a11d47d4ae95796298535-1\"><span class=\"crayon-e\">GK_ATOM</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">ondataavailable</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"ondataavailable\"</span><span class=\"crayon-sy\">)</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0001 seconds] -->\n<p>wizdget/nsGUIEvent.h</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-5a11d47d4ae97349138764\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n#define NS_DATAAVAILABLE        (NS_MESSAGE_EVENT_START 1 )</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5a11d47d4ae97349138764-1\">1</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5a11d47d4ae97349138764-1\"><span class=\"crayon-p\">#define NS_DATAAVAILABLE        (NS_MESSAGE_EVENT_START 1 )</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0001 seconds] -->\n<p>content/events/public/nsEventNameList.h</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-5a11d47d4ae99933947950\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nNON_IDL_EVENT(dataavailable,\n NS_DATAAVAILABLE,\n EventNameType_None,\n NS_EVENT)</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5a11d47d4ae99933947950-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5a11d47d4ae99933947950-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5a11d47d4ae99933947950-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5a11d47d4ae99933947950-4\">4</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5a11d47d4ae99933947950-1\"><span class=\"crayon-e\">NON_IDL_EVENT</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">dataavailable</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5a11d47d4ae99933947950-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">NS_DATAAVAILABLE</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-5a11d47d4ae99933947950-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">EventNameType_None</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5a11d47d4ae99933947950-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">NS_EVENT</span><span class=\"crayon-sy\">)</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0001 seconds] -->\n<p>3. 修改 DOM 物件<br/>\n3.1 加入 nsDOMEventTargetHelper 繼承<br/>\n3.2 在 public function 處，加入</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-5a11d47d4ae9a947042309\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nIMPL_EVENT_HANDLER(dataavailable)</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5a11d47d4ae9a947042309-1\">1</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5a11d47d4ae9a947042309-1\"><span class=\"crayon-e\">IMPL_EVENT_HANDLER</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">dataavailable</span><span class=\"crayon-sy\">)</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0001 seconds] -->\n<p>3.3 在需要回傳 event 處，加入傳遞 event 的相關函式呼叫如下</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-5a11d47d4ae9c703259021\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nNS_ABORT_IF_FALSE(NS_IsMainThread(), \"Not running on main thread\");\nnsresult rv = CheckInnerWindowCorrectness();\nif &lt;a href=\"http://www.cillap.com/\"&gt;casino online&lt;/a&gt;  (NS_FAILED(rv)) {\n return NS_OK;\n}\n\nnsCOMPtr&lt;nsIDOMEvent&gt; event;\nrv = NS_NewDOMEvent(getter_AddRefs(event), nullptr, nullptr);\nNS_ENSURE_SUCCESS(rv, rv);\n\nrv = event-&gt;InitEvent(NS_LITERAL_STRING(\"dataavailable\"), false, false);\nNS_ENSURE_SUCCESS(rv, rv);\n\nevent-&gt;SetTrusted(true);\n\nreturn DispatchDOMEvent(nullptr, event, nullptr, nullptr);</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5a11d47d4ae9c703259021-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5a11d47d4ae9c703259021-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5a11d47d4ae9c703259021-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5a11d47d4ae9c703259021-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5a11d47d4ae9c703259021-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5a11d47d4ae9c703259021-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5a11d47d4ae9c703259021-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5a11d47d4ae9c703259021-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5a11d47d4ae9c703259021-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5a11d47d4ae9c703259021-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5a11d47d4ae9c703259021-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5a11d47d4ae9c703259021-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-5a11d47d4ae9c703259021-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5a11d47d4ae9c703259021-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-5a11d47d4ae9c703259021-15\">15</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5a11d47d4ae9c703259021-16\">16</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5a11d47d4ae9c703259021-1\"><span class=\"crayon-e\">NS_ABORT_IF_FALSE</span><span class=\"crayon-sy\">(</span><span class=\"crayon-e\">NS_IsMainThread</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"Not running on main thread\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5a11d47d4ae9c703259021-2\"><span class=\"crayon-e\">nsresult </span><span class=\"crayon-v\">rv</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">CheckInnerWindowCorrectness</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5a11d47d4ae9c703259021-3\"><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-i\">a</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">href</span><span class=\"crayon-o\">=</span><span class=\"crayon-s\">\"http://www.cillap.com/\"</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-e\">casino </span><span class=\"crayon-v\">online</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">a</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">(</span><span class=\"crayon-e\">NS_FAILED</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">rv</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5a11d47d4ae9c703259021-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-st\">return</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">NS_OK</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5a11d47d4ae9c703259021-5\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5a11d47d4ae9c703259021-6\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5a11d47d4ae9c703259021-7\"><span class=\"crayon-v\">nsCOMPtr</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-v\">nsIDOMEvent</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5a11d47d4ae9c703259021-8\"><span class=\"crayon-v\">rv</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">NS_NewDOMEvent</span><span class=\"crayon-sy\">(</span><span class=\"crayon-e\">getter_AddRefs</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">nullptr</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">nullptr</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5a11d47d4ae9c703259021-9\"><span class=\"crayon-e\">NS_ENSURE_SUCCESS</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">rv</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">rv</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5a11d47d4ae9c703259021-10\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5a11d47d4ae9c703259021-11\"><span class=\"crayon-v\">rv</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">event</span><span class=\"crayon-o\">-&gt;</span><span class=\"crayon-e\">InitEvent</span><span class=\"crayon-sy\">(</span><span class=\"crayon-e\">NS_LITERAL_STRING</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"dataavailable\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">false</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">false</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5a11d47d4ae9c703259021-12\"><span class=\"crayon-e\">NS_ENSURE_SUCCESS</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">rv</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">rv</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5a11d47d4ae9c703259021-13\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5a11d47d4ae9c703259021-14\"><span class=\"crayon-v\">event</span><span class=\"crayon-o\">-&gt;</span><span class=\"crayon-e\">SetTrusted</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">true</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5a11d47d4ae9c703259021-15\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5a11d47d4ae9c703259021-16\"><span class=\"crayon-st\">return</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">DispatchDOMEvent</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">nullptr</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">nullptr</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">nullptr</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0007 seconds] -->\n<p>在應用程式端，則可以用 object.ondataavailable = func(e) 去捕捉此事件並實作相對應的處理<br/>\n需要注意的是<br/>\n1. 在實作擲回 Event 的 DOM 物件中，必須能夠取得 Context 物件，並在主程序中執行<br/>\n，否則事件無法被正確擲回<br/>\n2. 以上實作範例只有通知上層目前有一個 dataavailable 事件發生，但傳遞的事件本身並無夾帶額外資訊，如果需要夾帶資訊，則需要使用相對應的的 NS_NewDOMXXXEvent (如NewDOMMessageEvent/NewBlobEvent)，在應用程式端則在事件處理函式中，藉由取得 e.data 屬性來取得 DOM 物件所傳遞資料內容。</p>\n<p><a href=\"https://web.archive.org/web/20171119190011/http://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-數位時代_0313_3.jpg\"><img class=\"aligncenter wp-image-1915\" title=\"TO 數位時代_0313_3\" src=\"https://web.archive.org/web/20171119190011im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-數位時代_0313_3-682x1024.jpg\" alt=\"\" width=\"288\" height=\"432\" srcset=\"https://web.archive.org/web/20171119190011im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-數位時代_0313_3-682x1024.jpg 682w, https://web.archive.org/web/20171119190011im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-數位時代_0313_3-200x300.jpg 200w\" sizes=\"(max-width: 288px) 100vw, 288px\"/></a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
+  "content_text": "目前 Gecko 已經有實作相當多的事件，可供一般 Web 程式開發者使用，但如果在開發 FireFox OS 應用程式時，需要在 DOM 物件中，傳遞新的事件給 web application，如系統電量變化、使用者開關螢幕、耳機插拔等等行為，開發者該如何用最有效率的方式，傳遞這些資訊給應用程式端呢？本篇技術分享將介紹如何在 DOM 物件，新增一個自定的 event 事件：在此以 MediaRecorder 的 dataavailable 為例。 1. 在物件的 webIDL 加入 [SetterThrows] attribute EventHandler ondataavailable; 1 2 [ SetterThrows ] attribute EventHandler ondataavailable ; 2. 因為 Event Handler 是以字串當作識別與 JavaScript Engine 溝通，如果新加的事件名稱在 EventNameList 沒有定義，則需要修改以下三個檔案 content/base/src/nsGkAtomList.h GK_ATOM(ondataavailable, \"ondataavailable\") 1 GK_ATOM ( ondataavailable , \"ondataavailable\" ) wizdget/nsGUIEvent.h #define NS_DATAAVAILABLE (NS_MESSAGE_EVENT_START 1 ) 1 #define NS_DATAAVAILABLE (NS_MESSAGE_EVENT_START 1 ) content/events/public/nsEventNameList.h NON_IDL_EVENT(dataavailable, NS_DATAAVAILABLE, EventNameType_None, NS_EVENT) 1 2 3 4 NON_IDL_EVENT ( dataavailable , NS_DATAAVAILABLE , EventNameType_None , NS_EVENT ) 3. 修改 DOM 物件 3.1 加入 nsDOMEventTargetHelper 繼承 3.2 在 public function 處，加入 IMPL_EVENT_HANDLER(dataavailable) 1 IMPL_EVENT_HANDLER ( dataavailable ) 3.3 在需要回傳 event 處，加入傳遞 event 的相關函式呼叫如下 NS_ABORT_IF_FALSE(NS_IsMainThread(), \"Not running on main thread\"); nsresult rv = CheckInnerWindowCorrectness(); if <a href=\"http://www.cillap.com/\">casino online</a> (NS_FAILED(rv)) { return NS_OK; } nsCOMPtr<nsIDOMEvent> event; rv = NS_NewDOMEvent(getter_AddRefs(event), nullptr, nullptr); NS_ENSURE_SUCCESS(rv, rv); rv = event->InitEvent(NS_LITERAL_STRING(\"dataavailable\"), false, false); NS_ENSURE_SUCCESS(rv, rv); event->SetTrusted(true); return DispatchDOMEvent(nullptr, event, nullptr, nullptr); 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 NS_ABORT_IF_FALSE ( NS_IsMainThread ( ) , \"Not running on main thread\" ) ; nsresult rv = CheckInnerWindowCorrectness ( ) ; if < a href = \"http://www.cillap.com/\" > casino online < / a > ( NS_FAILED ( rv ) ) { return NS_OK ; } nsCOMPtr < nsIDOMEvent > event ; rv = NS_NewDOMEvent ( getter_AddRefs ( event ) , nullptr , nullptr ) ; NS_ENSURE_SUCCESS ( rv , rv ) ; rv = event -> InitEvent ( NS_LITERAL_STRING ( \"dataavailable\" ) , false , false ) ; NS_ENSURE_SUCCESS ( rv , rv ) ; event -> SetTrusted ( true ) ; return DispatchDOMEvent ( nullptr , event , nullptr , nullptr ) ; 在應用程式端，則可以用 object.ondataavailable = func(e) 去捕捉此事件並實作相對應的處理 需要注意的是 1. 在實作擲回 Event 的 DOM 物件中，必須能夠取得 Context 物件，並在主程序中執行 ，否則事件無法被正確擲回 2. 以上實作範例只有通知上層目前有一個 dataavailable 事件發生，但傳遞的事件本身並無夾帶額外資訊，如果需要夾帶資訊，則需要使用相對應的的 NS_NewDOMXXXEvent (如NewDOMMessageEvent/NewBlobEvent)，在應用程式端則在事件處理函式中，藉由取得 e.data 屬性來取得 DOM 物件所傳遞資料內容。",
   "images": [
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20171119190011im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing-150x150.jpg",
+      "alt": "14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/FFOS-update-flow11-150x150.png",
+      "alt": "FFOS-update-flow1",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/FFOS-update-flow11-295x300.png",
+      "alt": "FFOS-update-flow1",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/FFOS-update-flow11.png",
+      "alt": "FFOS-update-flow1",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-%E6%95%B8%E4%BD%8D%E6%99%82%E4%BB%A3_0313_3-682x1024.jpg",
       "alt": "",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/1771/wp-content/uploads/2013/03/TO-數位時代_0313_3-682x1024.jpg",
-      "markdown_path": "../assets/1771/wp-content/uploads/2013/03/TO-數位時代_0313_3-682x1024.jpg",
-      "wayback_timestamp": "20140727231210",
-      "asset_archive_url": "https://web.archive.org/web/20140727231210id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-%E6%95%B8%E4%BD%8D%E6%99%82%E4%BB%A3_0313_3-682x1024.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-%E6%95%B8%E4%BD%8D%E6%99%82%E4%BB%A3_0313_3-200x300.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-%E6%95%B8%E4%BD%8D%E6%99%82%E4%BB%A3_0313_3.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/1771/wp-content/uploads/2013/03/TO-數位時代_0313_3.jpg",
-      "markdown_path": "../assets/1771/wp-content/uploads/2013/03/TO-數位時代_0313_3.jpg",
-      "wayback_timestamp": "20140727231210",
-      "asset_archive_url": "https://web.archive.org/web/20140727231210id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-%E6%95%B8%E4%BD%8D%E6%99%82%E4%BB%A3_0313_3.jpg",
-      "content_type": "image/jpeg"
-    },
-    {
-      "post_id": 1771,
-      "page_type": "post",
-      "title": "耳目一新－自定 Event Handler！",
-      "page_timestamp": "20140727231210",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
-      "source": "img",
-      "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
-      "archive_path": "assets/1771/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
-      "markdown_path": "../assets/1771/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
-      "wayback_timestamp": "20150322033602",
-      "asset_archive_url": "https://web.archive.org/web/20150322033602id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "a-href"
     }
   ],
   "media": [
     {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20171119190011im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing-150x150.jpg",
+      "alt": "14590126-cartoon-illustration-of-a-plumber-worker-repairman-tradesman-with-adjustable-monkey-wrench-repairing",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/FFOS-update-flow11-150x150.png",
+      "alt": "FFOS-update-flow1",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/FFOS-update-flow11-295x300.png",
+      "alt": "FFOS-update-flow1",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/FFOS-update-flow11.png",
+      "alt": "FFOS-update-flow1",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-%E6%95%B8%E4%BD%8D%E6%99%82%E4%BB%A3_0313_3-682x1024.jpg",
       "alt": "",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/1771/wp-content/uploads/2013/03/TO-數位時代_0313_3-682x1024.jpg",
-      "markdown_path": "../assets/1771/wp-content/uploads/2013/03/TO-數位時代_0313_3-682x1024.jpg",
-      "wayback_timestamp": "20140727231210",
-      "asset_archive_url": "https://web.archive.org/web/20140727231210id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-%E6%95%B8%E4%BD%8D%E6%99%82%E4%BB%A3_0313_3-682x1024.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-%E6%95%B8%E4%BD%8D%E6%99%82%E4%BB%A3_0313_3-200x300.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-%E6%95%B8%E4%BD%8D%E6%99%82%E4%BB%A3_0313_3.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/1771/wp-content/uploads/2013/03/TO-數位時代_0313_3.jpg",
-      "markdown_path": "../assets/1771/wp-content/uploads/2013/03/TO-數位時代_0313_3.jpg",
-      "wayback_timestamp": "20140727231210",
-      "asset_archive_url": "https://web.archive.org/web/20140727231210id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-%E6%95%B8%E4%BD%8D%E6%99%82%E4%BB%A3_0313_3.jpg",
-      "content_type": "image/jpeg"
-    },
-    {
-      "post_id": 1771,
-      "page_type": "post",
-      "title": "耳目一新－自定 Event Handler！",
-      "page_timestamp": "20140727231210",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
-      "source": "img",
-      "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
-      "archive_path": "assets/1771/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
-      "markdown_path": "../assets/1771/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
-      "wayback_timestamp": "20150322033602",
-      "asset_archive_url": "https://web.archive.org/web/20150322033602id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "a-href"
     }
   ],
   "links": [
@@ -105,6 +281,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

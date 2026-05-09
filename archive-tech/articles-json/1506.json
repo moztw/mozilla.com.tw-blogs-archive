@@ -14,232 +14,264 @@
   "author": "leftL",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=1506",
-  "archive_url": "https://web.archive.org/web/20160113172405id_/https://tech.mozilla.com.tw/?p=1506",
-  "wayback_timestamp": "20160113172405",
+  "archive_url": "https://web.archive.org/web/20160113114402/https://tech.mozilla.com.tw/posts/1506/%e5%b7%a6%e5%8f%b3%e7%82%ba%e9%9b%a3%ef%bc%9aweb-%e6%a8%99%e6%ba%96-v-s-ux-user-experience-%ef%bc%8c%e4%bd%a0%e9%81%b8%e5%93%aa%e4%b8%80%e9%82%8a%ef%bc%9f",
+  "wayback_timestamp": "20160113114402",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p>HTML5 中引入了許多全新類型的 input field，讓開發者能夠輕易地利用 type，自定這個 input 是用來輸入 email、URL 又或者是時間等等的資訊。</p>\n<ul>\n<li>輸入網址： <code>&lt;input type=\"url\" /&gt;</code></li>\n<li>輸入email： <code>&lt;input type=\"email\" /&gt;</code></li>\n<li>輸入日期： <code>&lt;input type=\"date\" /&gt;</code></li>\n<li>輸入時間： <code>&lt;input type=\"time\" /&gt;</code></li>\n</ul>\n<p>詳見 <a href=\"https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-type\">MDN &#8211; &lt;input&gt; type Attribute</a></p>\n<p>同時，瀏覽器也能針對不同的類型，呈現不同的介面以方便使用者輸入。例如：下圖就是我們在 Firefox OS 中所實作的 time picker 。</p>\n<div id=\"attachment_1507\" style=\"width: 210px\" class=\"wp-caption aligncenter\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152546.png\"><img class=\"size-medium wp-image-1507\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152546-200x300.png\" alt=\"Time Picker in Firefox OS\" width=\"200\" height=\"300\" /></a><p class=\"wp-caption-text\">Time Picker in Firefox OS</p></div>\n<p style=\"text-align: left;\">不同種類的 input 當然也會被應用在 Firefox OS App 的開發上，讀者可參考下圖中 Browser App 上方的 <strong>Awesome bar</strong>。Awesome bar 結合了輸入 URL 和搜尋兩者功能，所以一開始我們就是選用 <code>type=\"url\"</code> 來實作這個功能。但，這時問題來了，因為它同時也是搜尋框，但就一般實作而言，URL type 的鍵盤是不會提供空白鍵的，於是，使用者便無法輸入多個關鍵字來做搜尋。</p>\n<div id=\"attachment_1509\" style=\"width: 210px\" class=\"wp-caption aligncenter\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152740.png\"><img class=\"size-medium wp-image-1509\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152740-200x300.png\" alt=\"Awesome bar in Firefox OS Browser App\" width=\"200\" height=\"300\" /></a><p class=\"wp-caption-text\">Awesome bar in Firefox OS Browser App</p></div>\n<p>這時可能有人會認為，只要在 URL 鍵盤上加上空白鍵，問題就能順利解決了？不過，由於 UX (User Experience) Designer 的堅持，認為加上空白鍵對於使用者會造成混淆，所以這個方案就沒有採用了。</p>\n<p>好吧！既然這樣那就得發明一個新的 type，可能是 <code>type=\"search+url\"</code> 之類的如何？如此一來，我們可以在 Firefox OS 中新增一個鍵盤 layout 對應到這個 type，如此一而不但可以放入空白鍵，也可以將常用的 &#8220;.com&#8221; 鍵等等加上去。既不需更改 <code>type=\"url\"</code> 鍵盤的 layout，也滿足了 UX 的需求，看來是一個兩全其美的方法。儘管如此，在經過漫長的討論後，遵循 Web 標準，仍是我們的最高指導準則 (至少就這個問題上)，而引入新的 type 並不全然符合這樣的規範。於是，我們最終還是回到原點，使用 <code>type=\"text\"</code>，也就是一般的 input field 來實作 Awesome bar 的輸入框。</p>\n<p>在以上這個問題之後，我們仍陸陸續續遇到不少這類 Web Standard 與 UX 間遊走的問題，而有時我們會選擇偏向標準，有時我們仍會想方設法讓 UX Design 得以實現。例如，下面便是 UX Designer 所提出針對 <code>&lt;select&gt;</code> element 呈現不同的 UI，一則是巢狀的選單，而一則是由 subheader 分隔的選單。這裡所隱含的問題是，並沒有一個標準語法能夠讓瀏覽器知道，應該選用那一種 style 才是適當的。</p>\n<div id=\"attachment_1510\" style=\"width: 210px\" class=\"wp-caption aligncenter\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup.jpg\"><img class=\"size-medium wp-image-1510 \" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup-200x300.jpg\" alt=\"Subheader version\" width=\"200\" height=\"300\" /></a><p class=\"wp-caption-text\">以 Subheader 分隔的選單</p></div>\n<div id=\"attachment_1511\" style=\"width: 210px\" class=\"wp-caption aligncenter\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01.jpg\"><img class=\"size-medium wp-image-1511\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01-200x300.jpg\" alt=\"巢狀選單\" width=\"200\" height=\"300\" /></a><p class=\"wp-caption-text\">以巢狀形式呈現的選單</p></div>\n<p>針對此問題的解決方案尚未出爐，我想這也是 Firefox OS 專案如此迷人有趣的地方，每一個設計、每一個決定，往往是眾人意見的統合，而不是由任何一個單一勢力所能左右。如果有讀者對以上的 UX 問題，抑或是其他 Firefox OS 相關問題有任何意見，也歡迎提出，也許在 Firefox OS 正式問世時，你會發現其中的某個設計/作法，有你的心血在其中哦！</p>\n\t\t\t</div>",
   "content_text": "HTML5 中引入了許多全新類型的 input field，讓開發者能夠輕易地利用 type，自定這個 input 是用來輸入 email、URL 又或者是時間等等的資訊。 輸入網址： <input type=\"url\" /> 輸入email： <input type=\"email\" /> 輸入日期： <input type=\"date\" /> 輸入時間： <input type=\"time\" /> 詳見 MDN – <input> type Attribute 同時，瀏覽器也能針對不同的類型，呈現不同的介面以方便使用者輸入。例如：下圖就是我們在 Firefox OS 中所實作的 time picker 。 Time Picker in Firefox OS 不同種類的 input 當然也會被應用在 Firefox OS App 的開發上，讀者可參考下圖中 Browser App 上方的 Awesome bar 。Awesome bar 結合了輸入 URL 和搜尋兩者功能，所以一開始我們就是選用 type=\"url\" 來實作這個功能。但，這時問題來了，因為它同時也是搜尋框，但就一般實作而言，URL type 的鍵盤是不會提供空白鍵的，於是，使用者便無法輸入多個關鍵字來做搜尋。 Awesome bar in Firefox OS Browser App 這時可能有人會認為，只要在 URL 鍵盤上加上空白鍵，問題就能順利解決了？不過，由於 UX (User Experience) Designer 的堅持，認為加上空白鍵對於使用者會造成混淆，所以這個方案就沒有採用了。 好吧！既然這樣那就得發明一個新的 type，可能是 type=\"search+url\" 之類的如何？如此一來，我們可以在 Firefox OS 中新增一個鍵盤 layout 對應到這個 type，如此一而不但可以放入空白鍵，也可以將常用的 “.com” 鍵等等加上去。既不需更改 type=\"url\" 鍵盤的 layout，也滿足了 UX 的需求，看來是一個兩全其美的方法。儘管如此，在經過漫長的討論後，遵循 Web 標準，仍是我們的最高指導準則 (至少就這個問題上)，而引入新的 type 並不全然符合這樣的規範。於是，我們最終還是回到原點，使用 type=\"text\" ，也就是一般的 input field 來實作 Awesome bar 的輸入框。 在以上這個問題之後，我們仍陸陸續續遇到不少這類 Web Standard 與 UX 間遊走的問題，而有時我們會選擇偏向標準，有時我們仍會想方設法讓 UX Design 得以實現。例如，下面便是 UX Designer 所提出針對 <select> element 呈現不同的 UI，一則是巢狀的選單，而一則是由 subheader 分隔的選單。這裡所隱含的問題是，並沒有一個標準語法能夠讓瀏覽器知道，應該選用那一種 style 才是適當的。 以 Subheader 分隔的選單 以巢狀形式呈現的選單 針對此問題的解決方案尚未出爐，我想這也是 Firefox OS 專案如此迷人有趣的地方，每一個設計、每一個決定，往往是眾人意見的統合，而不是由任何一個單一勢力所能左右。如果有讀者對以上的 UX 問題，抑或是其他 Firefox OS 相關問題有任何意見，也歡迎提出，也許在 Firefox OS 正式問世時，你會發現其中的某個設計/作法，有你的心血在其中哦！",
   "images": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/mock-showerrors2-150x150.png",
+      "alt": "mock-showerrors",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/Berlin_work_week-150x150.jpg",
+      "alt": "Berlin_work_week",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/25/c44cf3a2414977d162d5eab06abf9f99-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152546-200x300.png",
       "alt": "Time Picker in Firefox OS",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152546-200x300.png",
-      "markdown_path": "../assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152546-200x300.png",
-      "wayback_timestamp": "20160113172405",
-      "asset_archive_url": "https://web.archive.org/web/20160113172405id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152546-200x300.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152740-200x300.png",
       "alt": "Awesome bar in Firefox OS Browser App",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152740-200x300.png",
-      "markdown_path": "../assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152740-200x300.png",
-      "wayback_timestamp": "20160113172405",
-      "asset_archive_url": "https://web.archive.org/web/20160113172405id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152740-200x300.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup-200x300.jpg",
       "alt": "Subheader version",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/1506/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup-200x300.jpg",
-      "markdown_path": "../assets/1506/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup-200x300.jpg",
-      "wayback_timestamp": "20160113172405",
-      "asset_archive_url": "https://web.archive.org/web/20160113172405id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup-200x300.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01-200x300.jpg",
       "alt": "巢狀選單",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/1506/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01-200x300.jpg",
-      "markdown_path": "../assets/1506/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01-200x300.jpg",
-      "wayback_timestamp": "20160113172405",
-      "asset_archive_url": "https://web.archive.org/web/20160113172405id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01-200x300.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152546.png",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152546.png",
-      "markdown_path": "../assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152546.png",
-      "wayback_timestamp": "20160113172405",
-      "asset_archive_url": "https://web.archive.org/web/20160113172405id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152546.png",
-      "content_type": "image/png"
+      "source": "og:image"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152740.png",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152740.png",
-      "markdown_path": "../assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152740.png",
-      "wayback_timestamp": "20160113172405",
-      "asset_archive_url": "https://web.archive.org/web/20160113172405id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152740.png",
-      "content_type": "image/png"
+      "source": "a-href"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup-200x300.jpg",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup-200x300.jpg",
-      "archive_path": "assets/1506/008-8bdf39bf7d80.jpg",
-      "markdown_path": "../assets/1506/008-8bdf39bf7d80.jpg",
-      "wayback_timestamp": "20130524154452",
-      "asset_archive_url": "https://web.archive.org/web/20130524154452id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup-200x300.jpg",
-      "content_type": "image/jpeg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "a-href"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01-200x300.jpg",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01-200x300.jpg",
-      "archive_path": "assets/1506/009-fefcb5518637.jpg",
-      "markdown_path": "../assets/1506/009-fefcb5518637.jpg",
-      "wayback_timestamp": "20130524143351",
-      "asset_archive_url": "https://web.archive.org/web/20130524143351id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01-200x300.jpg",
-      "content_type": "image/jpeg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
-    },
-    {
-      "post_id": 1506,
-      "page_type": "post",
-      "title": "左右為難：Web 標準 v.s UX (User Experience) ，你選哪一邊？",
-      "page_timestamp": "20160113172405",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/25/c44cf3a2414977d162d5eab06abf9f99-bpthumb.jpg",
-      "source": "img",
-      "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/25/c44cf3a2414977d162d5eab06abf9f99-bpthumb.jpg",
-      "archive_path": "assets/1506/wp-content/uploads/avatars/25/c44cf3a2414977d162d5eab06abf9f99-bpthumb.jpg",
-      "markdown_path": "../assets/1506/wp-content/uploads/avatars/25/c44cf3a2414977d162d5eab06abf9f99-bpthumb.jpg",
-      "wayback_timestamp": "20160113170058",
-      "asset_archive_url": "https://web.archive.org/web/20160113170058id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/25/c44cf3a2414977d162d5eab06abf9f99-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "a-href"
     }
   ],
   "media": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/mock-showerrors2-150x150.png",
+      "alt": "mock-showerrors",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/Berlin_work_week-150x150.jpg",
+      "alt": "Berlin_work_week",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/25/c44cf3a2414977d162d5eab06abf9f99-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152546-200x300.png",
       "alt": "Time Picker in Firefox OS",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152546-200x300.png",
-      "markdown_path": "../assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152546-200x300.png",
-      "wayback_timestamp": "20160113172405",
-      "asset_archive_url": "https://web.archive.org/web/20160113172405id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152546-200x300.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152740-200x300.png",
       "alt": "Awesome bar in Firefox OS Browser App",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152740-200x300.png",
-      "markdown_path": "../assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152740-200x300.png",
-      "wayback_timestamp": "20160113172405",
-      "asset_archive_url": "https://web.archive.org/web/20160113172405id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152740-200x300.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup-200x300.jpg",
       "alt": "Subheader version",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/1506/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup-200x300.jpg",
-      "markdown_path": "../assets/1506/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup-200x300.jpg",
-      "wayback_timestamp": "20160113172405",
-      "asset_archive_url": "https://web.archive.org/web/20160113172405id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup-200x300.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01-200x300.jpg",
       "alt": "巢狀選單",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/1506/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01-200x300.jpg",
-      "markdown_path": "../assets/1506/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01-200x300.jpg",
-      "wayback_timestamp": "20160113172405",
-      "asset_archive_url": "https://web.archive.org/web/20160113172405id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01-200x300.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152546.png",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152546.png",
-      "markdown_path": "../assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152546.png",
-      "wayback_timestamp": "20160113172405",
-      "asset_archive_url": "https://web.archive.org/web/20160113172405id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152546.png",
-      "content_type": "image/png"
+      "source": "og:image"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152740.png",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152740.png",
-      "markdown_path": "../assets/1506/wp-content/uploads/2013/01/device-2013-01-09-152740.png",
-      "wayback_timestamp": "20160113172405",
-      "asset_archive_url": "https://web.archive.org/web/20160113172405id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/device-2013-01-09-152740.png",
-      "content_type": "image/png"
+      "source": "a-href"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup-200x300.jpg",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup-200x300.jpg",
-      "archive_path": "assets/1506/008-8bdf39bf7d80.jpg",
-      "markdown_path": "../assets/1506/008-8bdf39bf7d80.jpg",
-      "wayback_timestamp": "20130524154452",
-      "asset_archive_url": "https://web.archive.org/web/20130524154452id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/03_OWD_ValueSelector_Optgroup-200x300.jpg",
-      "content_type": "image/jpeg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "a-href"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01-200x300.jpg",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01-200x300.jpg",
-      "archive_path": "assets/1506/009-fefcb5518637.jpg",
-      "markdown_path": "../assets/1506/009-fefcb5518637.jpg",
-      "wayback_timestamp": "20130524143351",
-      "asset_archive_url": "https://web.archive.org/web/20130524143351id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/01/07_OWD_ValueSelector_Nested_01-200x300.jpg",
-      "content_type": "image/jpeg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
-    },
-    {
-      "post_id": 1506,
-      "page_type": "post",
-      "title": "左右為難：Web 標準 v.s UX (User Experience) ，你選哪一邊？",
-      "page_timestamp": "20160113172405",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/25/c44cf3a2414977d162d5eab06abf9f99-bpthumb.jpg",
-      "source": "img",
-      "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/25/c44cf3a2414977d162d5eab06abf9f99-bpthumb.jpg",
-      "archive_path": "assets/1506/wp-content/uploads/avatars/25/c44cf3a2414977d162d5eab06abf9f99-bpthumb.jpg",
-      "markdown_path": "../assets/1506/wp-content/uploads/avatars/25/c44cf3a2414977d162d5eab06abf9f99-bpthumb.jpg",
-      "wayback_timestamp": "20160113170058",
-      "asset_archive_url": "https://web.archive.org/web/20160113170058id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/25/c44cf3a2414977d162d5eab06abf9f99-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "a-href"
     }
   ],
   "links": [
@@ -265,6 +297,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

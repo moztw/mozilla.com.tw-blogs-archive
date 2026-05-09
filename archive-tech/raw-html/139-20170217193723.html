@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head><script src="//archive.org/includes/athena.js" type="text/javascript"></script>
+<script type="text/javascript">window.addEventListener('DOMContentLoaded',function(){var v=archive_analytics.values;v.service='wb';v.server_name='wwwb-app247.us.archive.org';v.server_ms=5535;archive_analytics.send_pageview({});});</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/bundle-playback.js?v=oZ57VlYl" charset="utf-8"></script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script>window.RufflePlayer=window.RufflePlayer||{};window.RufflePlayer.config={"autoplay":"on","unmuteOverlay":"hidden","showSwfDownload":true};</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/ruffle/ruffle.js"></script>
+<script type="text/javascript">
+    __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://tech.mozilla.com.tw:80/posts/139/99-cpu-usage%EF%BC%81why","20170217193723","https://web.archive.org/","web","https://web-static.archive.org/_static/",
+	      "1487360243");
+</script>
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3" />
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv" />
+<!-- End Wayback Rewrite JS Include -->
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。"/>
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA"/>
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78"/>
+<title>
+
+99% CPU Usage！Why ?  | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://web.archive.org/web/20170217193723im_/https://mozilla.com/favicon.ico"/>
+<meta property="og:url" content="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/139/99-cpu-usage%ef%bc%81why"/><meta property="og:image" content="https://web.archive.org/web/20170217193723im_/http://tech.mozilla.com.tw/wp-content/uploads/2012/06/CPU-Usage-Why-1024x1024.jpg"/>
+
+<link rel="stylesheet" type="text/css" media="all" href="https://web.archive.org/web/20170217193723cs_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="https://web.archive.org/web/20170217193723cs_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css"/><!--<link rel="pingback" href="http://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="http://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/","urlLoginRedirect":"https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=cfcfcf4ad5","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel="dns-prefetch" href="//web.archive.org/web/20170217193723/http://s.w.org/">
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 »" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/feed"/>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 » 迴響" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/comments/feed"/>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 » 99% CPU Usage！Why ? 迴響" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/139/99-cpu-usage%ef%bc%81why/feed"/>
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/web.archive.org\/web\/20170217193723\/https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/web.archive.org\/web\/20170217193723\/https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/web.archive.org\/web\/20170217193723\/http:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="crayon-css" href="https://web.archive.org/web/20170217193723cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="crayon-theme-arduino-ide-css" href="https://web.archive.org/web/20170217193723cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="crayon-font-monaco-css" href="https://web.archive.org/web/20170217193723cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="advanced-responsive-video-embedder-css" href="https://web.archive.org/web/20170217193723cs_/http://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.5.0" type="text/css" media="all"/>
+<link rel="stylesheet" id="persona-style-css" href="https://web.archive.org/web/20170217193723cs_/http://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46" type="text/css" media="all"/>
+<script type="text/javascript" src="https://web.archive.org/web/20170217193723js_/http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20170217193723js_/http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/web.archive.org\/web\/20170217193723\/http:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://web.archive.org/web/20170217193723js_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta"></script>
+<link rel="https://api.w.org/" href="http://tech.mozilla.com.tw/wp-json/"/>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://tech.mozilla.com.tw/xmlrpc.php?rsd"/>
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml"/> 
+<link rel="prev" title="JavaScript 如何定義 Function" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/296/javascript-%e5%a6%82%e4%bd%95%e5%ae%9a%e7%be%a9-function"/>
+<link rel="next" title="工程師的「今天」是到「明天早上」" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/183/%e5%b7%a5%e7%a8%8b%e5%b8%ab%e7%9a%84%e3%80%8c%e4%bb%8a%e5%a4%a9%e3%80%8d%e6%98%af%e5%88%b0%e3%80%8c%e6%98%8e%e5%a4%a9%e6%97%a9%e4%b8%8a%e3%80%8d"/>
+<meta name="generator" content="WordPress 4.6"/>
+<link rel="canonical" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/139/99-cpu-usage%ef%bc%81why"/>
+<link rel="shortlink" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/?p=139"/>
+<link rel="alternate" type="application/json+oembed" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/wp-json/oembed/1.0/embed?url=http%3A%2F%2Ftech.mozilla.com.tw%2Fposts%2F139%2F99-cpu-usage%25ef%25bc%2581why"/>
+<link rel="stylesheet" href="https://web.archive.org/web/20170217193723cs_/http://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen"/>	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://web.archive.org/web/20170217193723/https://ssl' : 'https://web.archive.org/web/20170217193723/http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-139 single-format-standard sand"><!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script>__wm.rw(0);</script>
+<div id="wm-ipp-base" lang="en" style="display:none;direction:ltr;" toolbar-mode="auto">
+<div id="wm-ipp" style="position:fixed;left:0;top:0;right:0;">
+<div id="donato" style="position:relative;width:100%;height:0;">
+  <div id="donato-base">
+    <iframe id="donato-if" src="https://archive.org/includes/donate.php?as_page=1&amp;platform=wb&amp;referer=https%3A//web.archive.org/web/20170217193723/http%3A//tech.mozilla.com.tw/posts/139/99-cpu-usage%EF%BC%81why"
+	    scrolling="no" frameborder="0" style="width:100%; height:100%">
+    </iframe>
+  </div>
+</div><div id="wm-ipp-inside">
+  <div id="wm-toolbar" style="position:relative;display:flex;flex-flow:row nowrap;justify-content:space-between;" nav="async">
+    <div id="wm-logo" style="/*width:110px;*/padding-top:12px;">
+      <a href="/web/" title="Wayback Machine home page"><img src="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png" srcset="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png 1.5x, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png 2x" alt="Wayback Machine" style="width:100px" border="0" /></a>
+    </div>
+    <div class="c" style="display:flex;flex-flow:column nowrap;justify-content:space-between;flex:1;">
+      <form class="u" style="display:flex;flex-direction:row;flex-wrap:nowrap;" target="_top" method="get" action="/web/submit" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="http://tech.mozilla.com.tw/posts/139/99-cpu-usage%EF%BC%81why" onfocus="this.focus();this.select();" style="flex:1;"/><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20170217193723" /><input type="submit" value="Go" />
+      </form>
+      <div style="display:flex;flex-flow:row nowrap;align-items:flex-end;">
+                <div class="s" id="wm-nav-captures" style="flex:1;">
+                    <a class="t" href="/web/20170217193723*/http://tech.mozilla.com.tw/posts/139/99-cpu-usage%EF%BC%81why" title="See a list of every capture for this URL">11 captures</a>
+          <div class="r" title="Timespan for captures of this URL">13 Aug 2012 - 17 Feb 2017</div>
+          </div>
+        <div class="k">
+          <a href="" id="wm-graph-anchor">
+            <div id="wm-ipp-sparkline" title="Explore captures for this URL" style="position: relative">
+              <canvas id="wm-sparkline-canvas" width="775" height="27" border="0"></canvas>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="n">
+      <table>
+        <tbody>
+          <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+          <tr class="m">
+            <td class="b" nowrap="nowrap">Jan</td>
+            <td class="c" id="displayMonthEl" title="You are here: 19:37:23 Feb 17, 2017">FEB</td>
+            <td class="f" nowrap="nowrap">Mar</td>
+          </tr>
+          <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+          <tr class="d">
+            <td class="b" nowrap="nowrap"><span class="ta"></span></td>
+            <td class="c" id="displayDayEl" style="width:34px;font-size:22px;white-space:nowrap;" title="You are here: 19:37:23 Feb 17, 2017">17</td>
+            <td class="f" nowrap="nowrap"><span class="ta"></span></td>
+          </tr>
+          <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+          <tr class="y">
+            <td class="b" nowrap="nowrap">2016</td>
+            <td class="c" id="displayYearEl" title="You are here: 19:37:23 Feb 17, 2017">2017</td>
+            <td class="f" nowrap="nowrap">2018</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="r" style="display:flex;flex-flow:column nowrap;align-items:flex-end;justify-content:space-between;">
+      <div id="wm-btns" style="text-align:right;height:23px;">
+                <span class="xxs">
+          <div id="wm-save-snapshot-success">success</div>
+          <div id="wm-save-snapshot-fail">fail</div>
+          <a id="wm-save-snapshot-open" href="#" title="Share via My Web Archive" >
+            <span class="iconochive-web"></span>
+          </a>
+          <a href="https://archive.org/account/login.php" title="Sign In" id="wm-sign-in">
+            <span class="iconochive-person"></span>
+          </a>
+          <span id="wm-save-snapshot-in-progress" class="iconochive-web"></span>
+        </span>
+                <a class="xxs" href="https://help.archive.org/help/category/the-wayback-machine/" title="Get some help using the Wayback Machine" style="top:-6px;"><span class="iconochive-question" style="color:rgb(87,186,244);font-size:160%;"></span></a>
+        <a id="wm-tb-close" href="#close" style="top:-2px;" title="Close the toolbar"><span class="iconochive-remove-circle" style="color:#888888;font-size:240%;"></span></a>
+      </div>
+      <div id="wm-share" class="xxs">
+        <a href="/web/20170217193723/http://web.archive.org/screenshot/http://tech.mozilla.com.tw/posts/139/99-cpu-usage%EF%BC%81why"
+           id="wm-screenshot"
+           title="screenshot">
+          <span class="wm-icon-screen-shot"></span>
+        </a>
+        <a href="#" id="wm-video" title="video">
+          <span class="iconochive-movies"></span>
+        </a>
+        <a id="wm-share-facebook" href="#" data-url="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw:80/posts/139/99-cpu-usage%EF%BC%81why" title="Share on Facebook" style="margin-right:5px;" target="_blank"><span class="iconochive-facebook" style="color:#3b5998;font-size:160%;"></span></a>
+        <a id="wm-share-twitter" href="#" data-url="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw:80/posts/139/99-cpu-usage%EF%BC%81why" title="Share on Twitter" style="margin-right:5px;" target="_blank"><span class="iconochive-twitter" style="color:#1dcaff;font-size:160%;"></span></a>
+      </div>
+      <div style="padding-right:2px;text-align:right;white-space:nowrap;">
+        <a id="wm-expand" class="wm-btn wm-closed" href="#expand"><span id="wm-expand-icon" class="iconochive-down-solid"></span> <span class="xxs" style="font-size:80%;">About this capture</span></a>
+      </div>
+    </div>
+  </div>
+    <div id="wm-capinfo" style="border-top:1px solid #777;display:none; overflow: hidden">
+        <div id="wm-capinfo-notice" source="api"></div>
+                <div id="wm-capinfo-collected-by">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;">COLLECTED BY</div>
+    <div style="padding:3px;position:relative" id="wm-collected-by-content">
+            <div style="display:inline-block;vertical-align:top;width:50%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls);"></span>
+		Organization: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+      <div style="display:inline-block;vertical-align:top;width:49%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/alexacrawls)"></span>
+		<div>Collection: <a style="color:#33f;" href="https://archive.org/details/alexacrawls" target="_new"><span class="wm-title">Alexa Crawls</span></a></div>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Starting in 1996, <a href="http://www.alexa.com/">Alexa Internet</a> has been donating their crawl data to the Internet Archive.  Flowing in every day, these data are added to the <a href="http://web.archive.org/">Wayback Machine</a> after an embargo period.
+	</div>
+	      </div>
+    </div>
+    </div>
+    <div id="wm-capinfo-timestamps">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;" title="Timestamps for the elements of this page">TIMESTAMPS</div>
+    <div>
+      <div id="wm-capresources" style="margin:0 5px 5px 5px;max-height:250px;overflow-y:scroll !important"></div>
+      <div id="wm-capresources-loading" style="text-align:left;margin:0 20px 5px 5px;display:none"><img src="https://web-static.archive.org/_static/images/loading.gif" alt="loading" /></div>
+    </div>
+    </div>
+  </div></div></div></div><div id="wm-ipp-print">The Wayback Machine - https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw:80/posts/139/99-cpu-usage%EF%BC%81why</div>
+<script type="text/javascript">//<![CDATA[
+__wm.bt(775,27,25,2,"web","http://tech.mozilla.com.tw/posts/139/99-cpu-usage%EF%BC%81why","20170217193723",1996,"https://web-static.archive.org/_static/",["https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3","https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv"], false);
+  __wm.rw(1);
+//]]></script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+ 
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//web.archive.org/web/20170217193723/http://mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//web.archive.org/web/20170217193723/http://mozilla.com.tw/" title="回首頁" class="close">
+              <img src="/web/20170217193723im_/http://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href="//web.archive.org/web/20170217193723/http://mozilla.com.tw/" class="home">Home</a>
+            <b>&raquo;</b>
+            <a href="//web.archive.org/web/20170217193723/http://mozilla.com.tw/news/">訊息中心</a>
+            <b>&raquo;</b>
+                          <a href="//web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/">謀智台客</a><b>&raquo;</b>
+              <span>99% CPU Usage！Why ?</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="http://tech.mozilla.com.tw/posts/139/99-cpu-usage%ef%bc%81why" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="http://tech.mozilla.com.tw/posts/139/99-cpu-usage%ef%bc%81why"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="https://web.archive.org/web/20170217193723/http://pinterest.com/pin/create/button/?url=http://tech.mozilla.com.tw/posts/139/99-cpu-usage%ef%bc%81why&amp;media=http://tech.mozilla.com.tw/wp-content/uploads/2012/06/CPU-Usage-Why-150x150.jpg" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//web.archive.org/web/20170217193723im_/http://assets.pinterest.com/images/PinExt.png" title="Pin It"/></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('https://web.archive.org/web/20170217193723/http://www.plurk.com/?qualifier=shares&amp;status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('(') .concat(encodeURIComponent(document.title)) .concat(')')));">
+	        <img src="https://web.archive.org/web/20170217193723im_/https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">1</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/296/javascript-%e5%a6%82%e4%bd%95%e5%ae%9a%e7%be%a9-function"><div class="post-tip"><span class="meta-nav">JavaScript 如何定義 Function</span></div></a></div>		
+							<div class="nav-next"><a href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/183/%e5%b7%a5%e7%a8%8b%e5%b8%ab%e7%9a%84%e3%80%8c%e4%bb%8a%e5%a4%a9%e3%80%8d%e6%98%af%e5%88%b0%e3%80%8c%e6%98%8e%e5%a4%a9%e6%97%a9%e4%b8%8a%e3%80%8d"><div class="post-tip"><span class="meta-nav">工程師的「今天」是到「明天早上」</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-139" class="post-139 post type-post status-publish format-standard has-post-thumbnail hentry category-b2g">
+	 	<header class="entry-header">
+		<h1 class="entry-title">99% CPU Usage！Why ?</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/date/2012/06" class="posted-month">6月</a>
+	        <span class="posted-date">11</span>
+	        <a title="See all posts from 2014" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/date/2012" class="posted-year">2012</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="10">
+		  	<a href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/author/vchangmozilla-com">
+	          <img src="https://web.archive.org/web/20170217193723im_/http://www.gravatar.com/avatar/0fa1e7a2807be2aaf0bd66d688506199?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=24" alt="" class="avatar user-10-avatar" width="24" height="24"/><!--
+	       --><div class="author-info">Vincet Chang</div><!--
+	       --><div class="author-title"></div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p><a href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/wp-content/uploads/2012/06/CPU-Usage-Why.jpg"><img class="aligncenter size-large wp-image-545" title="CPU Usage Why" src="https://web.archive.org/web/20170217193723im_/http://tech.mozilla.com.tw/wp-content/uploads/2012/06/CPU-Usage-Why-1024x1024.jpg" alt="" width="640" height="640" srcset="https://web.archive.org/web/20170217193723im_/http://tech.mozilla.com.tw/wp-content/uploads/2012/06/CPU-Usage-Why-1024x1024.jpg 1024w, https://web.archive.org/web/20170217193723im_/http://tech.mozilla.com.tw/wp-content/uploads/2012/06/CPU-Usage-Why-150x150.jpg 150w, https://web.archive.org/web/20170217193723im_/http://tech.mozilla.com.tw/wp-content/uploads/2012/06/CPU-Usage-Why-300x300.jpg 300w, https://web.archive.org/web/20170217193723im_/http://tech.mozilla.com.tw/wp-content/uploads/2012/06/CPU-Usage-Why.jpg 1384w" sizes="(max-width: 640px) 100vw, 640px"/></a></p>
+<p>前陣子接到一個新任務，就是要把 B2G 移植到新的 Samsung Galaxy S2 手機上。雖然這支手機也是 Galaxy S2，不過，他的 model name 是 GT-I9100G ，跟台灣市售的 GT-I9100 是完全不同的平台，有興趣的朋友可以參考<a href="https://web.archive.org/web/20170217193723/http://en.wikipedia.org/wiki/Samsung_Galaxy_S_II">這裡</a>。移植的過程中碰到了不少問題，在看到 B2G 成功的在新手機上跑起來，內心說真的還蠻感動的。移植成功後，當然要測試一下各個功能是否正常囉！嗯，看起來 Touch 功能是正常的，滑來滑去，還蠻順的。接著，再來放個電影看看， 哈哈！聲音和影像都正常呢！WiFi 連線也沒有問題，終於成功了。正當得意之際，突然發現怎麽 Touch 功能不會動了呢？當滑動螢幕時，系統一直把滑動 event 誤判為 Do you want to uninstall your &lt;app&gt;，難道是 input event 的偵測出了問題？</p>
+<p>Input event 實作的進入點目前是在 gecko/widget/gonk 這個目錄下的 nsAppShell.cpp，而 input event 的處理則是透過 Android framework 下的 libui 函式庫來實作，並且透過 widget/gonk/nsWindow.cpp 的 DispatchInputEvent () 函式將從 input device 所接收到的 event 傳到對應的 component 作處理。Input device 的 device nodes 目前是位於 /dev/input，有興趣的朋友可以 Trace 一下相關的程式碼。利用 logcat，我們可以得到 input event 的 debug 訊息，但是要先打開 gecko/widget/gonk/libui/InputReader.cpp 的 debug flag。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-58a750eb85465486004746" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+#define LOG_NDEBUG 1
+// Log debug messages for each raw event received from the EventHub.
+#define DEBUG_RAW_EVENTS 1</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-58a750eb85465486004746-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85465486004746-2">2</div><div class="crayon-num" data-line="crayon-58a750eb85465486004746-3">3</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-58a750eb85465486004746-1"><span class="crayon-p">#define LOG_NDEBUG 1</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85465486004746-2"><span class="crayon-c">// Log debug messages for each raw event received from the EventHub.</span></div><div class="crayon-line" id="crayon-58a750eb85465486004746-3"><span class="crayon-p">#define DEBUG_RAW_EVENTS 1</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0003 seconds] -->
+<p>打開 debug flag 再重新 編輯後，我們可以得到 InputReader 相關的 log，經過我們的分析後，我們發現 input event 的偵測部分是正常運作的，那問題到底出在什麽地方呢 ？</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-58a750eb85472945082002" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+D/InputReader( 4518): syncTouch: pointerCount 1 -&gt; 1, touching ids 0x80000000 -&gt; 0x80000000
+D/InputReader( 4518): Input event: device=5 type=0x0003 scancode=0x0035 keycode=0x0000
+D/InputReader( 4518): Input event: device=5 type=0x0003 scancode=0x0036 keycode=0x0000
+D/InputReader( 4518): Input event: device=5 type=0x0003 scancode=0x0030 keycode=0x0000
+D/InputReader( 4518): Input event: device=5 type=0x0003 scancode=0x0032 keycode=0x0000
+D/InputReader( 4518): Input event: device=5 type=0x0003 scancode=0x0039 keycode=0x0000
+D/InputReader( 4518): Input event: device=5 type=0x0000 scancode=0x0002 keycode=0x0000
+D/InputReader( 4518): Input event: device=5 type=0x0000 scancode=0x0000 keycode=0x0000</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-58a750eb85472945082002-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85472945082002-2">2</div><div class="crayon-num" data-line="crayon-58a750eb85472945082002-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85472945082002-4">4</div><div class="crayon-num" data-line="crayon-58a750eb85472945082002-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85472945082002-6">6</div><div class="crayon-num" data-line="crayon-58a750eb85472945082002-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85472945082002-8">8</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-58a750eb85472945082002-1"><span class="crayon-v">D</span><span class="crayon-o">/</span><span class="crayon-e">InputReader</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-cn">4518</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">syncTouch</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-i">pointerCount</span><span class="crayon-h"> </span><span class="crayon-cn">1</span><span class="crayon-h"> </span><span class="crayon-o">-&gt;</span><span class="crayon-h"> </span><span class="crayon-cn">1</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-e">touching </span><span class="crayon-i">ids</span><span class="crayon-h"> </span><span class="crayon-cn">0x80000000</span><span class="crayon-h"> </span><span class="crayon-o">-&gt;</span><span class="crayon-h"> </span><span class="crayon-cn">0x80000000</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85472945082002-2"><span class="crayon-v">D</span><span class="crayon-o">/</span><span class="crayon-e">InputReader</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-cn">4518</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-e">Input </span><span class="crayon-v">event</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">device</span><span class="crayon-o">=</span><span class="crayon-cn">5</span><span class="crayon-h"> </span><span class="crayon-v">type</span><span class="crayon-o">=</span><span class="crayon-cn">0x0003</span><span class="crayon-h"> </span><span class="crayon-v">scancode</span><span class="crayon-o">=</span><span class="crayon-cn">0x0035</span><span class="crayon-h"> </span><span class="crayon-v">keycode</span><span class="crayon-o">=</span><span class="crayon-cn">0x0000</span></div><div class="crayon-line" id="crayon-58a750eb85472945082002-3"><span class="crayon-v">D</span><span class="crayon-o">/</span><span class="crayon-e">InputReader</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-cn">4518</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-e">Input </span><span class="crayon-v">event</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">device</span><span class="crayon-o">=</span><span class="crayon-cn">5</span><span class="crayon-h"> </span><span class="crayon-v">type</span><span class="crayon-o">=</span><span class="crayon-cn">0x0003</span><span class="crayon-h"> </span><span class="crayon-v">scancode</span><span class="crayon-o">=</span><span class="crayon-cn">0x0036</span><span class="crayon-h"> </span><span class="crayon-v">keycode</span><span class="crayon-o">=</span><span class="crayon-cn">0x0000</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85472945082002-4"><span class="crayon-v">D</span><span class="crayon-o">/</span><span class="crayon-e">InputReader</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-cn">4518</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-e">Input </span><span class="crayon-v">event</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">device</span><span class="crayon-o">=</span><span class="crayon-cn">5</span><span class="crayon-h"> </span><span class="crayon-v">type</span><span class="crayon-o">=</span><span class="crayon-cn">0x0003</span><span class="crayon-h"> </span><span class="crayon-v">scancode</span><span class="crayon-o">=</span><span class="crayon-cn">0x0030</span><span class="crayon-h"> </span><span class="crayon-v">keycode</span><span class="crayon-o">=</span><span class="crayon-cn">0x0000</span></div><div class="crayon-line" id="crayon-58a750eb85472945082002-5"><span class="crayon-v">D</span><span class="crayon-o">/</span><span class="crayon-e">InputReader</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-cn">4518</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-e">Input </span><span class="crayon-v">event</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">device</span><span class="crayon-o">=</span><span class="crayon-cn">5</span><span class="crayon-h"> </span><span class="crayon-v">type</span><span class="crayon-o">=</span><span class="crayon-cn">0x0003</span><span class="crayon-h"> </span><span class="crayon-v">scancode</span><span class="crayon-o">=</span><span class="crayon-cn">0x0032</span><span class="crayon-h"> </span><span class="crayon-v">keycode</span><span class="crayon-o">=</span><span class="crayon-cn">0x0000</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85472945082002-6"><span class="crayon-v">D</span><span class="crayon-o">/</span><span class="crayon-e">InputReader</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-cn">4518</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-e">Input </span><span class="crayon-v">event</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">device</span><span class="crayon-o">=</span><span class="crayon-cn">5</span><span class="crayon-h"> </span><span class="crayon-v">type</span><span class="crayon-o">=</span><span class="crayon-cn">0x0003</span><span class="crayon-h"> </span><span class="crayon-v">scancode</span><span class="crayon-o">=</span><span class="crayon-cn">0x0039</span><span class="crayon-h"> </span><span class="crayon-v">keycode</span><span class="crayon-o">=</span><span class="crayon-cn">0x0000</span></div><div class="crayon-line" id="crayon-58a750eb85472945082002-7"><span class="crayon-v">D</span><span class="crayon-o">/</span><span class="crayon-e">InputReader</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-cn">4518</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-e">Input </span><span class="crayon-v">event</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">device</span><span class="crayon-o">=</span><span class="crayon-cn">5</span><span class="crayon-h"> </span><span class="crayon-v">type</span><span class="crayon-o">=</span><span class="crayon-cn">0x0000</span><span class="crayon-h"> </span><span class="crayon-v">scancode</span><span class="crayon-o">=</span><span class="crayon-cn">0x0002</span><span class="crayon-h"> </span><span class="crayon-v">keycode</span><span class="crayon-o">=</span><span class="crayon-cn">0x0000</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85472945082002-8"><span class="crayon-v">D</span><span class="crayon-o">/</span><span class="crayon-e">InputReader</span><span class="crayon-sy">(</span><span class="crayon-h"> </span><span class="crayon-cn">4518</span><span class="crayon-sy">)</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-e">Input </span><span class="crayon-v">event</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">device</span><span class="crayon-o">=</span><span class="crayon-cn">5</span><span class="crayon-h"> </span><span class="crayon-v">type</span><span class="crayon-o">=</span><span class="crayon-cn">0x0000</span><span class="crayon-h"> </span><span class="crayon-v">scancode</span><span class="crayon-o">=</span><span class="crayon-cn">0x0000</span><span class="crayon-h"> </span><span class="crayon-v">keycode</span><span class="crayon-o">=</span><span class="crayon-cn">0x0000</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0019 seconds] -->
+<p>好吧，用 top 來看一下有沒有什麽線索好了。哇！B2G process 的 CPU usage 居然是 99％耶，由於目前 B2G 這個 project 是 multi-threads 的架構，因此，首先我們必需知道每個 threads 的 CPU usage：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-58a750eb85475495512554" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+#top</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-58a750eb85475495512554-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-58a750eb85475495512554-1"><span class="crayon-p">#top</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0001 seconds] -->
+<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-58a750eb85476510417230" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+Mem: 167724K used, 782204K free, 0K shrd, 3112K buff, 49140K cached
+CPU: 68.1% usr  6.1% sys  0.0% nic 25.6% idle  0.0% io  0.0% irq  0.0% sirq
+Load average: 7.33 8.06 8.51 3/170 14358
+  PID  PPID USER     STAT   VSZ %VSZ %CPU COMMAND
+14166 14163 root     R     158m 16.9 99.2 /system/b2g/b2g
+14352 14299 root     R     1864  0.1  0.1 top
+    7     2 root     SW       0  0.0  0.1 [events/0]
+ 9660     1 media    S &lt;  25136  2.6  0.0 /system/bin/mediaserver
+ 9525     1 media    S    19008  1.9  0.0 /system/bin/syslink_daemon.out -f /sys
+ 9520     1 radio    S     9560  1.0  0.0 /system/bin/rild
+ 9524     1 system   S     4728  0.4  0.0 /system/bin/npsmobex
+ 9521     1 root     S     3956  0.4  0.0 /system/bin/vold
+ 9523     1 root     S     3948  0.4  0.0 /system/bin/netd
+ 9541     1 root     S     3452  0.3  0.0 /sbin/adbd</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-58a750eb85476510417230-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85476510417230-2">2</div><div class="crayon-num" data-line="crayon-58a750eb85476510417230-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85476510417230-4">4</div><div class="crayon-num" data-line="crayon-58a750eb85476510417230-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85476510417230-6">6</div><div class="crayon-num" data-line="crayon-58a750eb85476510417230-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85476510417230-8">8</div><div class="crayon-num" data-line="crayon-58a750eb85476510417230-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85476510417230-10">10</div><div class="crayon-num" data-line="crayon-58a750eb85476510417230-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85476510417230-12">12</div><div class="crayon-num" data-line="crayon-58a750eb85476510417230-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85476510417230-14">14</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-58a750eb85476510417230-1"><span class="crayon-v">Mem</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-cn">167724K</span><span class="crayon-h"> </span><span class="crayon-v">used</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">782204K</span><span class="crayon-h"> </span><span class="crayon-v">free</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">0K</span><span class="crayon-h"> </span><span class="crayon-v">shrd</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">3112K</span><span class="crayon-h"> </span><span class="crayon-v">buff</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-cn">49140K</span><span class="crayon-h"> </span><span class="crayon-e">cached</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85476510417230-2"><span class="crayon-v">CPU</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-cn">68.1</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">usr</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">6.1</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">sys</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.0</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">nic</span><span class="crayon-h"> </span><span class="crayon-cn">25.6</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">idle</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.0</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">io</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.0</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">irq</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.0</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-e">sirq</span></div><div class="crayon-line" id="crayon-58a750eb85476510417230-3"><span class="crayon-e">Load </span><span class="crayon-v">average</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-cn">7.33</span><span class="crayon-h"> </span><span class="crayon-cn">8.06</span><span class="crayon-h"> </span><span class="crayon-cn">8.51</span><span class="crayon-h"> </span><span class="crayon-cn">3</span><span class="crayon-o">/</span><span class="crayon-cn">170</span><span class="crayon-h"> </span><span class="crayon-cn">14358</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85476510417230-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">PID&nbsp;&nbsp;</span><span class="crayon-e">PPID </span><span class="crayon-e">USER&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-e">STAT&nbsp;&nbsp; </span><span class="crayon-v">VSZ</span><span class="crayon-h"> </span><span class="crayon-o">%</span><span class="crayon-v">VSZ</span><span class="crayon-h"> </span><span class="crayon-o">%</span><span class="crayon-e">CPU </span><span class="crayon-i">COMMAND</span></div><div class="crayon-line" id="crayon-58a750eb85476510417230-5"><span class="crayon-cn">14166</span><span class="crayon-h"> </span><span class="crayon-cn">14163</span><span class="crayon-h"> </span><span class="crayon-i">root</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-i">R</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">158m</span><span class="crayon-h"> </span><span class="crayon-cn">16.9</span><span class="crayon-h"> </span><span class="crayon-cn">99.2</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-i">b2g</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85476510417230-6"><span class="crayon-cn">14352</span><span class="crayon-h"> </span><span class="crayon-cn">14299</span><span class="crayon-h"> </span><span class="crayon-i">root</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-i">R</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">1864</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.1</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.1</span><span class="crayon-h"> </span><span class="crayon-i">top</span></div><div class="crayon-line" id="crayon-58a750eb85476510417230-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-cn">7</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">2</span><span class="crayon-h"> </span><span class="crayon-e">root&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-i">SW</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">0</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.0</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.1</span><span class="crayon-h"> </span><span class="crayon-sy">[</span><span class="crayon-v">events</span><span class="crayon-o">/</span><span class="crayon-cn">0</span><span class="crayon-sy">]</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85476510417230-8"><span class="crayon-h"> </span><span class="crayon-cn">9660</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">1</span><span class="crayon-h"> </span><span class="crayon-i">media</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">S</span><span class="crayon-h"> </span><span class="crayon-o">&lt;</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">25136</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">2.6</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.0</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">bin</span><span class="crayon-o">/</span><span class="crayon-i">mediaserver</span></div><div class="crayon-line" id="crayon-58a750eb85476510417230-9"><span class="crayon-h"> </span><span class="crayon-cn">9525</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">1</span><span class="crayon-h"> </span><span class="crayon-i">media</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-i">S</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-cn">19008</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">1.9</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.0</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">bin</span><span class="crayon-o">/</span><span class="crayon-v">syslink_daemon</span><span class="crayon-sy">.</span><span class="crayon-v">out</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-v">f</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-i">sys</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85476510417230-10"><span class="crayon-h"> </span><span class="crayon-cn">9520</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">1</span><span class="crayon-h"> </span><span class="crayon-i">radio</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-i">S</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">9560</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">1.0</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.0</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">bin</span><span class="crayon-o">/</span><span class="crayon-i">rild</span></div><div class="crayon-line" id="crayon-58a750eb85476510417230-11"><span class="crayon-h"> </span><span class="crayon-cn">9524</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">1</span><span class="crayon-h"> </span><span class="crayon-i">system</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-i">S</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">4728</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.4</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.0</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">bin</span><span class="crayon-o">/</span><span class="crayon-i">npsmobex</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85476510417230-12"><span class="crayon-h"> </span><span class="crayon-cn">9521</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">1</span><span class="crayon-h"> </span><span class="crayon-i">root</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-i">S</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">3956</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.4</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.0</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">bin</span><span class="crayon-o">/</span><span class="crayon-i">vold</span></div><div class="crayon-line" id="crayon-58a750eb85476510417230-13"><span class="crayon-h"> </span><span class="crayon-cn">9523</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">1</span><span class="crayon-h"> </span><span class="crayon-i">root</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-i">S</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">3948</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.4</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.0</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">bin</span><span class="crayon-o">/</span><span class="crayon-i">netd</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85476510417230-14"><span class="crayon-h"> </span><span class="crayon-cn">9541</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">1</span><span class="crayon-h"> </span><span class="crayon-i">root</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-i">S</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-cn">3452</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.3</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0.0</span><span class="crayon-h"> </span><span class="crayon-o">/</span><span class="crayon-v">sbin</span><span class="crayon-o">/</span><span class="crayon-v">adbd</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0026 seconds] -->
+<p>我們可以利用 toolbox 所提供的 top 指令來獲得 Thread level 的 CPU usage 資訊。除了 top 指令外，B2G project 也支援了 perf 及 oprofile 這兩個常見的工具，對於 performance profiling 有興趣的朋友可以參考<a href="https://web.archive.org/web/20170217193723/https://wiki.mozilla.org/B2G/Profiling">這裡</a>。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-58a750eb85479659615915" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+toolbox top -t -m 10</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-58a750eb85479659615915-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-58a750eb85479659615915-1"><span class="crayon-e">toolbox </span><span class="crayon-v">top</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-v">t</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-i">m</span><span class="crayon-h"> </span><span class="crayon-cn">10</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-58a750eb8547b482457487" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+User 55%, System 42%, IOW 0%, IRQ 0%
+User 340 + Nice 0 + Sys 264 + Idle 11 + IOW 0 + IRQ 0 + SIRQ 0 = 615
+
+  PID   TID CPU% S     VSS     RSS PCY UID      Thread          Proc
+14166 14241  39% R 392632K 309500K  fg root     b2g             /system/b2g/b2g
+14166 14166  38% S 392632K 309500K  fg root     b2g             /system/b2g/b2g
+14166 14235  13% R 392632K 309500K  fg root     b2g             /system/b2g/b2g
+14166 14194   3% R 392632K 309500K  fg root     b2g             /system/b2g/b2g
+14166 14196   2% S 392632K 309500K  fg root     b2g             /system/b2g/b2g
+15057 15057   0% R   1028K    420K  fg root     toolbox         toolbox
+  874   874   0% S      0K      0K  fg root     mmcqd
+14166 14205   0% S 392632K 309500K  fg root     b2g             /system/b2g/b2g
+  800   800   0% S      0K      0K  fg root     khotplug/0
+ 1011  1011   0% S      0K      0K  fg root     OMAPVOUT</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-58a750eb8547b482457487-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb8547b482457487-2">2</div><div class="crayon-num" data-line="crayon-58a750eb8547b482457487-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb8547b482457487-4">4</div><div class="crayon-num" data-line="crayon-58a750eb8547b482457487-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb8547b482457487-6">6</div><div class="crayon-num" data-line="crayon-58a750eb8547b482457487-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb8547b482457487-8">8</div><div class="crayon-num" data-line="crayon-58a750eb8547b482457487-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb8547b482457487-10">10</div><div class="crayon-num" data-line="crayon-58a750eb8547b482457487-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb8547b482457487-12">12</div><div class="crayon-num" data-line="crayon-58a750eb8547b482457487-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb8547b482457487-14">14</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-58a750eb8547b482457487-1"><span class="crayon-i">User</span><span class="crayon-h"> </span><span class="crayon-cn">55</span><span class="crayon-o">%</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-i">System</span><span class="crayon-h"> </span><span class="crayon-cn">42</span><span class="crayon-o">%</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-i">IOW</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-o">%</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-i">IRQ</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-o">%</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb8547b482457487-2"><span class="crayon-i">User</span><span class="crayon-h"> </span><span class="crayon-cn">340</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-i">Nice</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-i">Sys</span><span class="crayon-h"> </span><span class="crayon-cn">264</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-i">Idle</span><span class="crayon-h"> </span><span class="crayon-cn">11</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-i">IOW</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-i">IRQ</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-i">SIRQ</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-cn">615</span></div><div class="crayon-line" id="crayon-58a750eb8547b482457487-3">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb8547b482457487-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">PID&nbsp;&nbsp; </span><span class="crayon-e">TID </span><span class="crayon-v">CPU</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">S</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-e">VSS&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-e">RSS </span><span class="crayon-e">PCY </span><span class="crayon-e">UID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-e">Thread&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-i">Proc</span></div><div class="crayon-line" id="crayon-58a750eb8547b482457487-5"><span class="crayon-cn">14166</span><span class="crayon-h"> </span><span class="crayon-cn">14241</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">39</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">R</span><span class="crayon-h"> </span><span class="crayon-cn">392632K</span><span class="crayon-h"> </span><span class="crayon-cn">309500K</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">fg </span><span class="crayon-e">root&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-v">b2g</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-i">b2g</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb8547b482457487-6"><span class="crayon-cn">14166</span><span class="crayon-h"> </span><span class="crayon-cn">14166</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">38</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">S</span><span class="crayon-h"> </span><span class="crayon-cn">392632K</span><span class="crayon-h"> </span><span class="crayon-cn">309500K</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">fg </span><span class="crayon-e">root&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-v">b2g</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-i">b2g</span></div><div class="crayon-line" id="crayon-58a750eb8547b482457487-7"><span class="crayon-cn">14166</span><span class="crayon-h"> </span><span class="crayon-cn">14235</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">13</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">R</span><span class="crayon-h"> </span><span class="crayon-cn">392632K</span><span class="crayon-h"> </span><span class="crayon-cn">309500K</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">fg </span><span class="crayon-e">root&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-v">b2g</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-i">b2g</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb8547b482457487-8"><span class="crayon-cn">14166</span><span class="crayon-h"> </span><span class="crayon-cn">14194</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-cn">3</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">R</span><span class="crayon-h"> </span><span class="crayon-cn">392632K</span><span class="crayon-h"> </span><span class="crayon-cn">309500K</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">fg </span><span class="crayon-e">root&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-v">b2g</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-i">b2g</span></div><div class="crayon-line" id="crayon-58a750eb8547b482457487-9"><span class="crayon-cn">14166</span><span class="crayon-h"> </span><span class="crayon-cn">14196</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-cn">2</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">S</span><span class="crayon-h"> </span><span class="crayon-cn">392632K</span><span class="crayon-h"> </span><span class="crayon-cn">309500K</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">fg </span><span class="crayon-e">root&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-v">b2g</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-i">b2g</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb8547b482457487-10"><span class="crayon-cn">15057</span><span class="crayon-h"> </span><span class="crayon-cn">15057</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-cn">0</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">R</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-cn">1028K</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-cn">420K</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">fg </span><span class="crayon-e">root&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-e">toolbox&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-i">toolbox</span></div><div class="crayon-line" id="crayon-58a750eb8547b482457487-11"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">874</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-cn">874</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-cn">0</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">S</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-cn">0K</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-cn">0K</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">fg </span><span class="crayon-e">root&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-i">mmcqd</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb8547b482457487-12"><span class="crayon-cn">14166</span><span class="crayon-h"> </span><span class="crayon-cn">14205</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-cn">0</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">S</span><span class="crayon-h"> </span><span class="crayon-cn">392632K</span><span class="crayon-h"> </span><span class="crayon-cn">309500K</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">fg </span><span class="crayon-e">root&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-v">b2g</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-o">/</span><span class="crayon-v">system</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-o">/</span><span class="crayon-i">b2g</span></div><div class="crayon-line" id="crayon-58a750eb8547b482457487-13"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">800</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-cn">800</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-cn">0</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">S</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-cn">0K</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-cn">0K</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">fg </span><span class="crayon-e">root&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-v">khotplug</span><span class="crayon-o">/</span><span class="crayon-cn">0</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb8547b482457487-14"><span class="crayon-h"> </span><span class="crayon-cn">1011</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">1011</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-cn">0</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-i">S</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-cn">0K</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-cn">0K</span><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e">fg </span><span class="crayon-e">root&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-v">OMAPVOUT</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0025 seconds] -->
+<p>利用 toolbox 所提供的 top 指令，我們可以知道 TID = 14241 , 14166 及 TID ＝ 14235 這幾個 Threads 佔用了最多的 CPU 資源，因此，我們可以透過 GDB 這個工具來看看到底這幾個 Threads 發生了什麽事情。</p>
+<p>GDB 是「 The GNU Project Debugger」 的縮寫，對 GDB 這個工具不熟悉的朋友，可以參考 <a href="https://web.archive.org/web/20170217193723/http://www.gnu.org/software/gdb/documentation/">GNU 的網站</a>。為了簡化 GDB 的設定， B2G project 提供了 簡單的 <a href="https://web.archive.org/web/20170217193723/https://wiki.mozilla.org/B2G/gdb">make 指令</a>來設定 GDB，我們可以用 make run-gdb 這個指令來啟動 GDB。在執行了make run-gdb 指令後，應該會看到 gdb 的命令提示符號，這時，我們就可以利用 gdb 所支援的功能繼續 debug 了。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-58a750eb8547e420520822" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+vchang@vchang:~/project/b2g$ make run-gdb
+(gdb)</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-58a750eb8547e420520822-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb8547e420520822-2">2</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-58a750eb8547e420520822-1"><span class="crayon-v">vchang</span><span class="crayon-sy">@</span><span class="crayon-v">vchang</span><span class="crayon-o">:</span><span class="crayon-o">~</span><span class="crayon-o">/</span><span class="crayon-v">project</span><span class="crayon-o">/</span><span class="crayon-v">b2g</span><span class="crayon-sy">$</span><span class="crayon-h"> </span><span class="crayon-e">make </span><span class="crayon-v">run</span><span class="crayon-o">-</span><span class="crayon-e">gdb</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb8547e420520822-2"><span class="crayon-sy">(</span><span class="crayon-v">gdb</span><span class="crayon-sy">)</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0002 seconds] -->
+<p>我這裏先介紹幾個常用的 GDB 指令：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-58a750eb85480617633565" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+# 設定中斷點，
+break location =&gt; location 可以是函式名稱，某個檔案的某一行或是指令的記憶體位置 
+
+# 看 process 或是 Thread 的 backtrace，
+backtrace
+bt
+
+# 列出 B2G process 所有的 Thread 資訊
+info threads 
+
+# 列出目前設定的中斷點
+info b
+
+# 切換到不同的 Thread
+thread [id]
+
+# 單步執行
+step
+
+# 在同一函式單步執行
+next
+
+# 連續執行
+continue 
+
+# 中斷目前指令
+ctrl + c
+
+# 遇到中斷點時執行的指令
+commands [range...]
+... command-list ...
+end
+
+# 關掉標頁數的功能
+set pagination off</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-58a750eb85480617633565-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-2">2</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-4">4</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-6">6</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-8">8</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-10">10</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-12">12</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-14">14</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-16">16</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-18">18</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-20">20</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-22">22</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-24">24</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-25">25</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-26">26</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-27">27</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-28">28</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-29">29</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-30">30</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-31">31</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-32">32</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-33">33</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85480617633565-34">34</div><div class="crayon-num" data-line="crayon-58a750eb85480617633565-35">35</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-58a750eb85480617633565-1"><span class="crayon-p"># 設定中斷點，</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-2"><span class="crayon-st">break</span><span class="crayon-h"> </span><span class="crayon-v">location</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-o">&gt;</span><span class="crayon-h"> </span><span class="crayon-i">location</span><span class="crayon-h"> </span>可以是函式名稱，某個檔案的某一行或是指令的記憶體位置<span class="crayon-h"> </span></div><div class="crayon-line" id="crayon-58a750eb85480617633565-3">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-4"><span class="crayon-p"># 看 process 或是 Thread 的 backtrace，</span></div><div class="crayon-line" id="crayon-58a750eb85480617633565-5"><span class="crayon-e">backtrace</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-6"><span class="crayon-v">bt</span></div><div class="crayon-line" id="crayon-58a750eb85480617633565-7">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-8"><span class="crayon-p"># 列出 B2G process 所有的 Thread 資訊</span></div><div class="crayon-line" id="crayon-58a750eb85480617633565-9"><span class="crayon-e">info </span><span class="crayon-v">threads</span><span class="crayon-h"> </span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-10">&nbsp;</div><div class="crayon-line" id="crayon-58a750eb85480617633565-11"><span class="crayon-p"># 列出目前設定的中斷點</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-12"><span class="crayon-i">info</span><span class="crayon-h"> </span><span class="crayon-v">b</span></div><div class="crayon-line" id="crayon-58a750eb85480617633565-13">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-14"><span class="crayon-p"># 切換到不同的 Thread</span></div><div class="crayon-line" id="crayon-58a750eb85480617633565-15"><span class="crayon-i">thread</span><span class="crayon-h"> </span><span class="crayon-sy">[</span><span class="crayon-v">id</span><span class="crayon-sy">]</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-16">&nbsp;</div><div class="crayon-line" id="crayon-58a750eb85480617633565-17"><span class="crayon-p"># 單步執行</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-18"><span class="crayon-v">step</span></div><div class="crayon-line" id="crayon-58a750eb85480617633565-19">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-20"><span class="crayon-p"># 在同一函式單步執行</span></div><div class="crayon-line" id="crayon-58a750eb85480617633565-21"><span class="crayon-v">next</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-22">&nbsp;</div><div class="crayon-line" id="crayon-58a750eb85480617633565-23"><span class="crayon-p"># 連續執行</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-24"><span class="crayon-st">continue</span><span class="crayon-h"> </span></div><div class="crayon-line" id="crayon-58a750eb85480617633565-25">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-26"><span class="crayon-p"># 中斷目前指令</span></div><div class="crayon-line" id="crayon-58a750eb85480617633565-27"><span class="crayon-v">ctrl</span><span class="crayon-h"> </span><span class="crayon-o">+</span><span class="crayon-h"> </span><span class="crayon-v">c</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-28">&nbsp;</div><div class="crayon-line" id="crayon-58a750eb85480617633565-29"><span class="crayon-p"># 遇到中斷點時執行的指令</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-30"><span class="crayon-i">commands</span><span class="crayon-h"> </span><span class="crayon-sy">[</span><span class="crayon-v">range</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">]</span></div><div class="crayon-line" id="crayon-58a750eb85480617633565-31"><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-h"> </span><span class="crayon-v">command</span><span class="crayon-o">-</span><span class="crayon-i">list</span><span class="crayon-h"> </span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-32"><span class="crayon-st">end</span></div><div class="crayon-line" id="crayon-58a750eb85480617633565-33">&nbsp;</div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85480617633565-34"><span class="crayon-p"># 關掉標頁數的功能</span></div><div class="crayon-line" id="crayon-58a750eb85480617633565-35"><span class="crayon-e">set </span><span class="crayon-e">pagination </span><span class="crayon-v">off</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0006 seconds] -->
+<p>設定好 GDB 後，我們可以利用 top 指令所得到的 Thread ID 及 GDB 來確定是那一個 Threads 發生問題。首先，我們利用 info threads 得到 Id － Thread id 的對應關係：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-58a750eb85482920907260" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+(gdb) info threads
+  Id   Target Id         Frame
+  22   Thread 14166.14241 poll () at bionic/libc/arch-arm/syscalls/poll.S:15
+  21   Thread 14166.14240 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200
+  20   Thread 14166.14235 sqlite3VXPrintf (pAccum=0x449ff89c, useExtended=, fmt=, ap=...)
+  19   Thread 14166.14234 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200
+  18   Thread 14166.14233 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200
+  17   Thread 14166.14231 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200
+  16   Thread 14166.14228 syscall () at bionic/libc/arch-arm/bionic/syscall.S:50
+  15   Thread 14166.14210 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200
+  14   Thread 14166.14208 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200
+  13   Thread 14166.14207 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200
+  12   Thread 14166.14202 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200
+  11   Thread 14166.14205 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200
+  10   Thread 14166.14203 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200
+  9    Thread 14166.14200 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200
+  8    Thread 14166.14199 0xffff0520 in ?? ()
+  7    Thread 14166.14198 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200
+  6    Thread 14166.14197 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200
+  5    Thread 14166.14196 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200
+  4    Thread 14166.14195 0xffff0520 in ?? ()
+  3    Thread 14166.14194 __futex_syscall3 () at bionic/libc/arch-arm/bionic/atomics_arm.S:200
+  2    Thread 14166.14193 syscall () at bionic/libc/arch-arm/bionic/syscall.S:50
+* 1    Thread 14166.14166 0x82cb1090 in test (name=, entry=, pobj=, pc=, this=, obj=, cx=</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-58a750eb85482920907260-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85482920907260-2">2</div><div class="crayon-num" data-line="crayon-58a750eb85482920907260-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85482920907260-4">4</div><div class="crayon-num" data-line="crayon-58a750eb85482920907260-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85482920907260-6">6</div><div class="crayon-num" data-line="crayon-58a750eb85482920907260-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85482920907260-8">8</div><div class="crayon-num" data-line="crayon-58a750eb85482920907260-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85482920907260-10">10</div><div class="crayon-num" data-line="crayon-58a750eb85482920907260-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85482920907260-12">12</div><div class="crayon-num" data-line="crayon-58a750eb85482920907260-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85482920907260-14">14</div><div class="crayon-num" data-line="crayon-58a750eb85482920907260-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85482920907260-16">16</div><div class="crayon-num" data-line="crayon-58a750eb85482920907260-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85482920907260-18">18</div><div class="crayon-num" data-line="crayon-58a750eb85482920907260-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85482920907260-20">20</div><div class="crayon-num" data-line="crayon-58a750eb85482920907260-21">21</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85482920907260-22">22</div><div class="crayon-num" data-line="crayon-58a750eb85482920907260-23">23</div><div class="crayon-num crayon-striped-num" data-line="crayon-58a750eb85482920907260-24">24</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-58a750eb85482920907260-1"><span class="crayon-sy">(</span><span class="crayon-v">gdb</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">info </span><span class="crayon-e">threads</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85482920907260-2"><span class="crayon-e">&nbsp;&nbsp;</span><span class="crayon-e">Id&nbsp;&nbsp; </span><span class="crayon-e">Target </span><span class="crayon-e">Id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class="crayon-i">Frame</span></div><div class="crayon-line" id="crayon-58a750eb85482920907260-3"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">22</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14241</span><span class="crayon-h"> </span><span class="crayon-e">poll</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">syscalls</span><span class="crayon-o">/</span><span class="crayon-v">poll</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">15</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85482920907260-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">21</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14240</span><span class="crayon-h"> </span><span class="crayon-e">__futex_syscall3</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">atomics_arm</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">200</span></div><div class="crayon-line" id="crayon-58a750eb85482920907260-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">20</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14235</span><span class="crayon-h"> </span><span class="crayon-e">sqlite3VXPrintf</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">pAccum</span><span class="crayon-o">=</span><span class="crayon-cn">0x449ff89c</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">useExtended</span><span class="crayon-o">=</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">fmt</span><span class="crayon-o">=</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">ap</span><span class="crayon-o">=</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">.</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85482920907260-6"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">19</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14234</span><span class="crayon-h"> </span><span class="crayon-e">__futex_syscall3</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">atomics_arm</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">200</span></div><div class="crayon-line" id="crayon-58a750eb85482920907260-7"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">18</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14233</span><span class="crayon-h"> </span><span class="crayon-e">__futex_syscall3</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">atomics_arm</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">200</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85482920907260-8"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">17</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14231</span><span class="crayon-h"> </span><span class="crayon-e">__futex_syscall3</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">atomics_arm</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">200</span></div><div class="crayon-line" id="crayon-58a750eb85482920907260-9"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">16</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14228</span><span class="crayon-h"> </span><span class="crayon-e">syscall</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">syscall</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">50</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85482920907260-10"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">15</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14210</span><span class="crayon-h"> </span><span class="crayon-e">__futex_syscall3</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">atomics_arm</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">200</span></div><div class="crayon-line" id="crayon-58a750eb85482920907260-11"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">14</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14208</span><span class="crayon-h"> </span><span class="crayon-e">__futex_syscall3</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">atomics_arm</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">200</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85482920907260-12"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">13</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14207</span><span class="crayon-h"> </span><span class="crayon-e">__futex_syscall3</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">atomics_arm</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">200</span></div><div class="crayon-line" id="crayon-58a750eb85482920907260-13"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">12</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14202</span><span class="crayon-h"> </span><span class="crayon-e">__futex_syscall3</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">atomics_arm</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">200</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85482920907260-14"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">11</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14205</span><span class="crayon-h"> </span><span class="crayon-e">__futex_syscall3</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">atomics_arm</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">200</span></div><div class="crayon-line" id="crayon-58a750eb85482920907260-15"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">10</span><span class="crayon-h">&nbsp;&nbsp; </span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14203</span><span class="crayon-h"> </span><span class="crayon-e">__futex_syscall3</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">atomics_arm</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">200</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85482920907260-16"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">9</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14200</span><span class="crayon-h"> </span><span class="crayon-e">__futex_syscall3</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">atomics_arm</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">200</span></div><div class="crayon-line" id="crayon-58a750eb85482920907260-17"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">8</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14199</span><span class="crayon-h"> </span><span class="crayon-cn">0xffff0520</span><span class="crayon-h"> </span><span class="crayon-st">in</span><span class="crayon-h"> </span><span class="crayon-sy">?</span><span class="crayon-sy">?</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85482920907260-18"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">7</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14198</span><span class="crayon-h"> </span><span class="crayon-e">__futex_syscall3</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">atomics_arm</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">200</span></div><div class="crayon-line" id="crayon-58a750eb85482920907260-19"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">6</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14197</span><span class="crayon-h"> </span><span class="crayon-e">__futex_syscall3</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">atomics_arm</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">200</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85482920907260-20"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">5</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14196</span><span class="crayon-h"> </span><span class="crayon-e">__futex_syscall3</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">atomics_arm</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">200</span></div><div class="crayon-line" id="crayon-58a750eb85482920907260-21"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">4</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14195</span><span class="crayon-h"> </span><span class="crayon-cn">0xffff0520</span><span class="crayon-h"> </span><span class="crayon-st">in</span><span class="crayon-h"> </span><span class="crayon-sy">?</span><span class="crayon-sy">?</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85482920907260-22"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">3</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14194</span><span class="crayon-h"> </span><span class="crayon-e">__futex_syscall3</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">atomics_arm</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">200</span></div><div class="crayon-line" id="crayon-58a750eb85482920907260-23"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">2</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14193</span><span class="crayon-h"> </span><span class="crayon-e">syscall</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-e">at </span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">libc</span><span class="crayon-o">/</span><span class="crayon-v">arch</span><span class="crayon-o">-</span><span class="crayon-v">arm</span><span class="crayon-o">/</span><span class="crayon-v">bionic</span><span class="crayon-o">/</span><span class="crayon-v">syscall</span><span class="crayon-sy">.</span><span class="crayon-v">S</span><span class="crayon-o">:</span><span class="crayon-cn">50</span></div><div class="crayon-line crayon-striped-line" id="crayon-58a750eb85482920907260-24"><span class="crayon-o">*</span><span class="crayon-h"> </span><span class="crayon-cn">1</span><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-i">Thread</span><span class="crayon-h"> </span><span class="crayon-cn">14166.14166</span><span class="crayon-h"> </span><span class="crayon-cn">0x82cb1090</span><span class="crayon-h"> </span><span class="crayon-st">in</span><span class="crayon-h"> </span><span class="crayon-i">test</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">name</span><span class="crayon-o">=</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">entry</span><span class="crayon-o">=</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">pobj</span><span class="crayon-o">=</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">pc</span><span class="crayon-o">=</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-o">=</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">obj</span><span class="crayon-o">=</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">cx</span><span class="crayon-o">=</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0042 seconds] -->
+<p>接著利用 thread id 指令來切換目前的 Thread ，最後再利用 bt 指令來看這個 Thread 目前 stack 的 backtrace。利用 stack 的 backtrace 資訊，我們就可以知道目前這個 Thread 正在執行的函式了，有了這些資訊，再配合原始碼，就可以幫助我們判斷問題發生的原因了。</p>
+<p>在這個例子裡，我們利用 GDB 及 top 指令來幫忙解決將 B2G 移植到新手機時 input event 判斷錯誤的問題，以這些工具所收集到的資訊並加以分析之後，我們發現是 Timer Thread 進入了無窮迴圈。每隔幾個微秒 Timer Thread 就會傳送 timeout event 給其它的 Threads ，因而造成整個系統非常的忙碌，而無法正確處理 input event。雖然說 GDB 及 top 這兩個工具可以加速我們找到問題點，但是，問題真正發生的原因，還是需要透過追蹤原始碼才有辦法得知。原來，Timer Thread 為了更準確的處理 timeout event ，所以，當下一次 timeout event 的發生時間小於某個特定值時，Timer thread 會直接把 timeout event 取出並傳送給對應的 Thread，這樣可以避免因為排程所造成的時間誤差。但是，當我們將 B2G 移植到不同的手機上時，因為系統不同，所以誤判發生 timeout event 的時間，而造成整個系統都在處理 timeout event ，使得CPU 非常忙碌。</p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/category/b2g" rel="category tag">Firefox OS(B2G)</a>      </div>
+    </footer> 
+    </article><!-- #post-139 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&amp;hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div>目前找不到相關文章</div>			
+				<div id="comments">
+		
+			<h3 id="comments-title">
+			共 1 則讀者回應
+		</h3>
+
+		
+		<ol class="commentlist">
+				<li class="comment even thread-even depth-1" id="li-comment-8">
+		<article id="comment-8" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt="" src="https://web.archive.org/web/20170217193723im_/http://1.gravatar.com/avatar/1b1e23b2a902f247ad0bf8bf632fcc45?s=40&amp;d=mm&amp;r=g" srcset="https://web.archive.org/web/20170217193723im_/http://1.gravatar.com/avatar/1b1e23b2a902f247ad0bf8bf632fcc45?s=80&amp;d=mm&amp;r=g 2x" class="avatar avatar-40 photo" height="40" width="40"/>										<cite class="fn">LY</cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/139/99-cpu-usage%ef%bc%81why#comment-8"><time pubdate datetime="2012-06-27T10:39:06+00:00">
+					2012 年 06 月 27 日 上午 10:39					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>你好，我想請教一下，B2G里是不是每開一個應用程序，就開始一個新的線程？</p>
+<p>這點我認為跟Firefox是一樣的，每開一個Tab頁或者新窗口，就開始一個新的線程。</p>
+<p>您看是這樣的嗎？</p>
+</div>
+
+			<div class="reply">
+				<a rel="nofollow" class="comment-reply-link" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/139/99-cpu-usage%ef%bc%81why?replytocom=8#respond" onclick="return addComment.moveForm( &quot;comment-8&quot;, &quot;8&quot;, &quot;respond&quot;, &quot;139&quot; )" aria-label="回覆 LY">回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+		</ol>
+
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/web/20170217193723/http://tech.mozilla.com.tw/posts/139/99-cpu-usage%EF%BC%81why#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required="true" required="required"/></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required="true" required="required"/></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200"/></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表"/> <input type="hidden" name="comment_post_ID" value="139" id="comment_post_ID"/>
+<input type="hidden" name="comment_parent" id="comment_parent" value="0"/>
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="791a1f4894"/></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="132"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class="name-title"><a class="profile-link" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/author/vchangmozilla-com"><span class="gravatar left"><img src="https://web.archive.org/web/20170217193723im_/http://www.gravatar.com/avatar/0fa1e7a2807be2aaf0bd66d688506199?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=48" alt="" class="avatar user-10-avatar" width="48" height="48"/></span><span class="name">Vincet Chang</span></a></span><p class="contact"></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="70" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/author/szchenmozilla-com"><img src="https://web.archive.org/web/20170217193723im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg" alt="" class="avatar user-70-avatar" width="96" height="96"/></a><a data-author-id="33" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/author/pwangmozilla-com"><img src="https://web.archive.org/web/20170217193723im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg" alt="" class="avatar user-33-avatar" width="96" height="96"/></a><a data-author-id="43" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/author/atsaimozilla-com"><img src="https://web.archive.org/web/20170217193723im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg" alt="" class="avatar user-43-avatar" width="96" height="96"/></a><a data-author-id="103" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/author/jaliumozilla-com"><img src="https://web.archive.org/web/20170217193723im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg" alt="" class="avatar user-103-avatar" width="96" height="96"/></a><a data-author-id="90" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/author/hchangmozilla-com"><img src="https://web.archive.org/web/20170217193723im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg" alt="" class="avatar user-90-avatar" width="96" height="96"/></a><a data-author-id="61" href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/author/elinmozilla-com"><img src="https://web.archive.org/web/20170217193723im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg" alt="" class="avatar user-61-avatar" width="96" height="96"/></a></div><a class="more" href="/web/20170217193723/http://tech.mozilla.com.tw/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s"/>
+					<input type="submit" id="searchsubmit" value="搜尋"/>
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://web.archive.org/web/20170217193723if_/https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&amp;opaque=True&amp;hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://web.archive.org/web/20170217193723/https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://web.archive.org/web/20170217193723/https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="https://web.archive.org/web/20170217193723/http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="https://web.archive.org/web/20170217193723/http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="https://web.archive.org/web/20170217193723/http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/category/css">CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/category/firefox">Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/category/b2g">Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/category/interaction-design">Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/category/javascript">Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/category/life-at-mozilla">Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/category/mozilla">Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/category/open-source">Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://web.archive.org/web/20170217193723/http://tech.mozilla.com.tw/posts/category/ux">UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;">
+			
+			<option value="">選擇月份</option>
+				<option value="http://tech.mozilla.com.tw/posts/date/2016/05"> 2016 年 五月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2016/02"> 2016 年 二月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/07"> 2015 年 七月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/06"> 2015 年 六月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/05"> 2015 年 五月 &nbsp;(2)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/04"> 2015 年 四月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/03"> 2015 年 三月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/02"> 2015 年 二月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/01"> 2015 年 一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/12"> 2014 年 十二月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/11"> 2014 年 十一月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/10"> 2014 年 十月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/09"> 2014 年 九月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/08"> 2014 年 八月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/07"> 2014 年 七月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/05"> 2014 年 五月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/04"> 2014 年 四月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/03"> 2014 年 三月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/02"> 2014 年 二月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/01"> 2014 年 一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/12"> 2013 年 十二月 &nbsp;(6)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/11"> 2013 年 十一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/10"> 2013 年 十月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/09"> 2013 年 九月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/08"> 2013 年 八月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/07"> 2013 年 七月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/06"> 2013 年 六月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/05"> 2013 年 五月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/04"> 2013 年 四月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/03"> 2013 年 三月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/02"> 2013 年 二月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/01"> 2013 年 一月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/12"> 2012 年 十二月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/11"> 2012 年 十一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/10"> 2012 年 十月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/09"> 2012 年 九月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/08"> 2012 年 八月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/07"> 2012 年 七月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/06"> 2012 年 六月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/05"> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="https://web.archive.org/web/20170217193723/http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+        <noscript>
+    </noscript>
+    <script type="text/javascript" src="/web/20170217193723js_/http://tech.mozilla.com.tw/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/web/20170217193723js_/http://tech.mozilla.com.tw/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/web/20170217193723js_/http://tech.mozilla.com.tw/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/web/20170217193723js_/http://tech.mozilla.com.tw/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://web.archive.org/web/20170217193723js_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://web.archive.org/web/20170217193723js_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//web.archive.org/web/20170217193723/http://connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://web.archive.org/web/20170217193723/https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://web.archive.org/web/20170217193723js_/https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>
+<!--
+     FILE ARCHIVED ON 19:37:23 Feb 17, 2017 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 11:17:39 May 09, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 0.647
+  exclusion.robots: 0.071
+  exclusion.robots.policy: 0.059
+  esindex: 0.009
+  cdx.remote: 22.993
+  LoadShardBlock: 5325.757 (3)
+  PetaboxLoader3.datanode: 5194.022 (4)
+  PetaboxLoader3.resolve: 171.089 (3)
+  load_resource: 96.632
+  nav: 1.44 (6)
+-->

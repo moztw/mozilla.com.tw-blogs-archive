@@ -12,16 +12,52 @@
   "author": "Star Cheng",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=4313",
-  "archive_url": "https://web.archive.org/web/20190916015852id_/https://tech.mozilla.com.tw/?p=4313",
+  "archive_url": "https://web.archive.org/web/20190916015852/https://tech.mozilla.com.tw/?p=4313",
   "wayback_timestamp": "20190916015852",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p>&nbsp;</p>\n<p>&#8220;聽  海哭的聲音  這片海未免也太多情   悲泣到天明\"</p>\n<p>是低，大家都知道是阿妹經典到不行的歌，但是如果阿妹聲音播不出來，那哭的人就換成是我而不是那片海了 Orz ！</p>\n<p>請大家先從阿妹的歌聲裡 (或是我的哭聲?) 回到現實來，聽我來聊聊 Firefox OS 裡聲音的部分。基本上聲音系統裡可以簡單分成兩種，一種是 voice 另一種則是 audio，簡單的分法就是\"講電話\" (voice) 跟\"玩手機\" (audio)。玩手機又可以分成播放 (playback) 和錄音 (record) 兩種，本篇把焦點會放在 audio playback 的部分，換句話說就是手機播放聲音的功能！事實上，audio 牽扯很多相關的功能，像是 Modem、Bluetooth、FMRadio 等，而且有時候你叫 audio 播，他還真的給你裝作沒聲音；有時候你不想要 audio 播，他卻跑出聲音來！我只能學宮廷劇的華妃來一句 &#8211; audio 就是矯情！(尾音升高 =.=)</p>\n<p>&nbsp;</p>\n<p>從 FxOS (Firefox OS 的縮寫，本篇台客文章之後均用此縮寫) 大架構來分，audio 可以分成 Gaia layer / Gecko layer / Gonk layer ; 從 FxOS 播放來講，Gaia app 可以使用 audio element 來對 audio 進行播放、暫停等操作。來來來，你來，是叫你來一起看大架構啦：</p>\n<p>&nbsp;</p>\n<p><strong>[Gaia layer]</strong> <em> 以下舉例說明使用一個 audio element，至於如何使用 audio API，可以到 MDN 上查一查喔！</em></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5d7eec5b9c33d441060059\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nvar player = new Audio();    // audio element\r\nplayer.play()                // play function\r\nplayer.pause()               // pause function</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5d7eec5b9c33d441060059-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5d7eec5b9c33d441060059-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5d7eec5b9c33d441060059-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5d7eec5b9c33d441060059-1\"><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">player</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">new</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">Audio</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// audio element</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5d7eec5b9c33d441060059-2\"><span class=\"crayon-v\">player</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">play</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// play function</span></div><div class=\"crayon-line\" id=\"crayon-5d7eec5b9c33d441060059-3\"><span class=\"crayon-v\">player</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">pause</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class=\"crayon-c\">// pause function</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0003 seconds] -->\r\n<p>&nbsp;</p>\n<p><strong>[Gecko layer]</strong> <em>接下來 audio 檔案會被 decode 成 PCM data，然後往 audio back-end 傳送。</em></p>\n<p>鄉民說沒圖沒真相，為了讓大家了解 FxOS 發出聲音的真相，放上兩張野生的 Gecko 的 audio 架構圖。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio8.png\"><img class=\"alignnone  wp-image-4923\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio8.png\" alt=\"Audio8\" width=\"267\" height=\"282\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio8.png 432w, https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio8-284x300.png 284w\" sizes=\"(max-width: 267px) 100vw, 267px\" /></a> <img class=\"alignnone  wp-image-4344\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/04/Audio3.png\" alt=\"Audio3\" width=\"299\" height=\"267\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/04/Audio3.png 453w, https://tech.mozilla.com.tw/wp-content/uploads/2014/04/Audio3-300x268.png 300w\" sizes=\"(max-width: 299px) 100vw, 299px\" /></p>\n<p>從這兩張圖來看 audio 的 data 流動，左半邊的圖，我們看到在 MediaDecoderStateMachine 會產生一個 audio thread 負責把 decode 完的 PCM data 往 AudioStream 塞；右半邊的圖，我們看到會產生一個 AudioStream 的 instance，且在 AudioStream::Init() 的階段，會將 stream type、channel number、sample rate 等資訊帶到 audio back-end 去。以下對幾個 component 稍加說明。</p>\n<p>a) HTMLMediaElement: 是HTMLAudioElement 的 parent class，會提供 audio element 的基本操作像是 audio.play() 或是 audio.pause() 的具體實作。</p>\n<p>b) MediaDecoder/MediaDecoderStateMachine: MediaDecoder 中有個 MediaReader 負責 decode 不同類型的 audio 檔案成 PCM data，而在  MediaDecoderStateMachine 會處理不同的 decode 狀態，然後使用 AudioLoop 叫 AudioStream 去存取 decode 完成的資料。</p>\n<p>c) AudioStream: 維護一個 buffer，使用 SetCapacity() 設定存放 n 秒的 buffer 大小，利用 PopElements()  &amp; AppendElements() 兩個 function 來操作這一個 circular buffer 的讀取和寫入。</p>\n<p>d) Lib Cubeb: 提供一組 file operation 讓 audio stream object 可以和不同的 audio back-end 溝通。(FxOS 目前是使用 Android 的 OpenSL NDK lib 當成 back-end )</p>\n<p>&nbsp;</p>\n<p><strong>[Gonk layer]</strong> <em>使用 Android AudioTrack/AudioFlinger 和 ASOC audio driver 將 digital PCM轉成 analog 訊號往正確的 output device 傳送。</em></p>\n<p>a) OpenSL ndk: Android 提供的一個實作 OpenSL 的 API 的 library，FxOS 使用 OpenSL ndk 而不直接使用 AudioTrack 的原因 &#8211; 這樣就不會因為 Android 版本的改動而需要修改 Gecko 相關的 code。</p>\n<p>b) AudioTrack &amp; AudioFlinger: Android Audio back-end！ 維護一個 circular shared memory buffer，在 plackback 部分，AudioTrack 主要負責\"寫\" PCM data 到 buffer 裡；而 AudioFlinger 主要負責從 buffer 裡\"讀\" PCM data，然後把 PCM data 送給 Android HAL 的 AudioHardware 。</p>\n<p>c) Android HAL: Android 提出的一組硬體抽象層，透過 ALSA API (或是 Tiny ALSA API)  來對 ASOC audio driver 提供的 File Operation 來進行操作。然後將 digital 訊號轉成 analog 訊號，往 output device 硬體輸出。</p>\n<p>&nbsp;</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10.png\"><img class=\"alignnone size-full wp-image-4945\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10.png\" alt=\"Audio10\" width=\"632\" height=\"474\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10.png 632w, https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-300x225.png 300w\" sizes=\"(max-width: 632px) 100vw, 632px\" /></a></p>\n<h2><strong>[後記]</strong></h2>\n<p>除了上面提到的 audio playback 的部分外，像是跟 connection device (像是 Bluetooth headset &#8211; A2DP / SCO 或是有線耳機) 和 phone state 相關的 AudioManager 也是一個有趣的 topic (但是不是在本篇聊 ^.^)。另外 audio competing policy 的 audio channel service / agent 、audio policy service + audio policy manager (決定 routing path) 也都是可以好好聊聊的 topics。最後，如果對這些 audio 的 component 的熟悉度有提升的話，我想 audio 就沒辦法矯情了， 也可以快速地找到 bug 的 root cause了 🙂</p>\n<p>&nbsp;</p>\n<p>[1] cubeb.c 負責接不同的 audio back-end (<a href=\"http://dxr.mozilla.org/mozilla-central/source/media/libcubeb/src/cubeb.c?from=cubeb.c&amp;case=true#51\">http://dxr.mozilla.org/mozilla-central/source/media/libcubeb/src/cubeb.c?from=cubeb.c&amp;case=true#51</a>)</p>\n\t\t\t</div>",
   "content_text": "“聽 海哭的聲音 這片海未免也太多情 悲泣到天明\" 是低，大家都知道是阿妹經典到不行的歌，但是如果阿妹聲音播不出來，那哭的人就換成是我而不是那片海了 Orz ！ 請大家先從阿妹的歌聲裡 (或是我的哭聲?) 回到現實來，聽我來聊聊 Firefox OS 裡聲音的部分。基本上聲音系統裡可以簡單分成兩種，一種是 voice 另一種則是 audio，簡單的分法就是\"講電話\" (voice) 跟\"玩手機\" (audio)。玩手機又可以分成播放 (playback) 和錄音 (record) 兩種，本篇把焦點會放在 audio playback 的部分，換句話說就是手機播放聲音的功能！事實上，audio 牽扯很多相關的功能，像是 Modem、Bluetooth、FMRadio 等，而且有時候你叫 audio 播，他還真的給你裝作沒聲音；有時候你不想要 audio 播，他卻跑出聲音來！我只能學宮廷劇的華妃來一句 – audio 就是矯情！(尾音升高 =.=) 從 FxOS (Firefox OS 的縮寫，本篇台客文章之後均用此縮寫) 大架構來分，audio 可以分成 Gaia layer / Gecko layer / Gonk layer ; 從 FxOS 播放來講，Gaia app 可以使用 audio element 來對 audio 進行播放、暫停等操作。來來來，你來，是叫你來一起看大架構啦： [Gaia layer] 以下舉例說明使用一個 audio element，至於如何使用 audio API，可以到 MDN 上查一查喔！ var player = new Audio(); // audio element player.play() // play function player.pause() // pause function 1 2 3 var player = new Audio ( ) ; // audio element player . play ( ) // play function player . pause ( ) // pause function [Gecko layer] 接下來 audio 檔案會被 decode 成 PCM data，然後往 audio back-end 傳送。 鄉民說沒圖沒真相，為了讓大家了解 FxOS 發出聲音的真相，放上兩張野生的 Gecko 的 audio 架構圖。 從這兩張圖來看 audio 的 data 流動，左半邊的圖，我們看到在 MediaDecoderStateMachine 會產生一個 audio thread 負責把 decode 完的 PCM data 往 AudioStream 塞；右半邊的圖，我們看到會產生一個 AudioStream 的 instance，且在 AudioStream::Init() 的階段，會將 stream type、channel number、sample rate 等資訊帶到 audio back-end 去。以下對幾個 component 稍加說明。 a) HTMLMediaElement: 是HTMLAudioElement 的 parent class，會提供 audio element 的基本操作像是 audio.play() 或是 audio.pause() 的具體實作。 b) MediaDecoder/MediaDecoderStateMachine: MediaDecoder 中有個 MediaReader 負責 decode 不同類型的 audio 檔案成 PCM data，而在 MediaDecoderStateMachine 會處理不同的 decode 狀態，然後使用 AudioLoop 叫 AudioStream 去存取 decode 完成的資料。 c) AudioStream: 維護一個 buffer，使用 SetCapacity() 設定存放 n 秒的 buffer 大小，利用 PopElements() & AppendElements() 兩個 function 來操作這一個 circular buffer 的讀取和寫入。 d) Lib Cubeb: 提供一組 file operation 讓 audio stream object 可以和不同的 audio back-end 溝通。(FxOS 目前是使用 Android 的 OpenSL NDK lib 當成 back-end ) [Gonk layer] 使用 Android AudioTrack/AudioFlinger 和 ASOC audio driver 將 digital PCM轉成 analog 訊號往正確的 output device 傳送。 a) OpenSL ndk: Android 提供的一個實作 OpenSL 的 API 的 library，FxOS 使用 OpenSL ndk 而不直接使用 AudioTrack 的原因 – 這樣就不會因為 Android 版本的改動而需要修改 Gecko 相關的 code。 b) AudioTrack & AudioFlinger: Android Audio back-end！ 維護一個 circular shared memory buffer，在 plackback 部分，AudioTrack 主要負責\"寫\" PCM data 到 buffer 裡；而 AudioFlinger 主要負責從 buffer 裡\"讀\" PCM data，然後把 PCM data 送給 Android HAL 的 AudioHardware 。 c) Android HAL: Android 提出的一組硬體抽象層，透過 ALSA API (或是 Tiny ALSA API) 來對 ASOC audio driver 提供的 File Operation 來進行操作。然後將 digital 訊號轉成 analog 訊號，往 output device 硬體輸出。 [後記] 除了上面提到的 audio playback 的部分外，像是跟 connection device (像是 Bluetooth headset – A2DP / SCO 或是有線耳機) 和 phone state 相關的 AudioManager 也是一個有趣的 topic (但是不是在本篇聊 ^.^)。另外 audio competing policy 的 audio channel service / agent 、audio policy service + audio policy manager (決定 routing path) 也都是可以好好聊聊的 topics。最後，如果對這些 audio 的 component 的熟悉度有提升的話，我想 audio 就沒辦法矯情了， 也可以快速地找到 bug 的 root cause了 🙂 [1] cubeb.c 負責接不同的 audio back-end ( http://dxr.mozilla.org/mozilla-central/source/media/libcubeb/src/cubeb.c?from=cubeb.c&case=true#51 )",
   "images": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2014-07-10-%E4%B8%8B%E5%8D%886.04.20-150x150.png",
+      "alt": "app_uninstall",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/08/ogimg-150x150.png",
+      "alt": "Firefox 愛在鵲橋狐你幸福",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio8.png",
       "alt": "Audio8",
       "kind": "image",
       "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio8-284x300.png",
+      "alt": "Audio8",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/04/Audio3.png",
@@ -30,40 +66,102 @@
       "source": "img"
     },
     {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/04/Audio3-300x268.png",
+      "alt": "Audio3",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10.png",
       "alt": "Audio10",
       "kind": "image",
-      "source": "img",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "archive_path": "assets/4313/002-17c1b1426838.png",
-      "markdown_path": "../assets/4313/002-17c1b1426838.png",
-      "wayback_timestamp": "20150324035730",
-      "asset_archive_url": "https://web.archive.org/web/20150324035730id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-300x225.png",
+      "alt": "Audio10",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
       "alt": "",
       "kind": "image",
-      "source": "img",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "archive_path": "assets/4313/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "markdown_path": "../assets/4313/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "wayback_timestamp": "20150324035730",
-      "asset_archive_url": "https://web.archive.org/web/20150324035730id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "media": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2014-07-10-%E4%B8%8B%E5%8D%886.04.20-150x150.png",
+      "alt": "app_uninstall",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/08/ogimg-150x150.png",
+      "alt": "Firefox 愛在鵲橋狐你幸福",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio8.png",
       "alt": "Audio8",
       "kind": "image",
       "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio8-284x300.png",
+      "alt": "Audio8",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/04/Audio3.png",
@@ -72,32 +170,58 @@
       "source": "img"
     },
     {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/04/Audio3-300x268.png",
+      "alt": "Audio3",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10.png",
       "alt": "Audio10",
       "kind": "image",
-      "source": "img",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "archive_path": "assets/4313/002-17c1b1426838.png",
-      "markdown_path": "../assets/4313/002-17c1b1426838.png",
-      "wayback_timestamp": "20150324035730",
-      "asset_archive_url": "https://web.archive.org/web/20150324035730id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-300x225.png",
+      "alt": "Audio10",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
       "alt": "",
       "kind": "image",
-      "source": "img",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "archive_path": "assets/4313/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "markdown_path": "../assets/4313/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "wayback_timestamp": "20150324035730",
-      "asset_archive_url": "https://web.archive.org/web/20150324035730id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-150x150.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -118,11 +242,71 @@
   "asset_status": "partial_assets_failed",
   "asset_errors": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2014-07-10-%E4%B8%8B%E5%8D%886.04.20-150x150.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/08/ogimg-150x150.png",
+      "reason": "article_media_missing"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio8.png",
       "reason": "article_media_missing"
     },
     {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio8-284x300.png",
+      "reason": "article_media_missing"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/04/Audio3.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/04/Audio3-300x268.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/07/Audio10-300x225.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
       "reason": "article_media_missing"
     }
   ]

@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head><script src="//archive.org/includes/athena.js" type="text/javascript"></script>
+<script type="text/javascript">window.addEventListener('DOMContentLoaded',function(){var v=archive_analytics.values;v.service='wb';v.server_name='wwwb-app259.us.archive.org';v.server_ms=510;archive_analytics.send_pageview({});});</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/bundle-playback.js?v=oZ57VlYl" charset="utf-8"></script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script>window.RufflePlayer=window.RufflePlayer||{};window.RufflePlayer.config={"autoplay":"on","unmuteOverlay":"hidden","showSwfDownload":true};</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/ruffle/ruffle.js"></script>
+<script type="text/javascript">
+    __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://tech.mozilla.com.tw/posts/3060/firefox-os-%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e5%a4%a7%e6%8f%ad%e7%a7%98","20160604142848","https://web.archive.org/","web","https://web-static.archive.org/_static/",
+	      "1465050528");
+</script>
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3" />
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv" />
+<!-- End Wayback Rewrite JS Include -->
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。"/>
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA"/>
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78"/>
+<title>
+
+Firefox OS 測試流程大揭秘 | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://web.archive.org/web/20160604142848im_/https://mozilla.com/favicon.ico"/>
+<meta property="og:url" content="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/3060/firefox-os-%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e5%a4%a7%e6%8f%ad%e7%a7%98"/><meta property="og:image" content="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/fxos-1024x345.jpg"/>
+
+<link rel="stylesheet" type="text/css" media="all" href="https://web.archive.org/web/20160604142848cs_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="https://web.archive.org/web/20160604142848cs_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css"/><!--<link rel="pingback" href="http://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="http://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/","urlLoginRedirect":"https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=b3b961f5e1","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 »" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/feed"/>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 » 迴響" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/comments/feed"/>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 » Firefox OS 測試流程大揭秘 迴響" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/3060/firefox-os-%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e5%a4%a7%e6%8f%ad%e7%a7%98/feed"/>
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/web.archive.org\/web\/20160604142848\/https:\/\/s.w.org\/images\/core\/emoji\/72x72\/","ext":".png","source":{"concatemoji":"https:\/\/web.archive.org\/web\/20160604142848\/http:\/\/tech.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.4.2"}};
+			!function(a,b,c){function d(a){var c,d=b.createElement("canvas"),e=d.getContext&&d.getContext("2d"),f=String.fromCharCode;return e&&e.fillText?(e.textBaseline="top",e.font="600 32px Arial","flag"===a?(e.fillText(f(55356,56806,55356,56826),0,0),d.toDataURL().length>3e3):"diversity"===a?(e.fillText(f(55356,57221),0,0),c=e.getImageData(16,16,1,1).data.toString(),e.fillText(f(55356,57221,55356,57343),0,0),c!==e.getImageData(16,16,1,1).data.toString()):("simple"===a?e.fillText(f(55357,56835),0,0):e.fillText(f(55356,57135),0,0),0!==e.getImageData(16,16,1,1).data[0])):!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g;c.supports={simple:d("simple"),flag:d("flag"),unicode8:d("unicode8"),diversity:d("diversity")},c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.simple&&c.supports.flag&&c.supports.unicode8&&c.supports.diversity||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="crayon-css" href="https://web.archive.org/web/20160604142848cs_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="advanced-responsive-video-embedder-css" href="https://web.archive.org/web/20160604142848cs_/http://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/advanced-responsive-video-embedder-public.css?ver=6.4.1" type="text/css" media="all"/>
+<link rel="stylesheet" id="persona-style-css" href="https://web.archive.org/web/20160604142848cs_/http://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46" type="text/css" media="all"/>
+<script type="text/javascript" src="https://web.archive.org/web/20160604142848js_/http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.11.3"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20160604142848js_/http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/web.archive.org\/web\/20160604142848\/http:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://web.archive.org/web/20160604142848js_/http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta"></script>
+<link rel="https://api.w.org/" href="http://tech.mozilla.com.tw/wp-json/"/>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://tech.mozilla.com.tw/xmlrpc.php?rsd"/>
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml"/> 
+<link rel="prev" title="藍牙四大神器！– 簡介開發常用藍牙配件" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/2957/%e8%97%8d%e7%89%99%e5%9b%9b%e5%a4%a7%e7%a5%9e%e5%99%a8%ef%bc%81-%e7%b0%a1%e4%bb%8b%e9%96%8b%e7%99%bc%e5%b8%b8%e7%94%a8%e8%97%8d%e7%89%99%e9%85%8d%e4%bb%b6"/>
+<link rel="next" title="用 MozTrap 來管理你的測試" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/2748/%e7%94%a8-moztrap-%e4%be%86%e7%ae%a1%e7%90%86%e4%bd%a0%e7%9a%84%e6%b8%ac%e8%a9%a6"/>
+<meta name="generator" content="WordPress 4.4.2"/>
+<link rel="canonical" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/3060/firefox-os-%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e5%a4%a7%e6%8f%ad%e7%a7%98"/>
+<link rel="shortlink" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/?p=3060"/>
+<link rel="alternate" type="application/json+oembed" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/wp-json/oembed/1.0/embed?url=http%3A%2F%2Ftech.mozilla.com.tw%2Fposts%2F3060%2Ffirefox-os-%25e6%25b8%25ac%25e8%25a9%25a6%25e6%25b5%2581%25e7%25a8%258b%25e5%25a4%25a7%25e6%258f%25ad%25e7%25a7%2598"/>
+<link rel="alternate" type="text/xml+oembed" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/wp-json/oembed/1.0/embed?url=http%3A%2F%2Ftech.mozilla.com.tw%2Fposts%2F3060%2Ffirefox-os-%25e6%25b8%25ac%25e8%25a9%25a6%25e6%25b5%2581%25e7%25a8%258b%25e5%25a4%25a7%25e6%258f%25ad%25e7%25a7%2598&amp;format=xml"/>
+<link rel="stylesheet" href="https://web.archive.org/web/20160604142848cs_/http://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen"/>	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://web.archive.org/web/20160604142848/https://ssl' : 'https://web.archive.org/web/20160604142848/http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-3060 single-format-standard sand"><!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script>__wm.rw(0);</script>
+<div id="wm-ipp-base" lang="en" style="display:none;direction:ltr;" toolbar-mode="auto">
+<div id="wm-ipp" style="position:fixed;left:0;top:0;right:0;">
+<div id="donato" style="position:relative;width:100%;height:0;">
+  <div id="donato-base">
+    <iframe id="donato-if" src="https://archive.org/includes/donate.php?as_page=1&amp;platform=wb&amp;referer=https%3A//web.archive.org/web/20160604142848/http%3A//tech.mozilla.com.tw/posts/3060/firefox-os-%E6%B8%AC%E8%A9%A6%E6%B5%81%E7%A8%8B%E5%A4%A7%E6%8F%AD%E7%A7%98"
+	    scrolling="no" frameborder="0" style="width:100%; height:100%">
+    </iframe>
+  </div>
+</div><div id="wm-ipp-inside">
+  <div id="wm-toolbar" style="position:relative;display:flex;flex-flow:row nowrap;justify-content:space-between;" nav="async">
+    <div id="wm-logo" style="/*width:110px;*/padding-top:12px;">
+      <a href="/web/" title="Wayback Machine home page"><img src="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png" srcset="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png 1.5x, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png 2x" alt="Wayback Machine" style="width:100px" border="0" /></a>
+    </div>
+    <div class="c" style="display:flex;flex-flow:column nowrap;justify-content:space-between;flex:1;">
+      <form class="u" style="display:flex;flex-direction:row;flex-wrap:nowrap;" target="_top" method="get" action="/web/submit" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="http://tech.mozilla.com.tw/posts/3060/firefox-os-%E6%B8%AC%E8%A9%A6%E6%B5%81%E7%A8%8B%E5%A4%A7%E6%8F%AD%E7%A7%98" onfocus="this.focus();this.select();" style="flex:1;"/><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20160604142848" /><input type="submit" value="Go" />
+      </form>
+      <div style="display:flex;flex-flow:row nowrap;align-items:flex-end;">
+                <div class="s" id="wm-nav-captures" style="flex:1;">
+                    <a class="t" href="/web/20160604142848*/http://tech.mozilla.com.tw/posts/3060/firefox-os-%E6%B8%AC%E8%A9%A6%E6%B5%81%E7%A8%8B%E5%A4%A7%E6%8F%AD%E7%A7%98" title="See a list of every capture for this URL">44 captures</a>
+          <div class="r" title="Timespan for captures of this URL">16 Oct 2013 - 04 Jun 2016</div>
+          </div>
+        <div class="k">
+          <a href="" id="wm-graph-anchor">
+            <div id="wm-ipp-sparkline" title="Explore captures for this URL" style="position: relative">
+              <canvas id="wm-sparkline-canvas" width="775" height="27" border="0"></canvas>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="n">
+      <table>
+        <tbody>
+          <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+          <tr class="m">
+            <td class="b" nowrap="nowrap">May</td>
+            <td class="c" id="displayMonthEl" title="You are here: 14:28:48 Jun 04, 2016">JUN</td>
+            <td class="f" nowrap="nowrap">Jul</td>
+          </tr>
+          <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+          <tr class="d">
+            <td class="b" nowrap="nowrap"><span class="ta"></span></td>
+            <td class="c" id="displayDayEl" style="width:34px;font-size:22px;white-space:nowrap;" title="You are here: 14:28:48 Jun 04, 2016">04</td>
+            <td class="f" nowrap="nowrap"><span class="ta"></span></td>
+          </tr>
+          <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+          <tr class="y">
+            <td class="b" nowrap="nowrap">2015</td>
+            <td class="c" id="displayYearEl" title="You are here: 14:28:48 Jun 04, 2016">2016</td>
+            <td class="f" nowrap="nowrap">2017</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="r" style="display:flex;flex-flow:column nowrap;align-items:flex-end;justify-content:space-between;">
+      <div id="wm-btns" style="text-align:right;height:23px;">
+                <span class="xxs">
+          <div id="wm-save-snapshot-success">success</div>
+          <div id="wm-save-snapshot-fail">fail</div>
+          <a id="wm-save-snapshot-open" href="#" title="Share via My Web Archive" >
+            <span class="iconochive-web"></span>
+          </a>
+          <a href="https://archive.org/account/login.php" title="Sign In" id="wm-sign-in">
+            <span class="iconochive-person"></span>
+          </a>
+          <span id="wm-save-snapshot-in-progress" class="iconochive-web"></span>
+        </span>
+                <a class="xxs" href="https://help.archive.org/help/category/the-wayback-machine/" title="Get some help using the Wayback Machine" style="top:-6px;"><span class="iconochive-question" style="color:rgb(87,186,244);font-size:160%;"></span></a>
+        <a id="wm-tb-close" href="#close" style="top:-2px;" title="Close the toolbar"><span class="iconochive-remove-circle" style="color:#888888;font-size:240%;"></span></a>
+      </div>
+      <div id="wm-share" class="xxs">
+        <a href="/web/20160604142848/http://web.archive.org/screenshot/http://tech.mozilla.com.tw/posts/3060/firefox-os-%E6%B8%AC%E8%A9%A6%E6%B5%81%E7%A8%8B%E5%A4%A7%E6%8F%AD%E7%A7%98"
+           id="wm-screenshot"
+           title="screenshot">
+          <span class="wm-icon-screen-shot"></span>
+        </a>
+        <a href="#" id="wm-video" title="video">
+          <span class="iconochive-movies"></span>
+        </a>
+        <a id="wm-share-facebook" href="#" data-url="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/3060/firefox-os-%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e5%a4%a7%e6%8f%ad%e7%a7%98" title="Share on Facebook" style="margin-right:5px;" target="_blank"><span class="iconochive-facebook" style="color:#3b5998;font-size:160%;"></span></a>
+        <a id="wm-share-twitter" href="#" data-url="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/3060/firefox-os-%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e5%a4%a7%e6%8f%ad%e7%a7%98" title="Share on Twitter" style="margin-right:5px;" target="_blank"><span class="iconochive-twitter" style="color:#1dcaff;font-size:160%;"></span></a>
+      </div>
+      <div style="padding-right:2px;text-align:right;white-space:nowrap;">
+        <a id="wm-expand" class="wm-btn wm-closed" href="#expand"><span id="wm-expand-icon" class="iconochive-down-solid"></span> <span class="xxs" style="font-size:80%;">About this capture</span></a>
+      </div>
+    </div>
+  </div>
+    <div id="wm-capinfo" style="border-top:1px solid #777;display:none; overflow: hidden">
+        <div id="wm-capinfo-notice" source="api"></div>
+                <div id="wm-capinfo-collected-by">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;">COLLECTED BY</div>
+    <div style="padding:3px;position:relative" id="wm-collected-by-content">
+            <div style="display:inline-block;vertical-align:top;width:50%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/webwidecrawl);"></span>
+		Organization: <a style="color:#33f;" href="https://archive.org/details/webwidecrawl" target="_new"><span class="wm-title">Internet Archive</span></a>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  The Internet Archive discovers and captures web pages through many different web crawls.
+
+At any given time several distinct crawls are running, some for months, and some every day or longer.
+
+View the web archive through the <a href="http://archive.org/web/web.php">Wayback Machine</a>.
+	</div>
+	      </div>
+      <div style="display:inline-block;vertical-align:top;width:49%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/wide00014)"></span>
+		<div>Collection: <a style="color:#33f;" href="https://archive.org/details/wide00014" target="_new"><span class="wm-title">Wide Crawl Number 14 - Started Mar 4th, 2016 - Ended Sep 15th, 2016</span></a></div>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  <span style="font-family: Arial; font-size: 16px;">The seed for Wide00014 was:</span><br style="font-family: Arial; font-size: 16px;"><div style="font-family: Arial; font-size: 16px;"><br></div><div style="font-family: Arial; font-size: 16px;">- Slash pages from every domain on the web:<br><div><br></div><div>-- a list of domains using Survey crawl seeds<br></div><div>-- a list of domains using Wide00012 web graph<br></div><div>-- a list of domains using Wide00013 web graph<br></div></div><div style="font-family: Arial; font-size: 16px;"><br></div><div style="font-family: Arial; font-size: 16px;">- Top ranked pages (up to a max of 100) from every linked-to domain using the Wide00012 inter-domain navigational link graph<br><div><br></div><div>-- a ranking of all URLs that have more than one incoming inter-domain link (rank was determined by number of incoming links using Wide00012 inter domain links)<br></div><div>-- up to a maximum of 100 most highly ranked URLs per domain&nbsp;</div></div><div style="font-family: Arial; font-size: 16px;"><br></div><span style="font-family: Arial; font-size: 16px;">The seed list contains a total of 431,055,452 URLs</span><br style="font-family: Arial; font-size: 16px;"><span style="font-family: Arial; font-size: 16px;">The seed list was further filtered to exclude known porn, and link farm, domains</span><br style="font-family: Arial; font-size: 16px;"><span style="font-family: Arial; font-size: 16px;">The modified seed list contains a total of 428M URLs</span>
+	</div>
+	      </div>
+    </div>
+    </div>
+    <div id="wm-capinfo-timestamps">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;" title="Timestamps for the elements of this page">TIMESTAMPS</div>
+    <div>
+      <div id="wm-capresources" style="margin:0 5px 5px 5px;max-height:250px;overflow-y:scroll !important"></div>
+      <div id="wm-capresources-loading" style="text-align:left;margin:0 20px 5px 5px;display:none"><img src="https://web-static.archive.org/_static/images/loading.gif" alt="loading" /></div>
+    </div>
+    </div>
+  </div></div></div></div><div id="wm-ipp-print">The Wayback Machine - https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/3060/firefox-os-%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e5%a4%a7%e6%8f%ad%e7%a7%98</div>
+<script type="text/javascript">//<![CDATA[
+__wm.bt(775,27,25,2,"web","http://tech.mozilla.com.tw/posts/3060/firefox-os-%E6%B8%AC%E8%A9%A6%E6%B5%81%E7%A8%8B%E5%A4%A7%E6%8F%AD%E7%A7%98","20160604142848",1996,"https://web-static.archive.org/_static/",["https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3","https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv"], false);
+  __wm.rw(1);
+//]]></script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+ 
+    <div id="tabzilla-panel" class="close-nav" tabindex="-1">
+  <div id="tabzilla-contents">
+    <div id="tabzilla-promo">
+      <div id="tabzilla-promo-fxos" class="snippet">
+        <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/os/">
+          <h4>Firefox OS</h4>
+          <p>瞭解 Firefox OS</p>
+        </a>
+      </div>
+    </div>
+    <!-- end of tabzilla-promo -->
+    <div id="tabzilla-nav">
+      <ul>
+        <li class="sitemap">
+          <h2>Firefox</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/download/" title="下載 Mozilla Firefox 中文桌面版" tabindex="-1">Firefox 免費下載</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/desktop/" title="下載 Mozilla Firefox 中文桌面版">Firefox 桌面版</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/mobile/" title="Mozilla Firefox 行動版">Firefox 行動版</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/channel/" title="Mozilla Firefox 未來發行版">Firefox 未來發行版</a>
+              </li>
+              <li>
+                <a href="https://web.archive.org/web/20160604142848/https://addons.mozilla.org/zh-TW/firefox/" title="Firefox 附加元件">附加元件</a>
+              </li>
+              <li>
+                <a href="https://web.archive.org/web/20160604142848/https://support.mozilla.com/zh-TW/home" title="Firefox 說明文件、支援中心">支援中心</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>Firefox OS</h2>
+          <div>
+            <ul>
+              <li>
+                <a title="Firefox OS 詳細介紹" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/os/" tabindex="-1">詳細介紹</a>
+              </li>
+              <li>
+                <a title="Firefox OS 合作夥伴專區" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/partners/" tabindex="-1">合作夥伴專區</a>
+              </li>
+              <li>
+                <a title="Firefox OS 支援中心" href="//web.archive.org/web/20160604142848/http://support.mozilla.org/products/firefox-os" tabindex="-1">支援中心</a>
+              </li>
+              <li>
+                <a title="Firefox OS 常見問答集" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/os/faq/" tabindex="-1">常見問答集</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>社群參與</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="https://web.archive.org/web/20160604142848/http://firefox.club.tw/" title="Firefox 俱樂部">Firefox 設計品</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/community/student/" title="校園大使">校園大使</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/community/contribute/" title="社群專案">社群專案</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>訊息中心</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="//web.archive.org/web/20160604142848/http://blog.mozilla.com.tw/main" title="部落格">部落格</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/news/press/" title="新聞室">新聞室</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160604142848/http://blog.mozilla.com.tw/events-list" title="活動訊息">活動訊息</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/" title="謀智台客">謀智台客</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>關於我們</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/about/manifesto/" title="Mozilla 宣言">Mozilla 宣言</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/about/space/" title="Mozilla Space">Mozilla Space</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/about/careers/" title="工作機會">工作機會</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/about/contact/" title="聯絡資訊">聯絡資訊</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160604142848/http://mozilla.org/en-US/" title="Mozilla (US)">Mozilla (US)</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <!-- end of sitemap -->
+      </ul>
+    </div>
+    <!-- end of tabzilla-nav -->
+  </div>
+  <!-- end of tabzilla-content -->
+</div>
+<!-- end of tabzilla-panel -->
+        <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//web.archive.org/web/20160604142848/http://mozilla.org/">mozilla</a>
+          <nav id="nav-main" role="navigation">
+  <span class="toggle" role="button" aria-controls="nav-main-menu" tabindex="0">{{_('Menu')}}</span>
+  <ul id="nav-main-menu" class="has-submenus" role="menubar">
+    <li id="nav-main-firefox" role="menuitem" class="topMenu first">
+      <a title="Mozilla Firefox" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/" tabindex="0" aria-owns="nav-main-firefox-submenu" aria-haspopup="true">Firefox</a>
+      <ul id="nav-main-firefox-submenu" aria-expanded="false" class="submenu has-submenus">
+        <li class="first">
+          <a title="下載 Mozilla Firefox 中文桌面版" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/download/" tabindex="-1">Firefox 免費下載</a>
+        </li>
+        <li id="nav-sub-firefox-desktop" role="menuitem">
+          <a title="Mozilla Firefox 桌面版" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/desktop/" tabindex="-1" aria-owns="nav-sub-firefox-desktop-submenu" aria-haspopup="true">Firefox 桌面版</a>
+          <ul id="nav-sub-firefox-desktop-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="下載 Mozilla Firefox 中文桌面版" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/download/" tabindex="-1">下載</a>
+            </li>
+            <li>
+              <a title="Firefox 中文桌面版─自訂" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/customize/" tabindex="-1">自訂</a>
+            </li>
+            <li>
+              <a title="Firefox 中文桌面版─效能" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/performance/" tabindex="-1">效能</a>
+            </li>
+            <li>
+              <a title="Firefox 中文桌面版─技術" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/technology/" tabindex="-1">技術</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 中文桌面版─安全" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/security/" tabindex="-1">安全</a>
+            </li>
+          </ul>
+        </li>
+        <li id="nav-sub-firefox-mobile" role="menuitem">
+          <a title="Mozilla Firefox 行動版" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/mobile/" tabindex="-1" aria-owns="nav-sub-firefox-mobile-submenu" aria-haspopup="true">Firefox 行動版</a>
+          <ul id="nav-sub-firefox-mobile-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="下載 Mozilla Firefox 行動版" href="//web.archive.org/web/20160604142848/http://play.google.com/store/apps/details?id=org.mozilla.firefox" tabindex="-1">下載</a>
+            </li>
+            <li>
+              <a title="Firefox 行動版─功能特色" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/mobile/features/" tabindex="-1">功能特色</a>
+            </li>
+            <li>
+              <a title="Firefox 行動版─支援平台" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/mobile/platforms/" tabindex="-1">支援平台</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 行動版─常見問答集" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/mobile/faq/" tabindex="-1">常見問答集</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a title="Mozilla Firefox 開發者版本" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/developer/" tabindex="-1">Firefox 開發者版本</a>
+        </li>
+        <li>
+          <a title="Mozilla Firefox 未來發行版" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/channel/" tabindex="-1">Firefox 未來發行版</a>
+        </li>
+        <li id="nav-sub-services" role="menuitem">
+          <a title="相關服務" href="javascript:void(0);" tabindex="-1" aria-owns="nav-sub-services-submenu" aria-haspopup="true">相關服務</a>
+          <ul id="nav-sub-services-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="Firefox Hello" href="/web/20160604142848/http://tech.mozilla.com.tw/firefox/hello/" tabindex="-1">Hello</a>
+            </li>
+            <li class="last">
+              <a title="Firefox Sync" href="/web/20160604142848/http://tech.mozilla.com.tw/firefox/sync/" tabindex="-1">Sync</a>
+            </li>
+          </ul>
+        </li>
+        <li id="nav-sub-firefox-addons" role="menuitem">
+          <a title="Firefox 附加元件" href="//web.archive.org/web/20160604142848/http://addons.mozilla.org/zh-TW/firefox/" tabindex="-1" aria-owns="nav-sub-firefox-addons-submenu" aria-haspopup="true">附加元件</a>
+          <ul id="nav-sub-firefox-addons-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="Firefox 桌面版附加元件" href="//web.archive.org/web/20160604142848/http://addons.mozilla.org/zh-TW/firefox/" tabindex="-1">桌面版</a>
+            </li>
+            <li>
+              <a title="Firefox 行動版附加元件" href="//web.archive.org/web/20160604142848/http://addons.mozilla.org/zh-TW/android/" tabindex="-1">行動版</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 佈景主題" href="//web.archive.org/web/20160604142848/http://addons.mozilla.org/zh-TW/firefox/themes/" tabindex="-1">佈景主題</a>
+            </li>
+          </ul>
+        </li>
+        <li id="nav-sub-firefox-support" role="menuitem" class="last">
+          <a title="Firefox 說明文件、支援中心" href="https://web.archive.org/web/20160604142848/https://support.mozilla.com/zh-TW/home" tabindex="-1" aria-owns="nav-sub-firefox-support-submenu" aria-haspopup="true">支援中心</a>
+          <ul id="nav-sub-firefox-support-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="Firefox 桌面版支援中心" href="//web.archive.org/web/20160604142848/http://support.mozilla.org/zh-TW/products/firefox" tabindex="-1">桌面版</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 行動版支援中心" href="//web.archive.org/web/20160604142848/http://support.mozilla.org/zh-TW/products/mobile" tabindex="-1">行動版</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-firefoxos" role="menuitem" class="topMenu">
+      <a title="Firefox 行動作業系統" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/os/" tabindex="0" aria-owns="nav-main-firefoxos-submenu" aria-haspopup="true">Firefox OS</a>
+      <ul id="nav-main-firefoxos-submenu" aria-expanded="false" class="submenu">
+        <li class="first">
+          <a title="Firefox OS 簡介" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/os/" tabindex="-1">簡介</a>
+        </li>
+        <li>
+          <a title="Firefox OS 發佈機種" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/os/devices/" tabindex="-1">發佈機種</a>
+        </li>
+        <li>
+          <a title="Firefox OS 合作夥伴專區" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/partners/" tabindex="-1">合作夥伴專區</a>
+        </li>
+        <li>
+          <a title="Firefox OS 支援中心" href="//web.archive.org/web/20160604142848/http://support.mozilla.org/products/firefox-os" tabindex="-1">支援中心</a>
+        </li>
+        <li class="last">
+          <a title="Firefox OS 常見問答集" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/os/faq/" tabindex="-1">常見問答集</a>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-community" role="menuitem" class="topMenu">
+      <a title="社群參與" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/community/" tabindex="0" aria-owns="nav-main-community-submenu" aria-haspopup="true">社群參與</a>
+      <ul id="nav-main-community-submenu" aria-expanded="false" class="submenu has-submenus">
+        <li class="first">
+          <a title="Firefox 活力軍" href="https://web.archive.org/web/20160604142848/http://firefox.club.tw/" tabindex="-1">Firefox 設計品</a>
+        </li>
+        <li id="nav-sub-student" role="menuitem">
+          <a title="校園大使" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/community/student/" tabindex="-1" aria-owns="nav-sub-student-submenu" aria-haspopup="true">校園大使</a>
+            <ul id="nav-sub-student-submenu" aria-expanded="false" class="submenu_lv2">
+              <li class="first">
+                <a title="Firefox 校園大使詳細辦法" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/community/student/rules/" tabindex="-1">招募辦法</a>
+              </li>
+              <li>
+                <a title="Firefox 校園大使推廣任務和證書" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/community/student/mission/" tabindex="-1">任務及證書</a>
+              </li>
+              <li>
+                <a title="Firefox 校園大使酷炫工具包" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/community/student/package/" tabindex="-1">酷炫工具包</a>
+              </li>
+              <li>
+                <a title="Firefox 校園大使狐狐工作坊" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/community/student/workshop/" tabindex="-1">狐狐工作坊</a>
+              </li>
+              <li class="last">
+                <a title="Firefox 校園大使線上申請" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/contribute/universityambassadors/" tabindex="-1">線上申請</a>
+              </li>
+            </ul>
+        </li>
+        <li class="last">
+          <a title="社群專案" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/community/contribute/" tabindex="-1">社群專案</a>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-blog" role="menuitem" class="topMenu">
+      <a title="訊息中心" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/news/" tabindex="0" aria-owns="nav-main-blog-submenu" aria-haspopup="true">訊息中心</a>
+      <ul id="nav-main-blog-submenu" aria-expanded="false" class="submenu">
+        <li class="first">
+          <a title="部落格" href="//web.archive.org/web/20160604142848/http://blog.mozilla.com.tw/main" tabindex="-1">部落格</a>
+        </li>
+        <li>
+          <a title="新聞室" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/news/press/" tabindex="-1">新聞室</a>
+        </li>
+        <li>
+          <a title="活動訊息" href="//web.archive.org/web/20160604142848/http://blog.mozilla.com.tw/events-list" tabindex="-1">活動訊息</a>
+        </li>
+        <li class="last">
+          <a title="謀智台客" href="//web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/" tabindex="-1">謀智台客</a>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-about" role="menuitem" class="topMenu last">
+      <a title="關於我們" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/about/" tabindex="0" aria-owns="nav-main-about-submenu" aria-haspopup="true">關於我們</a>
+      <ul id="nav-main-about-submenu" aria-expanded="false" class="submenu">
+        <li class="first">
+          <a title="Mozilla 宣言" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/about/manifesto/" tabindex="-1">Mozilla 宣言</a>
+        </li>
+        <li>
+          <a title="Mozilla Space" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/about/space/" tabindex="-1">Mozilla Space</a>
+        </li>
+        <li>
+          <a title="工作機會" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/about/careers/" tabindex="-1">工作機會</a>
+        </li>
+        <li>
+          <a title="聯絡資訊" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/about/contact/" tabindex="-1">聯絡資訊</a>
+        </li>
+        <li class="last">
+          <a title="Mozilla (US)" href="//web.archive.org/web/20160604142848/http://mozilla.org/en-US/" tabindex="-1">Mozilla (US)</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          <h2>
+            <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/" title="回首頁" class="close">
+              <img src="/web/20160604142848im_/http://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/" class="home">Home</a>
+            <b>&raquo;</b>
+            <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/news/">訊息中心</a>
+            <b>&raquo;</b>
+                          <a href="//web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/">謀智台客</a><b>&raquo;</b>
+              <span>Firefox OS 測試流程大揭秘</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="http://tech.mozilla.com.tw/posts/3060/firefox-os-%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e5%a4%a7%e6%8f%ad%e7%a7%98" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="http://tech.mozilla.com.tw/posts/3060/firefox-os-%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e5%a4%a7%e6%8f%ad%e7%a7%98"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="https://web.archive.org/web/20160604142848/http://pinterest.com/pin/create/button/?url=http://tech.mozilla.com.tw/posts/3060/firefox-os-%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e5%a4%a7%e6%8f%ad%e7%a7%98&amp;media=http://tech.mozilla.com.tw/wp-content/uploads/2013/09/fxos-150x150.jpg" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//web.archive.org/web/20160604142848im_/http://assets.pinterest.com/images/PinExt.png" title="Pin It"/></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('https://web.archive.org/web/20160604142848/http://www.plurk.com/?qualifier=shares&amp;status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('(') .concat(encodeURIComponent(document.title)) .concat(')')));">
+	        <img src="https://web.archive.org/web/20160604142848im_/https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">0</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/2957/%e8%97%8d%e7%89%99%e5%9b%9b%e5%a4%a7%e7%a5%9e%e5%99%a8%ef%bc%81-%e7%b0%a1%e4%bb%8b%e9%96%8b%e7%99%bc%e5%b8%b8%e7%94%a8%e8%97%8d%e7%89%99%e9%85%8d%e4%bb%b6"><div class="post-tip"><img width="48" height="48" src="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/8401881183_8034f3f6f4_n-150x150.jpg" class="attachment-48x48 size-48x48 wp-post-image" alt="Bluetooth" srcset="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/8401881183_8034f3f6f4_n-150x150.jpg 150w, https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/8401881183_8034f3f6f4_n-300x300.jpg 300w, https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/8401881183_8034f3f6f4_n.jpg 320w" sizes="(max-width: 48px) 100vw, 48px"/><span class="meta-nav">藍牙四大神器！– 簡介開發常用藍牙配件</span></div></a></div>		
+							<div class="nav-next"><a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/2748/%e7%94%a8-moztrap-%e4%be%86%e7%ae%a1%e7%90%86%e4%bd%a0%e7%9a%84%e6%b8%ac%e8%a9%a6"><div class="post-tip"><img width="48" height="48" src="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/10/螢幕快照-2013-10-21-下午4.04.141-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="螢幕快照 2013-10-21 下午4.04.14"/><span class="meta-nav">用 MozTrap 來管理你的測試</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-3060" class="post-3060 post type-post status-publish format-standard has-post-thumbnail hentry category-b2g">
+	 	<header class="entry-header">
+		<h1 class="entry-title">Firefox OS 測試流程大揭秘</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/date/2013/10" class="posted-month">10月</a>
+	        <span class="posted-date">14</span>
+	        <a title="See all posts from 2014" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/date/2013" class="posted-year">2013</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="62">
+		  	<a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/author/whsumozilla-com">
+	          <img src="https://web.archive.org/web/20160604142848im_/http://www.gravatar.com/avatar/9be3a0d7e1160ffbb62fbd91c381a5cc?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=24" alt="" class="avatar user-62-avatar" width="24" height="24"/><!--
+	       --><div class="author-info">William H.</div><!--
+	       --><div class="author-title"></div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p><a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/fxos.jpg"><img class="alignnone size-large wp-image-3061" alt="fxos" src="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/fxos-1024x345.jpg" width="640" height="215" srcset="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/fxos-300x101.jpg 300w, https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/fxos-1024x345.jpg 1024w" sizes="(max-width: 640px) 100vw, 640px"/></a></p>
+<p>今天就聽我這小小測試工程師，娓娓道說 Firefox OS 快樂的工作史!!<br/>
+這根本可以媲美澳洲大堡礁的工作阿！~This is really good and happy job in Taiwan!!!</p>
+<p><a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/troll_2.png"><img class="alignnone size-full wp-image-3066" alt="troll_2" src="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/troll_2.png" width="107" height="101"/></a>&#8230;你還等什麼，快點加入謀智台灣阿，就缺你一個！<br/>
+~以上，工商廣告時間結束！</p>
+<p>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-</p>
+<p>讓我們開始進入主題吧！在早期 Firefox OS 測試，主要採用了 Winston Royce 在1970年提出的 Waterfall model<span style="color: #ff0000;">[1] </span>來測試 Firefox OS ；該模型給出了固定的順序，將生存期活動從上一個階段向下一個階段逐級過渡，如同流水下瀉，最終得到所開發的軟體產品。如下圖。</p>
+<p align="center"><a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/Waterfall.jpg"><img class="alignnone size-full wp-image-3063" alt="Waterfall" src="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/Waterfall.jpg" width="557" height="416"/></a></p>
+<p align="center">圖一、Waterfall process &#8211; 圖片引用自 tomfishburne.com<span style="color: #ff0000;">[2]</span></p>
+<p>但是經過 Firefox OS v.1.0.x 到 v.1.1.0 的版本釋出後，我們發現這個開發程序不足以應付現有廠商的需求，也無法快速反應工程師的想法。 因此在 v1.2 的開發過程中，導入了敏捷開發程序 (Agile development process)<span style="color: #ff0000;">[3]</span>， 但並非全盤採用整個開發程序，因為 Mozilla 的工程師、合作廠商散布在全球24個不同時區裡，沒辦法一次把不同時間、空間和文化的謀智人 (Mozillian) 聚集在一起跑敏捷開發程序。為了解決這個難題，讓整個開發過程更為彈性，因此我們採用一種混和 (Hybrid) 的開發、測試方式， 降低謀智人對開發程序轉換的痛苦。</p>
+<p>以下為開發、測試 Firefox OS 所採用的程序、方法，<br/>
+<strong>1. 常規會議 (Regular Meeting)</strong><br/>
+&#8211; 在敏捷開發過程中，因為變動是非常迅速的；為了要讓大家能在短時間抓住開發的方向，通常會有以下的常規會議，Kick off meeting, Standup meeting<span style="color: #ff0000;">[4]</span>, Weekly meeting, Triage meeting 和 Retrospective meeting。</p>
+<p><strong>2. 專案需求以及規格的討論 (Requirements/Specification discussion)</strong><br/>
+&#8211; 我們利用 Work week 方式，增進了溝通的效率；以及利用此機會協調專案所需的資訊。</p>
+<p><strong>3. PRD/HLD/UX 文件 (PRD/HLD/UX document creation)</strong><br/>
+&#8211; 文檔！？ 因為開發的週期即為短暫，任何的文檔通常是能精簡就精簡；但是該有的還是要有，像是 UX<span style="color: #ff0000;">[5] </span>文件；而主要產品的需求被記錄在一份備忘錄 (Backlog) 裡，所有討論過程都會利用以下工具記載，並同步所有人的資訊。<br/>
+( i ) MoPad <span style="color: #ff0000;">[6]</span><br/>
+( ii) Trello <span style="color: #ff0000;">[7]</span><br/>
+(iii) Pivotal Tracker <span style="color: #ff0000;">[8]</span></p>
+<p><strong>4. 時間估計 (Effort estimation)</strong><br/>
+&#8211; 每個版本被規劃成4個 sprint 開發、測試；開發測試前，會利用 Planning Poker <span style="color: #ff0000;">[9] </span>來估計每一項任務的所需時間。</p>
+<p><strong>5. 測試計畫 (Test plan)</strong><br/>
+&#8211; 測試計畫的提交通常在我們開發過程會被省略，因為在敏捷開發過程在短時間有太多的變動，導致測試計畫並不是那麼的準確、可參考。相對的，我們會產出一些縮小版測試計畫 Mini test plan，規劃每個 Sprint 需要達到的目標。</p>
+<p><strong>6. 產出測試用例 (Test case creation)</strong><br/>
+&#8211; 測試用例的產出是 QA 很重要的工作， QA 所有的測試用例都在 Mozilla MozTrap<span style="color: #ff0000;">[10] </span>上，歡迎大家隨時上去參觀。</p>
+<p><strong>7. 審查測試用例 (Test case review)</strong><br/>
+&#8211; 測試用例準備好之後，會進入審查的程序，但因為跨時區工作的關係，大部分的程序會透過電子郵件或是視訊會議完成。</p>
+<p><strong>8. 執行測試 (Run testing)</strong><br/>
+&#8211; 因為每個 Sprint 的測試時間通常只有一週，所以我們捨棄了 Waterfall 的測試方式 (Stage-&gt; Alpha-&gt;Beta-&gt; -&gt; Production) 。把測試分為 1~N run ，第一 run 會注重在軟體的功能性以及標準 (Criteria) 有沒有達到，第二 Run 以後會注重整合測試 (Integration testing) 的結果。</p>
+<p><strong>9. 臭蟲的提交、解決以及驗證 (Bug submission, solving, and verifying)</strong><br/>
+&#8211; 這過程是所有軟體開發必經之路；在 Mozilla ，我們利用了 Bugzilla<span style="color: #ff0000;">[11] </span>記錄開發及測試時所遇到的問題、臭蟲 (Bug) 。</p>
+<p><strong>10. 代碼/測試用例維護 (Code/Test case maintenance)</strong><br/>
+&#8211; QA 通常會在測試結束後，檢查所創建的測試用例是符合產品需求，以及挑選適合自動化 (Automation test) 的測試用例。</p>
+<p>目前Firefox OS v1.2 版進入 Code complete 階段 (9/15)，不如就用這活生生的例子跟讀者解釋整個測試週期！在時間上，一個將要釋出的版本 (Release Build) 通常會歷經4週的策劃、討論，8週的開發、測試，時間表如下：</p>
+<p style="text-align: center;"> <a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/v1-2_test_schedule.png"><img class="alignnone size-large wp-image-3064" alt="v1-2_test_schedule" src="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/v1-2_test_schedule-1024x544.png" width="640" height="340" srcset="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/v1-2_test_schedule-300x159.png 300w, https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/v1-2_test_schedule-1024x544.png 1024w, https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/09/v1-2_test_schedule.png 1282w" sizes="(max-width: 640px) 100vw, 640px"/></a></p>
+<p align="center">圖二、測試計畫表</p>
+<p>如 上圖表，在開發初期，為了讓產品開發更順利， Mozilla 利用 work week 來討論產品需求以及標準，取得不同文化的謀智人對產品開發的共識；通常這時候謀智台北辦公室，根本像座空城，世界有多遼闊，謀智人就跑多遠，這是 一場很棒的知識及文化盛宴，有興趣的讀者歡迎搜尋 “Mozilla Workweek” 。 Work week 結束之後，通常就是Manager  、Developer 和 QA 努力發想，如何設計、測試、開發產品的階段；當取得大家的共識後，就是第一個 Sprint 開始啟程的時候。</p>
+<p>在每一個 Sprint 的初期， QA 必須確保所有開發需求的內容以及完整性，不明確的內容，必須盡可能的與 Developer 或是 UX Designer 討論，而且要能提出開發的風險以及可能遭遇的問題，因為時間不能重來，錯誤的決策很容易影響到往後產品的釋出。當有明確的設計規格和需求後， QA 就會開始創造測試用例，測試用例的好壞和適用性通常取決於 QA 對產品以及相關知識的熟悉度；所以 Mozilla 的 QA 都像個活字典，隨時都準備好 讓人詢問相關產品規格、內容。通常在開發的過程中， QA 會保留半天來審查竭盡腦汁想出的測試用例；審查的過程，可以透過不同謀智人的觀點，快速的找出自己的盲點，加以改善測試用例的品質。開始運行測試之前， QA 必須要能針對測試的範圍、層面、平台、資源、時間等，組合出一個適合的測試策略讓其他的成員審 查。從上圖可以看出， V1.2 版的測試策略，主要由下列方法組成，冒煙測試 (Smoke Test) 、驗收測試 (Release Acceptance Test) 、整合測試 (Integration test) 、完整的運行測試 (Full run test) 和回歸測試 (Regression test) 。</p>
+<p>一切就緒後，相關的測試就會如火如荼的展開，通常可以在 MozTrap 和 Bugzilla 上輕易的看出目前的測試狀態，兩個系統的效能也跟隨著 QA 的工作量成反比，就如同 Github 的提交量 (commit) 和 Developer 的工作量成正比的道理是類似的！</p>
+<p>歷經幾回合的測試後，最終QA會提交一份測試報告給所有的利益相觀者 (Stakeholder) ，分析找到的問題以及軟體的品質，並提出相關風險評估。</p>
+<p>就這樣沒了嗎? 怎麼可能!!!<br/>
+最後一關，是對測試用例的分析，QA 會開始從手動測試中挑選適合做自動化測試 (Automation test) 的用例，並且整理測試用例。</p>
+<p>這下應該真的沒了吧?!<br/>
+不不不~在敏捷開發過程中，還有一個重要的一環-“回顧會議 (Retrospective meeting) ”，會議中會針對每一個 Sprint，做的對、做得好的項目提出來討論、表揚，該反省、檢討的事項會用備忘錄 (Backlog) 記載，並 提出改善方案，在下一次的回顧會議中，會拿出備忘錄來檢視是否改善。</p>
+<p>以上，通常就是一個 Sprint 的運作過程。讀者可能會感到疑惑，採用以上敏捷測試的過程跟傳統測試流程有什麼大不同呢? 最明顯之處莫過於，我們把測試點提早，需求切割到最小，很多問題通常能在早期被發現，及早被解決；而不像傳統開發過程，整個專案都跑一半了才發現一堆漏洞、問題，想要分配人力解決，又發現所需的資源不足，陷入兩難的局面，造就無限期加班、無限期延長專案釋出。</p>
+<p>目前 v1.2 版還算是敏捷測試的磨合期，一定會有讀者覺得美中不足的地方， Mozilla QA 正在竭盡可能的讓這一切變得更美好，相信 QA 會在 v1.3 的測試流程能有所突破。也礙於版面，沒能跟讀者分享太多細節，需要任何訊息嗎? 歡迎隨時跟我們聯絡，竭誠的歡迎您！</p>
+<p>Mozilla Taiwan – “Doing good is part of our code”!</p>
+<p><strong>參考文獻：</strong><br/>
+[1] <a href="https://web.archive.org/web/20160604142848/http://en.wikipedia.org/wiki/Waterfall_process">http://en.wikipedia.org/wiki/Waterfall_process</a><br/>
+[2] <a href="https://web.archive.org/web/20160604142848/http://tomfishburne.com/2010/04/the-new-product-waterfall.html">http://tomfishburne.com/2010/04/the-new-product-waterfall.html</a><br/>
+[3] <a href="https://web.archive.org/web/20160604142848/http://en.wikipedia.org/wiki/Agile_software_development">http://en.wikipedia.org/wiki/Agile_software_development</a><br/>
+[4] <a href="https://web.archive.org/web/20160604142848/http://en.wikipedia.org/wiki/Stand-up_meeting">http://en.wikipedia.org/wiki/Stand-up_meeting</a><br/>
+[5] <a href="https://web.archive.org/web/20160604142848/http://en.wikipedia.org/wiki/User_experience_design">http://en.wikipedia.org/wiki/User_experience_design</a><br/>
+[6] <a href="https://web.archive.org/web/20160604142848/https://etherpad.mozilla.org/">https://etherpad.mozilla.org/</a><br/>
+[7] <a href="https://web.archive.org/web/20160604142848/https://trello.com/">https://trello.com/</a><br/>
+[8] <a href="https://web.archive.org/web/20160604142848/http://www.pivotaltracker.com/">http://www.pivotaltracker.com/</a><br/>
+[9] <a href="https://web.archive.org/web/20160604142848/http://msdn.microsoft.com/zh-tw/library/hh765979.ASPX">http://msdn.microsoft.com/zh-tw/library/hh765979.ASPX</a><br/>
+[10] <a href="https://web.archive.org/web/20160604142848/https://moztrap.mozilla.org/">https://moztrap.mozilla.org</a><br/>
+[11] <a href="https://web.archive.org/web/20160604142848/http://www.bugzilla.org/">http://www.bugzilla.org/</a></p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/category/b2g" rel="category tag">Firefox OS(B2G)</a>      </div>
+    </footer> 
+    </article><!-- #post-3060 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&amp;hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div class="related-posts-scope"></div>			
+				<div id="comments">
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/web/20160604142848/http://tech.mozilla.com.tw/posts/3060/firefox-os-%e6%b8%ac%e8%a9%a6%e6%b5%81%e7%a8%8b%e5%a4%a7%e6%8f%ad%e7%a7%98#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" aria-required="true" required="required"/></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" aria-describedby="email-notes" aria-required="true" required="required"/></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30"/></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表"/> <input type="hidden" name="comment_post_ID" value="3060" id="comment_post_ID"/>
+<input type="hidden" name="comment_parent" id="comment_parent" value="0"/>
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="b1567078ea"/></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="69"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class="name-title"><a class="profile-link" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/author/whsumozilla-com"><span class="gravatar left"><img src="https://web.archive.org/web/20160604142848im_/http://www.gravatar.com/avatar/9be3a0d7e1160ffbb62fbd91c381a5cc?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;s=48" alt="" class="avatar user-62-avatar" width="48" height="48"/></span><span class="name">William H.</span></a></span><p class="contact"></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="133" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/author/ofengmozilla-com"><img src="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg" alt="" class="avatar user-133-avatar" width="96" height="96"/></a><a data-author-id="43" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/author/atsaimozilla-com"><img src="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg" alt="" class="avatar user-43-avatar" width="96" height="96"/></a><a data-author-id="41" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/author/rlinmozilla-com"><img src="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg" alt="" class="avatar user-41-avatar" width="96" height="96"/></a><a data-author-id="59" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/author/pyangmozilla-com"><img src="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg" alt="" class="avatar user-59-avatar" width="96" height="96"/></a><a data-author-id="33" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/author/pwangmozilla-com"><img src="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg" alt="" class="avatar user-33-avatar" width="96" height="96"/></a><a data-author-id="60" href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/author/gasolinmozilla-com"><img src="https://web.archive.org/web/20160604142848im_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg" alt="" class="avatar user-60-avatar" width="96" height="96"/></a></div><a class="more" href="/web/20160604142848/http://tech.mozilla.com.tw/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s"/>
+					<input type="submit" id="searchsubmit" value="搜尋"/>
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://web.archive.org/web/20160604142848if_/https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&amp;opaque=True&amp;hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://web.archive.org/web/20160604142848/https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://web.archive.org/web/20160604142848/https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="https://web.archive.org/web/20160604142848/http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="https://web.archive.org/web/20160604142848/http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="https://web.archive.org/web/20160604142848/http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/category/css">CSS</a> (16)
+</li>
+	<li class="cat-item cat-item-4"><a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/category/firefox">Firefox</a> (22)
+</li>
+	<li class="cat-item cat-item-3"><a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/category/b2g">Firefox OS(B2G)</a> (109)
+</li>
+	<li class="cat-item cat-item-30"><a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/category/interaction-design">Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/category/javascript">Javascript</a> (48)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/category/life-at-mozilla">Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/category/mozilla">Mozilla</a> (16)
+</li>
+	<li class="cat-item cat-item-7"><a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/category/open-source">Open Source</a> (19)
+</li>
+	<li class="cat-item cat-item-29"><a href="https://web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/posts/category/ux">UX/UE</a> (3)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;">
+			
+			<option value="">選擇月份</option>
+				<option value="http://tech.mozilla.com.tw/posts/date/2016/05"> 2016 年 五月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2016/02"> 2016 年 二月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/07"> 2015 年 七月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/06"> 2015 年 六月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/05"> 2015 年 五月 &nbsp;(2)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/04"> 2015 年 四月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/03"> 2015 年 三月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/02"> 2015 年 二月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2015/01"> 2015 年 一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/12"> 2014 年 十二月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/11"> 2014 年 十一月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/10"> 2014 年 十月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/09"> 2014 年 九月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/08"> 2014 年 八月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/07"> 2014 年 七月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/05"> 2014 年 五月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/04"> 2014 年 四月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/03"> 2014 年 三月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/02"> 2014 年 二月 &nbsp;(1)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2014/01"> 2014 年 一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/12"> 2013 年 十二月 &nbsp;(6)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/11"> 2013 年 十一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/10"> 2013 年 十月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/09"> 2013 年 九月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/08"> 2013 年 八月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/07"> 2013 年 七月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/06"> 2013 年 六月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/05"> 2013 年 五月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/04"> 2013 年 四月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/03"> 2013 年 三月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/02"> 2013 年 二月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2013/01"> 2013 年 一月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/12"> 2012 年 十二月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/11"> 2012 年 十一月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/10"> 2012 年 十月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/09"> 2012 年 九月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/08"> 2012 年 八月 &nbsp;(4)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/07"> 2012 年 七月 &nbsp;(5)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/06"> 2012 年 六月 &nbsp;(3)</option>
+	<option value="http://tech.mozilla.com.tw/posts/date/2012/05"> 2012 年 五月 &nbsp;(3)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="https://web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+    <footer id="footer">
+  <div id="footer-wrapper">
+    <div id="footer-logo" class="footer-content">
+      <a href="//web.archive.org/web/20160604142848/http://mozilla.org/en-US/" target="_blank">
+        <img style="border:0px;" alt="mozilla" src="/web/20160604142848im_/http://tech.mozilla.com.tw/media/img/sandstone/footer-mozilla.png">
+      </a>
+    </div>
+    <div id="sub-footer" class="footer-content">
+      <div id="sub-footer-contents">
+        <strong>與我們為友</strong>
+        <ul>
+          <li id="footer-Facebook">
+            <a href="https://web.archive.org/web/20160604142848/https://www.facebook.com/MozillaTaiwan">Facebook</a>
+          </li>
+          <li id="footer-Youtube">
+            <a href="https://web.archive.org/web/20160604142848/http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+          </li>
+          <li id="footer-Flickr">
+            <a href="https://web.archive.org/web/20160604142848/http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+          </li>
+          <li id="footer-電子報">
+            <a href="https://web.archive.org/web/20160604142848/http://mozilla.com.tw/join_us/">電子報</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!--end sub-footer-->
+    <div id="copyright" class="footer-content">
+      <ul>
+        <li><a href="//web.archive.org/web/20160604142848/http://www.mozilla.org/zh-TW/privacy-policy.html">隱私資料政策</a>&nbsp;|</li>
+        <li><a href="//web.archive.org/web/20160604142848/http://www.mozilla.org/zh-TW/about/legal.html">法律資訊</a>&nbsp;|</li>
+        <li><a href="//web.archive.org/web/20160604142848/http://www.mozilla.org/zh-TW/legal/fraud-report/index.html">回報商標濫用</a>&nbsp;|</li>
+        <li><a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/join_us/un_subscribe/">取消訂閱電子報</a>&nbsp;|</li>
+      </ul>
+      <p>除另有<a href="//web.archive.org/web/20160604142848/http://www.mozilla.org/zh-TW/about/legal.html#site">註明</a>外，本站內容皆採用<br>
+        <a href="https://web.archive.org/web/20160604142848/http://creativecommons.org/licenses/by-sa/3.0/">創用 CC 姓名標示—相同方式分享條款 3.0 </a>或更新版本授權大眾使用。</p>
+    </div>
+    <!-- end copyright-->
+  </div>
+  <!-- end of footer-wrapper -->
+</footer>
+<!-- end of footer -->    <noscript>
+    </noscript>
+    <script type="text/javascript" src="/web/20160604142848js_/http://tech.mozilla.com.tw/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/web/20160604142848js_/http://tech.mozilla.com.tw/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/web/20160604142848js_/http://tech.mozilla.com.tw/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/web/20160604142848js_/http://tech.mozilla.com.tw/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://web.archive.org/web/20160604142848js_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://web.archive.org/web/20160604142848js_/http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//web.archive.org/web/20160604142848/http://connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://web.archive.org/web/20160604142848/https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://web.archive.org/web/20160604142848js_/https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+    $(".toggle").click(function(){if($(".slided-it").size()==0){$(".slide-x").addClass("slided-it");$("#body-wrapper").removeClass("body-wrapper-default").addClass("body-wrapper-lock")}else{$(".slide-x").removeClass("slided-it");$("#body-wrapper").removeClass("body-wrapper-lock").addClass("body-wrapper-default")}});$(document).ready(function(){if($("#nav-main-menu").length===0){return}var a=$('#nav-main-menu [tabindex="0"]');var f,e,b,d,c;$("#nav-main > .has-submenus > li > .submenu.has-submenus > li").bind("mouseover focusin",function(g){d=$(this);if(!e||e.attr("id")!==d.attr("id")){d.addClass("hover").find('[aria-expanded="false"]').attr("aria-expanded","true");if(e){e.dequeue("sub")}}else{e.clearQueue("sub")}}).bind("mouseout focusout",function(g){e=$(this);var h=g.toElement||g.relatedTarget;h=h?h.parentNode.parentNode:h;e.delay(100,"sub").queue("sub",function(){if(e&&(g.type=="focusout"||h==this.parentNode)){e.clearQueue("sub");e.removeClass("hover").find('[aria-expanded="true"]').attr("aria-expanded","false");e=null;if(c){c.get(0).blur()}}}).dequeue("sub")});$("#nav-main > .has-submenus > li").bind("mouseover focusin",function(g){b=$(this);if(!f||f.attr("id")!==b.attr("id")){b.addClass("hover").find('[aria-expanded="false"]').attr("aria-expanded","true");if(f){f.dequeue()}}else{f.clearQueue()}}).bind("mouseout focusout",function(g){f=$(this);f.delay(100).queue(function(){if(f){f.clearQueue();f.find(".hover").removeClass("hover");f.removeClass("hover").find('[aria-expanded="true"]').attr("aria-expanded","false");f=null;e=null;if(c){c.get(0).blur()}}})}).each(function(g){var h=$(this).find("a");h.mouseover(function(i){this.focus()}).focus(function(){c=$(this)}).each(function(i){$(this).keydown(function(j){var k;if(j.altKey||j.ctrlKey||j.metaKey||j.shiftKey){return true}switch(j.keyCode){case 33:case 36:k=h.first();break;case 34:case 35:k=h.last();break;case 38:k=(i>0)?h.eq(i-1):h.last();break;case 40:k=(i<h.length-1)?h.eq(i+1):h.first();break;case 37:k=(g>0)?a.eq(g-1):a.last();break;case 39:k=(g<a.length-1)?a.eq(g+1):a.first();break}if(k){k.get(0).focus();return false}return true})})});$("#footer-menu").attr("role","presentation")});var Tabzilla=(function(b){var h="1.7.1";var m;var j;var C;var d;var x=false;var w=("matchMedia" in window);var p=(document.documentMode===9);var A=(typeof console=="object");var n="wide";var q="-1";var i=null;var l;var y=function(){var D=c();if(n!==D){n=D;u()}};var c=function(){if(w&&matchMedia("(max-width: 719px)").matches){return"compact"}return"wide"};var u=function(){if(n==="wide"){e()}else{g()}};var e=function(){f();a();m.focus()};var g=function(){k();r()};var k=function(){j.find(">ul").attr("role","presentation");C.each(function(D){i(this).attr({id:"tab-"+D,"aria-controls":"panel-"+D,tabindex:q,role:"tab","aria-expanded":false})});if(!j.find("h2[tabindex=0]").length){j.find("h2:first").attr("tabindex",0)}j.find("div").each(function(D){i(this).attr({id:"panel-"+D,"aria-labeledby":"tab-"+D,role:"tabpanel"}).css("display","none")})};var f=function(){j.find(">ul").removeAttr("role");C.removeAttr("id aria-controls tabindex role aria-expanded");j.find("div").removeAttr("id aria-labeledby role style")};var r=function(){j.on("click.submenu","h2",function(D){D.preventDefault();var E=i(D.target).next("div");i(D.target).attr("aria-expanded",E.is(":hidden"));E.toggle()});j.on("keydown.submenu",function(D){var F=D.which;var E=i(D.target);if(F===13||F===32){D.preventDefault();E.trigger("click")}if(F===37||F===38){D.preventDefault();C.each(function(G){if(G>0&&i(this).attr("tabindex")===0){i(this).attr("tabindex",q);i(C[G-1]).attr("tabindex",0).focus();return false}})}if(F===40||F===39){D.preventDefault();C.each(function(G){if(G<(C.length-1)&&i(this).attr("tabindex")===0){i(this).attr("tabindex",q);i(C[G+1]).attr("tabindex",0).focus();return false}})}if(F===27&&E.is("a")){D.preventDefault();D.stopPropagation();E.parents("div").prev("h2").trigger("click").focus()}})};var a=function(){j.off(".submenu")};b.open=function(){x=true;m.toggleClass("open");var D=i("#tabzilla-contents").height();m.animate({height:D},200,function(){m.css("height","auto")});d.attr({"aria-expanded":"true"}).addClass("tabzilla-opened").removeClass("tabzilla-closed");m.focus();return m};b.close=function(){x=false;m.animate({height:0},200,function(){m.toggleClass("open")});d.attr({"aria-expanded":"false"}).addClass("tabzilla-closed").removeClass("tabzilla-opened");return d};b.opened=function(){if(A){console.warn("This call is soon going to be deprecated, please replace it with Tabzilla.open() instead.")}return b.open()};b.closed=function(){if(A){console.warn("This call is soon going to be deprecated, please replace it with Tabzilla.close() instead.")}return b.close()};var z=function(){i.extend(i.easing,{easeInOut:function(E,F,D,H,G){if((F/=G/2)<1){return H/2*F*F+D}return -H/2*((--F)*(F-2)-1)+D}})};var o=function(){window.matchMedia=window.matchMedia||(function(H,I){var F;var D=H.documentElement;var E=D.firstElementChild||D.firstChild;var G=H.createElement("body");var J=H.createElement("div");J.id="mq-test-1";J.style.cssText="position:absolute;top:-100em";G.style.background="none";G.appendChild(J);return function(K){J.innerHTML='&shy;<style media="'+K+'"> #mq-test-1 { width: 42px; }</style>';D.insertBefore(G,E);F=J.offsetWidth===42;D.removeChild(G);return{matches:F,media:K}}}(document))};var t=function(){if(0==i("#tabzilla-panel").length){i("body").prepend(s)}d=i("#tabzilla");m=i("#tabzilla-panel");j=i("#tabzilla-nav");C=j.find("h2");if(p&&!w){o();w=true}z();y();i(window).on("resize",function(){y()});m.on("keydown",function(D){if(D.which===27){D.preventDefault();close()}});d.attr("aria-label","Mozilla links");d.on("click",function(D){D.preventDefault();if(x){b.close()}else{b.open()}})};var B=function(F){var E=function(){l=window.jQuery.noConflict(true);i=l;F.call()};var D=document.createElement("script");if(D.readyState){D.onreadystatechange=function(){if(D.readyState==="loaded"||D.readyState==="complete"){D.onreadystatechange=null;E.call()}}}else{D.onload=E}D.src="//web.archive.org/web/20160604142848/http://mozorg.cdn.mozilla.net/media/js/libs/jquery-"+h+".min.js";document.getElementsByTagName("head")[0].appendChild(D)};var v=function(E,D){E=(""+E).split(".");D=(""+D).split(".");while(E.length<D.length){E.push("0")}while(D.length<E.length){D.push("0")}for(var F=0;F<E.length;F++){if(E[F]>D[F]){return 1}if(E[F]<D[F]){return -1}}return 0};(function(){if(window.jQuery!==undefined&&v(window.jQuery.fn.jquery,h)!==-1){l=window.jQuery;i=l;i(document).ready(t)}else{B(t)}})();var s='<div id="tabzilla-panel" class="close-nav" tabindex="-1">  <div id="tabzilla-contents">    <div id="tabzilla-promo">    <div id="tabzilla-promo-webwewant" class="snippet">      <a href="https://web.archive.org/web/20160604142848/https://webwewant.mozilla.org/?icn=tabz">        <h4>你想要什麼樣的網路？</h4>        <p>分享你的觀點</p>      </a>    </div><!-- end of promo-name -->    </div>    <!-- end of tabzilla-promo -->    <div id="tabzilla-nav">      <ul>        <li class="sitemap">          <h2>Firefox</h2>          <div>            <ul>              <li>                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/download/" title="下載 Mozilla Firefox 中文桌面版" tabindex="-1">Firefox 免費下載</a>              </li>              <li>                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/desktop/" title="下載 Mozilla Firefox 中文桌面版">Firefox 桌面版</a>              </li>              <li>                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/mobile/" title="Mozilla Firefox 行動版">Firefox 行動版</a>              </li>              <li>                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/channel/" title="Mozilla Firefox 未來發行版">Firefox 未來發行版</a>              </li>              <li>                <a href="https://web.archive.org/web/20160604142848/https://addons.mozilla.org/zh-TW/firefox/" title="Firefox 附加元件">附加元件</a>              </li>              <li>                <a href="https://web.archive.org/web/20160604142848/https://support.mozilla.com/zh-TW/home" title="Firefox 說明文件、支援中心">支援中心</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>Firefox OS</h2>          <div>            <ul>              <li>                <a title="Firefox OS 詳細介紹" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/os/" tabindex="-1">詳細介紹</a>              </li>              <li>                <a title="Firefox OS 合作夥伴專區" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/partners/" tabindex="-1">合作夥伴專區</a>              </li>              <li>                <a title="Firefox OS 支援中心" href="//web.archive.org/web/20160604142848/http://support.mozilla.org/products/firefox-os" tabindex="-1">支援中心</a>              </li>              <li>                <a title="Firefox OS 常見問答集" href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/firefox/os/faq/" tabindex="-1">常見問答集</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>社群參與</h2>          <div>            <ul>              <li>                <a href="https://web.archive.org/web/20160604142848/http://firefox.club.tw/" title="Firefox 活力軍">Firefox 設計品</a>              </li>              <li>                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/community/student/" title="校園大使">校園大使</a>              </li>              <li>                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/community/contribute/" title="社群專案">社群專案</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>訊息中心</h2>          <div>            <ul>              <li>                <a href="//web.archive.org/web/20160604142848/http://blog.mozilla.com.tw/main" title="部落格">部落格</a>              </li>              <li>                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/news/press/" title="新聞室">新聞室</a>              </li>              <li>                <a href="//web.archive.org/web/20160604142848/http://blog.mozilla.com.tw/events-list" title="活動訊息">活動訊息</a>              </li>              <li>                <a href="//web.archive.org/web/20160604142848/http://tech.mozilla.com.tw/" title="謀智台客">謀智台客</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>關於我們</h2>          <div>            <ul>              <li>                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/about/manifesto/" title="Mozilla 宣言">Mozilla 宣言</a>              </li>              <li>                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/about/space/" title="Mozilla Space">Mozilla Space</a>              </li>              <li>                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/about/careers/" title="工作機會">工作機會</a>              </li>              <li>                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/about/intern/" title="工作機會">實習機會</a>              </li>              <li>                <a href="//web.archive.org/web/20160604142848/http://mozilla.com.tw/about/contact/" title="聯絡資訊">聯絡資訊</a>              </li>              <li>                <a href="//web.archive.org/web/20160604142848/http://mozilla.org/en-US/" title="Mozilla (US)">Mozilla (US)</a>              </li>            </ul>          </div>        </li>        <!-- end of sitemap -->      </ul>    </div>    <!-- end of tabzilla-nav -->  </div>  <!-- end of tabzilla-content --></div><!-- end of tabzilla-panel -->';return b})(Tabzilla||{});    </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>
+<!--
+     FILE ARCHIVED ON 14:28:48 Jun 04, 2016 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 11:42:00 May 09, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 0.591
+  exclusion.robots: 0.076
+  exclusion.robots.policy: 0.066
+  esindex: 0.009
+  cdx.remote: 10.605
+  LoadShardBlock: 110.289 (3)
+  PetaboxLoader3.datanode: 105.413 (4)
+  PetaboxLoader3.resolve: 329.633 (2)
+  load_resource: 351.741
+  nav: 0.214 (6)
+-->

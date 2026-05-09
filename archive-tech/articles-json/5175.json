@@ -14,44 +14,228 @@
   "author": "Conjuror",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=5175",
-  "archive_url": "https://web.archive.org/web/20140920175140id_/https://tech.mozilla.com.tw/?p=5175",
-  "wayback_timestamp": "20140920175140",
-  "content_html": "<div class=\"entry-content close\">\n\t\t<p>在開發的過程中，很常會遇到新上的 patch 不小心弄壞了已經存在的功能。處理這種 regression bug，尤其是在已經有大量 patch 加入了程式碼之後，要找出當初弄壞這個功能的 patch 更是難上加難。現在已經有一些工具能夠幫助你用 bisect 以二分法來找出造成問題的 patch，但還是要花費不少時間，若是能夠在第一時間預防，在 patch 加入後就進行測試，就能夠大輻降低開發時會遇上的問題。為了解決這種問題，自動化測試就能夠在這方面佔有很大的優勢，快速且全面的自動化測試能讓開發者和專案管理者盡早得知目前的專案品質，及早做出反應。</p>\n<p>然而，有沒有辦法可以更有效率的提昇整個開發品質呢？大部分有經驗的開發者都會選擇使用 CI server (Continuous Integration Server) 做為開發的輔助工具。CI server 可以負起編譯 (compile)、部署 (deploy)、測試 (test)、整理結果 (report)，的工作。藉由 CI server 定期的編譯程式碼，並進行測試，可以讓開發者每隔一段時間就能取得目前的專案狀態。目前市面上開源的 CI server 中，將常被使用的有老牌子的 Hudson CI、以及它再版的 Jenkins CI、新興起的 Go、支援小型專案做線上測試的 Travis CI、…等。其中筆者最推薦使用 Jenkins CI 來進行自動化集成及測試，它的設定簡單，支援的外掛模組也很多，不少人會推薦使用它，目前 Mozilla 內的小型專案也有使用。</p>\n<p>Mozilla 在 CI 的部分有特別花了一番工夫，我們自己設計了一套 ，比較特別的地方是它不只是完成 CI 的自動編譯的工作，它將工作區分成幾個比較細的部分，包含了 <a href=\"https://tbpl.mozilla.org/?tree=Try\" target=\"_blank\">Try Server</a>、<a href=\"https://tbpl.mozilla.org/?tree=B2g-Inbound%20\" target=\"_blank\">In-bound Server</a> 和 <a href=\"https://tbpl.mozilla.org/\" target=\"_blank\">mozilla-central</a> 三個區塊。 Try Server 提供開發者在實際送出 patch 之前就能夠有進行測試的地方，它可以讓開發者不需要等到實際送出 patch 之後才能完整執行過所有的測試； In-bound Server 則是將開發者已經完成並通過 review 的 patch 在獨立的空間整合並進行測試，這邊的整合結果並不會影響開發中的 trunk，但是卻能夠先看到整合過後的結果。在 patch 整合進 trunk 後，mozilla-central 還是會定期進行整合測試，以確保不會有相容性的問題。</p>\n<p>你有用過 CI 嗎？不妨找個容易操作的 CI，提昇一下開發效率吧。</p>\n\t\t\t</div>",
+  "archive_url": "https://web.archive.org/web/20181020163217/https://tech.mozilla.com.tw/posts/5175/%E5%B0%88%E6%B3%A8%E5%9C%A8%E8%A9%B2%E8%B2%BB%E5%BF%83%E7%9A%84%E5%B7%A5%E4%BD%9C%E4%B8%8A%EF%BC%8C%E7%94%A8-ci-%E4%BE%86%E6%8F%90%E6%98%87%E7%A8%8B%E5%BC%8F%E5%93%81%E8%B3%AA",
+  "wayback_timestamp": "20181020163217",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>在開發的過程中，很常會遇到新上的 patch 不小心弄壞了已經存在的功能。處理這種 regression bug，尤其是在已經有大量 patch 加入了程式碼之後，要找出當初弄壞這個功能的 patch 更是難上加難。現在已經有一些工具能夠幫助你用 bisect 以二分法來找出造成問題的 patch，但還是要花費不少時間，若是能夠在第一時間預防，在 patch 加入後就進行測試，就能夠大輻降低開發時會遇上的問題。為了解決這種問題，自動化測試就能夠在這方面佔有很大的優勢，快速且全面的自動化測試能讓開發者和專案管理者盡早得知目前的專案品質，及早做出反應。</p>\n<p>然而，有沒有辦法可以更有效率的提昇整個開發品質呢？大部分有經驗的開發者都會選擇使用 CI server (Continuous Integration Server) 做為開發的輔助工具。CI server 可以負起編譯 (compile)、部署 (deploy)、測試 (test)、整理結果 (report)，的工作。藉由 CI server 定期的編譯程式碼，並進行測試，可以讓開發者每隔一段時間就能取得目前的專案狀態。目前市面上開源的 CI server 中，將常被使用的有老牌子的 Hudson CI、以及它再版的 Jenkins CI、新興起的 Go、支援小型專案做線上測試的 Travis CI、…等。其中筆者最推薦使用 Jenkins CI 來進行自動化集成及測試，它的設定簡單，支援的外掛模組也很多，不少人會推薦使用它，目前 Mozilla 內的小型專案也有使用。</p>\n<p>Mozilla 在 CI 的部分有特別花了一番工夫，我們自己設計了一套 ，比較特別的地方是它不只是完成 CI 的自動編譯的工作，它將工作區分成幾個比較細的部分，包含了 <a href=\"https://web.archive.org/web/20181020163217/https://tbpl.mozilla.org/?tree=Try\" target=\"_blank\">Try Server</a>、<a href=\"https://web.archive.org/web/20181020163217/https://tbpl.mozilla.org/?tree=B2g-Inbound%20\" target=\"_blank\">In-bound Server</a> 和 <a href=\"https://web.archive.org/web/20181020163217/https://tbpl.mozilla.org/\" target=\"_blank\">mozilla-central</a> 三個區塊。 Try Server 提供開發者在實際送出 patch 之前就能夠有進行測試的地方，它可以讓開發者不需要等到實際送出 patch 之後才能完整執行過所有的測試； In-bound Server 則是將開發者已經完成並通過 review 的 patch 在獨立的空間整合並進行測試，這邊的整合結果並不會影響開發中的 trunk，但是卻能夠先看到整合過後的結果。在 patch 整合進 trunk 後，mozilla-central 還是會定期進行整合測試，以確保不會有相容性的問題。</p>\n<p>你有用過 CI 嗎？不妨找個容易操作的 CI，提昇一下開發效率吧。</p>\n\t\t\t</div>",
   "content_text": "在開發的過程中，很常會遇到新上的 patch 不小心弄壞了已經存在的功能。處理這種 regression bug，尤其是在已經有大量 patch 加入了程式碼之後，要找出當初弄壞這個功能的 patch 更是難上加難。現在已經有一些工具能夠幫助你用 bisect 以二分法來找出造成問題的 patch，但還是要花費不少時間，若是能夠在第一時間預防，在 patch 加入後就進行測試，就能夠大輻降低開發時會遇上的問題。為了解決這種問題，自動化測試就能夠在這方面佔有很大的優勢，快速且全面的自動化測試能讓開發者和專案管理者盡早得知目前的專案品質，及早做出反應。 然而，有沒有辦法可以更有效率的提昇整個開發品質呢？大部分有經驗的開發者都會選擇使用 CI server (Continuous Integration Server) 做為開發的輔助工具。CI server 可以負起編譯 (compile)、部署 (deploy)、測試 (test)、整理結果 (report)，的工作。藉由 CI server 定期的編譯程式碼，並進行測試，可以讓開發者每隔一段時間就能取得目前的專案狀態。目前市面上開源的 CI server 中，將常被使用的有老牌子的 Hudson CI、以及它再版的 Jenkins CI、新興起的 Go、支援小型專案做線上測試的 Travis CI、…等。其中筆者最推薦使用 Jenkins CI 來進行自動化集成及測試，它的設定簡單，支援的外掛模組也很多，不少人會推薦使用它，目前 Mozilla 內的小型專案也有使用。 Mozilla 在 CI 的部分有特別花了一番工夫，我們自己設計了一套 ，比較特別的地方是它不只是完成 CI 的自動編譯的工作，它將工作區分成幾個比較細的部分，包含了 Try Server 、 In-bound Server 和 mozilla-central 三個區塊。 Try Server 提供開發者在實際送出 patch 之前就能夠有進行測試的地方，它可以讓開發者不需要等到實際送出 patch 之後才能完整執行過所有的測試； In-bound Server 則是將開發者已經完成並通過 review 的 patch 在獨立的空間整合並進行測試，這邊的整合結果並不會影響開發中的 trunk，但是卻能夠先看到整合過後的結果。在 patch 整合進 trunk 後，mozilla-central 還是會定期進行整合測試，以確保不會有相容性的問題。 你有用過 CI 嗎？不妨找個容易操作的 CI，提昇一下開發效率吧。",
   "images": [
     {
-      "post_id": 5175,
-      "page_type": "post",
-      "title": "專注在該費心的工作上，用 CI 來提昇程式品質",
-      "page_timestamp": "20140920175140",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
-      "source": "img",
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
-      "archive_path": "assets/5175/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
-      "markdown_path": "../assets/5175/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
-      "wayback_timestamp": "20150324020250",
-      "asset_archive_url": "https://web.archive.org/web/20150324020250id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20181020163217im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/09/0-150x150.jpg",
+      "alt": "0",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/09/Krita-building_for-cats_010-git-update_by-deevad-50x50.jpg",
+      "alt": "Krita-building_for-cats_010-git-update_by-deevad",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/09/Krita-building_for-cats_010-git-update_by-deevad-150x150.jpg",
+      "alt": "Krita-building_for-cats_010-git-update_by-deevad",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/09/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2014-09-16-%E4%B8%8A%E5%8D%8810.51.21.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
     }
   ],
   "media": [
     {
-      "post_id": 5175,
-      "page_type": "post",
-      "title": "專注在該費心的工作上，用 CI 來提昇程式品質",
-      "page_timestamp": "20140920175140",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
-      "source": "img",
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
-      "archive_path": "assets/5175/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
-      "markdown_path": "../assets/5175/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
-      "wayback_timestamp": "20150324020250",
-      "asset_archive_url": "https://web.archive.org/web/20150324020250id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20181020163217im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/09/0-150x150.jpg",
+      "alt": "0",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/09/Krita-building_for-cats_010-git-update_by-deevad-50x50.jpg",
+      "alt": "Krita-building_for-cats_010-git-update_by-deevad",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/09/Krita-building_for-cats_010-git-update_by-deevad-150x150.jpg",
+      "alt": "Krita-building_for-cats_010-git-update_by-deevad",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/09/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2014-09-16-%E4%B8%8A%E5%8D%8810.51.21.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
     }
   ],
   "links": [
@@ -69,6 +253,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

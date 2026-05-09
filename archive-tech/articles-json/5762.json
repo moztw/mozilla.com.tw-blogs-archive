@@ -13,320 +13,300 @@
   "author": "Eric Chang",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=5762",
-  "archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/?p=5762",
+  "archive_url": "https://web.archive.org/web/20201019205848/https://tech.mozilla.com.tw/?p=5762",
   "wayback_timestamp": "20201019205848",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR.png\"><img class=\"alignnone size-medium wp-image-5843\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR-300x157.png\" alt=\"05.EMULATOR\" width=\"300\" height=\"157\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR-300x157.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR-1024x536.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR.png 1025w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a></p>\n<p>地理位置（Geolocation）的應用相信大家每天會使用到，早上查看上班前的交通狀況，傍晚打開手機 app 查詢附近的餐廳，上菜後照相打卡，看看週末旅行的城市天氣如何，或是用運動 app 記錄自己慢跑的速度，路線。在這篇短文，筆者將介紹如何在 Firefox OS 上，使用 Google maps 來查看目前的位置當作個簡單的開始，接下來由其他的高手朋友來作更多進階的應用。</p>\n<p>&nbsp;</p>\n<p>本篇的大綱如下</p>\n<ol>\n<li>使用 WedIDE 做一個簡單的 Firefox OS App</li>\n<li>加入 Google maps 地圖層及目前位置支援</li>\n<li>附錄</li>\n</ol>\n<p>&nbsp;</p>\n<div class=\"summary\">\n<h2>1. 使用 WedIDE 做一個簡單的 Firefox OS App</h2>\n<p>WebIDE 可透過 Firefox OS 模擬器或實體 Firefox OS 裝置，執行 Firefox OS App 並除錯，亦具備編輯環境，可建立並開發 Firefox OS App。這套強大的工具包含在 Firefox 瀏覽器 34 版以後的開發者版本或是 nightly 版本， 你可以用 Shift-F8，點選右上角的圖示或是從工具選單中開啓 WebIDE。附錄（1）</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/1.WEBIDEICON.png\"><img class=\"alignnone size-medium wp-image-5837\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/1.WEBIDEICON-300x108.png\" alt=\"1.WEBIDEICON\" width=\"300\" height=\"108\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/12/1.WEBIDEICON-300x108.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/1.WEBIDEICON.png 417w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a></p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS.png\"><img class=\"alignnone size-medium wp-image-5838\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS-300x179.png\" alt=\"01.WEBIDETOOLS\" width=\"300\" height=\"179\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS-300x179.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS.png 719w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a></p>\n<p>我們從新建一個 Privilege（Empty）app 或是從 Hello World 來更改都是好方法，端看個人喜好。</p>\n</div>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/02.NEWAPP.png\"><img class=\"alignnone size-medium wp-image-5839\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/02.NEWAPP-300x163.png\" alt=\"02.NEWAPP\" width=\"300\" height=\"163\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/12/02.NEWAPP-300x163.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/02.NEWAPP.png 705w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a></p>\n<p>&nbsp;</p>\n<h2>2. 加入 Google maps 地圖層及目前位置支援</h2>\n<p>接下來進入程式碼的部分，由於這個 demo 用 Google maps， 我們需要在 index.html &lt;HEAD&gt; 內指定要求 Google API 的支援。更多詳細 Google Maps API 的用法及資訊請參考附錄（2）</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8dfe078e401403386648\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n&lt;script src=\"http://maps.googleapis.com/maps/api/js\"&gt;&lt;/script&gt;</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e401403386648-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8dfe078e401403386648-1\"><span class=\"crayon-ta\">&lt;script </span><span class=\"crayon-e \">src</span><span class=\"crayon-o\">=</span><span class=\"crayon-s\">\"http://maps.googleapis.com/maps/api/js\"</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-ta\">&lt;/script&gt;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0006 seconds] -->\r\n<p>&nbsp;</p>\n<p>下一步在 app.js 的部分增加地圖層還有目前的位置和標記，使用前好習慣，先檢查 navigator 和 geolocation 不爲空。附錄（3）</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8dfe078e40b984608105\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nif (navigator &amp;&amp; navigator.geolocation) {\r\n // Do something with geolocation\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e40b984608105-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e40b984608105-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e40b984608105-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8dfe078e40b984608105-1\"><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">navigator</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&amp;&amp;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">geolocation</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e40b984608105-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// Do something with geolocation</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e40b984608105-3\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p>&nbsp;</p>\n<p>取得目前的位置非常簡單，呼叫 getCurrentPosition() 這個函式， 第一個參數爲 Callback function ，而第二三個參數可不填寫。附錄（4）</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8dfe078e40e660319161\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nnavigator.geolocation.getCurrentPosition()</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e40e660319161-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8dfe078e40e660319161-1\"><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">geolocation</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">getCurrentPosition</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p>&nbsp;</p>\n<p>在 Callback 中先將 Position 的經緯度轉成 Google 經緯度的參數。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8dfe078e411035760885\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nnavigator.geolocation.getCurrentPosition(function (position) {\r\n here = new google.maps.LatLng(position.coords.latitude, position.coords.longitude); \r\n // blah blah \r\n} </textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e411035760885-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e411035760885-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e411035760885-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e411035760885-4\">4</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8dfe078e411035760885-1\"><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">geolocation</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">getCurrentPosition</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e411035760885-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">here</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">new</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">google</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">maps</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">LatLng</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">coords</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">latitude</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">coords</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">longitude</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e411035760885-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// blah blah </span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e411035760885-4\"><span class=\"crayon-sy\">}</span> </div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>接下來準備 Google Maps 的部分，你也可以更改 zoom 來顯示的地圖精細粗略範圍大小，或是顯示街道地圖或是等高線之類， 在這裏我使用衛星地圖。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8dfe078e414325080863\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n var map_options = {\r\n zoom: 16,\r\n center: here,\r\n mapTypeId: google.maps.MapTypeId.SATELLITE\r\n }</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e414325080863-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e414325080863-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e414325080863-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e414325080863-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e414325080863-5\">5</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8dfe078e414325080863-1\"><span class=\"crayon-h\"> </span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">map_options</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e414325080863-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">zoom</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">16</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e414325080863-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">center</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">here</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e414325080863-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">mapTypeId</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">google</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">maps</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">MapTypeId</span><span class=\"crayon-sy\">.</span><span class=\"crayon-i\">SATELLITE</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e414325080863-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>準備好所需要的參數之後，開始建立一個 Google Maps 圖層並顯示在 index.html 上。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8dfe078e416565299609\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n map_container = document.getElementById(\"map\");\r\n map &lt;a href=\"http://www.svenskkasinon.com/\"&gt;online casino&lt;/a&gt;  = new google.maps.Map(map_container, map_options);</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e416565299609-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e416565299609-2\">2</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8dfe078e416565299609-1\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">map_container</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">document</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">getElementById</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"map\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e416565299609-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">map</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-i\">a</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">href</span><span class=\"crayon-o\">=</span><span class=\"crayon-s\">\"http://www.svenskkasinon.com/\"</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-e\">online </span><span class=\"crayon-v\">casino</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-o\">/</span><span class=\"crayon-v\">a</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">new</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">google</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">maps</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">Map</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">map_container</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">map_options</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>加上自己的定位點，這裏還是使用預設的紅色圖釘。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8dfe078e419854096655\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n marker = new google.maps.Marker({\r\n position: here,\r\n map: map,\r\n });</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e419854096655-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e419854096655-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e419854096655-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e419854096655-4\">4</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8dfe078e419854096655-1\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">marker</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">new</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">google</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">maps</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">Marker</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e419854096655-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">position</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">here</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e419854096655-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">map</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">map</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e419854096655-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>最後將經緯度顯示在地圖上供參考。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8dfe078e41b144634735\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n coordinates = \"Lat: \" DecimalToDegree(position.coords.latitude) \", Long: \" DecimalToDegree(position.coords.longitude);\r\n document.getElementById(\"coordinatesString\").innerHTML = coordinates;\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e41b144634735-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e41b144634735-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e41b144634735-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8dfe078e41b144634735-1\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">coordinates</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"Lat: \"</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">DecimalToDegree</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">coords</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">latitude</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\", Long: \"</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">DecimalToDegree</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">coords</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">longitude</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e41b144634735-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">document</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">getElementById</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"coordinatesString\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">innerHTML</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">coordinates</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e41b144634735-3\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>&nbsp;</p>\n<p>程式碼如下， 你也可以在 github 查到完整的部分。附錄（5）</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8dfe078e41e930732072\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nfunction init() {\r\n if (navigator &amp;&amp; navigator.geolocation) {\r\n navigator.geolocation.getCurrentPosition(function (position) {\r\n here = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);\r\n var map_options = {\r\n zoom: 16,\r\n center: here,\r\n mapTypeId: google.maps.MapTypeId.SATELLITE\r\n }\r\n map_container = document.getElementById(\"map\");\r\n map = new google.maps.Map(map_container, map_options);\r\n marker = new google.maps.Marker({\r\n position: here,\r\n map: map,\r\n });\r\n coordinates = \"Lat: \" DecimalToDegree(position.coords.latitude) \", Long: \" DecimalToDegree(position.coords.longitude);\r\n document.getElementById(\"coordinatesString\").innerHTML = coordinates;\r\n }\r\n );\r\n } else {\r\n console.log(\"Geolocation is not supported\");\r\n }\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e41e930732072-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e41e930732072-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e41e930732072-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e41e930732072-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e41e930732072-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e41e930732072-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e41e930732072-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e41e930732072-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e41e930732072-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e41e930732072-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e41e930732072-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e41e930732072-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e41e930732072-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e41e930732072-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e41e930732072-15\">15</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e41e930732072-16\">16</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e41e930732072-17\">17</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e41e930732072-18\">18</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e41e930732072-19\">19</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e41e930732072-20\">20</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e41e930732072-21\">21</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfe078e41e930732072-22\">22</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfe078e41e930732072-23\">23</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8dfe078e41e930732072-1\"><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">init</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e41e930732072-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">navigator</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&amp;&amp;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">geolocation</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e41e930732072-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">geolocation</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">getCurrentPosition</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e41e930732072-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">here</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">new</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">google</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">maps</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">LatLng</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">coords</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">latitude</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">coords</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">longitude</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e41e930732072-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">map_options</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e41e930732072-6\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">zoom</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">16</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e41e930732072-7\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">center</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">here</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e41e930732072-8\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">mapTypeId</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">google</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">maps</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">MapTypeId</span><span class=\"crayon-sy\">.</span><span class=\"crayon-i\">SATELLITE</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e41e930732072-9\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e41e930732072-10\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">map_container</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">document</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">getElementById</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"map\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e41e930732072-11\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">map</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">new</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">google</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">maps</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">Map</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">map_container</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">map_options</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e41e930732072-12\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">marker</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">new</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">google</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">maps</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">Marker</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e41e930732072-13\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">position</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">here</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e41e930732072-14\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">map</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">map</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e41e930732072-15\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e41e930732072-16\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">coordinates</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"Lat: \"</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">DecimalToDegree</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">coords</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">latitude</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\", Long: \"</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">DecimalToDegree</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">coords</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">longitude</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e41e930732072-17\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">document</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">getElementById</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"coordinatesString\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">innerHTML</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">coordinates</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e41e930732072-18\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e41e930732072-19\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e41e930732072-20\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span><span class=\"crayon-h\"> </span><span class=\"crayon-st\">else</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e41e930732072-21\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">console</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">log</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"Geolocation is not supported\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfe078e41e930732072-22\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfe078e41e930732072-23\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0009 seconds] -->\r\n<p>&nbsp;</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR.png\"><img class=\"alignnone size-large wp-image-5846\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR-1024x536.png\" alt=\"05.SIMULATOR\" width=\"640\" height=\"335\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR-1024x536.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR-300x157.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR.png 1025w\" sizes=\"(max-width: 640px) 100vw, 640px\" /></a></p>\n<p>Voila！接下來選擇 Firefox OS Simulator，按下 Play 按鍵看看成果！是不是心裏又想到了可以修改或是增加有趣功能的想法呢？希望這簡單的小程式可以讓你快速瞭解如何實作一個定位 app。接下來將會有其他的朋友來分享更多  Geolocation 應用。Stay tuned！</p>\n<p>&nbsp;</p>\n<h2>附錄</h2>\n<ol>\n<li>WebIDE <a title=\"https://developer.mozilla.org/en-US/docs/Tools/WebIDE\" href=\"https://developer.mozilla.org/en-US/docs/Tools/WebIDE\">https://developer.mozilla.org/en-US/docs/Tools/WebIDE</a></li>\n<li>Google Maps Javascript API <a title=\"https://developers.google.com/maps/documentation/javascript/tutorial\" href=\"https://developers.google.com/maps/documentation/javascript/tutorial\">https://developers.google.com/maps/documentation/javascript/tutorial</a></li>\n<li>Null 如何發音 <a title=\"http://www.youtube.com/watch?v=GB-QM4yYfCc\" href=\"http://www.youtube.com/watch?v=GB-QM4yYfCc\">http://www.youtube.com/watch?v=GB-QM4yYfCc</a></li>\n<li>MDN 上 getCurrentPosition() <a title=\"https://developer.mozilla.org/en-US/docs/Web/API/Geolocation.getCurrentPosition\" href=\"https://developer.mozilla.org/en-US/docs/Web/API/Geolocation.getCurrentPosition\">https://developer.mozilla.org/en-US/docs/Web/API/Geolocation.getCurrentPosition</a></li>\n<li>Github 上的 Demo app <a title=\"https://github.com/echangmoz/geolocation_demo\" href=\"https://github.com/echangmoz/geolocation_demo\">https://github.com/echangmoz/geolocation_demo</a></li>\n<li>Geographic Coordinates <a title=\"http://en.wikipedia.org/wiki/Geographic_coordinate_conversion\" href=\"http://en.wikipedia.org/wiki/Geographic_coordinate_conversion\">http://en.wikipedia.org/wiki/Geographic_coordinate_conversion</a></li>\n<li>GPS, GLONASS 衛星定位系統 <a title=\"http://en.wikipedia.org/wiki/Global_Positioning_System\" href=\"http://en.wikipedia.org/wiki/Global_Positioning_System\">http://en.wikipedia.org/wiki/Global_Positioning_System</a></li>\n<li>MDN 上 Geolocation 相關資訊 <a title=\"https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/Using_geolocation\" href=\"https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/Using_geolocation\">https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/Using_geolocation</a></li>\n<li>DD 和 DMS 的換算\n<ul>\n<li>DD 是 Decimal Degree 的縮寫，以十進位呈現資料，例如 <span class=\"cards-reveal-left-container cards-reveal-show-lat-lng\">25.037849N, 121.548819N</span> 。</li>\n<li>DMS 是 Degree Minute Second 以度分秒的方式，例如 25°02&#8243;16.3&#8243;N 121°32&#8243;55.8&#8243;E。</li>\n<li>目前運轉中的定位衛星有 GPS，GLONASS，BeiDou 都可以當作 geolocation 的資料提供者。</li>\n<li>Among difficult points <a href=\"https://best-horoscope.com/\">horscope</a> Leo mentions extreme interest of control powers to all the activities and undertakings.</li>\n</ul>\n</li>\n</ol>\n\t\t\t</div>",
   "content_text": "地理位置（Geolocation）的應用相信大家每天會使用到，早上查看上班前的交通狀況，傍晚打開手機 app 查詢附近的餐廳，上菜後照相打卡，看看週末旅行的城市天氣如何，或是用運動 app 記錄自己慢跑的速度，路線。在這篇短文，筆者將介紹如何在 Firefox OS 上，使用 Google maps 來查看目前的位置當作個簡單的開始，接下來由其他的高手朋友來作更多進階的應用。 本篇的大綱如下 使用 WedIDE 做一個簡單的 Firefox OS App 加入 Google maps 地圖層及目前位置支援 附錄 1. 使用 WedIDE 做一個簡單的 Firefox OS App WebIDE 可透過 Firefox OS 模擬器或實體 Firefox OS 裝置，執行 Firefox OS App 並除錯，亦具備編輯環境，可建立並開發 Firefox OS App。這套強大的工具包含在 Firefox 瀏覽器 34 版以後的開發者版本或是 nightly 版本， 你可以用 Shift-F8，點選右上角的圖示或是從工具選單中開啓 WebIDE。附錄（1） 我們從新建一個 Privilege（Empty）app 或是從 Hello World 來更改都是好方法，端看個人喜好。 2. 加入 Google maps 地圖層及目前位置支援 接下來進入程式碼的部分，由於這個 demo 用 Google maps， 我們需要在 index.html <HEAD> 內指定要求 Google API 的支援。更多詳細 Google Maps API 的用法及資訊請參考附錄（2） <script src=\"http://maps.googleapis.com/maps/api/js\"></script> 1 <script src = \"http://maps.googleapis.com/maps/api/js\" > </script> 下一步在 app.js 的部分增加地圖層還有目前的位置和標記，使用前好習慣，先檢查 navigator 和 geolocation 不爲空。附錄（3） if (navigator && navigator.geolocation) { // Do something with geolocation } 1 2 3 if ( navigator && navigator . geolocation ) { // Do something with geolocation } 取得目前的位置非常簡單，呼叫 getCurrentPosition() 這個函式， 第一個參數爲 Callback function ，而第二三個參數可不填寫。附錄（4） navigator.geolocation.getCurrentPosition() 1 navigator . geolocation . getCurrentPosition ( ) 在 Callback 中先將 Position 的經緯度轉成 Google 經緯度的參數。 navigator.geolocation.getCurrentPosition(function (position) { here = new google.maps.LatLng(position.coords.latitude, position.coords.longitude); // blah blah } 1 2 3 4 navigator . geolocation . getCurrentPosition ( function ( position ) { here = new google . maps . LatLng ( position . coords . latitude , position . coords . longitude ) ; // blah blah } 接下來準備 Google Maps 的部分，你也可以更改 zoom 來顯示的地圖精細粗略範圍大小，或是顯示街道地圖或是等高線之類， 在這裏我使用衛星地圖。 var map_options = { zoom: 16, center: here, mapTypeId: google.maps.MapTypeId.SATELLITE } 1 2 3 4 5 var map_options = { zoom : 16 , center : here , mapTypeId : google . maps . MapTypeId . SATELLITE } 準備好所需要的參數之後，開始建立一個 Google Maps 圖層並顯示在 index.html 上。 map_container = document.getElementById(\"map\"); map <a href=\"http://www.svenskkasinon.com/\">online casino</a> = new google.maps.Map(map_container, map_options); 1 2 map_container = document . getElementById ( \"map\" ) ; map < a href = \"http://www.svenskkasinon.com/\" > online casino < / a > = new google . maps . Map ( map_container , map_options ) ; 加上自己的定位點，這裏還是使用預設的紅色圖釘。 marker = new google.maps.Marker({ position: here, map: map, }); 1 2 3 4 marker = new google . maps . Marker ( { position : here , map : map , } ) ; 最後將經緯度顯示在地圖上供參考。 coordinates = \"Lat: \" DecimalToDegree(position.coords.latitude) \", Long: \" DecimalToDegree(position.coords.longitude); document.getElementById(\"coordinatesString\").innerHTML = coordinates; } 1 2 3 coordinates = \"Lat: \" DecimalToDegree ( position . coords . latitude ) \", Long: \" DecimalToDegree ( position . coords . longitude ) ; document . getElementById ( \"coordinatesString\" ) . innerHTML = coordinates ; } 程式碼如下， 你也可以在 github 查到完整的部分。附錄（5） function init() { if (navigator && navigator.geolocation) { navigator.geolocation.getCurrentPosition(function (position) { here = new google.maps.LatLng(position.coords.latitude, position.coords.longitude); var map_options = { zoom: 16, center: here, mapTypeId: google.maps.MapTypeId.SATELLITE } map_container = document.getElementById(\"map\"); map = new google.maps.Map(map_container, map_options); marker = new google.maps.Marker({ position: here, map: map, }); coordinates = \"Lat: \" DecimalToDegree(position.coords.latitude) \", Long: \" DecimalToDegree(position.coords.longitude); document.getElementById(\"coordinatesString\").innerHTML = coordinates; } ); } else { console.log(\"Geolocation is not supported\"); } } 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 function init ( ) { if ( navigator && navigator . geolocation ) { navigator . geolocation . getCurrentPosition ( function ( position ) { here = new google . maps . LatLng ( position . coords . latitude , position . coords . longitude ) ; var map_options = { zoom : 16 , center : here , mapTypeId : google . maps . MapTypeId . SATELLITE } map_container = document . getElementById ( \"map\" ) ; map = new google . maps . Map ( map_container , map_options ) ; marker = new google . maps . Marker ( { position : here , map : map , } ) ; coordinates = \"Lat: \" DecimalToDegree ( position . coords . latitude ) \", Long: \" DecimalToDegree ( position . coords . longitude ) ; document . getElementById ( \"coordinatesString\" ) . innerHTML = coordinates ; } ) ; } else { console . log ( \"Geolocation is not supported\" ) ; } } Voila！接下來選擇 Firefox OS Simulator，按下 Play 按鍵看看成果！是不是心裏又想到了可以修改或是增加有趣功能的想法呢？希望這簡單的小程式可以讓你快速瞭解如何實作一個定位 app。接下來將會有其他的朋友來分享更多 Geolocation 應用。Stay tuned！ 附錄 WebIDE https://developer.mozilla.org/en-US/docs/Tools/WebIDE Google Maps Javascript API https://developers.google.com/maps/documentation/javascript/tutorial Null 如何發音 http://www.youtube.com/watch?v=GB-QM4yYfCc MDN 上 getCurrentPosition() https://developer.mozilla.org/en-US/docs/Web/API/Geolocation.getCurrentPosition Github 上的 Demo app https://github.com/echangmoz/geolocation_demo Geographic Coordinates http://en.wikipedia.org/wiki/Geographic_coordinate_conversion GPS, GLONASS 衛星定位系統 http://en.wikipedia.org/wiki/Global_Positioning_System MDN 上 Geolocation 相關資訊 https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/Using_geolocation DD 和 DMS 的換算 DD 是 Decimal Degree 的縮寫，以十進位呈現資料，例如 25.037849N, 121.548819N 。 DMS 是 Degree Minute Second 以度分秒的方式，例如 25°02″16.3″N 121°32″55.8″E。 目前運轉中的定位衛星有 GPS，GLONASS，BeiDou 都可以當作 geolocation 的資料提供者。 Among difficult points horscope Leo mentions extreme interest of control powers to all the activities and undertakings.",
   "images": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/2013-05-10-16-42-06-150x150.png",
+      "alt": "2013-05-10-16-42-06",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-50x50.png",
+      "alt": "2014-12-18 18:49:53 的螢幕擷圖",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-150x150.png",
+      "alt": "2014-12-18 18:49:53 的螢幕擷圖",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR-300x157.png",
       "alt": "05.EMULATOR",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/05.EMULATOR-300x157.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/05.EMULATOR-300x157.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR-300x157.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR-1024x536.png",
+      "alt": "05.EMULATOR",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR.png",
+      "alt": "05.EMULATOR",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/1.WEBIDEICON-300x108.png",
       "alt": "1.WEBIDEICON",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/1.WEBIDEICON-300x108.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/1.WEBIDEICON-300x108.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/1.WEBIDEICON-300x108.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/1.WEBIDEICON.png",
+      "alt": "1.WEBIDEICON",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS-300x179.png",
       "alt": "01.WEBIDETOOLS",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/01.WEBIDETOOLS-300x179.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/01.WEBIDETOOLS-300x179.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS-300x179.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS.png",
+      "alt": "01.WEBIDETOOLS",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/02.NEWAPP-300x163.png",
       "alt": "02.NEWAPP",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/02.NEWAPP-300x163.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/02.NEWAPP-300x163.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/02.NEWAPP-300x163.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/02.NEWAPP.png",
+      "alt": "02.NEWAPP",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR-1024x536.png",
       "alt": "05.SIMULATOR",
       "kind": "image",
-      "source": "img",
-      "post_id": 5762,
-      "page_type": "post",
-      "title": "Where am I？－Part I－使用 Google Maps 地圖快速簡單查看你的位置",
-      "page_timestamp": "20201019205848",
-      "index": 9,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR-1024x536.png",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/05.SIMULATOR-1024x536.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/05.SIMULATOR-1024x536.png",
-      "wayback_timestamp": "20150324101326",
-      "asset_archive_url": "https://web.archive.org/web/20150324101326id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR-1024x536.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR.png",
-      "alt": "",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR-300x157.png",
+      "alt": "05.SIMULATOR",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/05.EMULATOR.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/05.EMULATOR.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/1.WEBIDEICON.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/1.WEBIDEICON.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/1.WEBIDEICON.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/1.WEBIDEICON.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS.png",
-      "alt": "",
-      "kind": "image",
-      "source": "img-srcset",
-      "post_id": 5762,
-      "page_type": "post",
-      "title": "Where am I？－Part I－使用 Google Maps 地圖快速簡單查看你的位置",
-      "page_timestamp": "20201019205848",
-      "index": 6,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS.png",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/01.WEBIDETOOLS.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/01.WEBIDETOOLS.png",
-      "wayback_timestamp": "20150508203825",
-      "asset_archive_url": "https://web.archive.org/web/20150508203825id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/02.NEWAPP.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/02.NEWAPP.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/02.NEWAPP.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/02.NEWAPP.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR.png",
+      "alt": "05.SIMULATOR",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/05.SIMULATOR.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/05.SIMULATOR.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5762,
-      "page_type": "post",
-      "title": "Where am I？－Part I－使用 Google Maps 地圖快速簡單查看你的位置",
-      "page_timestamp": "20201019205848",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR-1024x536.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 1,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR.png",
-      "archive_path": "assets/5762/002-6d6c32b7040e.png",
-      "markdown_path": "../assets/5762/002-6d6c32b7040e.png",
-      "wayback_timestamp": "20150508174910",
-      "asset_archive_url": "https://web.archive.org/web/20150508174910id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5762,
-      "page_type": "post",
-      "title": "Where am I？－Part I－使用 Google Maps 地圖快速簡單查看你的位置",
-      "page_timestamp": "20201019205848",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR-300x157.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 10,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR.png",
-      "archive_path": "assets/5762/011-6d6c32b7040e.png",
-      "markdown_path": "../assets/5762/011-6d6c32b7040e.png",
-      "wayback_timestamp": "20150508195013",
-      "asset_archive_url": "https://web.archive.org/web/20150508195013id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "media": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/07/2013-05-10-16-42-06-150x150.png",
+      "alt": "2013-05-10-16-42-06",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-50x50.png",
+      "alt": "2014-12-18 18:49:53 的螢幕擷圖",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-150x150.png",
+      "alt": "2014-12-18 18:49:53 的螢幕擷圖",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR-300x157.png",
       "alt": "05.EMULATOR",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/05.EMULATOR-300x157.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/05.EMULATOR-300x157.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR-300x157.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR-1024x536.png",
+      "alt": "05.EMULATOR",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR.png",
+      "alt": "05.EMULATOR",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/1.WEBIDEICON-300x108.png",
       "alt": "1.WEBIDEICON",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/1.WEBIDEICON-300x108.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/1.WEBIDEICON-300x108.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/1.WEBIDEICON-300x108.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/1.WEBIDEICON.png",
+      "alt": "1.WEBIDEICON",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS-300x179.png",
       "alt": "01.WEBIDETOOLS",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/01.WEBIDETOOLS-300x179.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/01.WEBIDETOOLS-300x179.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS-300x179.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS.png",
+      "alt": "01.WEBIDETOOLS",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/02.NEWAPP-300x163.png",
       "alt": "02.NEWAPP",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/02.NEWAPP-300x163.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/02.NEWAPP-300x163.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/02.NEWAPP-300x163.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/02.NEWAPP.png",
+      "alt": "02.NEWAPP",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR-1024x536.png",
       "alt": "05.SIMULATOR",
       "kind": "image",
-      "source": "img",
-      "post_id": 5762,
-      "page_type": "post",
-      "title": "Where am I？－Part I－使用 Google Maps 地圖快速簡單查看你的位置",
-      "page_timestamp": "20201019205848",
-      "index": 9,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR-1024x536.png",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/05.SIMULATOR-1024x536.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/05.SIMULATOR-1024x536.png",
-      "wayback_timestamp": "20150324101326",
-      "asset_archive_url": "https://web.archive.org/web/20150324101326id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR-1024x536.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR.png",
-      "alt": "",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR-300x157.png",
+      "alt": "05.SIMULATOR",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/05.EMULATOR.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/05.EMULATOR.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/1.WEBIDEICON.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/1.WEBIDEICON.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/1.WEBIDEICON.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/1.WEBIDEICON.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS.png",
-      "alt": "",
-      "kind": "image",
-      "source": "img-srcset",
-      "post_id": 5762,
-      "page_type": "post",
-      "title": "Where am I？－Part I－使用 Google Maps 地圖快速簡單查看你的位置",
-      "page_timestamp": "20201019205848",
-      "index": 6,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS.png",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/01.WEBIDETOOLS.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/01.WEBIDETOOLS.png",
-      "wayback_timestamp": "20150508203825",
-      "asset_archive_url": "https://web.archive.org/web/20150508203825id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/02.NEWAPP.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/02.NEWAPP.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/02.NEWAPP.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/02.NEWAPP.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR.png",
+      "alt": "05.SIMULATOR",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5762/wp-content/uploads/2014/12/05.SIMULATOR.png",
-      "markdown_path": "../assets/5762/wp-content/uploads/2014/12/05.SIMULATOR.png",
-      "wayback_timestamp": "20201019205848",
-      "asset_archive_url": "https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5762,
-      "page_type": "post",
-      "title": "Where am I？－Part I－使用 Google Maps 地圖快速簡單查看你的位置",
-      "page_timestamp": "20201019205848",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR-1024x536.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 1,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR.png",
-      "archive_path": "assets/5762/002-6d6c32b7040e.png",
-      "markdown_path": "../assets/5762/002-6d6c32b7040e.png",
-      "wayback_timestamp": "20150508174910",
-      "asset_archive_url": "https://web.archive.org/web/20150508174910id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5762,
-      "page_type": "post",
-      "title": "Where am I？－Part I－使用 Google Maps 地圖快速簡單查看你的位置",
-      "page_timestamp": "20201019205848",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR-300x157.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 10,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR.png",
-      "archive_path": "assets/5762/011-6d6c32b7040e.png",
-      "markdown_path": "../assets/5762/011-6d6c32b7040e.png",
-      "wayback_timestamp": "20150508195013",
-      "asset_archive_url": "https://web.archive.org/web/20150508195013id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -388,6 +368,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

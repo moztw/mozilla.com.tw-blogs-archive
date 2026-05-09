@@ -5,19 +5,82 @@
   "year": 2012,
   "month": 11,
   "day": 26,
-  "categories": [],
+  "categories": [
+    "Javascript",
+    "Mozilla"
+  ],
   "tags": [],
   "author": "香蕉人",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=1069",
-  "archive_url": "https://web.archive.org/web/20130414145556id_/https://tech.mozilla.com.tw/?p=1069",
-  "wayback_timestamp": "20130414145556",
-  "content_html": "<div class=\"entry-content close\">\n\t\t<p>香蕉人又登場了，今天要來教大家使用 Persona 囉！這是什麼? 能吃嗎?! 是新口味的香蕉嗎？！ 有在發落<a href=\"http://blog.mozilla.com.tw/main\" target=\"_blank\"> Mozilla Taiwan 部落格</a>的捧油應該不陌生啦，新朋友別緊張啦~ Persona 的詳細介紹可以看 <a title=\"安全可靠-persona-網路身份認證系統-beta-版首度釋出！\" href=\"http://blog.mozilla.com.tw/posts/1061/\" target=\"_blank\">http://blog.mozilla.com.tw/posts/1061/安全可靠-persona-網路身份認證系統-beta-版首度釋出！</a>簡單來說，Persona 是一種安全，簡單又快速的登入方式，全新體驗保障使用者的隱私哦！</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona1.png\"><img class=\"aligncenter size-full wp-image-1073\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona1.png\" alt=\"\" width=\"642\" height=\"204\" /></a></p>\n<p>Persona 除了使用者登入方便以外，香蕉人發現開發起來也是輕鬆寫意啊，只要簡簡單單的三個步驟，就可以在你的網站上或是web app上加入Persona。馬上就來看第一步：</p>\n<h4>Step 1.</h4>\n<p>因為 Persona 還未內建在任何的 Browser 裡，所以請在你的網站加上~ Persona 的Library <a title=\"https://login.persona.org/include.js\" href=\"https://login.persona.org/include.js\">https://login.persona.org/include.js</a></p>\n<h4>Step 2.</h4>\n<p>請在你的網站上加上兩個按鈕，分別是「登入」及「登出」的按鈕</p>\n<p>其中在「登入」的按鈕中加上 onclick 的事件：</p>\n<pre>var signinLink = document.getElementById('signin');\r\n\r\nif (signinLink) {\r\n  signinLink.onclick = function(evt) {\r\n    // Requests a signed identity assertion from the user.\r\n    navigator.id.request({\r\n      siteName: '網站名稱',\r\n      siteLogo: '/logo.png',\r\n      termsOfService: '/tos.html',\r\n      privacyPolicy: '/privacy.html',\r\n      returnTo: '/welcome.html',\r\n      oncancel: function() { alert('我害羞，不要登入！'); }\r\n    });\r\n  };\r\n}</pre>\n<p>另外「登出」的按鈕也加上下面的事件</p>\n<pre>var signoutLink = document.getElementById('signout');\r\n\r\nif (signoutLink) {\r\n  signoutLink.onclick = function(event) {\r\n    event.preventDefault();\r\n    navigator.id.logout();\r\n  };\r\n};</pre>\n<h4>Step 3.</h4>\n<p>最後我們要在網站放一隻「看門狗」，來確定使用者是不是成功登入了。</p>\n<pre>var user_email = <!--?php echo $email; ?-->;\r\nnavigator.id.watch({\r\n  loggedInUser: user_email, //註1\r\n  onlogin: function(assertion) {\r\n    // 使用者已經登入囉~ 你可以做些事情\r\n    // 1. 將assertion 送至 Persona檢驗並建立 Session\r\n    // 2. 更新你的UI\r\n  },\r\n  onlogout: function() {\r\n    // 使用者已經登出囉，你可以做些事情：\r\n    // 清除session囉~\r\n  }\r\n});</pre>\n<p>哈哈~~~三步驟 Persona 已經完成了嗎!? 沒錯，只要經過這三個步驟，你已經在 Persona 的舒適圈裡了。但是，香蕉人還有些事想說，傳說中的 One more thing 來了，使用者登入後，最重要的就是取得使用者的資料啦~ 在 Persona 裡唯二需要使用者填入的資料就是 Email 跟 密碼，當然也只有在使用者的同意(登入)下，網站才有辦法取得 Email了！那揪~~~竟要怎麼取得使用者的 E-mail 呢?! 這就要看看「看門狗」這邊的奧妙了，在 onlogin 這裡我們會取得一組驗證碼 assertion，這就是我們取得使用者的 E-mail 的關鍵！！香蕉人用 php 當範例吧，在 onlogin 裡我們透過 ajax 將 assertion 送至 verify.php 裡程式碼如下：</p>\n<pre>$audience = 'http://example.com'; //輸入你的網站\r\n$postdata = 'assertion=' . urlencode($assertion) . '&amp;audience=' . urlencode($audience);\r\n\r\n$ch = curl_init();\r\ncurl_setopt($ch,CURLOPT_URL,'https://verifier.login.persona.org/verify'); //輸入 persona 的認證網址\r\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, true); \r\ncurl_setopt($ch,CURLOPT_POST,true);\r\ncurl_setopt($ch,CURLOPT_POSTFIELDS, $postdata);\r\n$result = curl_exec($ch);\r\ncurl_close($ch);\r\n\r\n/* 將取得的JSON解密吧~\r\n$result_info = json_decode($result);\r\n$result_info['email'] // 使用者 email\r\n$result_info['status'] // 認證狀態，如果拿到 okay 的話就成功啦!!\r\n這裡可以加上建立 Session的程式碼哦~\r\n$_SESSION['loging'] = $result_info['status'];\r\n$_SESSION['email'] = $result_info['email'];\r\n*/\r\n\r\necho $result; // 回傳 json 格式</pre>\n<p>嘿嘿，就這樣完成透過 Persona 登入並取得使用者的Email資料啦~~ 是不是輕鬆寫意，非常簡單呢？如果想知道更完整、更新的 Persona API 的資訊， <a href=\"https://developer.mozilla.org/en-US/docs/Persona\" target=\"_blank\">MDN</a>上面通通有囉~</p>\n<p>最後，香蕉人再告訴大家一個小祕技，在 MDN 上 Persona 還貼心的放上 「登入」按鈕的 <a href=\"https://developer.mozilla.org/en-US/docs/persona/branding\" target=\"_blank\">CSS 檔案</a>，供開發者下載，Mozilla 是不是揪甘心的呢~~</p>\n<p>註1.<br />\n在這裡特別說明 Step 3 程式碼中的 loggedInUser: user_email 這段參數，這裡的 email 可以是 null，但如果你已經有取得 user的 email 時，就可以把他填入， Persona 會自動幫你確認這個 email 是否有被 Persona 認證過，<a href=\"https://developer.mozilla.org/en-US/docs/DOM/navigator.id.watch#Parameters\" target=\"_blank\">原文在此</a>。</p>\n\t\t\t</div>",
-  "content_text": "香蕉人又登場了，今天要來教大家使用 Persona 囉！這是什麼? 能吃嗎?! 是新口味的香蕉嗎？！ 有在發落 Mozilla Taiwan 部落格 的捧油應該不陌生啦，新朋友別緊張啦~ Persona 的詳細介紹可以看 http://blog.mozilla.com.tw/posts/1061/安全可靠-persona-網路身份認證系統-beta-版首度釋出！ 簡單來說，Persona 是一種安全，簡單又快速的登入方式，全新體驗保障使用者的隱私哦！ Persona 除了使用者登入方便以外，香蕉人發現開發起來也是輕鬆寫意啊，只要簡簡單單的三個步驟，就可以在你的網站上或是web app上加入Persona。馬上就來看第一步： Step 1. 因為 Persona 還未內建在任何的 Browser 裡，所以請在你的網站加上~ Persona 的Library https://login.persona.org/include.js Step 2. 請在你的網站上加上兩個按鈕，分別是「登入」及「登出」的按鈕 其中在「登入」的按鈕中加上 onclick 的事件： var signinLink = document.getElementById('signin'); if (signinLink) { signinLink.onclick = function(evt) { // Requests a signed identity assertion from the user. navigator.id.request({ siteName: '網站名稱', siteLogo: '/logo.png', termsOfService: '/tos.html', privacyPolicy: '/privacy.html', returnTo: '/welcome.html', oncancel: function() { alert('我害羞，不要登入！'); } }); }; } 另外「登出」的按鈕也加上下面的事件 var signoutLink = document.getElementById('signout'); if (signoutLink) { signoutLink.onclick = function(event) { event.preventDefault(); navigator.id.logout(); }; }; Step 3. 最後我們要在網站放一隻「看門狗」，來確定使用者是不是成功登入了。 var user_email = ; navigator.id.watch({ loggedInUser: user_email, //註1 onlogin: function(assertion) { // 使用者已經登入囉~ 你可以做些事情 // 1. 將assertion 送至 Persona檢驗並建立 Session // 2. 更新你的UI }, onlogout: function() { // 使用者已經登出囉，你可以做些事情： // 清除session囉~ } }); 哈哈~~~三步驟 Persona 已經完成了嗎!? 沒錯，只要經過這三個步驟，你已經在 Persona 的舒適圈裡了。但是，香蕉人還有些事想說，傳說中的 One more thing 來了，使用者登入後，最重要的就是取得使用者的資料啦~ 在 Persona 裡唯二需要使用者填入的資料就是 Email 跟 密碼，當然也只有在使用者的同意(登入)下，網站才有辦法取得 Email了！那揪~~~竟要怎麼取得使用者的 E-mail 呢?! 這就要看看「看門狗」這邊的奧妙了，在 onlogin 這裡我們會取得一組驗證碼 assertion，這就是我們取得使用者的 E-mail 的關鍵！！香蕉人用 php 當範例吧，在 onlogin 裡我們透過 ajax 將 assertion 送至 verify.php 裡程式碼如下： $audience = 'http://example.com'; //輸入你的網站 $postdata = 'assertion=' . urlencode($assertion) . '&audience=' . urlencode($audience); $ch = curl_init(); curl_setopt($ch,CURLOPT_URL,'https://verifier.login.persona.org/verify'); //輸入 persona 的認證網址 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); curl_setopt($ch,CURLOPT_POST,true); curl_setopt($ch,CURLOPT_POSTFIELDS, $postdata); $result = curl_exec($ch); curl_close($ch); /* 將取得的JSON解密吧~ $result_info = json_decode($result); $result_info['email'] // 使用者 email $result_info['status'] // 認證狀態，如果拿到 okay 的話就成功啦!! 這裡可以加上建立 Session的程式碼哦~ $_SESSION['loging'] = $result_info['status']; $_SESSION['email'] = $result_info['email']; */ echo $result; // 回傳 json 格式 嘿嘿，就這樣完成透過 Persona 登入並取得使用者的Email資料啦~~ 是不是輕鬆寫意，非常簡單呢？如果想知道更完整、更新的 Persona API 的資訊， MDN 上面通通有囉~ 最後，香蕉人再告訴大家一個小祕技，在 MDN 上 Persona 還貼心的放上 「登入」按鈕的 CSS 檔案 ，供開發者下載，Mozilla 是不是揪甘心的呢~~ 註1. 在這裡特別說明 Step 3 程式碼中的 loggedInUser: user_email 這段參數，這裡的 email 可以是 null，但如果你已經有取得 user的 email 時，就可以把他填入， Persona 會自動幫你確認這個 email 是否有被 Persona 認證過， 原文在此 。",
+  "archive_url": "https://web.archive.org/web/20180603234233/https://tech.mozilla.com.tw/posts/1069/%e4%b8%89%e6%ad%a5%e9%a9%9f%e5%ad%b8%e6%9c%83-persona%ef%bc%81%ef%bc%81",
+  "wayback_timestamp": "20180603234233",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>香蕉人又登場了，今天要來教大家使用 Persona 囉！這是什麼? 能吃嗎?! 是新口味的香蕉嗎？！ 有在發落<a href=\"https://web.archive.org/web/20180603234233/http://blog.mozilla.com.tw/main\" target=\"_blank\"> Mozilla Taiwan 部落格</a>的捧油應該不陌生啦，新朋友別緊張啦~ Persona 的詳細介紹可以看 <a title=\"安全可靠-persona-網路身份認證系統-beta-版首度釋出！\" href=\"https://web.archive.org/web/20180603234233/http://blog.mozilla.com.tw/posts/1061/\" target=\"_blank\">http://blog.mozilla.com.tw/posts/1061/安全可靠-persona-網路身份認證系統-beta-版首度釋出！</a>簡單來說，Persona 是一種安全，簡單又快速的登入方式，全新體驗保障使用者的隱私哦！</p>\n<p><a href=\"https://web.archive.org/web/20180603234233/http://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona1.png\"><img class=\"aligncenter size-full wp-image-1073\" src=\"https://web.archive.org/web/20180603234233im_/http://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona1.png\" alt=\"\" width=\"642\" height=\"204\" srcset=\"https://web.archive.org/web/20180603234233im_/http://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona1.png 642w, https://web.archive.org/web/20180603234233im_/http://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona1-300x95.png 300w\" sizes=\"(max-width: 642px) 100vw, 642px\"/></a></p>\n<p>Persona 除了使用者登入方便以外，香蕉人發現開發起來也是輕鬆寫意啊，只要簡簡單單的三個步驟，就可以在你的網站上或是web app上加入Persona。馬上就來看第一步：</p>\n<h4>Step 1.</h4>\n<p>因為 Persona 還未內建在任何的 Browser 裡，所以請在你的網站加上~ Persona 的Library <a title=\"https://login.persona.org/include.js\" href=\"https://web.archive.org/web/20180603234233/https://login.persona.org/include.js\">https://login.persona.org/include.js</a></p>\n<h4>Step 2.</h4>\n<p>請在你的網站上加上兩個按鈕，分別是「登入」及「登出」的按鈕</p>\n<p>其中在「登入」的按鈕中加上 onclick 的事件：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-5b147ce88c63b769982978\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nvar signinLink = document.getElementById(\"signin\");\n\nif (signinLink) {\n signinLink.onclick = function(evt) {\n // Requests a signed identity assertion from the user.\n navigator.id.request({\n siteName: \"網站名稱\",\n siteLogo: \"/logo.png\",\n termsOfService: \"/tos.html\",\n privacyPolicy: \"/privacy.html\",\n returnTo: \"/welcome.html\",\n oncancel: function() { alert(\"我害羞，不要登入！\"); }\n });\n };\n}</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c63b769982978-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c63b769982978-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c63b769982978-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c63b769982978-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c63b769982978-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c63b769982978-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c63b769982978-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c63b769982978-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c63b769982978-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c63b769982978-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c63b769982978-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c63b769982978-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c63b769982978-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c63b769982978-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c63b769982978-15\">15</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5b147ce88c63b769982978-1\"><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">signinLink</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">document</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">getElementById</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"signin\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c63b769982978-2\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5b147ce88c63b769982978-3\"><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">signinLink</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c63b769982978-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">signinLink</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">onclick</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">evt</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c63b769982978-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// Requests a signed identity assertion from the user.</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c63b769982978-6\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">id</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">request</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c63b769982978-7\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">siteName</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"網站名稱\"</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c63b769982978-8\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">siteLogo</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"/logo.png\"</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c63b769982978-9\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">termsOfService</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"/tos.html\"</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c63b769982978-10\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">privacyPolicy</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"/privacy.html\"</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c63b769982978-11\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">returnTo</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"/welcome.html\"</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c63b769982978-12\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">oncancel</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">alert</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"我害羞，不要登入！\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c63b769982978-13\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c63b769982978-14\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c63b769982978-15\"><span class=\"crayon-sy\">}</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0009 seconds] -->\n<p>另外「登出」的按鈕也加上下面的事件</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-5b147ce88c645196906031\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nvar signoutLink = document.getElementById(\"signout\");\n\nif (signoutLink) {\n signoutLink.onclick = function(event) {\n event.preventDefault();\n navigator.id.logout();\n };\n};</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c645196906031-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c645196906031-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c645196906031-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c645196906031-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c645196906031-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c645196906031-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c645196906031-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c645196906031-8\">8</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5b147ce88c645196906031-1\"><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">signoutLink</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">document</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">getElementById</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"signout\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c645196906031-2\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5b147ce88c645196906031-3\"><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">signoutLink</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c645196906031-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">signoutLink</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">onclick</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c645196906031-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">preventDefault</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c645196906031-6\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">id</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">logout</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c645196906031-7\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c645196906031-8\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0005 seconds] -->\n<p></p>\n<h4>Step 3.</h4>\n<p>最後我們要在網站放一隻「看門狗」，來確定使用者是不是成功登入了。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-5b147ce88c648901053666\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nvar user_email = &lt;!--?php echo $email; ?--&gt;;\nnavigator.id.watch({\n loggedInUser: user_email, //註1\n onlogin: function(assertion) {\n // 使用者已經登入囉~ 你可以做些事情\n // 1. 將assertion 送至 Persona檢驗並建立 Session\n // 2. 更新你的UI\n },\n onlogout: function() {\n // 使用者已經登出囉，你可以做些事情：\n // 清除session囉~\n }\n});</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c648901053666-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c648901053666-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c648901053666-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c648901053666-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c648901053666-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c648901053666-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c648901053666-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c648901053666-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c648901053666-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c648901053666-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c648901053666-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c648901053666-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c648901053666-13\">13</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5b147ce88c648901053666-1\"><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">user_email</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-o\">!</span><span class=\"crayon-o\">--</span><span class=\"crayon-sy\">?</span><span class=\"crayon-e\">php </span><span class=\"crayon-i\">echo</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">email</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">?</span><span class=\"crayon-o\">--</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c648901053666-2\"><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">id</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">watch</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c648901053666-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">loggedInUser</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">user_email</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">//註1</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c648901053666-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">onlogin</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">assertion</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c648901053666-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// 使用者已經登入囉~ 你可以做些事情</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c648901053666-6\"><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// 1. 將assertion 送至 Persona檢驗並建立 Session</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c648901053666-7\"><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// 2. 更新你的UI</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c648901053666-8\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c648901053666-9\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">onlogout</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c648901053666-10\"><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// 使用者已經登出囉，你可以做些事情：</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c648901053666-11\"><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// 清除session囉~</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c648901053666-12\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c648901053666-13\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0005 seconds] -->\n<p>哈哈~~~三步驟 Persona 已經完成了嗎!? 沒錯，只要經過這三個步驟，你已經在 Persona 的舒適圈裡了。但是，香蕉人還有些事想說，傳說中的 One more thing 來了，使用者登入後，最重要的就是取得使用者的資料啦~ 在 Persona 裡唯二需要使用者填入的資料就是 Email 跟 密碼，當然也只有在使用者的同意(登入)下，網站才有辦法取得 Email了！那揪~~~竟要怎麼取得使用者的 E-mail 呢?! <a href=\"https://web.archive.org/web/20180603234233/http://www.theinnocents.org/\">&#12458;&#12531;&#12521;&#12452;&#12531; &#12459;&#12472;&#12494;</a>  這就要看看「看門狗」這邊的奧妙了，在 onlogin 這裡我們會取得一組驗證碼 assertion，這就是我們取得使用者的 E-mail 的關鍵！！香蕉人用 php 當範例吧，在 onlogin 裡我們透過 ajax 將 assertion 送至 verify.php 裡程式碼如下：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-5b147ce88c64a253554251\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n$audience = \"http://example.com\"; //輸入你的網站\n$postdata = \"assertion=\" . urlencode($assertion) . \"&amp;audience=\" . urlencode($audience);\n\n$ch = curl_init();\ncurl_setopt($ch,CURLOPT_URL,\"https://verifier.login.persona.org/verify\"); //輸入 persona 的認證網址\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, true); \ncurl_setopt($ch,CURLOPT_POST,true);\ncurl_setopt($ch,CURLOPT_POSTFIELDS, $postdata);\n$result = curl_exec($ch);\ncurl_close($ch);\n\n/* 將取得的JSON解密吧~\n$result_info = json_decode($result);\n$result_info[\"email\"] // 使用者 email\n$result_info[\"status\"] // 認證狀態，如果拿到 okay 的話就成功啦!!\n這裡可以加上建立 Session的程式碼哦~\n$_SESSION[\"loging\"] = $result_info[\"status\"];\n$_SESSION[\"email\"] = $result_info[\"email\"];\n*/\n\necho $result; // 回傳 json 格式</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c64a253554251-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c64a253554251-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c64a253554251-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c64a253554251-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c64a253554251-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c64a253554251-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c64a253554251-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c64a253554251-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c64a253554251-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c64a253554251-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c64a253554251-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c64a253554251-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c64a253554251-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c64a253554251-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c64a253554251-15\">15</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c64a253554251-16\">16</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c64a253554251-17\">17</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c64a253554251-18\">18</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c64a253554251-19\">19</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5b147ce88c64a253554251-20\">20</div><div class=\"crayon-num\" data-line=\"crayon-5b147ce88c64a253554251-21\">21</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5b147ce88c64a253554251-1\"><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">audience</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"http://example.com\"</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">//輸入你的網站</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c64a253554251-2\"><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">postdata</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"assertion=\"</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">.</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">urlencode</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">assertion</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">.</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"&amp;audience=\"</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">.</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">urlencode</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">audience</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c64a253554251-3\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c64a253554251-4\"><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">ch</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">curl_init</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c64a253554251-5\"><span class=\"crayon-e\">curl_setopt</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">ch</span><span class=\"crayon-sy\">,</span><span class=\"crayon-v\">CURLOPT_URL</span><span class=\"crayon-sy\">,</span><span class=\"crayon-s\">\"https://verifier.login.persona.org/verify\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">//輸入 persona 的認證網址</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c64a253554251-6\"><span class=\"crayon-e\">curl_setopt</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">ch</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">CURLOPT_RETURNTRANSFER</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">true</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c64a253554251-7\"><span class=\"crayon-e\">curl_setopt</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">ch</span><span class=\"crayon-sy\">,</span><span class=\"crayon-v\">CURLOPT_POST</span><span class=\"crayon-sy\">,</span><span class=\"crayon-t\">true</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c64a253554251-8\"><span class=\"crayon-e\">curl_setopt</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">ch</span><span class=\"crayon-sy\">,</span><span class=\"crayon-v\">CURLOPT_POSTFIELDS</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">postdata</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c64a253554251-9\"><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">result</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">curl_exec</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">ch</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c64a253554251-10\"><span class=\"crayon-e\">curl_close</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">ch</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c64a253554251-11\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c64a253554251-12\"><span class=\"crayon-c\">/* 將取得的JSON解密吧~</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c64a253554251-13\"><span class=\"crayon-c\">$result_info = json_decode($result);</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c64a253554251-14\"><span class=\"crayon-c\">$result_info[\"email\"] // 使用者 email</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c64a253554251-15\"><span class=\"crayon-c\">$result_info[\"status\"] // 認證狀態，如果拿到 okay 的話就成功啦!!</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c64a253554251-16\"><span class=\"crayon-c\">這裡可以加上建立 Session的程式碼哦~</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c64a253554251-17\"><span class=\"crayon-c\">$_SESSION[\"loging\"] = $result_info[\"status\"];</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c64a253554251-18\"><span class=\"crayon-c\">$_SESSION[\"email\"] = $result_info[\"email\"];</span></div><div class=\"crayon-line\" id=\"crayon-5b147ce88c64a253554251-19\"><span class=\"crayon-c\">*/</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5b147ce88c64a253554251-20\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5b147ce88c64a253554251-21\"><span class=\"crayon-i\">echo</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">result</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// 回傳 json 格式</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0009 seconds] -->\n<p>嘿嘿，就這樣完成透過 Persona 登入並取得使用者的Email資料啦~~ 是不是輕鬆寫意，非常簡單呢？如果想知道更完整、更新的 Persona API 的資訊， <a href=\"https://web.archive.org/web/20180603234233/https://developer.mozilla.org/en-US/docs/Persona\" target=\"_blank\">MDN</a>上面通通有囉~</p>\n<p>最後，香蕉人再告訴大家一個小祕技，在 MDN 上 Persona 還貼心的放上 「登入」按鈕的 <a href=\"https://web.archive.org/web/20180603234233/https://developer.mozilla.org/en-US/docs/persona/branding\" target=\"_blank\">CSS 檔案</a>，供開發者下載，Mozilla 是不是揪甘心的呢~~</p>\n<p>註1.<br/>\n在這裡特別說明 Step 3 程式碼中的 loggedInUser: user_email 這段參數，這裡的 email 可以是 null，但如果你已經有取得 user的 email 時，就可以把他填入， Persona 會自動幫你確認這個 email 是否有被 Persona 認證過，<a href=\"https://web.archive.org/web/20180603234233/https://developer.mozilla.org/en-US/docs/DOM/navigator.id.watch#Parameters\" target=\"_blank\">原文在此</a>。</p>\n\t\t\t</div>",
+  "content_text": "香蕉人又登場了，今天要來教大家使用 Persona 囉！這是什麼? 能吃嗎?! 是新口味的香蕉嗎？！ 有在發落 Mozilla Taiwan 部落格 的捧油應該不陌生啦，新朋友別緊張啦~ Persona 的詳細介紹可以看 http://blog.mozilla.com.tw/posts/1061/安全可靠-persona-網路身份認證系統-beta-版首度釋出！ 簡單來說，Persona 是一種安全，簡單又快速的登入方式，全新體驗保障使用者的隱私哦！ Persona 除了使用者登入方便以外，香蕉人發現開發起來也是輕鬆寫意啊，只要簡簡單單的三個步驟，就可以在你的網站上或是web app上加入Persona。馬上就來看第一步： Step 1. 因為 Persona 還未內建在任何的 Browser 裡，所以請在你的網站加上~ Persona 的Library https://login.persona.org/include.js Step 2. 請在你的網站上加上兩個按鈕，分別是「登入」及「登出」的按鈕 其中在「登入」的按鈕中加上 onclick 的事件： var signinLink = document.getElementById(\"signin\"); if (signinLink) { signinLink.onclick = function(evt) { // Requests a signed identity assertion from the user. navigator.id.request({ siteName: \"網站名稱\", siteLogo: \"/logo.png\", termsOfService: \"/tos.html\", privacyPolicy: \"/privacy.html\", returnTo: \"/welcome.html\", oncancel: function() { alert(\"我害羞，不要登入！\"); } }); }; } 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 var signinLink = document . getElementById ( \"signin\" ) ; if ( signinLink ) { signinLink . onclick = function ( evt ) { // Requests a signed identity assertion from the user. navigator . id . request ( { siteName : \"網站名稱\" , siteLogo : \"/logo.png\" , termsOfService : \"/tos.html\" , privacyPolicy : \"/privacy.html\" , returnTo : \"/welcome.html\" , oncancel : function ( ) { alert ( \"我害羞，不要登入！\" ) ; } } ) ; } ; } 另外「登出」的按鈕也加上下面的事件 var signoutLink = document.getElementById(\"signout\"); if (signoutLink) { signoutLink.onclick = function(event) { event.preventDefault(); navigator.id.logout(); }; }; 1 2 3 4 5 6 7 8 var signoutLink = document . getElementById ( \"signout\" ) ; if ( signoutLink ) { signoutLink . onclick = function ( event ) { event . preventDefault ( ) ; navigator . id . logout ( ) ; } ; } ; Step 3. 最後我們要在網站放一隻「看門狗」，來確定使用者是不是成功登入了。 var user_email = <!--?php echo $email; ?-->; navigator.id.watch({ loggedInUser: user_email, //註1 onlogin: function(assertion) { // 使用者已經登入囉~ 你可以做些事情 // 1. 將assertion 送至 Persona檢驗並建立 Session // 2. 更新你的UI }, onlogout: function() { // 使用者已經登出囉，你可以做些事情： // 清除session囉~ } }); 1 2 3 4 5 6 7 8 9 10 11 12 13 var user_email = < ! -- ? php echo $ email ; ? -- > ; navigator . id . watch ( { loggedInUser : user_email , //註1 onlogin : function ( assertion ) { // 使用者已經登入囉~ 你可以做些事情 // 1. 將assertion 送至 Persona檢驗並建立 Session // 2. 更新你的UI } , onlogout : function ( ) { // 使用者已經登出囉，你可以做些事情： // 清除session囉~ } } ) ; 哈哈~~~三步驟 Persona 已經完成了嗎!? 沒錯，只要經過這三個步驟，你已經在 Persona 的舒適圈裡了。但是，香蕉人還有些事想說，傳說中的 One more thing 來了，使用者登入後，最重要的就是取得使用者的資料啦~ 在 Persona 裡唯二需要使用者填入的資料就是 Email 跟 密碼，當然也只有在使用者的同意(登入)下，網站才有辦法取得 Email了！那揪~~~竟要怎麼取得使用者的 E-mail 呢?! オンライン カジノ 這就要看看「看門狗」這邊的奧妙了，在 onlogin 這裡我們會取得一組驗證碼 assertion，這就是我們取得使用者的 E-mail 的關鍵！！香蕉人用 php 當範例吧，在 onlogin 裡我們透過 ajax 將 assertion 送至 verify.php 裡程式碼如下： $audience = \"http://example.com\"; //輸入你的網站 $postdata = \"assertion=\" . urlencode($assertion) . \"&audience=\" . urlencode($audience); $ch = curl_init(); curl_setopt($ch,CURLOPT_URL,\"https://verifier.login.persona.org/verify\"); //輸入 persona 的認證網址 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); curl_setopt($ch,CURLOPT_POST,true); curl_setopt($ch,CURLOPT_POSTFIELDS, $postdata); $result = curl_exec($ch); curl_close($ch); /* 將取得的JSON解密吧~ $result_info = json_decode($result); $result_info[\"email\"] // 使用者 email $result_info[\"status\"] // 認證狀態，如果拿到 okay 的話就成功啦!! 這裡可以加上建立 Session的程式碼哦~ $_SESSION[\"loging\"] = $result_info[\"status\"]; $_SESSION[\"email\"] = $result_info[\"email\"]; */ echo $result; // 回傳 json 格式 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 $ audience = \"http://example.com\" ; //輸入你的網站 $ postdata = \"assertion=\" . urlencode ( $ assertion ) . \"&audience=\" . urlencode ( $ audience ) ; $ ch = curl_init ( ) ; curl_setopt ( $ ch , CURLOPT_URL , \"https://verifier.login.persona.org/verify\" ) ; //輸入 persona 的認證網址 curl_setopt ( $ ch , CURLOPT_RETURNTRANSFER , true ) ; curl_setopt ( $ ch , CURLOPT_POST , true ) ; curl_setopt ( $ ch , CURLOPT_POSTFIELDS , $ postdata ) ; $ result = curl_exec ( $ ch ) ; curl_close ( $ ch ) ; /* 將取得的JSON解密吧~ $result_info = json_decode($result); $result_info[\"email\"] // 使用者 email $result_info[\"status\"] // 認證狀態，如果拿到 okay 的話就成功啦!! 這裡可以加上建立 Session的程式碼哦~ $_SESSION[\"loging\"] = $result_info[\"status\"]; $_SESSION[\"email\"] = $result_info[\"email\"]; */ echo $ result ; // 回傳 json 格式 嘿嘿，就這樣完成透過 Persona 登入並取得使用者的Email資料啦~~ 是不是輕鬆寫意，非常簡單呢？如果想知道更完整、更新的 Persona API 的資訊， MDN 上面通通有囉~ 最後，香蕉人再告訴大家一個小祕技，在 MDN 上 Persona 還貼心的放上 「登入」按鈕的 CSS 檔案 ，供開發者下載，Mozilla 是不是揪甘心的呢~~ 註1. 在這裡特別說明 Step 3 程式碼中的 loggedInUser: user_email 這段參數，這裡的 email 可以是 null，但如果你已經有取得 user的 email 時，就可以把他填入， Persona 會自動幫你確認這個 email 是否有被 Persona 認證過， 原文在此 。",
   "images": [
     {
-      "url": "https://mozilla.com.tw/assets/pic/FirefoxforAndroid.png",
-      "alt": "Firefox for Android",
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20180603234233im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/428882_10152000131370022_1878524113_n-150x150.jpg",
+      "alt": "428882_10152000131370022_1878524113_n",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/428882_10152000131370022_1878524113_n-300x300.jpg",
+      "alt": "428882_10152000131370022_1878524113_n",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/428882_10152000131370022_1878524113_n.jpg",
+      "alt": "428882_10152000131370022_1878524113_n",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543-150x150.png",
+      "alt": "Profiling Information",
       "kind": "image",
       "source": "img"
     },
@@ -25,34 +88,80 @@
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
       "alt": "",
       "kind": "image",
-      "source": "img"
-    },
-    {
-      "url": "https://assets.pinterest.com/images/PinExt.png",
-      "alt": "",
-      "kind": "image",
-      "source": "img"
-    },
-    {
-      "url": "https://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
-      "alt": "plurk share",
-      "kind": "image",
-      "source": "img"
+      "source": "img",
+      "post_id": 1069,
+      "page_type": "post",
+      "title": "三步驟學會 Persona！！",
+      "page_timestamp": "20130414145556",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "archive_path": "assets/1069/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "markdown_path": "../assets/1069/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "wayback_timestamp": "20130430133545",
+      "asset_archive_url": "https://web.archive.org/web/20130430133545id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "content_type": "image/jpeg"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona1.png",
       "alt": "",
       "kind": "image",
-      "source": "img"
+      "source": "img",
+      "post_id": 1069,
+      "page_type": "post",
+      "title": "三步驟學會 Persona！！",
+      "page_timestamp": "20130414145556",
+      "index": 3,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona1.png",
+      "archive_path": "assets/1069/wp-content/uploads/2012/11/Persona1.png",
+      "markdown_path": "../assets/1069/wp-content/uploads/2012/11/Persona1.png",
+      "wayback_timestamp": "20130414145607",
+      "asset_archive_url": "https://web.archive.org/web/20130414145607id_/http://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona1.png",
+      "content_type": "image/png"
     },
     {
-      "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/footer-mozilla.png",
-      "alt": "mozilla",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona1-300x95.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona-ogimg-150x150.png",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona-ogimg.png",
       "alt": "",
       "kind": "image",
       "source": "og:image"
@@ -60,8 +169,68 @@
   ],
   "media": [
     {
-      "url": "https://mozilla.com.tw/assets/pic/FirefoxforAndroid.png",
-      "alt": "Firefox for Android",
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20180603234233im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/428882_10152000131370022_1878524113_n-150x150.jpg",
+      "alt": "428882_10152000131370022_1878524113_n",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/428882_10152000131370022_1878524113_n-300x300.jpg",
+      "alt": "428882_10152000131370022_1878524113_n",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/428882_10152000131370022_1878524113_n.jpg",
+      "alt": "428882_10152000131370022_1878524113_n",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/12/Screenshot-from-2012-12-03-1342543-150x150.png",
+      "alt": "Profiling Information",
       "kind": "image",
       "source": "img"
     },
@@ -69,34 +238,80 @@
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
       "alt": "",
       "kind": "image",
-      "source": "img"
-    },
-    {
-      "url": "https://assets.pinterest.com/images/PinExt.png",
-      "alt": "",
-      "kind": "image",
-      "source": "img"
-    },
-    {
-      "url": "https://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
-      "alt": "plurk share",
-      "kind": "image",
-      "source": "img"
+      "source": "img",
+      "post_id": 1069,
+      "page_type": "post",
+      "title": "三步驟學會 Persona！！",
+      "page_timestamp": "20130414145556",
+      "index": 0,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "archive_path": "assets/1069/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "markdown_path": "../assets/1069/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "wayback_timestamp": "20130430133545",
+      "asset_archive_url": "https://web.archive.org/web/20130430133545id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/2/b5a24e407f0a35a9e3a4e4292c7e6a39-bpthumb.jpg",
+      "content_type": "image/jpeg"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona1.png",
       "alt": "",
       "kind": "image",
-      "source": "img"
+      "source": "img",
+      "post_id": 1069,
+      "page_type": "post",
+      "title": "三步驟學會 Persona！！",
+      "page_timestamp": "20130414145556",
+      "index": 3,
+      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona1.png",
+      "archive_path": "assets/1069/wp-content/uploads/2012/11/Persona1.png",
+      "markdown_path": "../assets/1069/wp-content/uploads/2012/11/Persona1.png",
+      "wayback_timestamp": "20130414145607",
+      "asset_archive_url": "https://web.archive.org/web/20130414145607id_/http://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona1.png",
+      "content_type": "image/png"
     },
     {
-      "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/footer-mozilla.png",
-      "alt": "mozilla",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona1-300x95.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona-ogimg-150x150.png",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona-ogimg.png",
       "alt": "",
       "kind": "image",
       "source": "og:image"
@@ -120,6 +335,10 @@
       "text": "https://login.persona.org/include.js"
     },
     {
+      "url": "https://www.theinnocents.org/",
+      "text": "オンライン カジノ"
+    },
+    {
       "url": "https://developer.mozilla.org/en-US/docs/Persona",
       "text": "MDN"
     },
@@ -133,6 +352,19 @@
     }
   ],
   "status": "ok",
-  "asset_status": "skipped",
-  "asset_errors": []
+  "asset_status": "partial_assets_failed",
+  "asset_errors": [
+    {
+      "url": "https://mozilla.com.tw/assets/pic/FirefoxforAndroid.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/footer-mozilla.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona-ogimg-150x150.png",
+      "reason": "article_media_missing"
+    }
+  ]
 }

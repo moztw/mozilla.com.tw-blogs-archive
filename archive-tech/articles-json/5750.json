@@ -14,144 +14,312 @@
   "author": "Sean Lin",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=5750",
-  "archive_url": "https://web.archive.org/web/20150323223941id_/https://tech.mozilla.com.tw/?p=5750",
-  "wayback_timestamp": "20150323223941",
-  "content_html": "<div class=\"entry-content close\">\n\t\t<p>相信各位使用手機或多或少都有收過 SMS 簡訊或是定時鬧鈴等種種來自系統本身的通知，而在 Firefox OS 中，這些功能都可透過所謂的 system message 機制來達成，即便是在相關 app 尚未開啟的情況下。</p>\n<p>簡而言之，system message 是為了處理一些必須要由 Gecko 來掌控並提供給相關 Gaia app 的訊息而衍伸出來的機制。在某些情況下，相關的 app 可能尚未開啟（例如一通電話打進來可是 Phone App 卻尚未開啟），因此 system message 同時也肩負著喚醒該 app 的任務。</p>\n<h2>System Message 架構</h2>\n<p>首先，system message 主要可分為兩部分：</p>\n<ol>\n<li>SystemMessageInternal : 在 B2G process 上執行，主要負責管理所有 message，以及記錄是否有已經開啟可接收特定 message 的 App 。</li>\n<li>SystemMessageManager : 在各個 content process 執行，可以想像成每個 App 都有一個專職的原件，幫忙接收從 B2G process 上 SystemMessageInternal 送過來的 message。</li>\n</ol>\n<p>而 SystemMessageInternal 和 SystemMessageManager 之間 （B2G process 和 content process 間）主要是透過 IPC （Inter Process Communication） 溝通。</p>\n<p>值得一提的是， Gecko 也會保有一份事先制訂好的 SystemMessagePermissionsTable ，每個 message 都可以綁定特定的權限，再由綁定的權限決定該 message 可不可以被特定的 app 使用。例如 &#8220;alarm&#8221; message 就會綁定 &#8220;alarms&#8221; 權限，&#8221;sms-received&#8221; message 就會需要 &#8220;sms&#8221; 權限。</p>\n<p>另外，每個想要接收 system message 的 app，都需要先在自己的 manifest.webapp 中宣告一個 &#8220;messages&#8221; 的欄位，來指定想接收的 message type 和對應處理的 URL。例如，在 Clock App 裡我們會看到關於處理 &#8220;alarm&#8221; message 的一些內容</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550fd974d27f2958237076\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n\"messages\": [\r\n   { \"alarm\": \"/index.html\" }\r\n]</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550fd974d27f2958237076-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550fd974d27f2958237076-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-550fd974d27f2958237076-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550fd974d27f2958237076-1\"><span class=\"crayon-s\">\"messages\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">[</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550fd974d27f2958237076-2\"><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-sy\">{</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"alarm\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"/index.html\"</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-550fd974d27f2958237076-3\"><span class=\"crayon-sy\">]</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0010 seconds] -->\r\n<p>同時因為 &#8220;alarm&#8221; message 需要 &#8220;alarms&#8221; 權限，所以我們也會看到關於權限宣告的內容</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550fd974d2805373380497\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n\"permissions\": {\r\n  \"alarms\":{},\r\n},</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550fd974d2805373380497-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550fd974d2805373380497-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-550fd974d2805373380497-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550fd974d2805373380497-1\"><span class=\"crayon-s\">\"permissions\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550fd974d2805373380497-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-s\">\"alarms\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-sy\">{</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-550fd974d2805373380497-3\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0012 seconds] -->\r\n<p>除此之外，每個 App 還需再透過 navigator.mozSetMessageHandler 來對指定的 message type 註冊 callback handler。同樣以 Clock App 為例，會發現有以下的 code</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550fd974d280d975179659\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nnavigator.mozSetMessageHandler('alarm', this.onMozAlarm.bind(this));</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550fd974d280d975179659-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550fd974d280d975179659-1\"><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">mozSetMessageHandler</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'alarm'</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">onMozAlarm</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">bind</span><span class=\"crayon-sy\">(</span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0016 seconds] -->\r\n<p>下列這個頁面則有詳細列出所有的 system message 以及其 handler signature：</p>\n<p><a href=\"https://developer.mozilla.org/en-US/docs/Web/API/Navigator.mozSetMessageHandler\">https://developer.mozilla.org/en-US/docs/Web/API/Navigator.mozSetMessageHandler</a></p>\n<p>以上大致是幾個跟 system message 相關的元件，接下來要來討論一些比較細部的流程。</p>\n<h2>Process Launch</h2>\n<p>這邊主要是分別對 SystemMessageInternal （B2G process）和 SystemMessageManager（content process）在 launch 時的不同行為進行描述。</p>\n<ol>\n<li>當 B2G process launch 之後，Gecko 會檢查 app manifest 並透過 SystemMessageInternal 記錄 &#8220;哪些 app 該處理哪幾種 system message&#8221;。</li>\n<li>當每個 content process launch 後，SystemMessageManager 也會隨之跟著啟動，並透過 IPC 跟 SystemMessageInternal 註冊這個 content process 所代表的頁面（如下圖）。而 SystemMessageInternal 則可藉此判斷 &#8220;相關的 app 是否已經開啟&#8221;。<a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage.png\"><img class=\"aligncenter wp-image-5751 size-medium\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage-300x161.png\" alt=\"SystemMessage_RegisterPage\" width=\"300\" height=\"161\" /></a>相對的，當 SystemMessageManager 結束時，也會通知 SystemMessageInternal 以確保資料正確。</li>\n</ol>\n<p>緊接著，就要開始來介紹當需要發出 system message 時，各個元件彼此之間的運作模式。</p>\n<h2>App 已開 &#8212; 單純傳遞 System Message</h2>\n<p>首先是個比較單純的案例（以 alarm 為例），因為 app 已經開啟，故已透過 IPC 跟 SystemMessageInternal 註冊（並也已透過 mozSetMessageHandler 註冊 callback handler），所以 SystemMessageInternal 只需單純地把 system message 傳給對應的 SystemMessageManager 即可，SystemMessageManager 再透過 callback handler 傳遞給 Clock App（如下圖）。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage.png\"><img class=\"aligncenter wp-image-5752 size-large\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-1024x477.png\" alt=\"SystemMessage_SendMessage\" width=\"640\" height=\"298\" /></a></p>\n<h2>App 未開 &#8212; 先開 App 再傳 System Message</h2>\n<p>萬一不幸地沒有先開好 app ， SystemMessageInternal 必須先 queue 住相關的 message ，並且透過 open-app event 通知 System App 來開啟相關的 app ，而該 app 同個 content process 上的 SystemMessageManager 也會跟著啟動，當 Clock App 註冊 callback handler 後 SystemMessageManager 會跟 SystemMessageInternal 索取先前 queue 住的 message （如果有的話），緊接著再透過 callback handler 傳遞給 Clock App（如下圖）。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp.png\"><img class=\"aligncenter wp-image-5754 size-large\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp-1024x633.png\" alt=\"SystemMessage_OpenApp\" width=\"640\" height=\"395\" /></a></p>\n<p>以上大致是關於 system message 運作模式的介紹，省略了部分實作細節並且盡量以簡單的例子闡述其工作流程。順帶一提，system message 除了可透過例子中可指定 manifest URL 跟 page URL 的 sendMessage 方式外，也可以利用 broadcastMessage 的方式發送 system message 給所有會接收該 message 的 app。另外，當有 app 新增或移除時， SystemMessageInternal 也會自動更新相關資料。至於其他更多有趣的內容，就留給各位有興趣去探索了。</p>\n<p>&nbsp;</p>\n<p>[1] <a href=\"http://dxr.mozilla.org/mozilla-central/source/dom/messages\">http://dxr.mozilla.org/mozilla-central/source/dom/messages</a></p>\n<p>[2] <a href=\"https://github.com/mozilla-b2g/gaia/tree/master/apps/clock\">https://github.com/mozilla-b2g/gaia/tree/master/apps/clock</a></p>\n<p>[3] <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/Navigator.mozSetMessageHandler\">https://developer.mozilla.org/en-US/docs/Web/API/Navigator.mozSetMessageHandler</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
-  "content_text": "相信各位使用手機或多或少都有收過 SMS 簡訊或是定時鬧鈴等種種來自系統本身的通知，而在 Firefox OS 中，這些功能都可透過所謂的 system message 機制來達成，即便是在相關 app 尚未開啟的情況下。 簡而言之，system message 是為了處理一些必須要由 Gecko 來掌控並提供給相關 Gaia app 的訊息而衍伸出來的機制。在某些情況下，相關的 app 可能尚未開啟（例如一通電話打進來可是 Phone App 卻尚未開啟），因此 system message 同時也肩負著喚醒該 app 的任務。 System Message 架構 首先，system message 主要可分為兩部分： SystemMessageInternal : 在 B2G process 上執行，主要負責管理所有 message，以及記錄是否有已經開啟可接收特定 message 的 App 。 SystemMessageManager : 在各個 content process 執行，可以想像成每個 App 都有一個專職的原件，幫忙接收從 B2G process 上 SystemMessageInternal 送過來的 message。 而 SystemMessageInternal 和 SystemMessageManager 之間 （B2G process 和 content process 間）主要是透過 IPC （Inter Process Communication） 溝通。 值得一提的是， Gecko 也會保有一份事先制訂好的 SystemMessagePermissionsTable ，每個 message 都可以綁定特定的權限，再由綁定的權限決定該 message 可不可以被特定的 app 使用。例如 “alarm” message 就會綁定 “alarms” 權限，”sms-received” message 就會需要 “sms” 權限。 另外，每個想要接收 system message 的 app，都需要先在自己的 manifest.webapp 中宣告一個 “messages” 的欄位，來指定想接收的 message type 和對應處理的 URL。例如，在 Clock App 裡我們會看到關於處理 “alarm” message 的一些內容 \"messages\": [ { \"alarm\": \"/index.html\" } ] 1 2 3 \"messages\" : [ { \"alarm\" : \"/index.html\" } ] 同時因為 “alarm” message 需要 “alarms” 權限，所以我們也會看到關於權限宣告的內容 \"permissions\": { \"alarms\":{}, }, 1 2 3 \"permissions\" : { \"alarms\" : { } , } , 除此之外，每個 App 還需再透過 navigator.mozSetMessageHandler 來對指定的 message type 註冊 callback handler。同樣以 Clock App 為例，會發現有以下的 code navigator.mozSetMessageHandler('alarm', this.onMozAlarm.bind(this)); 1 navigator . mozSetMessageHandler ( 'alarm' , this . onMozAlarm . bind ( this ) ) ; 下列這個頁面則有詳細列出所有的 system message 以及其 handler signature： https://developer.mozilla.org/en-US/docs/Web/API/Navigator.mozSetMessageHandler 以上大致是幾個跟 system message 相關的元件，接下來要來討論一些比較細部的流程。 Process Launch 這邊主要是分別對 SystemMessageInternal （B2G process）和 SystemMessageManager（content process）在 launch 時的不同行為進行描述。 當 B2G process launch 之後，Gecko 會檢查 app manifest 並透過 SystemMessageInternal 記錄 “哪些 app 該處理哪幾種 system message”。 當每個 content process launch 後，SystemMessageManager 也會隨之跟著啟動，並透過 IPC 跟 SystemMessageInternal 註冊這個 content process 所代表的頁面（如下圖）。而 SystemMessageInternal 則可藉此判斷 “相關的 app 是否已經開啟”。 相對的，當 SystemMessageManager 結束時，也會通知 SystemMessageInternal 以確保資料正確。 緊接著，就要開始來介紹當需要發出 system message 時，各個元件彼此之間的運作模式。 App 已開 — 單純傳遞 System Message 首先是個比較單純的案例（以 alarm 為例），因為 app 已經開啟，故已透過 IPC 跟 SystemMessageInternal 註冊（並也已透過 mozSetMessageHandler 註冊 callback handler），所以 SystemMessageInternal 只需單純地把 system message 傳給對應的 SystemMessageManager 即可，SystemMessageManager 再透過 callback handler 傳遞給 Clock App（如下圖）。 App 未開 — 先開 App 再傳 System Message 萬一不幸地沒有先開好 app ， SystemMessageInternal 必須先 queue 住相關的 message ，並且透過 open-app event 通知 System App 來開啟相關的 app ，而該 app 同個 content process 上的 SystemMessageManager 也會跟著啟動，當 Clock App 註冊 callback handler 後 SystemMessageManager 會跟 SystemMessageInternal 索取先前 queue 住的 message （如果有的話），緊接著再透過 callback handler 傳遞給 Clock App（如下圖）。 以上大致是關於 system message 運作模式的介紹，省略了部分實作細節並且盡量以簡單的例子闡述其工作流程。順帶一提，system message 除了可透過例子中可指定 manifest URL 跟 page URL 的 sendMessage 方式外，也可以利用 broadcastMessage 的方式發送 system message 給所有會接收該 message 的 app。另外，當有 app 新增或移除時， SystemMessageInternal 也會自動更新相關資料。至於其他更多有趣的內容，就留給各位有興趣去探索了。 [1] http://dxr.mozilla.org/mozilla-central/source/dom/messages [2] https://github.com/mozilla-b2g/gaia/tree/master/apps/clock [3] https://developer.mozilla.org/en-US/docs/Web/API/Navigator.mozSetMessageHandler",
+  "archive_url": "https://web.archive.org/web/20170820235230/https://tech.mozilla.com.tw/posts/5750/%E6%B7%BA%E8%AB%87-system-message",
+  "wayback_timestamp": "20170820235230",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>相信各位使用手機或多或少都有收過 SMS 簡訊或是定時鬧鈴等種種來自系統本身的通知，而在 Firefox OS 中，這些功能都可透過所謂的 system message 機制來達成，即便是在相關 app 尚未開啟的情況下。</p>\n<p>簡而言之，system message 是為了處理一些必須要由 Gecko 來掌控並提供給相關 Gaia app 的訊息而衍伸出來的機制。在某些情況下，相關的 app 可能尚未開啟（例如一通電話打進來可是 Phone App 卻尚未開啟），因此 system message 同時也肩負著喚醒該 app 的任務。</p>\n<h2>System Message 架構</h2>\n<p>首先，system message 主要可分為兩部分：</p>\n<ol>\n<li>SystemMessageInternal : 在 B2G process 上執行，主要負責管理所有 message，以及記錄是否有已經開啟可接收特定 message 的 App 。</li>\n<li>SystemMessageManager : 在各個 content process 執行，可以想像成每個 App 都有一個專職的原件，幫忙接收從 B2G process 上 SystemMessageInternal 送過來的 message。</li>\n</ol>\n<p>而 SystemMessageInternal 和 SystemMessageManager 之間 （B2G process 和 content process 間）主要是透過 IPC （Inter Process Communication） 溝通。</p>\n<p>值得一提的是， Gecko 也會保有一份事先制訂好的 SystemMessagePermissionsTable ，每個 message 都可以綁定特定的權限，再由綁定的權限決定該 message 可不可以被特定的 app 使用。例如 &#8220;alarm\" message 就會綁定 &#8220;alarms\" 權限，\"sms-received\" message 就會需要 &#8220;sms\" 權限。</p>\n<p>另外，每個想要接收 system message 的 app，都需要先在自己的 manifest.webapp 中宣告一個 &#8220;messages\" 的欄位，來指定想接收的 message type 和對應處理的 URL。例如，在 Clock App 裡我們會看到關於處理 &#8220;alarm\" message 的一些內容</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-599a2093a18fc065419099\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n\"messages\": [\n   { \"alarm\": \"/index.html\" }\n]</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-599a2093a18fc065419099-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-599a2093a18fc065419099-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-599a2093a18fc065419099-3\">3</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-599a2093a18fc065419099-1\"><span class=\"crayon-s\">\"messages\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">[</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-599a2093a18fc065419099-2\"><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-sy\">{</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"alarm\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"/index.html\"</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-599a2093a18fc065419099-3\"><span class=\"crayon-sy\">]</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0010 seconds] -->\n<p>同時因為 &#8220;alarm\" message 需要 &#8220;alarms\" 權限，所以我們也會看到關於權限宣告的內容</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-599a2093a1906570746821\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n\"permissions\": {\n  \"alarms\":{},\n},</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-599a2093a1906570746821-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-599a2093a1906570746821-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-599a2093a1906570746821-3\">3</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-599a2093a1906570746821-1\"><span class=\"crayon-s\">\"permissions\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-599a2093a1906570746821-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-s\">\"alarms\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-sy\">{</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-599a2093a1906570746821-3\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0001 seconds] -->\n<p>除此之外，每個 App 還需再透過 navigator.mozSetMessageHandler 來對指定的 message type 註冊 callback handler。同樣以 Clock App 為例，會發現有以下的 code</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-599a2093a1908752765655\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nnavigator.mozSetMessageHandler('alarm', this.onMozAlarm.bind(this));</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-599a2093a1908752765655-1\">1</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-599a2093a1908752765655-1\"><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">mozSetMessageHandler</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'alarm'</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">onMozAlarm</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">bind</span><span class=\"crayon-sy\">(</span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0001 seconds] -->\n<p>下列這個頁面則有詳細列出所有的 system message 以及其 handler signature：</p>\n<p><a href=\"https://web.archive.org/web/20170820235230/https://developer.mozilla.org/en-US/docs/Web/API/Navigator.mozSetMessageHandler\">https://developer.mozilla.org/en-US/docs/Web/API/Navigator.mozSetMessageHandler</a></p>\n<p>以上大致是幾個跟 system message 相關的元件，接下來要來討論一些比較細部的流程。</p>\n<h2>Process Launch</h2>\n<p>這邊主要是分別對 SystemMessageInternal （B2G process）和 SystemMessageManager（content process）在 launch 時的不同行為進行描述。</p>\n<ol>\n<li>當 B2G process launch 之後，Gecko 會檢查 app manifest 並透過 SystemMessageInternal 記錄 &#8220;哪些 app 該處理哪幾種 system message\"。</li>\n<li>當每個 content process launch 後，SystemMessageManager 也會隨之跟著啟動，並透過 IPC 跟 SystemMessageInternal 註冊這個 content process 所代表的頁面（如下圖）。而 SystemMessageInternal 則可藉此判斷 &#8220;相關的 app 是否已經開啟\"。<a href=\"https://web.archive.org/web/20170820235230/http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage.png\"><img class=\"aligncenter wp-image-5751 size-medium\" src=\"https://web.archive.org/web/20170820235230im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage-300x161.png\" alt=\"SystemMessage_RegisterPage\" width=\"300\" height=\"161\" srcset=\"https://web.archive.org/web/20170820235230im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage-300x161.png 300w, https://web.archive.org/web/20170820235230im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage.png 529w\" sizes=\"(max-width: 300px) 100vw, 300px\"/></a>相對的，當 SystemMessageManager 結束時，也會通知 SystemMessageInternal 以確保資料正確。</li>\n</ol>\n<p>緊接著，就要開始來介紹當需要發出 system message 時，各個元件彼此之間的運作模式。</p>\n<h2>App 已開 &#8212; 單純傳遞 System Message</h2>\n<p>首先是個比較單純的案例（以 alarm 為例），因為 app 已經開啟，故已透過 IPC 跟 SystemMessageInternal 註冊（並也已透過 mozSetMessageHandler 註冊 callback handler），所以 SystemMessageInternal 只需單純地把 system message 傳給對應的 SystemMessageManager 即可，SystemMessageManager 再透過 callback handler 傳遞給 Clock App（如下圖）。</p>\n<p><a href=\"https://web.archive.org/web/20170820235230/http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage.png\"><img class=\"aligncenter wp-image-5752 size-large\" src=\"https://web.archive.org/web/20170820235230im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-1024x477.png\" alt=\"SystemMessage_SendMessage\" width=\"640\" height=\"298\" srcset=\"https://web.archive.org/web/20170820235230im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-1024x477.png 1024w, https://web.archive.org/web/20170820235230im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-300x140.png 300w, https://web.archive.org/web/20170820235230im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage.png 1039w\" sizes=\"(max-width: 640px) 100vw, 640px\"/></a></p>\n<h2>App 未開 &#8212; 先開 App 再傳 System Message</h2>\n<p>萬一不幸地沒有先開好 app ， SystemMessageInternal 必須先 queue 住相關的 message ，並且透過 open-app event 通知 System App 來開啟相關的 app ，而該 app 同個 content process 上的 SystemMessageManager 也會跟著啟動，當 Clock App 註冊 callback handler 後 SystemMessageManager 會跟 SystemMessageInternal 索取先前 queue 住的 message （如果有的話），緊接著再透過 callback handler 傳遞給 Clock App（如下圖）。</p>\n<p><a href=\"https://web.archive.org/web/20170820235230/http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp.png\"><img class=\"aligncenter wp-image-5754 size-large\" src=\"https://web.archive.org/web/20170820235230im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp-1024x633.png\" alt=\"SystemMessage_OpenApp\" width=\"640\" height=\"395\" srcset=\"https://web.archive.org/web/20170820235230im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp-1024x633.png 1024w, https://web.archive.org/web/20170820235230im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp-300x185.png 300w, https://web.archive.org/web/20170820235230im_/http://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp.png 1132w\" sizes=\"(max-width: 640px) 100vw, 640px\"/></a></p>\n<p>以上大致是關於 system message 運作模式的介紹，省略了部分實作細節並且盡量以簡單的例子闡述其工作流程。順帶一提，system message 除了可透過例子中可指定 manifest URL 跟 page URL 的 sendMessage 方式外，也可以利用 broadcastMessage 的方式發送 system message 給所有會接收該 message 的 app。另外，當有 app 新增或移除時， SystemMessageInternal 也會自動更新相關資料。至於其他更多有趣的內容，就留給各位有興趣去探索了。</p>\n<p>&nbsp;</p>\n<p>[1] <a href=\"https://web.archive.org/web/20170820235230/http://dxr.mozilla.org/mozilla-central/source/dom/messages\">http://dxr.mozilla.org/mozilla-central/source/dom/messages</a></p>\n<p>[2] <a href=\"https://web.archive.org/web/20170820235230/https://github.com/mozilla-b2g/gaia/tree/master/apps/clock\">https://github.com/mozilla-b2g/gaia/tree/master/apps/clock</a></p>\n<p>[3] <a href=\"https://web.archive.org/web/20170820235230/https://developer.mozilla.org/en-US/docs/Web/API/Navigator.mozSetMessageHandler\">https://developer.mozilla.org/en-US/docs/Web/API/Navigator.mozSetMessageHandler</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
+  "content_text": "相信各位使用手機或多或少都有收過 SMS 簡訊或是定時鬧鈴等種種來自系統本身的通知，而在 Firefox OS 中，這些功能都可透過所謂的 system message 機制來達成，即便是在相關 app 尚未開啟的情況下。 簡而言之，system message 是為了處理一些必須要由 Gecko 來掌控並提供給相關 Gaia app 的訊息而衍伸出來的機制。在某些情況下，相關的 app 可能尚未開啟（例如一通電話打進來可是 Phone App 卻尚未開啟），因此 system message 同時也肩負著喚醒該 app 的任務。 System Message 架構 首先，system message 主要可分為兩部分： SystemMessageInternal : 在 B2G process 上執行，主要負責管理所有 message，以及記錄是否有已經開啟可接收特定 message 的 App 。 SystemMessageManager : 在各個 content process 執行，可以想像成每個 App 都有一個專職的原件，幫忙接收從 B2G process 上 SystemMessageInternal 送過來的 message。 而 SystemMessageInternal 和 SystemMessageManager 之間 （B2G process 和 content process 間）主要是透過 IPC （Inter Process Communication） 溝通。 值得一提的是， Gecko 也會保有一份事先制訂好的 SystemMessagePermissionsTable ，每個 message 都可以綁定特定的權限，再由綁定的權限決定該 message 可不可以被特定的 app 使用。例如 “alarm\" message 就會綁定 “alarms\" 權限，\"sms-received\" message 就會需要 “sms\" 權限。 另外，每個想要接收 system message 的 app，都需要先在自己的 manifest.webapp 中宣告一個 “messages\" 的欄位，來指定想接收的 message type 和對應處理的 URL。例如，在 Clock App 裡我們會看到關於處理 “alarm\" message 的一些內容 \"messages\": [ { \"alarm\": \"/index.html\" } ] 1 2 3 \"messages\" : [ { \"alarm\" : \"/index.html\" } ] 同時因為 “alarm\" message 需要 “alarms\" 權限，所以我們也會看到關於權限宣告的內容 \"permissions\": { \"alarms\":{}, }, 1 2 3 \"permissions\" : { \"alarms\" : { } , } , 除此之外，每個 App 還需再透過 navigator.mozSetMessageHandler 來對指定的 message type 註冊 callback handler。同樣以 Clock App 為例，會發現有以下的 code navigator.mozSetMessageHandler('alarm', this.onMozAlarm.bind(this)); 1 navigator . mozSetMessageHandler ( 'alarm' , this . onMozAlarm . bind ( this ) ) ; 下列這個頁面則有詳細列出所有的 system message 以及其 handler signature： https://developer.mozilla.org/en-US/docs/Web/API/Navigator.mozSetMessageHandler 以上大致是幾個跟 system message 相關的元件，接下來要來討論一些比較細部的流程。 Process Launch 這邊主要是分別對 SystemMessageInternal （B2G process）和 SystemMessageManager（content process）在 launch 時的不同行為進行描述。 當 B2G process launch 之後，Gecko 會檢查 app manifest 並透過 SystemMessageInternal 記錄 “哪些 app 該處理哪幾種 system message\"。 當每個 content process launch 後，SystemMessageManager 也會隨之跟著啟動，並透過 IPC 跟 SystemMessageInternal 註冊這個 content process 所代表的頁面（如下圖）。而 SystemMessageInternal 則可藉此判斷 “相關的 app 是否已經開啟\"。 相對的，當 SystemMessageManager 結束時，也會通知 SystemMessageInternal 以確保資料正確。 緊接著，就要開始來介紹當需要發出 system message 時，各個元件彼此之間的運作模式。 App 已開 — 單純傳遞 System Message 首先是個比較單純的案例（以 alarm 為例），因為 app 已經開啟，故已透過 IPC 跟 SystemMessageInternal 註冊（並也已透過 mozSetMessageHandler 註冊 callback handler），所以 SystemMessageInternal 只需單純地把 system message 傳給對應的 SystemMessageManager 即可，SystemMessageManager 再透過 callback handler 傳遞給 Clock App（如下圖）。 App 未開 — 先開 App 再傳 System Message 萬一不幸地沒有先開好 app ， SystemMessageInternal 必須先 queue 住相關的 message ，並且透過 open-app event 通知 System App 來開啟相關的 app ，而該 app 同個 content process 上的 SystemMessageManager 也會跟著啟動，當 Clock App 註冊 callback handler 後 SystemMessageManager 會跟 SystemMessageInternal 索取先前 queue 住的 message （如果有的話），緊接著再透過 callback handler 傳遞給 Clock App（如下圖）。 以上大致是關於 system message 運作模式的介紹，省略了部分實作細節並且盡量以簡單的例子闡述其工作流程。順帶一提，system message 除了可透過例子中可指定 manifest URL 跟 page URL 的 sendMessage 方式外，也可以利用 broadcastMessage 的方式發送 system message 給所有會接收該 message 的 app。另外，當有 app 新增或移除時， SystemMessageInternal 也會自動更新相關資料。至於其他更多有趣的內容，就留給各位有興趣去探索了。 [1] http://dxr.mozilla.org/mozilla-central/source/dom/messages [2] https://github.com/mozilla-b2g/gaia/tree/master/apps/clock [3] https://developer.mozilla.org/en-US/docs/Web/API/Navigator.mozSetMessageHandler",
   "images": [
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20170820235230im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/simpsons-death-grip-300x201-50x50.jpg",
+      "alt": "simpsons-death-grip-300x201",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/simpsons-death-grip-300x201-150x150.jpg",
+      "alt": "simpsons-death-grip-300x201",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-50x50.png",
+      "alt": "乾淨的 Firefox Profile",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-150x150.png",
+      "alt": "乾淨的 Firefox Profile",
+      "kind": "image",
+      "source": "img-srcset"
+    },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage-300x161.png",
       "alt": "SystemMessage_RegisterPage",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5750/wp-content/uploads/2014/11/SystemMessage_RegisterPage-300x161.png",
-      "markdown_path": "../assets/5750/wp-content/uploads/2014/11/SystemMessage_RegisterPage-300x161.png",
-      "wayback_timestamp": "20150323223941",
-      "asset_archive_url": "https://web.archive.org/web/20150323223941id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage-300x161.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage.png",
+      "alt": "SystemMessage_RegisterPage",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-1024x477.png",
       "alt": "SystemMessage_SendMessage",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5750/wp-content/uploads/2014/11/SystemMessage_SendMessage-1024x477.png",
-      "markdown_path": "../assets/5750/wp-content/uploads/2014/11/SystemMessage_SendMessage-1024x477.png",
-      "wayback_timestamp": "20150323223941",
-      "asset_archive_url": "https://web.archive.org/web/20150323223941id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-1024x477.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-300x140.png",
+      "alt": "SystemMessage_SendMessage",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage.png",
+      "alt": "SystemMessage_SendMessage",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp-1024x633.png",
       "alt": "SystemMessage_OpenApp",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5750/wp-content/uploads/2014/11/SystemMessage_OpenApp-1024x633.png",
-      "markdown_path": "../assets/5750/wp-content/uploads/2014/11/SystemMessage_OpenApp-1024x633.png",
-      "wayback_timestamp": "20150323223941",
-      "asset_archive_url": "https://web.archive.org/web/20150323223941id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp-1024x633.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage.png",
-      "alt": "",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp-300x185.png",
+      "alt": "SystemMessage_OpenApp",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5750/wp-content/uploads/2014/11/SystemMessage_RegisterPage.png",
-      "markdown_path": "../assets/5750/wp-content/uploads/2014/11/SystemMessage_RegisterPage.png",
-      "wayback_timestamp": "20150323223941",
-      "asset_archive_url": "https://web.archive.org/web/20150323223941id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5750/wp-content/uploads/2014/11/SystemMessage_SendMessage.png",
-      "markdown_path": "../assets/5750/wp-content/uploads/2014/11/SystemMessage_SendMessage.png",
-      "wayback_timestamp": "20150323223941",
-      "asset_archive_url": "https://web.archive.org/web/20150323223941id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp.png",
+      "alt": "SystemMessage_OpenApp",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5750/wp-content/uploads/2014/11/SystemMessage_OpenApp.png",
-      "markdown_path": "../assets/5750/wp-content/uploads/2014/11/SystemMessage_OpenApp.png",
-      "wayback_timestamp": "20150323223941",
-      "asset_archive_url": "https://web.archive.org/web/20150323223941id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "media": [
     {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20170820235230im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/simpsons-death-grip-300x201-50x50.jpg",
+      "alt": "simpsons-death-grip-300x201",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/simpsons-death-grip-300x201-150x150.jpg",
+      "alt": "simpsons-death-grip-300x201",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-50x50.png",
+      "alt": "乾淨的 Firefox Profile",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/Screenshot-from-2014-12-19-165821-150x150.png",
+      "alt": "乾淨的 Firefox Profile",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage-300x161.png",
       "alt": "SystemMessage_RegisterPage",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5750/wp-content/uploads/2014/11/SystemMessage_RegisterPage-300x161.png",
-      "markdown_path": "../assets/5750/wp-content/uploads/2014/11/SystemMessage_RegisterPage-300x161.png",
-      "wayback_timestamp": "20150323223941",
-      "asset_archive_url": "https://web.archive.org/web/20150323223941id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage-300x161.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage.png",
+      "alt": "SystemMessage_RegisterPage",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-1024x477.png",
       "alt": "SystemMessage_SendMessage",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5750/wp-content/uploads/2014/11/SystemMessage_SendMessage-1024x477.png",
-      "markdown_path": "../assets/5750/wp-content/uploads/2014/11/SystemMessage_SendMessage-1024x477.png",
-      "wayback_timestamp": "20150323223941",
-      "asset_archive_url": "https://web.archive.org/web/20150323223941id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-1024x477.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage-300x140.png",
+      "alt": "SystemMessage_SendMessage",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage.png",
+      "alt": "SystemMessage_SendMessage",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp-1024x633.png",
       "alt": "SystemMessage_OpenApp",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5750/wp-content/uploads/2014/11/SystemMessage_OpenApp-1024x633.png",
-      "markdown_path": "../assets/5750/wp-content/uploads/2014/11/SystemMessage_OpenApp-1024x633.png",
-      "wayback_timestamp": "20150323223941",
-      "asset_archive_url": "https://web.archive.org/web/20150323223941id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp-1024x633.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage.png",
-      "alt": "",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp-300x185.png",
+      "alt": "SystemMessage_OpenApp",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5750/wp-content/uploads/2014/11/SystemMessage_RegisterPage.png",
-      "markdown_path": "../assets/5750/wp-content/uploads/2014/11/SystemMessage_RegisterPage.png",
-      "wayback_timestamp": "20150323223941",
-      "asset_archive_url": "https://web.archive.org/web/20150323223941id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage.png",
-      "alt": "",
-      "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5750/wp-content/uploads/2014/11/SystemMessage_SendMessage.png",
-      "markdown_path": "../assets/5750/wp-content/uploads/2014/11/SystemMessage_SendMessage.png",
-      "wayback_timestamp": "20150323223941",
-      "asset_archive_url": "https://web.archive.org/web/20150323223941id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp.png",
+      "alt": "SystemMessage_OpenApp",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/5750/wp-content/uploads/2014/11/SystemMessage_OpenApp.png",
-      "markdown_path": "../assets/5750/wp-content/uploads/2014/11/SystemMessage_OpenApp.png",
-      "wayback_timestamp": "20150323223941",
-      "asset_archive_url": "https://web.archive.org/web/20150323223941id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -185,6 +353,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

@@ -14,78 +14,264 @@
   "author": "鶴鶴鶴鶴鶴鶴鶴鶴",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=4204",
-  "archive_url": "https://web.archive.org/web/20150326035508id_/https://tech.mozilla.com.tw/?p=4204",
-  "wayback_timestamp": "20150326035508",
+  "archive_url": "https://web.archive.org/web/20150319052153id_/http://tech.mozilla.com.tw/posts/4204/c11-%e8%88%87-gecko",
+  "wayback_timestamp": "20150319052153",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p>大家都知道 Firefox OS 最大的賣點就在於其開放的平台以及以網頁為基礎的應用程式。相信常關注我們謀智台客的讀者們，也都知道在應用層下的核心引擎 Gecko 是用 C++ 撰寫而成的。Gecko 自開發以來經歷的好幾個年頭，C++ 也不斷地進步當中。<img style=\"margin: 15px;\" alt=\"C++0x\" src=\"http://blog.operationreality.org/wp-content/uploads/2011/08/c-plus-plus-0x-11.jpg\" width=\"55%\" />在 C++0x 被提出的若干年後，終於在 2011 年 8 月 12 號發布 C++11 取代了 C++03 成為 C++ 最新的標準。永遠跟著標準走的 mozilla，也逐漸地在 Gecko 裡使用 C++11 的功能，現在就來讓我們看看 Gecko 裡面有哪些使用到 C++11 的地方:</p>\n<h2>nullptr</h2>\n<p>簡單來說，nullptr 就是用來取代 NULL 的。NULL 在 C/C++ 用的好好的，為何 C++11 要特地引進一個新的關鍵字來取代呢？在 C++11 前，C++之父 Stroustrup 推薦我們 <a href=\"http://www.stroustrup.com/bs_faq2.html#null\"> 使用 0 來取代 NULL。</a>而在 C++ 聖經 &#8220;The C++ Programming Language&#8221; 也提到由於 C++ 有著較 C 強的型別檢查，用 0 來代表 null pointer 會帶來較少的問題。但無論是用 ((void*)0) 或是 0，都不是一個完美的方式來表達 null pointer 這個概念，譬如以下程式</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c03a6220582729\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nvoid f(int x) {}  // (1)\r\nvoid f(int* x) {} // (2)\r\n\r\nf(0);    // (1) is called\r\nf(NULL); // error: call of overloaded ‘f(NULL)’ is ambiguous</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03a6220582729-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c03a6220582729-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03a6220582729-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c03a6220582729-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03a6220582729-5\">5</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c03a6220582729-1\"><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">f</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">int</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">x</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span><span class=\"crayon-sy\">}</span><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-c\">// (1)</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c03a6220582729-2\"><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">f</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">int</span><span class=\"crayon-o\">*</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">x</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span><span class=\"crayon-sy\">}</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// (2)</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c03a6220582729-3\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c03a6220582729-4\"><span class=\"crayon-e\">f</span><span class=\"crayon-sy\">(</span><span class=\"crayon-cn\">0</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// (1) is called</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c03a6220582729-5\"><span class=\"crayon-e\">f</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">NULL</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// error: call of overloaded ‘f(NULL)’ is ambiguous</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0016 seconds] -->\r\n<p>無論用 0 或 NULL 都無法讓預期的 (2) 被喚起。正因如此，C++11 才引進了 nullptr 來專門描述 null pointer。實作上來說，nullptr 是型別 nullptr_t 的一個 instance (如同 true/false 是 bool type 的 instance)，nullptr_t 可被隱式地轉換成任何型別的 pointer (包含 pointer-to-member 型別)，所以所有原先用到 NULL 的地方，可以無痛轉換成 nullptr。所以在上例我們遇到的窘境，用 nullptr 就可以輕鬆解決：</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c03ba409140481\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nf(nullptr); // (2) is called</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03ba409140481-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c03ba409140481-1\"><span class=\"crayon-e\">f</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">nullptr</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// (2) is called</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0009 seconds] -->\r\n<p></p>\n<h2></h2>\n<h2>auto</h2>\n<p>當你使用 STL container，例如 queue、map，需要做遍尋 (iterate) 時，最痛苦的就是要寫一長串程式碼來描述 iterator 的型別:</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c03c2709284244\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nstd::map&lt;int, int&gt; m;\r\nfor (std::map&lt;int, int&gt;::iterator i = m.begin(); i != m.end(); ++i) {\r\n  // ...\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03c2709284244-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c03c2709284244-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03c2709284244-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c03c2709284244-4\">4</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c03c2709284244-1\"><span class=\"crayon-v\">std</span><span class=\"crayon-o\">::</span><span class=\"crayon-v\">map</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-t\">int</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">int</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">m</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c03c2709284244-2\"><span class=\"crayon-st\">for</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">std</span><span class=\"crayon-o\">::</span><span class=\"crayon-v\">map</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-t\">int</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">int</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-o\">::</span><span class=\"crayon-i\">iterator</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">i</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">m</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">begin</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">i</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">!=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">m</span><span class=\"crayon-sy\">.</span><span class=\"crayon-st\">end</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">++</span><span class=\"crayon-v\">i</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c03c2709284244-3\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-c\">// ...</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c03c2709284244-4\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0021 seconds] -->\r\n<p>但有了 auto 之後，你可以輕鬆地這樣寫: [1]</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c03c9369949206\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nfor (auto i = m.begin(); i != m.end(); ++i) {\r\n  // ...\r\n};</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03c9369949206-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c03c9369949206-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03c9369949206-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c03c9369949206-1\"><span class=\"crayon-st\">for</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-i\">auto</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">i</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">m</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">begin</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">i</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">!=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">m</span><span class=\"crayon-sy\">.</span><span class=\"crayon-st\">end</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">++</span><span class=\"crayon-v\">i</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c03c9369949206-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-c\">// ...</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c03c9369949206-3\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0015 seconds] -->\r\n<p>C++11 引進了 auto 關鍵字 [2] 來作自動的型別推斷，請注意它只是&#8221;推斷&#8221;，該變數本身還是有一個型別，auto 的功用並非將 C++ 推向弱型別的語言。auto 在使用上雖然仍有些限制 (譬如無法乾淨俐落地<a href=\"http://stackoverflow.com/questions/15233188/how-do-i-get-a-const-iterator-using-auto\">用 auto 得到 const_iterator</a>)<br />\n但在大部分情況下我們還是能從中得到許多好處，甚至連 return type 都可以用 auto 來表示。</p>\n<h2>static_assert</h2>\n<p>在防禦式程式設計 (Defensive Programming) 中，我們常常需要對各種輸入輸出參數做檢查，而為了減少 runtime overhead，一般會用 assert 對 debug 版本做檢查。有些檢查可以提前在 compile time 完成，譬如某個寫死的表格的大小應該等於某個特定值。聰明的工程師們利用 macro 寫出各種 compile time 的assert function，但 macro 始終是危險的玩意兒，所以 C++11 從語言層面加入了 compile time assertion: static_assert。舉例來說，在 dom/indexedDB/OpenDatabaseHelper.cpp 你可以看到這樣的 static_assert 使用：</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c03d2605956318\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n// The schema version we store in the SQLite database is a (signed) 32-bit\r\n// integer. The major version is left-shifted 4 bits so the max value is\r\n// 0xFFFFFFF. The minor version occupies the lower 4 bits and its max is 0xF.\r\nstatic_assert(kMajorSchemaVersion &lt;= 0xFFFFFFF,\r\n              \"Major version needs to fit in 28 bits.\");\r\nstatic_assert(kMinorSchemaVersion &lt;= 0xF,\r\n              \"Minor version needs to fit in 4 bits.\");</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03d2605956318-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c03d2605956318-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03d2605956318-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c03d2605956318-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03d2605956318-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c03d2605956318-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03d2605956318-7\">7</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c03d2605956318-1\"><span class=\"crayon-c\">// The schema version we store in the SQLite database is a (signed) 32-bit</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c03d2605956318-2\"><span class=\"crayon-c\">// integer. The major version is left-shifted 4 bits so the max value is</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c03d2605956318-3\"><span class=\"crayon-c\">// 0xFFFFFFF. The minor version occupies the lower 4 bits and its max is 0xF.</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c03d2605956318-4\"><span class=\"crayon-e\">static_assert</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">kMajorSchemaVersion</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&lt;=</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">0xFFFFFFF</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c03d2605956318-5\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-s\">\"Major version needs to fit in 28 bits.\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c03d2605956318-6\"><span class=\"crayon-e\">static_assert</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">kMinorSchemaVersion</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&lt;=</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">0xF</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c03d2605956318-7\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-s\">\"Minor version needs to fit in 4 bits.\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0015 seconds] -->\r\n<p></p>\n<h2>rvalue reference</h2>\n<p>rvalue reference 可能是 C++11 的新標準中最讓人難以理解的一項，它通常會伴隨著 move semantics 這概念而出現。為了幫助理解，我們從 move semantics 出發。考慮以下 function：</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c03d9183033402\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nstd::vector&lt;int&gt; createVectorWithOnes(int num) {\r\n  return std::vector&lt;int&gt;(num, 1);\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03d9183033402-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c03d9183033402-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03d9183033402-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c03d9183033402-1\"><span class=\"crayon-v\">std</span><span class=\"crayon-o\">::</span><span class=\"crayon-v\">vector</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-t\">int</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">createVectorWithOnes</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">int</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">num</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c03d9183033402-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-st\">return</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">std</span><span class=\"crayon-o\">::</span><span class=\"crayon-v\">vector</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-t\">int</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">num</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">1</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c03d9183033402-3\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0016 seconds] -->\r\n<p>不考慮任何的 RVO (Return Value Optimization)，以下的一行 function call</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c03e1896502033\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nstd::vector&lt;int&gt; v = createVectorWithOnes(10000);</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03e1896502033-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c03e1896502033-1\"><span class=\"crayon-v\">std</span><span class=\"crayon-o\">::</span><span class=\"crayon-v\">vector</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-t\">int</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">v</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">createVectorWithOnes</span><span class=\"crayon-sy\">(</span><span class=\"crayon-cn\">10000</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0011 seconds] -->\r\n<p>在 C++03 總共會做一次 constructor，兩次 copy constructor。</p>\n<p>但這兩次複製真的有必要的嗎? 在 std::vector 內部的實作，必定是有個指標指向一塊記憶體。對於普通的複製行為，我們無法只複製指標 (shallow copy) 而必需要整塊複製被指向的記憶體 (deep copy)。然而以上的動作，與其說是&#8221;複製&#8221;，不如說是&#8221;移動”。你可以想像在過程當中被呼叫的兩次 copy constructor 的參數都是暫存物件，一旦離開了 constructor，就再沒人能碰觸的到它並會被立即釋放。面對這種特別的&#8221;移動&#8221;的語意，我們大可以放膽地&#8221;偷&#8221;暫存物件的內容，也就是只複製指標 (以及一些 meta data)。所以在 C++11 的 <a href=\"http://www.cplusplus.com/reference/vector/vector/vector/\">std::vector constructors</a> 中我們可以看到所謂 move constructor：</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c03e8292387672\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nvector(vector&amp;&amp; x)</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03e8292387672-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c03e8292387672-1\"><span class=\"crayon-e\">vector</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">vector</span><span class=\"crayon-o\">&amp;&amp;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">x</span><span class=\"crayon-sy\">)</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0011 seconds] -->\r\n<p>連續的兩個 &amp;&amp; 代表 x 是一個 rvalue reference。我們可以簡單地理解 rvalue 為暫存物件，它不具名且稍縱即逝。Compiler 會在適當的時機喚起這個版本的 constructor，在裡面你就可以盡情地偷竊並榨乾 x 裡的內容而不必感到罪惡!</p>\n<p>另一個解讀 move semantics 的方法，就是所有權的轉移 (ownership transfer)，這也是 Gecko 裡用到 rvalue reference 的地方之一：</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c03f0125562001\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nnsAutoPtr( nsAutoPtr&amp;&amp; aSmartPtr )\r\n  : mRawPtr( aSmartPtr.forget() )\r\n// Construct by transferring ownership from another smart pointer.\r\n{\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03f0125562001-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c03f0125562001-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03f0125562001-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c03f0125562001-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03f0125562001-5\">5</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c03f0125562001-1\"><span class=\"crayon-e\">nsAutoPtr</span><span class=\"crayon-sy\">(</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">nsAutoPtr</span><span class=\"crayon-o\">&amp;&amp;</span><span class=\"crayon-h\"> </span><span class=\"crayon-i\">aSmartPtr</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">)</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c03f0125562001-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">mRawPtr</span><span class=\"crayon-sy\">(</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">aSmartPtr</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">forget</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">)</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c03f0125562001-3\"><span class=\"crayon-c\">// Construct by transferring ownership from another smart pointer.</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c03f0125562001-4\"><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c03f0125562001-5\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0023 seconds] -->\r\n<p>Auto pointer 通常蘊含著某個物件指標的&#8221;唯一所有權&#8221;，正因為是&#8221;唯一所有權&#8221;，所以只有&#8221;轉移&#8221;而沒有&#8221;複製&#8221;這回事。類似的唯一所有權概念也發生在 thread object 身上。在 C++03 時代，我們沒有 rvalue reference，對於 auto pointer 只能提供 copy constructor 並且禱告使用者不要在所有權轉移後，繼續使用原先已故的 auto pointer。有了 rvalue reference，我們就可以只提供 move constructor，防止使用者無意間轉移了所有權仍持續使用無效的auto pointer。</p>\n<h2>final / override</h2>\n<p>既然 C++ 是物件導向的程式語言，繼承以及多型必定是最常被使用到的特性之一。然而過具彈性的 C++ 語法，常常讓使用者能做出原設計者預期外的行為。像是繼承某些先天就不是設計成被用來繼承的class，如 std::string 和 std::vector。在 C++03 你無法防止 class 被繼承，C++11 加進了關鍵字 final，來提示 compiler 以及 programmer 這個 class 不允許被繼承。final 除了用來防止 class 被繼承外，也能用來提示某個 virtual function 不應該被覆寫 (override)。這裡其實有些矛盾存在: 如果你不希望一個 function 被 override, 為何還要宣告它為 virtual function? C++ 之父同樣地提出了<a href=\"http://stroustrup.com/C++11FAQ.html#final\">這個問題</a></p>\n<p>至於另一個關鍵字 override，則是用來提示 compiler 這個 function 應該要 override 某個 parent class 的版本。這點在龐大的繼承體系下尤其重要，可以用來避免因為少打或打錯一兩個字而沒有提供到 overridden 的行為。舉例來說 accessible/src/html/HTMLFormControlAccessible.h</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c03f8620218254\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nclass HTMLRangeAccessible : public LeafAccessible\r\n{\r\n  ...\r\n  virtual double MaxValue() const MOZ_OVERRIDE;\r\n  ...\r\n};</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03f8620218254-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c03f8620218254-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03f8620218254-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c03f8620218254-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c03f8620218254-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c03f8620218254-6\">6</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c03f8620218254-1\"><span class=\"crayon-t\">class</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">HTMLRangeAccessible</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-m\">public</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">LeafAccessible</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c03f8620218254-2\"><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c03f8620218254-3\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">.</span><span class=\"crayon-sy\">.</span><span class=\"crayon-sy\">.</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c03f8620218254-4\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-e\">virtual </span><span class=\"crayon-t\">double</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">MaxValue</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-m\">const</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">MOZ_OVERRIDE</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c03f8620218254-5\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">.</span><span class=\"crayon-sy\">.</span><span class=\"crayon-sy\">.</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c03f8620218254-6\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0016 seconds] -->\r\n<p>這裡可以加上 MOZ_OVERRIDE (也就是 override 的 macro ) 用來提示 compiler 該 virtual function 將會 override LeafAccessible::MaxValue。反之如果你不小心手滑打成</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c0400974385445\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nclass HTMLRangeAccessible : public LeafAccessible\r\n{\r\n  ...\r\n  virtual double MaxValue() MOZ_OVERRIDE; // |const| is missing!\r\n  ...\r\n};</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c0400974385445-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c0400974385445-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c0400974385445-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c0400974385445-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c0400974385445-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c0400974385445-6\">6</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c0400974385445-1\"><span class=\"crayon-t\">class</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">HTMLRangeAccessible</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-m\">public</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">LeafAccessible</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c0400974385445-2\"><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c0400974385445-3\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">.</span><span class=\"crayon-sy\">.</span><span class=\"crayon-sy\">.</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c0400974385445-4\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-e\">virtual </span><span class=\"crayon-t\">double</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">MaxValue</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">MOZ_OVERRIDE</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// |const| is missing!</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c0400974385445-5\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">.</span><span class=\"crayon-sy\">.</span><span class=\"crayon-sy\">.</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c0400974385445-6\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0016 seconds] -->\r\n<p>你就會得到一個 compile error 而知道自己不小心打錯囉！</p>\n<p>而在 Gecko 裡，為了不同編譯器間相容性的問題，我們使用 MOZ_FINAL 以及 MOZ_OVERRIDE 這兩個 macro 來取代 final/override 的使用。</p>\n<h2>default / delete</h2>\n<p>當你在建構一個 C++ 物件時，如果你不主動實作以下四個function: copy constructor、default constructor、destructor 以及 copy assignment operator，它們會被 compiler 自動產生。有時候我們不希望 compiler 那麼雞婆，譬如我們希望某個 class 無法被複製，最常見的方法就是將 copy constructor 和 copy assignment operator 宣告為 private 且不提供實作。這是個好方法，唯一的缺點是在 link time 才會得到 error。 C++11 加進了 default 和 delete 關鍵字對 compiler-generated function 有了更細部的控制。以上述的例子來看，只要將 copy constructor 和 copy assignment operator 後加上 &#8220;delete&#8221;，compiler 就不會自動產生這兩個 function 的實作，一旦被明確或是隱式地使用，你也可在 compile time 就得到錯誤訊息及早治療。與 delete 相對的是 default，用來告訴 compiler 我就是希望你幫我產生一個預設版本。 delete 不僅可用在上述四個可能會被自動產生的 function，還可用來修飾任意 function 防止其被呼叫。甚麼情況你會宣告 function 卻不希望被呼叫呢？假設你定義了以下 function：</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c0408798584395\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nvoid f(int) { /* ... */ }</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c0408798584395-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c0408798584395-1\"><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">f</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">int</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">/* ... */</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0010 seconds] -->\r\n<p>以下的用法都可以經過編譯</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c040f346107790\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nf(0);   // (1) OK. No conversion\r\nf('c'); // (2) OK. |char| implicitly converted to |int|\r\nf(0.5); // (3) OK. |float| implicitly converted to |int|</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c040f346107790-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c040f346107790-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c040f346107790-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c040f346107790-1\"><span class=\"crayon-e\">f</span><span class=\"crayon-sy\">(</span><span class=\"crayon-cn\">0</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-c\">// (1) OK. No conversion</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c040f346107790-2\"><span class=\"crayon-e\">f</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'c'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// (2) OK. |char| implicitly converted to |int|</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c040f346107790-3\"><span class=\"crayon-e\">f</span><span class=\"crayon-sy\">(</span><span class=\"crayon-cn\">0.5</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">// (3) OK. |float| implicitly converted to |int|</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0012 seconds] -->\r\n<p>可能某些原因，你不希望隱式的型別轉換發生，在 C++03 你只能故技重施宣告一個多載 (overloading) 的版本而不定義它. 而在 C++11 你可以這樣作：</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c0416558027692\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nvoid f(char) = delete;\r\nvoid f(float) = delete;</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c0416558027692-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c0416558027692-2\">2</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c0416558027692-1\"><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">f</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">char</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">delete</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c0416558027692-2\"><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">f</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">float</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">delete</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0013 seconds] -->\r\n<p>來讓 compiler 在 compile time 就幫你檢查是否有人違法呼叫這個 function。</p>\n<h2>Right angle bracket</h2>\n<p>C++11 前的 compiler parsing rule 上有個著名的 bug, 就是 &gt;&gt; 永遠會被解讀為 right shift operator。所以以下語法</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c041e957023545\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nstd::vector&lt;std::vector&lt;int&gt;&gt;</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c041e957023545-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c041e957023545-1\"><span class=\"crayon-v\">std</span><span class=\"crayon-o\">::</span><span class=\"crayon-v\">vector</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-v\">std</span><span class=\"crayon-o\">::</span><span class=\"crayon-v\">vector</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-t\">int</span><span class=\"crayon-o\">&gt;&gt;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0014 seconds] -->\r\n<p>的最後兩個 &gt;&gt; 會被優先解讀為 right shift operator 而導致 compile error. C++11 修正了這個 bug，所以我們再也不用寫出std::vector&lt;std::vector&lt;int&gt; &gt; 這種奇怪的code啦！</p>\n<p>以上僅列舉部份 C++11 在 Gecko 裡的使用, 完整的 C++11 清單可參考 <a href=\"http://en.wikipedia.org/wiki/C++11\">wiki</a> 或是免費的 <a href=\"http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf\"> draft。</a></p>\n<p>&nbsp;</p>\n<p>[1] C++11 有所謂的 range-based for loop，所以這裡的 for loop 可以更進一步簡化成</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-550a5cf1c0425263721689\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nfor (auto i : m) {\r\n  // ...\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c0425263721689-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-550a5cf1c0425263721689-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-550a5cf1c0425263721689-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-550a5cf1c0425263721689-1\"><span class=\"crayon-st\">for</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-i\">auto</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">i</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">m</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-550a5cf1c0425263721689-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-c\">// ...</span></div><div class=\"crayon-line\" id=\"crayon-550a5cf1c0425263721689-3\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0011 seconds] -->\r\n<p>不過根據<a href=\"https://developer.mozilla.org/en-US/docs/Using_CXX_in_Mozilla_code\">這篇文章</a>，gecko 裡不允許使用 range-based for loop。</p>\n<p>[2] C++98 就存在關鍵字 auto 作為 storage class specifier，簡單的說就是 local variable，由於 C++ 預設就是 auto，所以幾乎是沒有機會用到。</p>\n\t\t\t</div>",
   "content_text": "大家都知道 Firefox OS 最大的賣點就在於其開放的平台以及以網頁為基礎的應用程式。相信常關注我們謀智台客的讀者們，也都知道在應用層下的核心引擎 Gecko 是用 C++ 撰寫而成的。Gecko 自開發以來經歷的好幾個年頭，C++ 也不斷地進步當中。 在 C++0x 被提出的若干年後，終於在 2011 年 8 月 12 號發布 C++11 取代了 C++03 成為 C++ 最新的標準。永遠跟著標準走的 mozilla，也逐漸地在 Gecko 裡使用 C++11 的功能，現在就來讓我們看看 Gecko 裡面有哪些使用到 C++11 的地方: nullptr 簡單來說，nullptr 就是用來取代 NULL 的。NULL 在 C/C++ 用的好好的，為何 C++11 要特地引進一個新的關鍵字來取代呢？在 C++11 前，C++之父 Stroustrup 推薦我們 使用 0 來取代 NULL。 而在 C++ 聖經 “The C++ Programming Language” 也提到由於 C++ 有著較 C 強的型別檢查，用 0 來代表 null pointer 會帶來較少的問題。但無論是用 ((void*)0) 或是 0，都不是一個完美的方式來表達 null pointer 這個概念，譬如以下程式 void f(int x) {} // (1) void f(int* x) {} // (2) f(0); // (1) is called f(NULL); // error: call of overloaded ‘f(NULL)’ is ambiguous 1 2 3 4 5 void f ( int x ) { } // (1) void f ( int * x ) { } // (2) f ( 0 ) ; // (1) is called f ( NULL ) ; // error: call of overloaded ‘f(NULL)’ is ambiguous 無論用 0 或 NULL 都無法讓預期的 (2) 被喚起。正因如此，C++11 才引進了 nullptr 來專門描述 null pointer。實作上來說，nullptr 是型別 nullptr_t 的一個 instance (如同 true/false 是 bool type 的 instance)，nullptr_t 可被隱式地轉換成任何型別的 pointer (包含 pointer-to-member 型別)，所以所有原先用到 NULL 的地方，可以無痛轉換成 nullptr。所以在上例我們遇到的窘境，用 nullptr 就可以輕鬆解決： f(nullptr); // (2) is called 1 f ( nullptr ) ; // (2) is called auto 當你使用 STL container，例如 queue、map，需要做遍尋 (iterate) 時，最痛苦的就是要寫一長串程式碼來描述 iterator 的型別: std::map<int, int> m; for (std::map<int, int>::iterator i = m.begin(); i != m.end(); ++i) { // ... } 1 2 3 4 std :: map < int , int > m ; for ( std :: map < int , int > :: iterator i = m . begin ( ) ; i != m . end ( ) ; ++ i ) { // ... } 但有了 auto 之後，你可以輕鬆地這樣寫: [1] for (auto i = m.begin(); i != m.end(); ++i) { // ... }; 1 2 3 for ( auto i = m . begin ( ) ; i != m . end ( ) ; ++ i ) { // ... } ; C++11 引進了 auto 關鍵字 [2] 來作自動的型別推斷，請注意它只是”推斷”，該變數本身還是有一個型別，auto 的功用並非將 C++ 推向弱型別的語言。auto 在使用上雖然仍有些限制 (譬如無法乾淨俐落地 用 auto 得到 const_iterator ) 但在大部分情況下我們還是能從中得到許多好處，甚至連 return type 都可以用 auto 來表示。 static_assert 在防禦式程式設計 (Defensive Programming) 中，我們常常需要對各種輸入輸出參數做檢查，而為了減少 runtime overhead，一般會用 assert 對 debug 版本做檢查。有些檢查可以提前在 compile time 完成，譬如某個寫死的表格的大小應該等於某個特定值。聰明的工程師們利用 macro 寫出各種 compile time 的assert function，但 macro 始終是危險的玩意兒，所以 C++11 從語言層面加入了 compile time assertion: static_assert。舉例來說，在 dom/indexedDB/OpenDatabaseHelper.cpp 你可以看到這樣的 static_assert 使用： // The schema version we store in the SQLite database is a (signed) 32-bit // integer. The major version is left-shifted 4 bits so the max value is // 0xFFFFFFF. The minor version occupies the lower 4 bits and its max is 0xF. static_assert(kMajorSchemaVersion <= 0xFFFFFFF, \"Major version needs to fit in 28 bits.\"); static_assert(kMinorSchemaVersion <= 0xF, \"Minor version needs to fit in 4 bits.\"); 1 2 3 4 5 6 7 // The schema version we store in the SQLite database is a (signed) 32-bit // integer. The major version is left-shifted 4 bits so the max value is // 0xFFFFFFF. The minor version occupies the lower 4 bits and its max is 0xF. static_assert ( kMajorSchemaVersion <= 0xFFFFFFF , \"Major version needs to fit in 28 bits.\" ) ; static_assert ( kMinorSchemaVersion <= 0xF , \"Minor version needs to fit in 4 bits.\" ) ; rvalue reference rvalue reference 可能是 C++11 的新標準中最讓人難以理解的一項，它通常會伴隨著 move semantics 這概念而出現。為了幫助理解，我們從 move semantics 出發。考慮以下 function： std::vector<int> createVectorWithOnes(int num) { return std::vector<int>(num, 1); } 1 2 3 std :: vector < int > createVectorWithOnes ( int num ) { return std :: vector < int > ( num , 1 ) ; } 不考慮任何的 RVO (Return Value Optimization)，以下的一行 function call std::vector<int> v = createVectorWithOnes(10000); 1 std :: vector < int > v = createVectorWithOnes ( 10000 ) ; 在 C++03 總共會做一次 constructor，兩次 copy constructor。 但這兩次複製真的有必要的嗎? 在 std::vector 內部的實作，必定是有個指標指向一塊記憶體。對於普通的複製行為，我們無法只複製指標 (shallow copy) 而必需要整塊複製被指向的記憶體 (deep copy)。然而以上的動作，與其說是”複製”，不如說是”移動”。你可以想像在過程當中被呼叫的兩次 copy constructor 的參數都是暫存物件，一旦離開了 constructor，就再沒人能碰觸的到它並會被立即釋放。面對這種特別的”移動”的語意，我們大可以放膽地”偷”暫存物件的內容，也就是只複製指標 (以及一些 meta data)。所以在 C++11 的 std::vector constructors 中我們可以看到所謂 move constructor： vector(vector&& x) 1 vector ( vector && x ) 連續的兩個 && 代表 x 是一個 rvalue reference。我們可以簡單地理解 rvalue 為暫存物件，它不具名且稍縱即逝。Compiler 會在適當的時機喚起這個版本的 constructor，在裡面你就可以盡情地偷竊並榨乾 x 裡的內容而不必感到罪惡! 另一個解讀 move semantics 的方法，就是所有權的轉移 (ownership transfer)，這也是 Gecko 裡用到 rvalue reference 的地方之一： nsAutoPtr( nsAutoPtr&& aSmartPtr ) : mRawPtr( aSmartPtr.forget() ) // Construct by transferring ownership from another smart pointer. { } 1 2 3 4 5 nsAutoPtr ( nsAutoPtr && aSmartPtr ) : mRawPtr ( aSmartPtr . forget ( ) ) // Construct by transferring ownership from another smart pointer. { } Auto pointer 通常蘊含著某個物件指標的”唯一所有權”，正因為是”唯一所有權”，所以只有”轉移”而沒有”複製”這回事。類似的唯一所有權概念也發生在 thread object 身上。在 C++03 時代，我們沒有 rvalue reference，對於 auto pointer 只能提供 copy constructor 並且禱告使用者不要在所有權轉移後，繼續使用原先已故的 auto pointer。有了 rvalue reference，我們就可以只提供 move constructor，防止使用者無意間轉移了所有權仍持續使用無效的auto pointer。 final / override 既然 C++ 是物件導向的程式語言，繼承以及多型必定是最常被使用到的特性之一。然而過具彈性的 C++ 語法，常常讓使用者能做出原設計者預期外的行為。像是繼承某些先天就不是設計成被用來繼承的class，如 std::string 和 std::vector。在 C++03 你無法防止 class 被繼承，C++11 加進了關鍵字 final，來提示 compiler 以及 programmer 這個 class 不允許被繼承。final 除了用來防止 class 被繼承外，也能用來提示某個 virtual function 不應該被覆寫 (override)。這裡其實有些矛盾存在: 如果你不希望一個 function 被 override, 為何還要宣告它為 virtual function? C++ 之父同樣地提出了 這個問題 至於另一個關鍵字 override，則是用來提示 compiler 這個 function 應該要 override 某個 parent class 的版本。這點在龐大的繼承體系下尤其重要，可以用來避免因為少打或打錯一兩個字而沒有提供到 overridden 的行為。舉例來說 accessible/src/html/HTMLFormControlAccessible.h class HTMLRangeAccessible : public LeafAccessible { ... virtual double MaxValue() const MOZ_OVERRIDE; ... }; 1 2 3 4 5 6 class HTMLRangeAccessible : public LeafAccessible { . . . virtual double MaxValue ( ) const MOZ_OVERRIDE ; . . . } ; 這裡可以加上 MOZ_OVERRIDE (也就是 override 的 macro ) 用來提示 compiler 該 virtual function 將會 override LeafAccessible::MaxValue。反之如果你不小心手滑打成 class HTMLRangeAccessible : public LeafAccessible { ... virtual double MaxValue() MOZ_OVERRIDE; // |const| is missing! ... }; 1 2 3 4 5 6 class HTMLRangeAccessible : public LeafAccessible { . . . virtual double MaxValue ( ) MOZ_OVERRIDE ; // |const| is missing! . . . } ; 你就會得到一個 compile error 而知道自己不小心打錯囉！ 而在 Gecko 裡，為了不同編譯器間相容性的問題，我們使用 MOZ_FINAL 以及 MOZ_OVERRIDE 這兩個 macro 來取代 final/override 的使用。 default / delete 當你在建構一個 C++ 物件時，如果你不主動實作以下四個function: copy constructor、default constructor、destructor 以及 copy assignment operator，它們會被 compiler 自動產生。有時候我們不希望 compiler 那麼雞婆，譬如我們希望某個 class 無法被複製，最常見的方法就是將 copy constructor 和 copy assignment operator 宣告為 private 且不提供實作。這是個好方法，唯一的缺點是在 link time 才會得到 error。 C++11 加進了 default 和 delete 關鍵字對 compiler-generated function 有了更細部的控制。以上述的例子來看，只要將 copy constructor 和 copy assignment operator 後加上 “delete”，compiler 就不會自動產生這兩個 function 的實作，一旦被明確或是隱式地使用，你也可在 compile time 就得到錯誤訊息及早治療。與 delete 相對的是 default，用來告訴 compiler 我就是希望你幫我產生一個預設版本。 delete 不僅可用在上述四個可能會被自動產生的 function，還可用來修飾任意 function 防止其被呼叫。甚麼情況你會宣告 function 卻不希望被呼叫呢？假設你定義了以下 function： void f(int) { /* ... */ } 1 void f ( int ) { /* ... */ } 以下的用法都可以經過編譯 f(0); // (1) OK. No conversion f('c'); // (2) OK. |char| implicitly converted to |int| f(0.5); // (3) OK. |float| implicitly converted to |int| 1 2 3 f ( 0 ) ; // (1) OK. No conversion f ( 'c' ) ; // (2) OK. |char| implicitly converted to |int| f ( 0.5 ) ; // (3) OK. |float| implicitly converted to |int| 可能某些原因，你不希望隱式的型別轉換發生，在 C++03 你只能故技重施宣告一個多載 (overloading) 的版本而不定義它. 而在 C++11 你可以這樣作： void f(char) = delete; void f(float) = delete; 1 2 void f ( char ) = delete ; void f ( float ) = delete ; 來讓 compiler 在 compile time 就幫你檢查是否有人違法呼叫這個 function。 Right angle bracket C++11 前的 compiler parsing rule 上有個著名的 bug, 就是 >> 永遠會被解讀為 right shift operator。所以以下語法 std::vector<std::vector<int>> 1 std :: vector < std :: vector < int >> 的最後兩個 >> 會被優先解讀為 right shift operator 而導致 compile error. C++11 修正了這個 bug，所以我們再也不用寫出std::vector<std::vector<int> > 這種奇怪的code啦！ 以上僅列舉部份 C++11 在 Gecko 裡的使用, 完整的 C++11 清單可參考 wiki 或是免費的 draft。 [1] C++11 有所謂的 range-based for loop，所以這裡的 for loop 可以更進一步簡化成 for (auto i : m) { // ... } 1 2 3 for ( auto i : m ) { // ... } 不過根據 這篇文章 ，gecko 裡不允許使用 range-based for loop。 [2] C++98 就存在關鍵字 auto 作為 storage class specifier，簡單的說就是 local variable，由於 C++ 預設就是 auto，所以幾乎是沒有機會用到。",
   "images": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1-150x150.png",
+      "alt": "mapreduce_vs_for",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian-150x150.png",
+      "alt": "mozillian",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://blog.operationreality.org/wp-content/uploads/2011/08/c-plus-plus-0x-11.jpg",
       "alt": "C++0x",
       "kind": "image",
       "source": "img"
     },
     {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/Da_Vinci_Vitruve_Luc_Viatour-150x150.jpg",
+      "alt": "Da_Vinci_Vitruve_Luc_Viatour",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/428882_10152000131370022_1878524113_n-150x150.jpg",
+      "alt": "428882_10152000131370022_1878524113_n",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-%E6%95%B8%E4%BD%8D%E6%99%82%E4%BB%A3_0313_3-150x150.jpg",
+      "alt": "TO 數位時代_0313_3",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/gonk-misc-folder-150x150.jpg",
+      "alt": "gonk-misc folder",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/04/c-plus-plus-0x-11.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
+    },
+    {
       "url": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf",
       "alt": "draft。",
       "kind": "media",
-      "source": "a-href",
-      "archive_path": "assets/4204/002-9df225e84262.pdf",
-      "markdown_path": "../assets/4204/002-9df225e84262.pdf",
-      "wayback_timestamp": "20150326035508",
-      "asset_archive_url": "https://web.archive.org/web/20150326035508id_/https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf",
-      "content_type": "application/pdf"
-    },
-    {
-      "post_id": 4204,
-      "page_type": "post",
-      "title": "C++11 與 Gecko",
-      "page_timestamp": "20150326035508",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
-      "source": "img",
-      "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
-      "archive_path": "assets/4204/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
-      "markdown_path": "../assets/4204/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
-      "wayback_timestamp": "20150322034443",
-      "asset_archive_url": "https://web.archive.org/web/20150322034443id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "a-href"
     }
   ],
   "media": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1-150x150.png",
+      "alt": "mapreduce_vs_for",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian-150x150.png",
+      "alt": "mozillian",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://blog.operationreality.org/wp-content/uploads/2011/08/c-plus-plus-0x-11.jpg",
       "alt": "C++0x",
       "kind": "image",
       "source": "img"
     },
     {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/Da_Vinci_Vitruve_Luc_Viatour-150x150.jpg",
+      "alt": "Da_Vinci_Vitruve_Luc_Viatour",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/428882_10152000131370022_1878524113_n-150x150.jpg",
+      "alt": "428882_10152000131370022_1878524113_n",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-%E6%95%B8%E4%BD%8D%E6%99%82%E4%BB%A3_0313_3-150x150.jpg",
+      "alt": "TO 數位時代_0313_3",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/gonk-misc-folder-150x150.jpg",
+      "alt": "gonk-misc folder",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/04/c-plus-plus-0x-11.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
+    },
+    {
       "url": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf",
       "alt": "draft。",
       "kind": "media",
-      "source": "a-href",
-      "archive_path": "assets/4204/002-9df225e84262.pdf",
-      "markdown_path": "../assets/4204/002-9df225e84262.pdf",
-      "wayback_timestamp": "20150326035508",
-      "asset_archive_url": "https://web.archive.org/web/20150326035508id_/https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf",
-      "content_type": "application/pdf"
-    },
-    {
-      "post_id": 4204,
-      "page_type": "post",
-      "title": "C++11 與 Gecko",
-      "page_timestamp": "20150326035508",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
-      "source": "img",
-      "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
-      "archive_path": "assets/4204/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
-      "markdown_path": "../assets/4204/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
-      "wayback_timestamp": "20150322034443",
-      "asset_archive_url": "https://web.archive.org/web/20150322034443id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "a-href"
     }
   ],
   "links": [
@@ -122,7 +308,87 @@
   "asset_status": "partial_assets_failed",
   "asset_errors": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1-150x150.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/02/mozillian-150x150.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "reason": "article_media_missing"
+    },
+    {
       "url": "https://blog.operationreality.org/wp-content/uploads/2011/08/c-plus-plus-0x-11.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/Da_Vinci_Vitruve_Luc_Viatour-150x150.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2012/11/428882_10152000131370022_1878524113_n-150x150.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/TO-%E6%95%B8%E4%BD%8D%E6%99%82%E4%BB%A3_0313_3-150x150.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/gonk-misc-folder-150x150.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpfull.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpfull.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpfull.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpfull.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpfull.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpfull.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/04/c-plus-plus-0x-11.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf",
       "reason": "article_media_missing"
     }
   ]

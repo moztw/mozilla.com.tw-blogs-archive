@@ -16,176 +16,264 @@
   "author": "George",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=3508",
-  "archive_url": "https://web.archive.org/web/20160325045949id_/https://tech.mozilla.com.tw/?p=3508",
-  "wayback_timestamp": "20160325045949",
-  "content_html": "<div class=\"entry-content close\">\n\t\t<p>開發前端的程式，一個基本的前端 debug 工具會幫我們及時揭露大部份的 HTML，CSS 和 JS，並且及時改 HTML 與 CSS，為 JS 下斷點，目前各大瀏覽器包括 Firefox，Chrome 以及 IE 都有這方面的支援，我就不在此一一贅述。那今天有什麼好用的工具可以幫助我在 Firefox OS 上 debug 呢？這篇今天主要介紹的兩項 debug 神器 Firefox Nightly 和 App Manager。</p>\n<h3>Firefox Nightly</h3>\n<p>前置準備：電腦必須支援 git 和 make 的指令</p>\n<ol>\n<li>請至<a href=\"http://nightly.mozilla.org/\">http://nightly.mozilla.org/</a> 下載最新的版的Firefox Nightly。並安裝到您的電腦，並記住您 Nightly 執行檔的路徑<br />\ne.g., on mac, &#8220;/Applications/FirefoxNightly.app/Contents/MacOS/firefox”</li>\n<li>請把 gaia 的 git repository 下載至電腦內 <code>git clone https://github.com/mozilla-b2g/gaia</code></li>\n<li>在下載的 gaia 目錄下，執行<code>DEBUG=1 make</code></li>\n<li>執行<code>/path/to/firefox -profile /path/to/gaia/progile-debug -no-remote</code></li>\n</ol>\n<p>跟隨以上步驟，您便可以用 Nightly 開啟一個 Firefox OS，所有 Gaia 的程式碼便在 debug 面板裡向您展露無疑。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56.png\"><img class=\"size-large wp-image-3511 aligncenter\" alt=\"Nightly Debugger\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56-1024x640.png\" width=\"640\" height=\"400\" srcset=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56-300x187.png 300w, http://tech.mozilla.com.tw/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56-1024x640.png 1024w, http://tech.mozilla.com.tw/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56.png 1440w\" sizes=\"(max-width: 640px) 100vw, 640px\" /></a></p>\n<p>用 Nightly 來 debug 最大的好處是，我們直接透過重新整理頁面就可以立即看到修改過的樣貌與邏輯，不過有些 App 為了追尋最佳化，可能有另外進行壓縮合併，那樣的話還是必須再重新執行上述步驟 3，但在大部分情況是不需要的。除此之外，我們也可直接調整螢幕大小與 devicePixel，便可大概知道在不同裝置下是否有破版或功能的不正常。</p>\n<p>然而在 Nightly 上也有缺點，就是它的執行結果不必然等於實際在手機上的狀況，最顯著的例子便是瀏覽器是沒有 SIM 卡的，因此我們不能在上面傳簡訊或打電話以及所有跟 SIM 相關的功能都跟手機不一樣，因此我們需要另外個遠端 debug 的工具，就是App Manager！</p>\n<h3>App Manager</h3>\n<p>前置條件，您必須擁有 Firefox OS phone 1.2+，電腦必須支援 adb 指令</p>\n<ol>\n<li>必須確保手機的 Firefox OS 版本是在 1.2 以上的，並在 Settings App 裡關掉 Screen Lock 並遠端除錯 (Remote Debugging) 功能打開。</li>\n<li><a href=\"https://ftp.mozilla.org/pub/mozilla.org/labs/fxos-simulator/\">https://ftp.mozilla.org/pub/mozilla.org/labs/fxos-simulator/</a> 安裝Simulator 和 ADB Helper</li>\n<li>在 Nightly 裡打開App Manager，連接裝置，便可以開始除錯了！</li>\n</ol>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager.png\"><img class=\"size-large wp-image-3515 aligncenter\" alt=\"Appmanager\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager-1024x471.png\" width=\"640\" height=\"294\" srcset=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager-300x138.png 300w, http://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager-1024x471.png 1024w, http://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager.png 1434w\" sizes=\"(max-width: 640px) 100vw, 640px\" /></a></p>\n<p>遠端除錯最厲害的功能就是它簡直跟你用瀏覽器除錯完全一樣，差別只在於把螢幕從瀏覽器轉移到你的手機上，您依然可以看到他所有的html/css/js ，甚至可以即時修改它們和下斷點，並在手機上直接看到修改結果，除此之外，也可透過手指點選螢幕的方式找尋物件在 html 的位置。</p>\n<p>而它不方便的是必須花時間把修改過的程式碼重新安裝到手機裡，才可以看到結果，而且目前該工具仍在開發階段，仍然有些小問題有待解決，不過大體上而言，搭配 Nightly 來除錯應該解決大部份前端的問題。</p>\n<p>如果看倌們有任何問題，歡迎至參考資料中尋找更詳細的說明並留下您的問題在裡面噢！</p>\n<h4>參考資料：</h4>\n<p><a href=\"https://developer.mozilla.org/en-US/Firefox_OS/Using_the_App_Manager\">https://developer.mozilla.org/en-US/Firefox_OS/Using_the_App_Manager</a></p>\n<p><a href=\"https://developer.mozilla.org/en-US/Firefox_OS/Using_Gaia_in_Firefox\">https://developer.mozilla.org/en-US/Firefox_OS/Using_Gaia_in_Firefox</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
+  "archive_url": "https://web.archive.org/web/20170901002707/https://tech.mozilla.com.tw/posts/3508/gaia-%E7%9A%84-debug-%E7%A5%9E%E5%99%A8",
+  "wayback_timestamp": "20170901002707",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>開發前端的程式，一個基本的前端 debug 工具會幫我們及時揭露大部份的 HTML，CSS 和 JS，並且及時改 HTML 與 CSS，為 JS 下斷點，目前各大瀏覽器包括 Firefox，Chrome 以及 IE 都有這方面的支援，我就不在此一一贅述。那今天有什麼好用的工具可以幫助我在 Firefox OS 上 debug 呢？這篇今天主要介紹的兩項 debug 神器 Firefox Nightly 和 App Manager。</p>\n<h3>Firefox Nightly</h3>\n<p>前置準備：電腦必須支援 git 和 make 的指令</p>\n<ol>\n<li>請至<a href=\"https://web.archive.org/web/20170901002707/http://nightly.mozilla.org/\">http://nightly.mozilla.org/</a> 下載最新的版的Firefox Nightly。並安裝到您的電腦，並記住您 Nightly 執行檔的路徑<br/>\ne.g., on mac, &#8220;/Applications/FirefoxNightly.app/Contents/MacOS/firefox”</li>\n<li>請把 gaia 的 git repository 下載至電腦內 <code>git clone https://github.com/mozilla-b2g/gaia</code></li>\n<li>在下載的 gaia 目錄下，執行<code>DEBUG=1 make</code></li>\n<li>執行<code>/path/to/firefox -profile /path/to/gaia/progile-debug -no-remote</code></li>\n</ol>\n<p>跟隨以上步驟，您便可以用 Nightly 開啟一個 Firefox OS，所有 Gaia 的程式碼便在 debug 面板裡向您展露無疑。</p>\n<p><a href=\"https://web.archive.org/web/20170901002707/http://tech.mozilla.com.tw/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56.png\"><img class=\"size-large wp-image-3511 aligncenter\" alt=\"Nightly Debugger\" src=\"https://web.archive.org/web/20170901002707im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56-1024x640.png\" width=\"640\" height=\"400\" srcset=\"https://web.archive.org/web/20170901002707im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56-1024x640.png 1024w, https://web.archive.org/web/20170901002707im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56-300x187.png 300w, https://web.archive.org/web/20170901002707im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56.png 1440w\" sizes=\"(max-width: 640px) 100vw, 640px\"/></a></p>\n<p>用 Nightly 來 debug 最大的好處是，我們直接透過重新整理頁面就可以立即看到修改過的樣貌與邏輯，不過有些 App 為了追尋最佳化，可能有另外進行壓縮合併，那樣的話還是必須再重新執行上述步驟 3，但在大部分情況是不需要的。除此之外，我們也可直接調整螢幕大小與 devicePixel，便可大概知道在不同裝置下是否有破版或功能的不正常。</p>\n<p>然而在 Nightly 上也有缺點，就是它的執行結果不必然等於實際在手機上的狀況，最顯著的例子便是瀏覽器是沒有 SIM 卡的，因此我們不能在上面傳簡訊或打電話以及所有跟 SIM 相關的功能都跟手機不一樣，因此我們需要另外個遠端 debug 的工具，就是App Manager！</p>\n<h3>App Manager</h3>\n<p>前置條件，您必須擁有 Firefox OS phone 1.2+，電腦必須支援 adb 指令</p>\n<ol>\n<li>必須確保手機的 Firefox OS 版本是在 1.2 以上的，並在 Settings App 裡關掉 Screen Lock 並遠端除錯 (Remote Debugging) 功能打開。</li>\n<li><a href=\"https://web.archive.org/web/20170901002707/https://ftp.mozilla.org/pub/mozilla.org/labs/fxos-simulator/\">https://ftp.mozilla.org/pub/mozilla.org/labs/fxos-simulator/</a> 安裝Simulator 和 ADB Helper</li>\n<li>在 Nightly 裡打開App Manager，連接裝置，便可以開始除錯了！</li>\n</ol>\n<p><a href=\"https://web.archive.org/web/20170901002707/http://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager.png\"><img class=\"size-large wp-image-3515 aligncenter\" alt=\"Appmanager\" src=\"https://web.archive.org/web/20170901002707im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager-1024x471.png\" width=\"640\" height=\"294\" srcset=\"https://web.archive.org/web/20170901002707im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager-1024x471.png 1024w, https://web.archive.org/web/20170901002707im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager-300x138.png 300w, https://web.archive.org/web/20170901002707im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager.png 1434w\" sizes=\"(max-width: 640px) 100vw, 640px\"/></a></p>\n<p>遠端除錯最厲害的功能就是它簡直跟你用瀏覽器除錯完全一樣，差別只在於把螢幕從瀏覽器轉移到你的手機上，您依然可以看到他所有的html/css/js ，甚至可以即時修改它們和下斷點，並在手機上直接看到修改結果，除此之外，也可透過手指點選螢幕的方式找尋物件在 html 的位置。</p>\n<p>而它不方便的是必須花時間把修改過的程式碼重新安裝到手機裡，才可以看到結果，而且目前該工具仍在開發階段，仍然有些小問題有待解決，不過大體上而言，搭配 Nightly 來除錯應該解決大部份前端的問題。</p>\n<p>如果看倌們有任何問題，歡迎至參考資料中尋找更詳細的說明並留下您的問題在裡面噢！</p>\n<h4>參考資料：</h4>\n<p><a href=\"https://web.archive.org/web/20170901002707/https://developer.mozilla.org/en-US/Firefox_OS/Using_the_App_Manager\">https://developer.mozilla.org/en-US/Firefox_OS/Using_the_App_Manager</a></p>\n<p><a href=\"https://web.archive.org/web/20170901002707/https://developer.mozilla.org/en-US/Firefox_OS/Using_Gaia_in_Firefox\">https://developer.mozilla.org/en-US/Firefox_OS/Using_Gaia_in_Firefox</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
   "content_text": "開發前端的程式，一個基本的前端 debug 工具會幫我們及時揭露大部份的 HTML，CSS 和 JS，並且及時改 HTML 與 CSS，為 JS 下斷點，目前各大瀏覽器包括 Firefox，Chrome 以及 IE 都有這方面的支援，我就不在此一一贅述。那今天有什麼好用的工具可以幫助我在 Firefox OS 上 debug 呢？這篇今天主要介紹的兩項 debug 神器 Firefox Nightly 和 App Manager。 Firefox Nightly 前置準備：電腦必須支援 git 和 make 的指令 請至 http://nightly.mozilla.org/ 下載最新的版的Firefox Nightly。並安裝到您的電腦，並記住您 Nightly 執行檔的路徑 e.g., on mac, “/Applications/FirefoxNightly.app/Contents/MacOS/firefox” 請把 gaia 的 git repository 下載至電腦內 git clone https://github.com/mozilla-b2g/gaia 在下載的 gaia 目錄下，執行 DEBUG=1 make 執行 /path/to/firefox -profile /path/to/gaia/progile-debug -no-remote 跟隨以上步驟，您便可以用 Nightly 開啟一個 Firefox OS，所有 Gaia 的程式碼便在 debug 面板裡向您展露無疑。 用 Nightly 來 debug 最大的好處是，我們直接透過重新整理頁面就可以立即看到修改過的樣貌與邏輯，不過有些 App 為了追尋最佳化，可能有另外進行壓縮合併，那樣的話還是必須再重新執行上述步驟 3，但在大部分情況是不需要的。除此之外，我們也可直接調整螢幕大小與 devicePixel，便可大概知道在不同裝置下是否有破版或功能的不正常。 然而在 Nightly 上也有缺點，就是它的執行結果不必然等於實際在手機上的狀況，最顯著的例子便是瀏覽器是沒有 SIM 卡的，因此我們不能在上面傳簡訊或打電話以及所有跟 SIM 相關的功能都跟手機不一樣，因此我們需要另外個遠端 debug 的工具，就是App Manager！ App Manager 前置條件，您必須擁有 Firefox OS phone 1.2+，電腦必須支援 adb 指令 必須確保手機的 Firefox OS 版本是在 1.2 以上的，並在 Settings App 裡關掉 Screen Lock 並遠端除錯 (Remote Debugging) 功能打開。 https://ftp.mozilla.org/pub/mozilla.org/labs/fxos-simulator/ 安裝Simulator 和 ADB Helper 在 Nightly 裡打開App Manager，連接裝置，便可以開始除錯了！ 遠端除錯最厲害的功能就是它簡直跟你用瀏覽器除錯完全一樣，差別只在於把螢幕從瀏覽器轉移到你的手機上，您依然可以看到他所有的html/css/js ，甚至可以即時修改它們和下斷點，並在手機上直接看到修改結果，除此之外，也可透過手指點選螢幕的方式找尋物件在 html 的位置。 而它不方便的是必須花時間把修改過的程式碼重新安裝到手機裡，才可以看到結果，而且目前該工具仍在開發階段，仍然有些小問題有待解決，不過大體上而言，搭配 Nightly 來除錯應該解決大部份前端的問題。 如果看倌們有任何問題，歡迎至參考資料中尋找更詳細的說明並留下您的問題在裡面噢！ 參考資料： https://developer.mozilla.org/en-US/Firefox_OS/Using_the_App_Manager https://developer.mozilla.org/en-US/Firefox_OS/Using_Gaia_in_Firefox",
   "images": [
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20170901002707im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-150x150.jpg",
+      "alt": "8515474-3d-abstract-digital-code-connection",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-12-03-%E4%B8%8B%E5%8D%8810.50.53-150x150.png",
+      "alt": "Firefox 刮刮樂",
+      "kind": "image",
+      "source": "img"
+    },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56-1024x640.png",
       "alt": "Nightly Debugger",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3508/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56-1024x640.png",
-      "markdown_path": "../assets/3508/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56-1024x640.png",
-      "wayback_timestamp": "20160325045949",
-      "asset_archive_url": "https://web.archive.org/web/20160325045949id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56-1024x640.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56-300x187.png",
       "alt": "Nightly Debugger",
       "kind": "image",
-      "source": "img-srcset",
-      "post_id": 3508,
-      "page_type": "post",
-      "title": "Gaia 的 Debug 神器",
-      "page_timestamp": "20160325045949",
-      "index": 1,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56.png",
-      "archive_path": "assets/3508/007-e5b8d6251f02.png",
-      "markdown_path": "../assets/3508/007-e5b8d6251f02.png",
-      "wayback_timestamp": "20140710071919",
-      "asset_archive_url": "https://web.archive.org/web/20140710071919id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56.png",
-      "content_type": "image/png",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56.png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56.png",
       "alt": "Nightly Debugger",
       "kind": "image",
-      "source": "img-srcset",
-      "archive_path": "assets/3508/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56.png",
-      "markdown_path": "../assets/3508/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56.png",
-      "wayback_timestamp": "20160325045949",
-      "asset_archive_url": "https://web.archive.org/web/20160325045949id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager-1024x471.png",
       "alt": "Appmanager",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3508/wp-content/uploads/2013/12/Appmanager-1024x471.png",
-      "markdown_path": "../assets/3508/wp-content/uploads/2013/12/Appmanager-1024x471.png",
-      "wayback_timestamp": "20160325045949",
-      "asset_archive_url": "https://web.archive.org/web/20160325045949id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager-1024x471.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager-300x138.png",
       "alt": "Appmanager",
       "kind": "image",
-      "source": "img-srcset",
-      "post_id": 3508,
-      "page_type": "post",
-      "title": "Gaia 的 Debug 神器",
-      "page_timestamp": "20160325045949",
-      "index": 4,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager.png",
-      "archive_path": "assets/3508/007-ebfe5980d6d5.png",
-      "markdown_path": "../assets/3508/007-ebfe5980d6d5.png",
-      "wayback_timestamp": "20140710071454",
-      "asset_archive_url": "https://web.archive.org/web/20140710071454id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager.png",
-      "content_type": "image/png",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager.png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager.png",
       "alt": "Appmanager",
       "kind": "image",
-      "source": "img-srcset",
-      "archive_path": "assets/3508/wp-content/uploads/2013/12/Appmanager.png",
-      "markdown_path": "../assets/3508/wp-content/uploads/2013/12/Appmanager.png",
-      "wayback_timestamp": "20160325045949",
-      "asset_archive_url": "https://web.archive.org/web/20160325045949id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "media": [
     {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20170901002707im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/8515474-3d-abstract-digital-code-connection-150x150.jpg",
+      "alt": "8515474-3d-abstract-digital-code-connection",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-12-03-%E4%B8%8B%E5%8D%8810.50.53-150x150.png",
+      "alt": "Firefox 刮刮樂",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56-1024x640.png",
       "alt": "Nightly Debugger",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3508/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56-1024x640.png",
-      "markdown_path": "../assets/3508/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56-1024x640.png",
-      "wayback_timestamp": "20160325045949",
-      "asset_archive_url": "https://web.archive.org/web/20160325045949id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56-1024x640.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56-300x187.png",
       "alt": "Nightly Debugger",
       "kind": "image",
-      "source": "img-srcset",
-      "post_id": 3508,
-      "page_type": "post",
-      "title": "Gaia 的 Debug 神器",
-      "page_timestamp": "20160325045949",
-      "index": 1,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56.png",
-      "archive_path": "assets/3508/007-e5b8d6251f02.png",
-      "markdown_path": "../assets/3508/007-e5b8d6251f02.png",
-      "wayback_timestamp": "20140710071919",
-      "asset_archive_url": "https://web.archive.org/web/20140710071919id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56.png",
-      "content_type": "image/png",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56.png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56.png",
       "alt": "Nightly Debugger",
       "kind": "image",
-      "source": "img-srcset",
-      "archive_path": "assets/3508/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56.png",
-      "markdown_path": "../assets/3508/wp-content/uploads/2013/12/螢幕快照-2013-11-30-上午11.51.56.png",
-      "wayback_timestamp": "20160325045949",
-      "asset_archive_url": "https://web.archive.org/web/20160325045949id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-11-30-%E4%B8%8A%E5%8D%8811.51.56.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager-1024x471.png",
       "alt": "Appmanager",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3508/wp-content/uploads/2013/12/Appmanager-1024x471.png",
-      "markdown_path": "../assets/3508/wp-content/uploads/2013/12/Appmanager-1024x471.png",
-      "wayback_timestamp": "20160325045949",
-      "asset_archive_url": "https://web.archive.org/web/20160325045949id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager-1024x471.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager-300x138.png",
       "alt": "Appmanager",
       "kind": "image",
-      "source": "img-srcset",
-      "post_id": 3508,
-      "page_type": "post",
-      "title": "Gaia 的 Debug 神器",
-      "page_timestamp": "20160325045949",
-      "index": 4,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager.png",
-      "archive_path": "assets/3508/007-ebfe5980d6d5.png",
-      "markdown_path": "../assets/3508/007-ebfe5980d6d5.png",
-      "wayback_timestamp": "20140710071454",
-      "asset_archive_url": "https://web.archive.org/web/20140710071454id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager.png",
-      "content_type": "image/png",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager.png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager.png",
       "alt": "Appmanager",
       "kind": "image",
-      "source": "img-srcset",
-      "archive_path": "assets/3508/wp-content/uploads/2013/12/Appmanager.png",
-      "markdown_path": "../assets/3508/wp-content/uploads/2013/12/Appmanager.png",
-      "wayback_timestamp": "20160325045949",
-      "asset_archive_url": "https://web.archive.org/web/20160325045949id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/Appmanager.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -215,6 +303,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

@@ -14,66 +14,204 @@
   "author": "Lyu Shing",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=5797",
-  "archive_url": "https://web.archive.org/web/20201019204421id_/https://tech.mozilla.com.tw/?p=5797",
+  "archive_url": "https://web.archive.org/web/20201019204421/https://tech.mozilla.com.tw/?p=5797",
   "wayback_timestamp": "20201019204421",
   "content_html": "<div class=\"entry-content close\">\n\t\t<h2><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/app.png\"><img class=\"alignright wp-image-5867 \" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/12/app.png\" alt=\"app screenshot\" width=\"249\" height=\"443\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/12/app.png 320w, https://tech.mozilla.com.tw/wp-content/uploads/2014/12/app-168x300.png 168w\" sizes=\"(max-width: 249px) 100vw, 249px\" /></a></h2>\n<p>之前在 Eric <a href=\"#ref-1\">[1]</a> 與 Owen 的文章 <a href=\"#ref-2\">[2]</a> 已經介紹了如何使用 Geolocation API <a href=\"#ref-3\">[3]</a> 開發地圖應用，在這篇文章中我們要進一步介紹如何用 Geolocation API 實現導航。另外考慮到定位服務需要一定的時間才能完成，為了避免使用者每次開啟 App 時候都要花時間重新尋找所在位置，因此我們要利用離線儲存的函式庫 &#8212;  localForage <a href=\"#ref-4\">[4]</a> 來紀錄使用者最後出現的地點，如此一來即使定位緩慢的時候依然能快速把地圖移到最近的位置。</p>\n<h2>導航 &#8212; watchPosition()</h2>\n<p>聲明：我們在此只會實作一個能夠隨著使用者走動更新現在位置的App, 並沒有要實作規劃路徑或是行車提醒。</p>\n<p>之前在 Owen的文章 <a href=\"#ref-1\">[1]</a> 中介紹了如何使用 <code>geolocation.getCurrentPosition()</code> 取得手機所在的位置。但是<code>getCurrentPosition()</code>只會回傳一次位置，而且為了減少等待時間，<code>getCurrentPosition()</code> 會傾向於比較快速但是比較不準確的 WiFi 或 IP 定位。假設我們希望每當位置資訊更新（可能是手機移動，或是更精確的 GPS 定位完成）的時候都能更新現在位置符號，那就必須要使用 <code>watchPosition()</code> 函式 <a href=\"#ref-5\">[5]</a>。</p>\n<p><code>watchPosition()</code>的參數包括一個成功時呼叫的回調函式 (callback function)，一個失敗時呼叫的回調函數，以及一些相關的設定值。使用起來如下：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8dfaa4ae914669555076\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nfunction on_success(position) { //成功時會呼叫這個函式\r\n  do_something(position.coords.latitude, position.coords.longitude);　//經緯度\r\n}\r\n\r\nfunction on_error(err) { //失敗時會呼叫這個函式\r\n  alert(err);\r\n}\r\n\r\nvar options = {　//相關設定，本文不深入介紹\r\n  enableHighAccuracy: true, \r\n  maximumAge        : 30000, \r\n  timeout           : 27000\r\n};\r\n\r\n//開始監控位置\r\nvar watchID = navigator.geolocation.watchPosition(on_success, on_error, options);</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8dfaa4ae914669555076-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfaa4ae914669555076-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfaa4ae914669555076-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfaa4ae914669555076-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfaa4ae914669555076-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfaa4ae914669555076-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfaa4ae914669555076-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfaa4ae914669555076-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfaa4ae914669555076-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfaa4ae914669555076-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfaa4ae914669555076-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfaa4ae914669555076-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfaa4ae914669555076-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfaa4ae914669555076-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfaa4ae914669555076-15\">15</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfaa4ae914669555076-16\">16</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8dfaa4ae914669555076-1\"><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">on_success</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">//成功時會呼叫這個函式</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfaa4ae914669555076-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-e\">do_something</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">coords</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">latitude</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">coords</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">longitude</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span>　<span class=\"crayon-c\">//經緯度</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfaa4ae914669555076-3\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfaa4ae914669555076-4\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5f8dfaa4ae914669555076-5\"><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">on_error</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">err</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">//失敗時會呼叫這個函式</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfaa4ae914669555076-6\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-r\">alert</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">err</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfaa4ae914669555076-7\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfaa4ae914669555076-8\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5f8dfaa4ae914669555076-9\"><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">options</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span>　<span class=\"crayon-c\">//相關設定，本文不深入介紹</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfaa4ae914669555076-10\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">enableHighAccuracy</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">true</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span></div><div class=\"crayon-line\" id=\"crayon-5f8dfaa4ae914669555076-11\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">maximumAge</span><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">30000</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfaa4ae914669555076-12\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">timeout</span><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-cn\">27000</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfaa4ae914669555076-13\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfaa4ae914669555076-14\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5f8dfaa4ae914669555076-15\"><span class=\"crayon-c\">//開始監控位置</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfaa4ae914669555076-16\"><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">watchID</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">geolocation</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">watchPosition</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">on_success</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">on_error</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">options</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0005 seconds] -->\r\n<p>每當系統底層抓到最新的位置時（不論是從WiFi或是GPS），<code>on_success()</code>就會被呼叫，此時就可以利用傳入的經緯度來畫出現在位置的標誌。細部的設定我們不深入介紹，讀者可以參考MDN上的介紹 <a href=\"#ref-5\">[5]</a>。</p>\n<p><code>watchPosition()</code> 只要被啟動以後，就會不斷的呼叫 <code>on_success()</code> 直到<del>天荒地老</del>。要停止一個進行中的 <code>watchPosition()</code> 就必須在啟動時記住它回傳的 <code>watchID</code>。只要把 <code>watchID</code> 傳給<code>geolocation</code> 中的 <code>clearWatch()</code> 就可以停止它繼續動作。（若是熟悉 JavaScript 的讀者會發現這很類似 <code>setInterval()</code> 的用法）</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8dfaa4ae91f363019524\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n//開始監控\r\nvar watchID = navigator.geolocation.watchPosition(on_success, on_error, options);\r\n//停止監控\r\nnavigator.geolocation.clearWatch(watchID);</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8dfaa4ae91f363019524-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfaa4ae91f363019524-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfaa4ae91f363019524-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfaa4ae91f363019524-4\">4</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8dfaa4ae91f363019524-1\"><span class=\"crayon-c\">//開始監控</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfaa4ae91f363019524-2\"><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">watchID</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">geolocation</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">watchPosition</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">on_success</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">on_error</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">options</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfaa4ae91f363019524-3\"><span class=\"crayon-c\">//停止監控</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfaa4ae91f363019524-4\"><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">geolocation</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">clearWatch</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">watchID</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>有了<code>watchPosition()</code>的幫助，我們就可以輕鬆的在使用者走動的時候，把最新的位置畫到地圖上，達成導航的功能。</p>\n<p>想實際體驗 Geolocation API 的讀者可以 fork/clone 這份 GitHub Repository <a href=\"#ref-8\">[8]</a> 來實驗。</p>\n<p>&nbsp;</p>\n<h2>記得我在哪嗎? &#8212; Offline Storage</h2>\n<p>不論 Geolocation API 使用什麼樣的技術，總是需要幾秒鐘甚至幾分鐘的時間才能定位成功，因此 App 啟動時就必須要等待許久才能讓地圖移動到正確位置。但是我們可以合理的推測使用者開啟 App 時，並不會離上次關閉 App 前的最後位置差太遠。若是App能夠記得上次 App 關閉前的最後位置，就能在下次啟動時直接顯示最後位置附近的地圖，將會大大改善使用者的體驗。</p>\n<p>Web 平台上提供本地儲存的技術有很多種 (IndexedDB, WebSQL, localStorage, etc.)，在各種瀏覽器上支援的程度也不一。我們推薦使用 Mozilla 開發的 localForage 函式庫 <a href=\"#ref-4\">[4]</a>，localForage 讓您可以不必擔心平台的差異，利用一套統一的 API，localForage 就會自動根據平台來使用不同的技術。</p>\n<p>localForage 的安裝非常容易，只要從GitHub <a href=\"#ref-4\">[4]</a> 下載最新的 <code>localforage.js</code> (也可以使用 npm 或 bower )，然後在 App 的 html 檔案中加入</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8dfaa4ae923630542508\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n&lt;script src=\"localforage.js\"&gt;&lt;/script&gt;</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8dfaa4ae923630542508-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8dfaa4ae923630542508-1\"><span class=\"crayon-ta\">&lt;script </span><span class=\"crayon-e \">src</span><span class=\"crayon-o\">=</span><span class=\"crayon-s\">\"localforage.js\"</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-ta\">&lt;/script&gt;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p>有了localForage，我們就可以在每次獲得新位置資訊的時候把它存起來：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8dfaa4ae926101805981\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\non_success(position) { //定位成功時會呼叫這個函式\r\n  //syntax: localforage.setItem('key', 'value', successCallback);\r\n  localforage.setItem('position', position, function(err, value){});\r\n  do_something(position.coords.latitude, position.coords.longitude);　//經緯度\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8dfaa4ae926101805981-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfaa4ae926101805981-2\">2</div><div class=\"crayon-num crayon-marked-num crayon-top crayon-bottom\" data-line=\"crayon-5f8dfaa4ae926101805981-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfaa4ae926101805981-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfaa4ae926101805981-5\">5</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8dfaa4ae926101805981-1\"><span class=\"crayon-e\">on_success</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">//定位成功時會呼叫這個函式</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfaa4ae926101805981-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-c\">//syntax: localforage.setItem('key', 'value', successCallback);</span></div><div class=\"crayon-line crayon-marked-line crayon-top crayon-bottom\" id=\"crayon-5f8dfaa4ae926101805981-3\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">localforage</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">setItem</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'position'</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">err</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">value</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">{</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfaa4ae926101805981-4\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-e\">do_something</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">coords</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">latitude</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">coords</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">longitude</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span>　<span class=\"crayon-c\">//經緯度</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfaa4ae926101805981-5\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0003 seconds] -->\r\n<p>localForage 是使用 key-value 的格式來儲存資料，我們可以把 Geolocation API 回傳的 <code>position</code> 變數當作 value 儲存，並且給它一個字串 <code>'position'</code> 作為 key，之後要存取的時候就可以用 key 來搜尋。</p>\n<p>值得注意的一點是 localForage 的 API 都是非同步的 (Asynchronous)，當 <code>localforage.setItem()</code>執行以後並不會阻塞 (blocking) 等到儲存完畢，而是會直接繼續往下執行<code>do_something()</code>，等到儲存真的完成時才會呼叫 <code>successCallback</code>。</p>\n<p>當程式啟動時，我們可以優先從localForage取出上次儲存的位置，而不用慢慢的等 Geolocation API 回傳。存取的方法如下</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f8dfaa4ae928982857340\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nfunction successCallback(position) {\r\n   update_current_position(position);\r\n}\r\n\r\nlocalforage.getItem('position', successCallback);</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f8dfaa4ae928982857340-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfaa4ae928982857340-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f8dfaa4ae928982857340-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f8dfaa4ae928982857340-4\">4</div><div class=\"crayon-num crayon-marked-num crayon-top crayon-bottom\" data-line=\"crayon-5f8dfaa4ae928982857340-5\">5</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f8dfaa4ae928982857340-1\"><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">successCallback</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfaa4ae928982857340-2\"><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-e\">update_current_position</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">position</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f8dfaa4ae928982857340-3\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f8dfaa4ae928982857340-4\">&nbsp;</div><div class=\"crayon-line crayon-marked-line crayon-top crayon-bottom\" id=\"crayon-5f8dfaa4ae928982857340-5\"><span class=\"crayon-v\">localforage</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">getItem</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'position'</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">successCallback</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>注意到 <code>getItem()</code> 也是非同步的，當 <code>position</code> 成功的從本機的儲存中被取出的時候，<code>successCallback</code> 就會被呼叫。</p>\n<p>localForage 當然還支援更新、刪除等資料庫常用的功能，不過我們只需要這兩個函式就足以建構我們的 App 了，對於 localForage 的其他功能可以參考 <a href=\"#ref-6\">[6]</a></p>\n<p>想要動手試試看的讀者可以參考這個 GitHub Repository <a href=\"#ref-9\">[9]</a>，它示範如何用 localForage 離線暫存 Ubike 的可借車數資訊。</p>\n<p>以上我們介紹了如何使用 Geolocation API 的 <code> watchPosition()</code> 來持續不斷的得到位置資訊，以及如何使用 localForage 來輕鬆的幫 App 加上離線儲存的功能。有了這兩個利器，我們已經可以建構出功能相當完整的地圖 App 了。您也有更多的創意嗎？歡迎留言與大家分享吧！</p>\n<h2>Reference</h2>\n<p id=\"ref-1\">[1] Where am I？－Part I－使用 Google Maps 地圖快速簡單查看你的位置 <a href=\"http://tech.mozilla.com.tw/?p=5762\">http://tech.mozilla.com.tw/?p=5762</a></p>\n<p id=\"ref-2\">[2] Where am I? – Part II 在 Google Maps 標記地圖資訊 <a href=\"http://tech.mozilla.com.tw/?p=5762\">http://tech.mozilla.com.tw/?p=5765</a></p>\n<p id=\"ref-3\">[3] Geolocation API <a href=\"https://developer.mozilla.org/zh-TW/docs/Using_geolocation\">https://developer.mozilla.org/zh-TW/docs/Using_geolocation</a></p>\n<p id=\"ref-4\">[4] localForage (GitHub) <a href=\"https://github.com/mozilla/localForage\">https://github.com/mozilla/localForage</a></p>\n<p id=\"ref-5\">[5] watchPosition() <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/Geolocation.watchPosition\">https://developer.mozilla.org/en-US/docs/Web/API/Geolocation.watchPosition</a></p>\n<p id=\"ref-6\">[6] localForage API Documentation <a href=\"http://mozilla.github.io/localForage/\">http://mozilla.github.io/localForage/</a></p>\n<p id=\"ref-7\">[7] localForage Intro on Mozilla Hack <a href=\"https://hacks.mozilla.org/2014/02/localforage-offline-storage-improved/\">https://hacks.mozilla.org/2014/02/localforage-offline-storage-improved/</a></p>\n<p id=\"ref-8\">[8]Geolocation API Demo (GitHub) <a href=\"https://github.com/shinglyu/geolocation_demo\">https://github.com/shinglyu/geolocation_demo</a></p>\n<p id=\"ref-9\">[9] Offline App Demo (GitHub) <a href=\"https://github.com/shinglyu/offline_app_demo\">https://github.com/shinglyu/offline_app_demo</a></p>\n\t\t\t</div>",
   "content_text": "之前在 Eric [1] 與 Owen 的文章 [2] 已經介紹了如何使用 Geolocation API [3] 開發地圖應用，在這篇文章中我們要進一步介紹如何用 Geolocation API 實現導航。另外考慮到定位服務需要一定的時間才能完成，為了避免使用者每次開啟 App 時候都要花時間重新尋找所在位置，因此我們要利用離線儲存的函式庫 — localForage [4] 來紀錄使用者最後出現的地點，如此一來即使定位緩慢的時候依然能快速把地圖移到最近的位置。 導航 — watchPosition() 聲明：我們在此只會實作一個能夠隨著使用者走動更新現在位置的App, 並沒有要實作規劃路徑或是行車提醒。 之前在 Owen的文章 [1] 中介紹了如何使用 geolocation.getCurrentPosition() 取得手機所在的位置。但是 getCurrentPosition() 只會回傳一次位置，而且為了減少等待時間， getCurrentPosition() 會傾向於比較快速但是比較不準確的 WiFi 或 IP 定位。假設我們希望每當位置資訊更新（可能是手機移動，或是更精確的 GPS 定位完成）的時候都能更新現在位置符號，那就必須要使用 watchPosition() 函式 [5] 。 watchPosition() 的參數包括一個成功時呼叫的回調函式 (callback function)，一個失敗時呼叫的回調函數，以及一些相關的設定值。使用起來如下： function on_success(position) { //成功時會呼叫這個函式 do_something(position.coords.latitude, position.coords.longitude); //經緯度 } function on_error(err) { //失敗時會呼叫這個函式 alert(err); } var options = { //相關設定，本文不深入介紹 enableHighAccuracy: true, maximumAge : 30000, timeout : 27000 }; //開始監控位置 var watchID = navigator.geolocation.watchPosition(on_success, on_error, options); 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 function on_success ( position ) { //成功時會呼叫這個函式 do_something ( position . coords . latitude , position . coords . longitude ) ; //經緯度 } function on_error ( err ) { //失敗時會呼叫這個函式 alert ( err ) ; } var options = { //相關設定，本文不深入介紹 enableHighAccuracy : true , maximumAge : 30000 , timeout : 27000 } ; //開始監控位置 var watchID = navigator . geolocation . watchPosition ( on_success , on_error , options ) ; 每當系統底層抓到最新的位置時（不論是從WiFi或是GPS）， on_success() 就會被呼叫，此時就可以利用傳入的經緯度來畫出現在位置的標誌。細部的設定我們不深入介紹，讀者可以參考MDN上的介紹 [5] 。 watchPosition() 只要被啟動以後，就會不斷的呼叫 on_success() 直到 天荒地老 。要停止一個進行中的 watchPosition() 就必須在啟動時記住它回傳的 watchID 。只要把 watchID 傳給 geolocation 中的 clearWatch() 就可以停止它繼續動作。（若是熟悉 JavaScript 的讀者會發現這很類似 setInterval() 的用法） //開始監控 var watchID = navigator.geolocation.watchPosition(on_success, on_error, options); //停止監控 navigator.geolocation.clearWatch(watchID); 1 2 3 4 //開始監控 var watchID = navigator . geolocation . watchPosition ( on_success , on_error , options ) ; //停止監控 navigator . geolocation . clearWatch ( watchID ) ; 有了 watchPosition() 的幫助，我們就可以輕鬆的在使用者走動的時候，把最新的位置畫到地圖上，達成導航的功能。 想實際體驗 Geolocation API 的讀者可以 fork/clone 這份 GitHub Repository [8] 來實驗。 記得我在哪嗎? — Offline Storage 不論 Geolocation API 使用什麼樣的技術，總是需要幾秒鐘甚至幾分鐘的時間才能定位成功，因此 App 啟動時就必須要等待許久才能讓地圖移動到正確位置。但是我們可以合理的推測使用者開啟 App 時，並不會離上次關閉 App 前的最後位置差太遠。若是App能夠記得上次 App 關閉前的最後位置，就能在下次啟動時直接顯示最後位置附近的地圖，將會大大改善使用者的體驗。 Web 平台上提供本地儲存的技術有很多種 (IndexedDB, WebSQL, localStorage, etc.)，在各種瀏覽器上支援的程度也不一。我們推薦使用 Mozilla 開發的 localForage 函式庫 [4] ，localForage 讓您可以不必擔心平台的差異，利用一套統一的 API，localForage 就會自動根據平台來使用不同的技術。 localForage 的安裝非常容易，只要從GitHub [4] 下載最新的 localforage.js (也可以使用 npm 或 bower )，然後在 App 的 html 檔案中加入 <script src=\"localforage.js\"></script> 1 <script src = \"localforage.js\" > </script> 有了localForage，我們就可以在每次獲得新位置資訊的時候把它存起來： on_success(position) { //定位成功時會呼叫這個函式 //syntax: localforage.setItem('key', 'value', successCallback); localforage.setItem('position', position, function(err, value){}); do_something(position.coords.latitude, position.coords.longitude); //經緯度 } 1 2 3 4 5 on_success ( position ) { //定位成功時會呼叫這個函式 //syntax: localforage.setItem('key', 'value', successCallback); localforage . setItem ( 'position' , position , function ( err , value ) { } ) ; do_something ( position . coords . latitude , position . coords . longitude ) ; //經緯度 } localForage 是使用 key-value 的格式來儲存資料，我們可以把 Geolocation API 回傳的 position 變數當作 value 儲存，並且給它一個字串 'position' 作為 key，之後要存取的時候就可以用 key 來搜尋。 值得注意的一點是 localForage 的 API 都是非同步的 (Asynchronous)，當 localforage.setItem() 執行以後並不會阻塞 (blocking) 等到儲存完畢，而是會直接繼續往下執行 do_something() ，等到儲存真的完成時才會呼叫 successCallback 。 當程式啟動時，我們可以優先從localForage取出上次儲存的位置，而不用慢慢的等 Geolocation API 回傳。存取的方法如下 function successCallback(position) { update_current_position(position); } localforage.getItem('position', successCallback); 1 2 3 4 5 function successCallback ( position ) { update_current_position ( position ) ; } localforage . getItem ( 'position' , successCallback ) ; 注意到 getItem() 也是非同步的，當 position 成功的從本機的儲存中被取出的時候， successCallback 就會被呼叫。 localForage 當然還支援更新、刪除等資料庫常用的功能，不過我們只需要這兩個函式就足以建構我們的 App 了，對於 localForage 的其他功能可以參考 [6] 想要動手試試看的讀者可以參考這個 GitHub Repository [9] ，它示範如何用 localForage 離線暫存 Ubike 的可借車數資訊。 以上我們介紹了如何使用 Geolocation API 的 watchPosition() 來持續不斷的得到位置資訊，以及如何使用 localForage 來輕鬆的幫 App 加上離線儲存的功能。有了這兩個利器，我們已經可以建構出功能相當完整的地圖 App 了。您也有更多的創意嗎？歡迎留言與大家分享吧！ Reference [1] Where am I？－Part I－使用 Google Maps 地圖快速簡單查看你的位置 http://tech.mozilla.com.tw/?p=5762 [2] Where am I? – Part II 在 Google Maps 標記地圖資訊 http://tech.mozilla.com.tw/?p=5765 [3] Geolocation API https://developer.mozilla.org/zh-TW/docs/Using_geolocation [4] localForage (GitHub) https://github.com/mozilla/localForage [5] watchPosition() https://developer.mozilla.org/en-US/docs/Web/API/Geolocation.watchPosition [6] localForage API Documentation http://mozilla.github.io/localForage/ [7] localForage Intro on Mozilla Hack https://hacks.mozilla.org/2014/02/localforage-offline-storage-improved/ [8]Geolocation API Demo (GitHub) https://github.com/shinglyu/geolocation_demo [9] Offline App Demo (GitHub) https://github.com/shinglyu/offline_app_demo",
   "images": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-50x50.png",
+      "alt": "2014-12-18 18:49:53 的螢幕擷圖",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-150x150.png",
+      "alt": "2014-12-18 18:49:53 的螢幕擷圖",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/01/xpcomEmbedding-50x50.gif",
+      "alt": "XPCOM",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/01/xpcomEmbedding-150x150.gif",
+      "alt": "XPCOM",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/app.png",
       "alt": "app screenshot",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5797/wp-content/uploads/2014/12/app.png",
-      "markdown_path": "../assets/5797/wp-content/uploads/2014/12/app.png",
-      "wayback_timestamp": "20201019204421",
-      "asset_archive_url": "https://web.archive.org/web/20201019204421id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/app.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5797,
-      "page_type": "post",
-      "title": "Where am I?－Part III－用 Geolocation API 以及 Offline Storage 實現導航與離線儲存",
-      "page_timestamp": "20201019204421",
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/app-168x300.png",
-      "source": "img-srcset",
+      "alt": "app screenshot",
       "kind": "image",
-      "index": 1,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/app.png",
-      "archive_path": "assets/5797/002-90f73000773c.png",
-      "markdown_path": "../assets/5797/002-90f73000773c.png",
-      "wayback_timestamp": "20160909124611",
-      "asset_archive_url": "https://web.archive.org/web/20160909124611id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/app.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/channels-firefox.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
     }
   ],
   "media": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-50x50.png",
+      "alt": "2014-12-18 18:49:53 的螢幕擷圖",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96-150x150.png",
+      "alt": "2014-12-18 18:49:53 的螢幕擷圖",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/01/xpcomEmbedding-50x50.gif",
+      "alt": "XPCOM",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2015/01/xpcomEmbedding-150x150.gif",
+      "alt": "XPCOM",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/app.png",
       "alt": "app screenshot",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/5797/wp-content/uploads/2014/12/app.png",
-      "markdown_path": "../assets/5797/wp-content/uploads/2014/12/app.png",
-      "wayback_timestamp": "20201019204421",
-      "asset_archive_url": "https://web.archive.org/web/20201019204421id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/12/app.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 5797,
-      "page_type": "post",
-      "title": "Where am I?－Part III－用 Geolocation API 以及 Offline Storage 實現導航與離線儲存",
-      "page_timestamp": "20201019204421",
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/app-168x300.png",
-      "source": "img-srcset",
+      "alt": "app screenshot",
       "kind": "image",
-      "index": 1,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/12/app.png",
-      "archive_path": "assets/5797/002-90f73000773c.png",
-      "markdown_path": "../assets/5797/002-90f73000773c.png",
-      "wayback_timestamp": "20160909124611",
-      "asset_archive_url": "https://web.archive.org/web/20160909124611id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/12/app.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/channels-firefox.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
     }
   ],
   "links": [
@@ -167,6 +305,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

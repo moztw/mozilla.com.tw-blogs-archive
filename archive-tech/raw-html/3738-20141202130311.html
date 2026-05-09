@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+
+瀏覽器的預設 File Input 不好用！我想自訂美觀實用的照片上傳元件怎麼辦？ | Mozilla Tech | 謀智台客
+</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="http://tech.mozilla.com.tw/posts/3738/%e7%80%8f%e8%a6%bd%e5%99%a8%e7%9a%84%e9%a0%90%e8%a8%ad-file-input-%e4%b8%8d%e5%a5%bd%e7%94%a8%ef%bc%81%e6%88%91%e6%83%b3%e8%87%aa%e8%a8%82%e7%be%8e%e8%a7%80%e5%af%a6%e7%94%a8%e7%9a%84%e7%85%a7"/><meta property="og:image" content="http://tech.mozilla.com.tw/wp-content/uploads/2013/12/螢幕快照-2013-12-17-下午3.51.22.png" />
+
+<link rel="stylesheet" type="text/css" media="all" href="http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<link rel="stylesheet" type="text/css" media="all" href="http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/jquery-ui.min.css" /><!--<link rel="pingback" href="http://tech.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="http://tech.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+       var browserid_common = {"urlLoginSubmit":"http://tech.mozilla.com.tw/","urlLoginRedirect":"http://tech.mozilla.com.tw/wp-admin/","urlRegistrationRedirect":"http://tech.mozilla.com.tw/wp-admin/profile.php","urlLogoutRedirect":"http://tech.mozilla.com.tw/wp-login.php?action=logout&amp;_wpnonce=04a7904795","msgError":null,"msgFailed":"Verification failed","isPersonaOnlyAuth":"","isPersonaUsedWithComments":false,"siteName":"Mozilla Tech | \u8b00\u667a\u53f0\u5ba2","siteLogo":"","backgroundColor":"","termsOfService":"","privacyPolicy":"","loggedInUser":null}</script>
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo;" href="http://tech.mozilla.com.tw/feed" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 迴響" href="http://tech.mozilla.com.tw/comments/feed" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 Mozilla Tech | 謀智台客 &raquo; 瀏覽器的預設 File Input 不好用！我想自訂美觀實用的照片上傳元件怎麼辦？ 迴響" href="http://tech.mozilla.com.tw/posts/3738/%e7%80%8f%e8%a6%bd%e5%99%a8%e7%9a%84%e9%a0%90%e8%a8%ad-file-input-%e4%b8%8d%e5%a5%bd%e7%94%a8%ef%bc%81%e6%88%91%e6%83%b3%e8%87%aa%e8%a8%82%e7%be%8e%e8%a7%80%e5%af%a6%e7%94%a8%e7%9a%84%e7%85%a7/feed" />
+<link rel='stylesheet' id='crayon-css'  href='http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=2.6.8' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-theme-arduino-ide-css'  href='http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=2.6.8' type='text/css' media='all' />
+<link rel='stylesheet' id='crayon-font-monaco-css'  href='http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=2.6.8' type='text/css' media='all' />
+<link rel='stylesheet' id='arpw-style-css'  href='http://tech.mozilla.com.tw/wp-content/plugins/advanced-random-posts-widget/assets/css/arpw-frontend.css' type='text/css' media='all' />
+<link rel='stylesheet' id='persona-style-css'  href='http://tech.mozilla.com.tw/wp-content/plugins/browserid/browserid.min.css?ver=0.46' type='text/css' media='all' />
+<link rel='stylesheet' id='advanced-responsive-video-embedder-plugin-styles-css'  href='http://tech.mozilla.com.tw/wp-content/plugins/advanced-responsive-video-embedder/public/assets/css/public.css?ver=5.1.0' type='text/css' media='all' />
+<script type='text/javascript' src='http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.11.1'></script>
+<script type='text/javascript' src='http://tech.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"2.6.8","is_admin":"0","ajaxurl":"http:\/\/tech.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://tech.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=2.6.8'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://tech.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://tech.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Gecko Layer 除錯工具: LayerDump &amp; LayerScope' href='http://tech.mozilla.com.tw/posts/3827/gecko-layer-%e9%99%a4%e9%8c%af%e5%b7%a5%e5%85%b7-layerdump-layerscope' />
+<link rel='next' title='超夯！視差捲軸動畫大解密！' href='http://tech.mozilla.com.tw/posts/3742/%e8%b6%85%e5%a4%af%ef%bc%81%e8%a6%96%e5%b7%ae%e6%8d%b2%e8%bb%b8%e5%8b%95%e7%95%ab%e5%a4%a7%e8%a7%a3%e5%af%86%ef%bc%81' />
+<meta name="generator" content="WordPress 4.0" />
+<link rel='canonical' href='http://tech.mozilla.com.tw/posts/3738/%e7%80%8f%e8%a6%bd%e5%99%a8%e7%9a%84%e9%a0%90%e8%a8%ad-file-input-%e4%b8%8d%e5%a5%bd%e7%94%a8%ef%bc%81%e6%88%91%e6%83%b3%e8%87%aa%e8%a8%82%e7%be%8e%e8%a7%80%e5%af%a6%e7%94%a8%e7%9a%84%e7%85%a7' />
+<link rel='shortlink' href='http://tech.mozilla.com.tw/?p=3738' />
+<link rel="stylesheet" href="http://tech.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" /><style type="text/css">.arve-thumb-wrapper { max-width: 300px; }.arve-normal-wrapper.alignleft, .arve-normal-wrapper.alignright, .arve-normal-wrapper.aligncenter { max-width: 400px; }</style>
+	
+
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-3738 single-format-standard sand">
+    <div id="tabzilla-panel" class="close-nav" tabindex="-1">
+  <div id="tabzilla-contents">
+    <div id="tabzilla-promo">
+      <div id="tabzilla-promo-fxos" class="snippet">
+        <a href="//mozilla.com.tw/firefox/os/">
+          <h4>Firefox OS</h4>
+          <p>瞭解 Firefox OS</p>
+        </a>
+      </div>
+    </div>
+    <!-- end of tabzilla-promo -->
+    <div id="tabzilla-nav">
+      <ul>
+        <li class="sitemap">
+          <h2>Firefox</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="//mozilla.com.tw/firefox/download/" title="下載 Mozilla Firefox 中文桌面版" tabindex="-1">Firefox 免費下載</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/firefox/desktop/" title="下載 Mozilla Firefox 中文桌面版">Firefox 桌面版</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/firefox/mobile/" title="Mozilla Firefox 行動版">Firefox 行動版</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/firefox/channel/" title="Mozilla Firefox 未來發行版">Firefox 未來發行版</a>
+              </li>
+              <li>
+                <a href="https://addons.mozilla.org/zh-TW/firefox/" title="Firefox 附加元件">附加元件</a>
+              </li>
+              <li>
+                <a href="https://support.mozilla.com/zh-TW/home" title="Firefox 說明文件、支援中心">支援中心</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>Firefox OS</h2>
+          <div>
+            <ul>
+              <li>
+                <a title="Firefox OS 詳細介紹" href="//mozilla.com.tw/firefox/os/" tabindex="-1">詳細介紹</a>
+              </li>
+              <li>
+                <a title="Firefox OS 合作夥伴專區" href="//mozilla.com.tw/firefox/partners/" tabindex="-1">合作夥伴專區</a>
+              </li>
+              <li>
+                <a title="Firefox OS 支援中心" href="//support.mozilla.org/products/firefox-os" tabindex="-1">支援中心</a>
+              </li>
+              <li>
+                <a title="Firefox OS 常見問答集" href="//mozilla.com.tw/firefox/os/faq/" tabindex="-1">常見問答集</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>社群參與</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="http://firefox.club.tw/" title="Firefox 俱樂部">Firefox 設計品</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/community/student/" title="校園大使">校園大使</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/community/contribute/" title="社群專案">社群專案</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>訊息中心</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="//blog.mozilla.com.tw/main" title="部落格">部落格</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/news/press/" title="新聞室">新聞室</a>
+              </li>
+              <li>
+                <a href="//blog.mozilla.com.tw/events-list" title="活動訊息">活動訊息</a>
+              </li>
+              <li>
+                <a href="//tech.mozilla.com.tw/" title="謀智台客">謀智台客</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>關於我們</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="//mozilla.com.tw/about/manifesto/" title="Mozilla 宣言">Mozilla 宣言</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/about/space/" title="Mozilla Space">Mozilla Space</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/about/careers/" title="工作機會">工作機會</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/about/intern/" title="工作機會">實習機會</a>
+              </li>
+              <li>
+                <a href="//mozilla.com.tw/about/contact/" title="聯絡資訊">聯絡資訊</a>
+              </li>
+              <li>
+                <a href="//mozilla.org/en-US/" title="Mozilla (US)">Mozilla (US)</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <!-- end of sitemap -->
+      </ul>
+    </div>
+    <!-- end of tabzilla-nav -->
+  </div>
+  <!-- end of tabzilla-content -->
+</div>
+<!-- end of tabzilla-panel -->
+        <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+          <nav id="nav-main" role="navigation">
+  <span class="toggle" role="button" aria-controls="nav-main-menu" tabindex="0">{{_('Menu')}}</span>
+  <ul id="nav-main-menu" class="has-submenus" role="menubar">
+    <li id="nav-main-firefox" role="menuitem" class="topMenu first">
+      <a title="Mozilla Firefox" href="//mozilla.com.tw/firefox/" tabindex="0" aria-owns="nav-main-firefox-submenu" aria-haspopup="true">Firefox</a>
+      <ul id="nav-main-firefox-submenu" aria-expanded="false" class="submenu has-submenus">
+        <li class="first">
+          <a title="下載 Mozilla Firefox 中文桌面版" href="//mozilla.com.tw/firefox/download/" tabindex="-1">Firefox 免費下載</a>
+        </li>
+        <li id="nav-sub-firefox-desktop" role="menuitem" >
+          <a title="Mozilla Firefox 桌面版" href="//mozilla.com.tw/firefox/desktop/" tabindex="-1" aria-owns="nav-sub-firefox-desktop-submenu" aria-haspopup="true">Firefox 桌面版</a>
+          <ul id="nav-sub-firefox-desktop-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="下載 Mozilla Firefox 中文桌面版" href="//mozilla.com.tw/firefox/download/" tabindex="-1">下載</a>
+            </li>
+            <li>
+              <a title="Firefox 中文桌面版─自訂" href="//mozilla.com.tw/firefox/customize/" tabindex="-1">自訂</a>
+            </li>
+            <li>
+              <a title="Firefox 中文桌面版─效能" href="//mozilla.com.tw/firefox/performance/" tabindex="-1">效能</a>
+            </li>
+            <li>
+              <a title="Firefox 中文桌面版─技術" href="//mozilla.com.tw/firefox/technology/" tabindex="-1">技術</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 中文桌面版─安全" href="//mozilla.com.tw/firefox/security/" tabindex="-1">安全</a>
+            </li>
+          </ul>
+        </li>
+        <li id="nav-sub-firefox-mobile" role="menuitem">
+          <a title="Mozilla Firefox 行動版" href="//mozilla.com.tw/firefox/mobile/" tabindex="-1" aria-owns="nav-sub-firefox-mobile-submenu" aria-haspopup="true">Firefox 行動版</a>
+          <ul id="nav-sub-firefox-mobile-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="下載 Mozilla Firefox 行動版" href="//play.google.com/store/apps/details?id=org.mozilla.firefox" tabindex="-1">下載</a>
+            </li>
+            <li>
+              <a title="Firefox 行動版─功能特色" href="//mozilla.com.tw/firefox/mobile/features/" tabindex="-1">功能特色</a>
+            </li>
+            <li>
+              <a title="Firefox 行動版─支援平台" href="//mozilla.com.tw/firefox/mobile/platforms/" tabindex="-1">支援平台</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 行動版─常見問答集" href="//mozilla.com.tw/firefox/mobile/faq/" tabindex="-1">常見問答集</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a title="Mozilla Firefox 未來發行版" href="//mozilla.com.tw/firefox/channel/" tabindex="-1">Firefox 未來發行版</a>
+        </li>
+        <li id="nav-sub-firefox-addons" role="menuitem">
+          <a title="Firefox 附加元件" href="//addons.mozilla.org/zh-TW/firefox/" tabindex="-1" aria-owns="nav-sub-firefox-addons-submenu" aria-haspopup="true">附加元件</a>
+          <ul id="nav-sub-firefox-addons-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="Firefox 桌面版附加元件" href="//addons.mozilla.org/zh-TW/firefox/" tabindex="-1">桌面版</a>
+            </li>
+            <li>
+              <a title="Firefox 行動版附加元件" href="//addons.mozilla.org/zh-TW/android/" tabindex="-1">行動版</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 佈景主題" href="//addons.mozilla.org/zh-TW/firefox/themes/" tabindex="-1">佈景主題</a>
+            </li>
+          </ul>
+        </li>
+        <li id="nav-sub-firefox-support" role="menuitem" class="last">
+          <a title="Firefox 說明文件、支援中心" href="https://support.mozilla.com/zh-TW/home" tabindex="-1" aria-owns="nav-sub-firefox-support-submenu" aria-haspopup="true">支援中心</a>
+          <ul id="nav-sub-firefox-support-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="Firefox 桌面版支援中心" href="//support.mozilla.org/zh-TW/products/firefox" tabindex="-1">桌面版</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 行動版支援中心" href="//support.mozilla.org/zh-TW/products/mobile" tabindex="-1">行動版</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-firefoxos" role="menuitem" class="topMenu">
+      <a title="Firefox 行動作業系統" href="//mozilla.com.tw/firefox/os/" tabindex="0" aria-owns="nav-main-firefoxos-submenu" aria-haspopup="true">Firefox OS</a>
+      <ul id="nav-main-firefoxos-submenu" aria-expanded="false" class="submenu">
+        <li class="first">
+          <a title="Firefox OS 詳細介紹" href="//mozilla.com.tw/firefox/os/" tabindex="-1">詳細介紹</a>
+        </li>
+        <li>
+          <a title="Firefox OS 合作夥伴專區" href="//mozilla.com.tw/firefox/partners/" tabindex="-1">合作夥伴專區</a>
+        </li>
+        <li>
+          <a title="Firefox OS 支援中心" href="//support.mozilla.org/products/firefox-os" tabindex="-1">支援中心</a>
+        </li>
+        <li class="last">
+          <a title="Firefox OS 常見問答集" href="//mozilla.com.tw/firefox/os/faq/" tabindex="-1">常見問答集</a>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-community" role="menuitem" class="topMenu">
+      <a title="社群參與" href="//mozilla.com.tw/community/" tabindex="0" aria-owns="nav-main-community-submenu" aria-haspopup="true">社群參與</a>
+      <ul id="nav-main-community-submenu" aria-expanded="false" class="submenu has-submenus">
+        <li class="first">
+          <a title="Firefox 活力軍" href="http://firefox.club.tw/" tabindex="-1">Firefox 設計品</a>
+        </li>
+        <li id="nav-sub-student" role="menuitem">
+          <a title="校園大使" href="//mozilla.com.tw/community/student/" tabindex="-1" aria-owns="nav-sub-student-submenu" aria-haspopup="true">校園大使</a>
+            <ul id="nav-sub-student-submenu" aria-expanded="false" class="submenu_lv2">
+              <li class="first">
+                <a title="Firefox 校園大使詳細辦法" href="//mozilla.com.tw/community/student/rules/" tabindex="-1">招募辦法</a>
+              </li>
+              <li>
+                <a title="Firefox 校園大使推廣任務和證書" href="//mozilla.com.tw/community/student/mission/" tabindex="-1">任務及證書</a>
+              </li>
+              <li>
+                <a title="Firefox 校園大使酷炫工具包" href="//mozilla.com.tw/community/student/package/" tabindex="-1">酷炫工具包</a>
+              </li>
+              <li>
+                <a title="Firefox 校園大使狐狐工作坊" href="//mozilla.com.tw/community/student/workshop/" tabindex="-1">狐狐工作坊</a>
+              </li>
+              <li class="last">
+                <a title="Firefox 校園大使線上申請" href="//mozilla.com.tw/contribute/universityambassadors/" tabindex="-1">線上申請</a>
+              </li>
+            </ul>
+        </li>
+        <li class="last">
+          <a title="社群專案" href="//mozilla.com.tw/community/contribute/" tabindex="-1">社群專案</a>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-blog" role="menuitem" class="topMenu">
+      <a title="訊息中心" href="//mozilla.com.tw/news/" tabindex="0" aria-owns="nav-main-blog-submenu" aria-haspopup="true">訊息中心</a>
+      <ul id="nav-main-blog-submenu" aria-expanded="false" class="submenu">
+        <li class="first">
+          <a title="部落格" href="//blog.mozilla.com.tw/main" tabindex="-1">部落格</a>
+        </li>
+        <li>
+          <a title="新聞室" href="//mozilla.com.tw/news/press/" tabindex="-1">新聞室</a>
+        </li>
+        <li>
+          <a title="活動訊息" href="//blog.mozilla.com.tw/events-list" tabindex="-1">活動訊息</a>
+        </li>
+        <li class="last">
+          <a title="謀智台客" href="//tech.mozilla.com.tw/" tabindex="-1">謀智台客</a>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-about" role="menuitem" class="topMenu last">
+      <a title="關於我們" href="//mozilla.com.tw/about/" tabindex="0" aria-owns="nav-main-about-submenu" aria-haspopup="true">關於我們</a>
+      <ul id="nav-main-about-submenu" aria-expanded="false" class="submenu">
+        <li class="first">
+          <a title="Mozilla 宣言" href="//mozilla.com.tw/about/manifesto/" tabindex="-1">Mozilla 宣言</a>
+        </li>
+        <li>
+          <a title="Mozilla Space" href="//mozilla.com.tw/about/space/" tabindex="-1">Mozilla Space</a>
+        </li>
+        <li>
+          <a title="工作機會" href="//mozilla.com.tw/about/careers/" tabindex="-1">工作機會</a>
+        </li>
+        <li>
+          <a title="實習機會" href="//mozilla.com.tw/about/intern/" tabindex="-1">實習機會</a>
+        </li>
+        <li>
+          <a title="聯絡資訊" href="//mozilla.com.tw/about/contact/" tabindex="-1">聯絡資訊</a>
+        </li>
+        <li class="last">
+          <a title="Mozilla (US)" href="//mozilla.org/en-US/" tabindex="-1">Mozilla (US)</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='//mozilla.com.tw/' class='home'>Home</a>
+            <b>&raquo;</b>
+            <a href='//mozilla.com.tw/news/'>訊息中心</a>
+            <b>&raquo;</b>
+                          <a href='//tech.mozilla.com.tw/'>謀智台客</a><b>&raquo;</b>
+              <span>瀏覽器的預設 File Input 不好用！我想自訂美觀實用的照片上傳元件怎麼辦？</span>                      </nav>
+                  </header>
+        <div id="main">
+
+	<div id="social-box">
+		<div class="fg-share">
+		<div class="fb-like" data-href="http://tech.mozilla.com.tw/posts/3738/%e7%80%8f%e8%a6%bd%e5%99%a8%e7%9a%84%e9%a0%90%e8%a8%ad-file-input-%e4%b8%8d%e5%a5%bd%e7%94%a8%ef%bc%81%e6%88%91%e6%83%b3%e8%87%aa%e8%a8%82%e7%be%8e%e8%a7%80%e5%af%a6%e7%94%a8%e7%9a%84%e7%85%a7" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>		<!-- Place this tag where you want the +1 button to render. -->
+		<div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="http://tech.mozilla.com.tw/posts/3738/%e7%80%8f%e8%a6%bd%e5%99%a8%e7%9a%84%e9%a0%90%e8%a8%ad-file-input-%e4%b8%8d%e5%a5%bd%e7%94%a8%ef%bc%81%e6%88%91%e6%83%b3%e8%87%aa%e8%a8%82%e7%be%8e%e8%a7%80%e5%af%a6%e7%94%a8%e7%9a%84%e7%85%a7"></div></div>	   	</div>
+		<div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=http://tech.mozilla.com.tw/posts/3738/%e7%80%8f%e8%a6%bd%e5%99%a8%e7%9a%84%e9%a0%90%e8%a8%ad-file-input-%e4%b8%8d%e5%a5%bd%e7%94%a8%ef%bc%81%e6%88%91%e6%83%b3%e8%87%aa%e8%a8%82%e7%be%8e%e8%a7%80%e5%af%a6%e7%94%a8%e7%9a%84%e7%85%a7&media=http://tech.mozilla.com.tw/wp-content/uploads/2013/12/螢幕快照-2013-12-17-下午3.51.22-150x150.png" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>	    <div class="plurk-share">
+	      <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+	        <img src="http://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+	      </a>
+	    </div>
+	    <div class="comment-share">
+	    <a class="comment-button" href="#respond"><div class="count-bubble">3</div>留言</a>
+		</div>
+	</div>
+
+		<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="http://tech.mozilla.com.tw/posts/3827/gecko-layer-%e9%99%a4%e9%8c%af%e5%b7%a5%e5%85%b7-layerdump-layerscope"><div class="post-tip"><img width="48" height="48" src="http://tech.mozilla.com.tw/wp-content/uploads/2014/01/layerscope-150x150.png" class="attachment-48x48 wp-post-image" alt="layerscope" /><span class="meta-nav">Gecko Layer 除錯工具: LayerDump &amp; LayerScope</span></div></a></div>		
+							<div class="nav-next"><a href="http://tech.mozilla.com.tw/posts/3742/%e8%b6%85%e5%a4%af%ef%bc%81%e8%a6%96%e5%b7%ae%e6%8d%b2%e8%bb%b8%e5%8b%95%e7%95%ab%e5%a4%a7%e8%a7%a3%e5%af%86%ef%bc%81"><div class="post-tip"><img width="48" height="48" src="http://tech.mozilla.com.tw/wp-content/uploads/2013/12/螢幕快照-2013-12-17-下午4.23.17-150x150.png" class="attachment-48x48 wp-post-image" alt="視差動畫" /><span class="meta-nav">超夯！視差捲軸動畫大解密！</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+		<div id="primary" role="main">
+		<div id="article">
+					<article id="post-3738" class="post-3738 post type-post status-publish format-standard has-post-thumbnail hentry category-javascript">
+	 	<header class="entry-header">
+		<h1 class="entry-title">瀏覽器的預設 File Input 不好用！我想自訂美觀實用的照片上傳元件怎麼辦？</h1>
+	    <p class="entry-posted">
+	      <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+	        <a title="See all posts from May, 2014" href="http://tech.mozilla.com.tw/posts/date/2014/03" class="posted-month">3月</a>
+	        <span class="posted-date">24</span>
+	        <a title="See all posts from 2014" href="http://tech.mozilla.com.tw/posts/date/2014" class="posted-year">2014</a>
+	      </time>
+	    </p>
+		<div class="entry-meta">
+		  <div class="author-meta" data-author-id="61">
+		  	<a href="http://tech.mozilla.com.tw/posts/author/elinmozilla-com">
+	          <img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg" alt="" class="avatar user-61-avatar" width='24' height='24' /><!--
+	       --><div class="author-info">小y</div><!--
+	       --><div class="author-title">&nbsp;- 網站開發類編輯</div>
+			</a>
+		  </div>
+		  <div class="post-date">
+		    		  </div>
+		</div><!-- .entry-meta -->
+   
+	</header><!-- .entry-header -->
+
+	<div class="entry-content close">
+		<p>接續前一篇介紹 <a title="網頁上也能做刮刮樂！運用 HTML5 canvas 合成功能" href="http://tech.mozilla.com.tw/posts/3502/%e7%b6%b2%e9%a0%81%e4%b8%8a%e4%b9%9f%e8%83%bd%e5%81%9a%e5%88%ae%e5%88%ae%e6%a8%82%ef%bc%81%e9%81%8b%e7%94%a8-html5-canvas-%e5%90%88%e6%88%90%e5%8a%9f%e8%83%bd" target="_blank">Canvas 刮刮樂</a>的文章，<br />
+本篇介紹的是去年九月份 <a title="Firefox OS 讓你盡情享受每一刻" href="http://firefox.club.tw/campaign/every-moment/" target="_blank">Firefox OS 讓你盡情享受每一刻</a> 活動的照片上傳作法。</p>
+<p>有做過上傳表單的人一定對瀏覽器提供的預設上傳元件有一些意見，<br />
+它的外觀光用 CSS 來設定樣式也救不了，而且上傳圖片沒有前端預覽很不直覺。<br />
+幸好可以搭配&lt;label&gt;元素改變表單元素外觀，以及新的 FileReader API 以在上傳前預覽圖片。</p>
+<p>實際的範例請先看底下的 fiddle：</p>
+<p><span id="more-3738"></span></p>
+<iframe style='width:100%;height:600px;border:solid #4173A0 1px;' src='http://jsfiddle.net/elin/s3LZJ/embedded/result,js,html,css/light/' frameborder='0'></iframe>
+<p>想知道這是怎麼做的嗎？不囉嗦，以下馬上開始介紹&#8230;&#8230;</p>
+<h2>如何不用 Javascript 自訂上傳元件外觀</h2>
+<p>會用 Javascript 的人大多會先想到，只要把原本的上傳元件藏起來，<br />
+再從自訂上傳鈕的 
+			<span id="crayon-547db88f11e38913233420" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">onclick</span></span></span> 內呼叫上傳元件的 
+			<span id="crayon-547db88f11e47314124940" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">click</span></span></span> 即可。<br />
+但這招在 IE10 實測時發現，選完圖後居然點下表單的送出鈕沒反應！<br />
+（送出鈕同樣也是在自訂按鈕的 
+			<span id="crayon-547db88f11e4f724737513" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">onclick</span></span></span>  去呼叫 
+			<span id="crayon-547db88f11e56930241137" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">submit</span></span></span>  ）<br />
+仔細追蹤後發現此行為被當作不安全的動作而被擋下來了！<br />
+因為 IE10 可能認為透過程式（而非人為的 
+			<span id="crayon-547db88f11e5d578465315" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">click</span></span></span> ）而編輯過的表單資料不安全。<br />
+這部分的行為在網路上沒有找到正式說明文件，但根據 <a title="Dynamically submitting a file upload form in IE10 using jQuery" href="http://stackoverflow.com/questions/16676945/dynamically-submitting-a-file-upload-form-in-ie10-using-jquery/#answers-header" target="_blank">stackoverflow 上神人的實測結果</a>，<br />
+上傳元件的 
+			<span id="crayon-547db88f11e65307783591" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">click</span></span></span> 以及表單的 
+			<span id="crayon-547db88f11e6c224986807" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">submit</span></span></span> 兩者都是透過程式去驅動時就會被 IE 擋下來，<br />
+只有透過程式驅動其中一種，或是使用原生表單元件功能的話就不會有此問題。</p>
+<p>哇～！那這下不剉賽了？難道真的要換回原生醜醜的表單元件嗎（掩面）。<br />
+還好 <a title="W3C Standards" href="http://www.w3.org/standards/" target="_blank">W3C 標準</a>中有一個很貼心的小設計&#8230;&#8230;那就是<a title="&lt;label&gt;" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label" target="_blank"> 
+			<span id="crayon-547db88f11e73865759746" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-o">&lt;</span><span class="crayon-v">label</span><span class="crayon-o">&gt;</span></span></span> 標籤</a>。<br />
+它的作用除了說明表單元件的用途以外，更可增加元件的點擊範圍！<br />
+最常見的地方是搭配小不拉幾的 
+			<span id="crayon-547db88f11e7b908422832" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">checkbox</span></span></span>  或 
+			<span id="crayon-547db88f11e81803971500" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">radio</span></span></span>  來使用，<br />
+讓使用者在選取選項時不必艱難地對準小小的按鈕，可以直接點對應的 
+			<span id="crayon-547db88f11e89897582187" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">label</span></span></span>  文字來選取。<br />
+更妙的是 
+			<span id="crayon-547db88f11e8f439481954" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">label</span></span></span>  搭配 
+			<span id="crayon-547db88f11e96363502046" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">file </span><span class="crayon-v">input</span></span></span>  也有同樣的效果！<br />
+簡單來說只要把原本的 
+			<span id="crayon-547db88f11e9d866327655" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">file </span><span class="crayon-v">input</span></span></span>  藏起來，<br />
+再透過 CSS 把對應它的 
+			<span id="crayon-547db88f11ea4381692123" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">label</span></span></span>  自訂成想要的按鈕外觀，<br />
+一個自訂外觀的上傳元件就完成了！完全不需用到 Javascript！</p>
+<p>這是 HTML 的部分：</p><!-- Crayon Syntax Highlighter v2.6.8 -->
+
+		<div id="crayon-547db88f11eab569833138" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+&lt;label class="choose-file" id="upload" for="id_image_large"&gt;&lt;/label&gt;
+&lt;input type="file" id="id_image_large" name="image_large"&gt;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-547db88f11eab569833138-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11eab569833138-2">2</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-547db88f11eab569833138-1"><span class="crayon-o">&lt;</span><span class="crayon-e">label </span><span class="crayon-t">class</span><span class="crayon-o">=</span><span class="crayon-s">"choose-file"</span><span class="crayon-h"> </span><span class="crayon-v">id</span><span class="crayon-o">=</span><span class="crayon-s">"upload"</span><span class="crayon-h"> </span><span class="crayon-st">for</span><span class="crayon-o">=</span><span class="crayon-s">"id_image_large"</span><span class="crayon-o">&gt;</span><span class="crayon-o">&lt;</span><span class="crayon-o">/</span><span class="crayon-v">label</span><span class="crayon-o">&gt;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11eab569833138-2"><span class="crayon-o">&lt;</span><span class="crayon-e">input </span><span class="crayon-v">type</span><span class="crayon-o">=</span><span class="crayon-s">"file"</span><span class="crayon-h"> </span><span class="crayon-v">id</span><span class="crayon-o">=</span><span class="crayon-s">"id_image_large"</span><span class="crayon-h"> </span><span class="crayon-v">name</span><span class="crayon-o">=</span><span class="crayon-s">"image_large"</span><span class="crayon-o">&gt;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0014 seconds] -->
+<p>
+			<span id="crayon-547db88f11eb2577152000" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">label</span></span></span>  的 
+			<span id="crayon-547db88f11eb9163390727" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-st">for</span></span></span>  屬性用來指定對應的表單元件 
+			<span id="crayon-547db88f11ec0121095998" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">id</span></span></span> ，如果不用 
+			<span id="crayon-547db88f11ec7233857042" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-st">for</span></span></span>  的話就必須把表單元件包在 
+			<span id="crayon-547db88f11ece351217364" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">label</span></span></span>  標籤之內。<br />
+以下是對應的 CSS：</p><!-- Crayon Syntax Highlighter v2.6.8 -->
+
+		<div id="crayon-547db88f11ed5796412615" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+/* Hide file input */
+#id_image_large {
+    display: none;
+}
+/* Custom upload button appearance*/
+#upload {
+  position: absolute;
+  cursor: pointer;
+  z-index: 1;
+  left: 84px;
+  top: 201px;
+  display: block;
+  width: 138px;
+  height: 138px;
+  background: url(https://firefox.club.tw/static/img/event/every-moment/upload/upload-pic.png);
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-547db88f11ed5796412615-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11ed5796412615-2">2</div><div class="crayon-num" data-line="crayon-547db88f11ed5796412615-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11ed5796412615-4">4</div><div class="crayon-num" data-line="crayon-547db88f11ed5796412615-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11ed5796412615-6">6</div><div class="crayon-num" data-line="crayon-547db88f11ed5796412615-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11ed5796412615-8">8</div><div class="crayon-num" data-line="crayon-547db88f11ed5796412615-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11ed5796412615-10">10</div><div class="crayon-num" data-line="crayon-547db88f11ed5796412615-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11ed5796412615-12">12</div><div class="crayon-num" data-line="crayon-547db88f11ed5796412615-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11ed5796412615-14">14</div><div class="crayon-num" data-line="crayon-547db88f11ed5796412615-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11ed5796412615-16">16</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-547db88f11ed5796412615-1"><span class="crayon-c">/* Hide file input */</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11ed5796412615-2"><span class="crayon-k ">#id_image_large </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-547db88f11ed5796412615-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-e ">display</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">none</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11ed5796412615-4"><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-547db88f11ed5796412615-5"><span class="crayon-c">/* Custom upload button appearance*/</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11ed5796412615-6"><span class="crayon-k ">#upload </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-547db88f11ed5796412615-7"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e ">position</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">absolute</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11ed5796412615-8"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e ">cursor</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">pointer</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-547db88f11ed5796412615-9"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e ">z-index</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">1</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11ed5796412615-10"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e ">left</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">84px</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-547db88f11ed5796412615-11"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e ">top</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">201px</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11ed5796412615-12"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e ">display</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">block</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-547db88f11ed5796412615-13"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e ">width</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">138px</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11ed5796412615-14"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e ">height</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">138px</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-547db88f11ed5796412615-15"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-e ">background</span><span class="crayon-sy">:</span><span class="crayon-h"> </span><span class="crayon-i ">url</span><span class="crayon-sy">(</span><span class="crayon-e ">https</span><span class="crayon-sy">:</span><span class="crayon-i ">//firefox.club.tw/static/img/event/every-moment/upload/upload-pic.png</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11ed5796412615-16"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0024 seconds] -->
+<p>很簡單對吧？</p>
+<h2>上傳前的照片預覽</h2>
+<p>照片上傳之前有一個重要的功能－預覽 ，<br />
+使用者透過預覽可以確認自己選的圖看起來如何，<br />
+甚至做一些簡單的調整。<br />
+這個功能如果可以在瀏覽器本機端就完成是最好不過了，<br />
+省去上傳等待半天又來回修改換圖的麻煩。</p>
+<p>透過 HTML5 的 
+			<span id="crayon-547db88f11edc316092958" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">FileReader</span></span></span>  API （註 1）要做照片預覽現在非常容易，<br />
+只要使用 
+			<span id="crayon-547db88f11ee3456305271" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">readDataAsURL</span></span></span>  將檔案載入即可：</p><!-- Crayon Syntax Highlighter v2.6.8 -->
+
+		<div id="crayon-547db88f11eea787437592" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+function loadImage(e) {
+    var image = new Image();
+    image.src = e.target.result;
+}
+function previewImage() {
+    var reader = new FileReader();
+    var file = document.getElementById("id_image_large").files[0];
+    reader.readAsDataURL(file);
+    reader.onload = loadImage;
+}
+$('#id_image_large').change(previewImage);</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-547db88f11eea787437592-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11eea787437592-2">2</div><div class="crayon-num" data-line="crayon-547db88f11eea787437592-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11eea787437592-4">4</div><div class="crayon-num" data-line="crayon-547db88f11eea787437592-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11eea787437592-6">6</div><div class="crayon-num" data-line="crayon-547db88f11eea787437592-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11eea787437592-8">8</div><div class="crayon-num" data-line="crayon-547db88f11eea787437592-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11eea787437592-10">10</div><div class="crayon-num" data-line="crayon-547db88f11eea787437592-11">11</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-547db88f11eea787437592-1"><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">loadImage</span><span class="crayon-sy">(</span><span class="crayon-v">e</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11eea787437592-2">   <span class="crayon-h"> </span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">image</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-r">new</span><span class="crayon-h"> </span><span class="crayon-e">Image</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-547db88f11eea787437592-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">image</span><span class="crayon-sy">.</span><span class="crayon-v">src</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">e</span><span class="crayon-sy">.</span><span class="crayon-v">target</span><span class="crayon-sy">.</span><span class="crayon-v">result</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11eea787437592-4"><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-547db88f11eea787437592-5"><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-e">previewImage</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11eea787437592-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">reader</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-r">new</span><span class="crayon-h"> </span><span class="crayon-e">FileReader</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-547db88f11eea787437592-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">file</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">document</span><span class="crayon-sy">.</span><span class="crayon-e">getElementById</span><span class="crayon-sy">(</span><span class="crayon-s">"id_image_large"</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-v">files</span><span class="crayon-sy">[</span><span class="crayon-cn">0</span><span class="crayon-sy">]</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11eea787437592-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">reader</span><span class="crayon-sy">.</span><span class="crayon-e">readAsDataURL</span><span class="crayon-sy">(</span><span class="crayon-v">file</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-547db88f11eea787437592-9"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">reader</span><span class="crayon-sy">.</span><span class="crayon-v">onload</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">loadImage</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11eea787437592-10"><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-547db88f11eea787437592-11"><span class="crayon-sy">$</span><span class="crayon-sy">(</span><span class="crayon-s">'#id_image_large'</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-e">change</span><span class="crayon-sy">(</span><span class="crayon-v">previewImage</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0035 seconds] -->
+<p>
+			<span id="crayon-547db88f11ef1688426920" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">readDataAsURL</span></span></span>  的作用是將本機的圖片檔案讀進瀏覽器中，<br />
+並將圖片資料轉換為 Base64 編碼的 Data URL（註 2）。<br />
+只要在 
+			<span id="crayon-547db88f11ef8996715061" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-e">file </span><span class="crayon-v">input</span></span></span>  的 
+			<span id="crayon-547db88f11eff481075272" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">change</span></span></span>  事件中讀進檔案轉換為 URL，<br />
+並且在 reader 的 
+			<span id="crayon-547db88f11f06808051142" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">onload</span></span></span>  事件中將轉換完成的圖片 URL（
+			<span id="crayon-547db88f11f0d056053154" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">e</span><span class="crayon-sy">.</span><span class="crayon-v">target</span><span class="crayon-sy">.</span><span class="crayon-v">result</span></span></span> ）<br />
+塞給目標圖片的（
+			<span id="crayon-547db88f11f14932054439" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">img</span></span></span>  標籤） 
+			<span id="crayon-547db88f11f1b962097716" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">src</span></span></span>  屬性即可。</p>
+<h3>拖曳改變圖片裁切位置</h3>
+<p>為了統一上傳圖片的大小，我想在上傳前就把預先裁切至適當比例，<br />
+最簡單的作法可以直接把裁切範圍鎖定在中間，<br />
+但考慮不同構圖方式只切中間可能會把重點切掉影響呈現效果，<br />
+決定還是讓使用者在上傳前可以橫向拖曳圖片，<br />
+以調整至最適合的裁切位置。</p>
+<p>不想把功能和程式做得太複雜，所以經過討論這次只支援橫向拖曳，<br />
+利用 JQuery UI Draggable（註 3） 的限制移動功能，可以防止圖片被拖到外太空去，<br />
+這個功能有兩個屬性可以設定：</p>
+<ul>
+<li>
+			<span id="crayon-547db88f11f22253274155" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">axis</span></span></span>  可以把拖曳限制在 x 軸或 y 軸上</li>
+<li>
+			<span id="crayon-547db88f11f29302324400" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">containment</span></span></span>  可以把拖曳限制在指定元素的範圍之內</li>
+</ul>
+<p>所以我們只需要將圖片依比例縮至符合外框大小，再依圖片和外框比例判斷要限制在哪一軸，<br />
+並且做出一個大小剛好不會讓圖片被拖出界的元素即可，如下圖的淺藍色範圍：</p>
+<p><a href="http://tech.mozilla.com.tw/wp-content/uploads/2014/01/draggable-container.png"><img class="alignnone size-full wp-image-4011" alt="draggable-container" src="http://tech.mozilla.com.tw/wp-content/uploads/2014/01/draggable-container.png" width="597" height="419" /></a></p>
+<p>簡單來說，假設圖片的寬高比例比外框寬，就會限制成橫向拖曳，<br />
+因此我們就需要一個高度和圖片一樣，寬度比圖片長一些的 containment 元素。<br />
+要如何算出它的寬度呢？如果上傳的照片寬度為 w，而外框寬度為 m，<br />
+整張圖片的可拖曳寬度就是 
+			<span id="crayon-547db88f11f31894137065" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-cn">2w</span><span class="crayon-h"> </span><span class="crayon-o">-</span><span class="crayon-h"> </span><span class="crayon-v">m</span></span></span> ，以此作為 containment 元素的寬度，<br />
+就可以將拖曳範圍恰恰限縮在不會超界的範圍。</p><!-- Crayon Syntax Highlighter v2.6.8 -->
+
+		<div id="crayon-547db88f11f38875052694" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+$('#dragger').draggable({
+    containment: "#container",
+    scroll: false,
+    axis: horizontal ? 'x' : 'y',
+    stop: function() {
+        // convert and save current position
+    }
+});</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-547db88f11f38875052694-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f38875052694-2">2</div><div class="crayon-num" data-line="crayon-547db88f11f38875052694-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f38875052694-4">4</div><div class="crayon-num" data-line="crayon-547db88f11f38875052694-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f38875052694-6">6</div><div class="crayon-num" data-line="crayon-547db88f11f38875052694-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f38875052694-8">8</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-547db88f11f38875052694-1"><span class="crayon-sy">$</span><span class="crayon-sy">(</span><span class="crayon-s">'#dragger'</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-e">draggable</span><span class="crayon-sy">(</span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f38875052694-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">containment</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">"#container"</span><span class="crayon-sy">,</span></div><div class="crayon-line" id="crayon-547db88f11f38875052694-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">scroll</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-t">false</span><span class="crayon-sy">,</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f38875052694-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">axis</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-i">horizontal</span><span class="crayon-h"> </span><span class="crayon-sy">?</span><span class="crayon-h"> </span><span class="crayon-s">'x'</span><span class="crayon-h"> </span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-s">'y'</span><span class="crayon-sy">,</span></div><div class="crayon-line" id="crayon-547db88f11f38875052694-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">stop</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f38875052694-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// convert and save current position</span></div><div class="crayon-line" id="crayon-547db88f11f38875052694-7"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f38875052694-8"><span class="crayon-sy">}</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0018 seconds] -->
+<p>上面這段是用來啟動 Draggable 的程式，<br />
+想知道如何把圖片縮放至適當比例請參考 
+			<span id="crayon-547db88f11f3f172848734" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">resizeImage</span></span></span>  函式，<br />
+詳細計算元素寬高、比例、初始位置的邏輯詳見 
+			<span id="crayon-547db88f11f46701977471" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">initImagePosition</span></span></span>  函式，<br />
+本文就不多加詳述。</p>
+<h3>處理照片旋轉</h3>
+<p>最麻煩的問題來了，現在的智慧型手機大多有陀螺儀，<br />
+大家可以用任何角度，愛怎麼拍就怎麼拍，<br />
+轉置角度的資訊會存在照片裡。<br />
+秀圖軟體就會依照轉置資訊把圖轉正。<br />
+聽起來好像很簡單，<br />
+但目前要在前端去處理轉置資訊需要透過第三方函式庫解析圖片裡的 EXIF 資料，<br />
+再判斷八種不同的轉置角度來決定轉正的方式。</p>
+<p>在這個範例中引用的是 <a href="https://github.com/jseidelin/exif-js" target="_blank">exif.js</a>，<a title="Javascript EXIF Reader" href="http://www.nihilogic.dk/labs/exif/" target="_blank">作者 Nihilogic 的網站</a>有簡單的介紹和展示，<br />
+運用這個函式庫就可以讀進圖片並解析其 EXIF 中的 Orientation 資訊：</p><!-- Crayon Syntax Highlighter v2.6.8 -->
+
+		<div id="crayon-547db88f11f4d376086563" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+image.onload = function (e) {
+    var bin = atob(e.target.src.split(',')[1]);
+    var exif = EXIF.readFromBinaryFile(new BinaryFile(bin));
+    var rotated = false;
+    switch (exif.Orientation) {
+        case 8:
+            $(this).removeClass().addClass('rotate-90');
+            rotated = true;
+            break;
+        case 3:
+            $(this).removeClass().addClass('rotate180');
+            break;
+        case 6:
+            $(this).removeClass().addClass('rotate90');
+            rotated = true;
+            break;
+        default:
+            break;
+    }
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-547db88f11f4d376086563-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f4d376086563-2">2</div><div class="crayon-num" data-line="crayon-547db88f11f4d376086563-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f4d376086563-4">4</div><div class="crayon-num" data-line="crayon-547db88f11f4d376086563-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f4d376086563-6">6</div><div class="crayon-num" data-line="crayon-547db88f11f4d376086563-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f4d376086563-8">8</div><div class="crayon-num" data-line="crayon-547db88f11f4d376086563-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f4d376086563-10">10</div><div class="crayon-num" data-line="crayon-547db88f11f4d376086563-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f4d376086563-12">12</div><div class="crayon-num" data-line="crayon-547db88f11f4d376086563-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f4d376086563-14">14</div><div class="crayon-num" data-line="crayon-547db88f11f4d376086563-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f4d376086563-16">16</div><div class="crayon-num" data-line="crayon-547db88f11f4d376086563-17">17</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f4d376086563-18">18</div><div class="crayon-num" data-line="crayon-547db88f11f4d376086563-19">19</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f4d376086563-20">20</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-547db88f11f4d376086563-1"><span class="crayon-v">image</span><span class="crayon-sy">.</span><span class="crayon-v">onload</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">function</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">e</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f4d376086563-2">   <span class="crayon-h"> </span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">bin</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-e">atob</span><span class="crayon-sy">(</span><span class="crayon-v">e</span><span class="crayon-sy">.</span><span class="crayon-v">target</span><span class="crayon-sy">.</span><span class="crayon-v">src</span><span class="crayon-sy">.</span><span class="crayon-e">split</span><span class="crayon-sy">(</span><span class="crayon-s">','</span><span class="crayon-sy">)</span><span class="crayon-sy">[</span><span class="crayon-cn">1</span><span class="crayon-sy">]</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-547db88f11f4d376086563-3">   <span class="crayon-h"> </span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">exif</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">EXIF</span><span class="crayon-sy">.</span><span class="crayon-e">readFromBinaryFile</span><span class="crayon-sy">(</span><span class="crayon-r">new</span><span class="crayon-h"> </span><span class="crayon-e">BinaryFile</span><span class="crayon-sy">(</span><span class="crayon-v">bin</span><span class="crayon-sy">)</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f4d376086563-4">   <span class="crayon-h"> </span><span class="crayon-t">var</span><span class="crayon-h"> </span><span class="crayon-v">rotated</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">false</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-547db88f11f4d376086563-5">   <span class="crayon-h"> </span><span class="crayon-st">switch</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">exif</span><span class="crayon-sy">.</span><span class="crayon-v">Orientation</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f4d376086563-6">       <span class="crayon-h"> </span><span class="crayon-st">case</span><span class="crayon-h"> </span><span class="crayon-cn">8</span><span class="crayon-o">:</span></div><div class="crayon-line" id="crayon-547db88f11f4d376086563-7">           <span class="crayon-h"> </span><span class="crayon-sy">$</span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-e">removeClass</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-e">addClass</span><span class="crayon-sy">(</span><span class="crayon-s">'rotate-90'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f4d376086563-8">           <span class="crayon-h"> </span><span class="crayon-v">rotated</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">true</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-547db88f11f4d376086563-9">           <span class="crayon-h"> </span><span class="crayon-st">break</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f4d376086563-10">       <span class="crayon-h"> </span><span class="crayon-st">case</span><span class="crayon-h"> </span><span class="crayon-cn">3</span><span class="crayon-o">:</span></div><div class="crayon-line" id="crayon-547db88f11f4d376086563-11">           <span class="crayon-h"> </span><span class="crayon-sy">$</span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-e">removeClass</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-e">addClass</span><span class="crayon-sy">(</span><span class="crayon-s">'rotate180'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f4d376086563-12">           <span class="crayon-h"> </span><span class="crayon-st">break</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-547db88f11f4d376086563-13">       <span class="crayon-h"> </span><span class="crayon-st">case</span><span class="crayon-h"> </span><span class="crayon-cn">6</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f4d376086563-14">           <span class="crayon-h"> </span><span class="crayon-sy">$</span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-e">removeClass</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">.</span><span class="crayon-e">addClass</span><span class="crayon-sy">(</span><span class="crayon-s">'rotate90'</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-547db88f11f4d376086563-15">           <span class="crayon-h"> </span><span class="crayon-v">rotated</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-t">true</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f4d376086563-16">           <span class="crayon-h"> </span><span class="crayon-st">break</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-547db88f11f4d376086563-17">       <span class="crayon-h"> </span><span class="crayon-st">default</span><span class="crayon-o">:</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f4d376086563-18">           <span class="crayon-h"> </span><span class="crayon-st">break</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-547db88f11f4d376086563-19">   <span class="crayon-h"> </span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f4d376086563-20"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0059 seconds] -->
+<p>再依照不同的 Orientation 值做對應的圖片旋轉，<br />
+Orientation 的值共有八種，這在 <a title="JPEGclub" href="http://jpegclub.org/exif_orientation.html" target="_blank">JPEGclub</a> 上有詳細的解說，<br />
+八種值其中四種包含了鏡像翻轉，在大部分的情況下不需考慮鏡像翻轉，<br />
+沒有旋轉的情況也不需要處理，所以只要判斷 8、3、6三個值即可。</p>
+<h4>期待簡易的新標準</h4>
+<p>目前針對 HTML5 標準的草案中，<br />
+有一個針對圖片旋轉作處理的 CSS 特性 
+			<span id="crayon-547db88f11f55134738858" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">image</span><span class="crayon-o">-</span><span class="crayon-v">orientation</span></span></span> 。<br />
+我在寫這篇文章的時候只有 Firefox 支援這個實驗性的特性，<br />
+它的作用除了自行指定圖片的旋轉角度、翻轉方式以外，</p><!-- Crayon Syntax Highlighter v2.6.8 -->
+
+		<div id="crayon-547db88f11f5c572918248" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+image-orientation: from-image;</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-547db88f11f5c572918248-1">1</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-547db88f11f5c572918248-1"><span class="crayon-v">image</span><span class="crayon-o">-</span><span class="crayon-v">orientation</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">from</span><span class="crayon-o">-</span><span class="crayon-v">image</span><span class="crayon-sy">;</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0010 seconds] -->
+<p>這行 CSS 設定即可讓圖片依據 EXIF 中的資訊進行旋轉及翻轉。<br />
+期待它能成為新的 HTML5 標準吧！</p>
+<h2>One more thing&#8230;再加個假掰光暈動畫</h2>
+<p>最後教大家用 CSS 的影格動畫（keyframe animation）做一個超搶眼的光暈閃爍動畫，<br />
+把它放在要強調的按鈕後面，讓網站的使用者想不看到你的按鈕都沒辦法：</p><!-- Crayon Syntax Highlighter v2.6.8 -->
+
+		<div id="crayon-547db88f11f64409307390" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+@keyframes spot {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.spotlight {
+  background: radial-gradient(ellipse at center, #ffffff 0%, rgba(255, 255, 255, 0) 70%);
+  animation: spot 1.5s linear infinite;
+}</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-547db88f11f64409307390-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f64409307390-2">2</div><div class="crayon-num" data-line="crayon-547db88f11f64409307390-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f64409307390-4">4</div><div class="crayon-num" data-line="crayon-547db88f11f64409307390-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f64409307390-6">6</div><div class="crayon-num" data-line="crayon-547db88f11f64409307390-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f64409307390-8">8</div><div class="crayon-num" data-line="crayon-547db88f11f64409307390-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f64409307390-10">10</div><div class="crayon-num" data-line="crayon-547db88f11f64409307390-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f64409307390-12">12</div><div class="crayon-num" data-line="crayon-547db88f11f64409307390-13">13</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f64409307390-14">14</div><div class="crayon-num" data-line="crayon-547db88f11f64409307390-15">15</div><div class="crayon-num crayon-striped-num" data-line="crayon-547db88f11f64409307390-16">16</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-547db88f11f64409307390-1"><span class="crayon-sy">@</span><span class="crayon-e">keyframes</span><span class="crayon-h"> </span><span class="crayon-e">spot</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f64409307390-2"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">0</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-547db88f11f64409307390-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">opacity</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-cn">1</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f64409307390-4"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-547db88f11f64409307390-5"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">50</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f64409307390-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">opacity</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-cn">0</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-547db88f11f64409307390-7"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f64409307390-8"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-cn">100</span><span class="crayon-o">%</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line" id="crayon-547db88f11f64409307390-9"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-v">opacity</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-cn">1</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f64409307390-10"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-sy">}</span></div><div class="crayon-line" id="crayon-547db88f11f64409307390-11"><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f64409307390-12">&nbsp;</div><div class="crayon-line" id="crayon-547db88f11f64409307390-13"><span class="crayon-sy">.</span><span class="crayon-i">spotlight</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f64409307390-14"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">background</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-v">radial</span><span class="crayon-o">-</span><span class="crayon-e">gradient</span><span class="crayon-sy">(</span><span class="crayon-e">ellipse </span><span class="crayon-e">at </span><span class="crayon-v">center</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-p">#ffffff 0%, rgba(255, 255, 255, 0) 70%);</span></div><div class="crayon-line" id="crayon-547db88f11f64409307390-15"><span class="crayon-h">&nbsp;&nbsp;</span><span class="crayon-v">animation</span><span class="crayon-o">:</span><span class="crayon-h"> </span><span class="crayon-i">spot</span><span class="crayon-h"> </span><span class="crayon-cn">1.5s</span><span class="crayon-h"> </span><span class="crayon-e">linear </span><span class="crayon-v">infinite</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-547db88f11f64409307390-16"><span class="crayon-sy">}</span></div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0027 seconds] -->
+<p>如果你對這段 CSS 的長相和它的作用感到疑惑，底下就稍微解釋一下運作原理：<br />
+首先在 
+			<span id="crayon-547db88f11f6b699925432" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-sy">@</span><span class="crayon-v">keyframe</span></span></span>  區塊中定義動畫進度百分之幾時需要漸變的屬性目標值，<br />
+瀏覽器會根據時間動畫長度、時間函式（timing function）、<br />
+以及目前動畫播放的進度，算出一個介於中間的值。<br />
+以閃爍的動畫來說，只需要讓 
+			<span id="crayon-547db88f11f72717966511" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">opacity</span></span></span>  屬性從 1 漸變成 0，再從 0 漸變成 1 即可，<br />
+在範例中 
+			<span id="crayon-547db88f11f79339525068" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-sy">.</span><span class="crayon-v">spotlight</span></span></span>  選擇器中的 
+			<span id="crayon-547db88f11f80773939490" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">animation</span></span></span>  屬性指定 
+			<span id="crayon-547db88f11f87049839430" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">spot</span></span></span>  作為動畫的影格設定，<br />
+假設 20 秒作為動畫長度，時間函式設為線性（Linear），<br />
+那麼在剛開始播放第 0 秒的時候，等於是 
+			<span id="crayon-547db88f11f8e163631492" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">keyframe</span></span></span>  的 0%，<br />
+光暈的 
+			<span id="crayon-547db88f11f94059560140" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">opacity</span></span></span>  會是 1，也就是完全不透明，<br />
+第 10 秒時，播放進度到達 50%，
+			<span id="crayon-547db88f11f9b502785997" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">opacity</span></span></span>  漸變為 0，完全變成透明了，<br />
+那麼在第 15 秒的時候呢？15 秒對 20 秒來說是 75%，等於 50% 到 100% 的半路上，<br />
+所以 
+			<span id="crayon-547db88f11fa2308502032" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">opacity</span></span></span>  的值是 0.5，呈現出半透明的效果，以此類推。<br />
+以上就是這個動畫運算的基本原理。</p>
+<p>附帶一提最後的 
+			<span id="crayon-547db88f11fa9220055187" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">infinte</span></span></span>  設定可以讓動畫無限循環播放。<br />
+關於 CSS 動畫更多詳細的說明、範例和各瀏覽器支援度請參考 MDN 的 <a title="CSS 動畫" href="https://developer.mozilla.org/zh-TW/docs/CSS_%E5%8B%95%E7%95%AB" target="_blank">CSS 動畫</a>文件。<br />
+至於光暈的背景如果不想用圖片的話，可以參考本範例利用 CSS 的 <a title="Radial Gradient" href="https://developer.mozilla.org/en-US/docs/Web/CSS/radial-gradient" target="_blank">
+			<span id="crayon-547db88f11fb1253533386" class="crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;"><span class="crayon-pre crayon-code" style="font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><span class="crayon-v">radial</span><span class="crayon-o">-</span><span class="crayon-v">gradient</span></span></span></a>  功能。</p>
+<p>很驚訝原來這些功能都能在網頁上運作嗎？你也試著來做做看吧！</p>
+<h2>參考資料</h2>
+<p>註 1：<a href="https://developer.mozilla.org/en-US/docs/Web/API/FileReader" target="_blank">FileReader API</a> 是 HTML5 的新 API，讓瀏覽器得以讀取客戶端電腦的檔案。<br />
+註 2：<a href="http://en.wikipedia.org/wiki/Data_URI_scheme" target="_blank">Data URL</a>也是 URL 的一種標準規範，可將完整檔案資料直接嵌入URL中。<br />
+註 3：<a href="http://jqueryui.com/draggable/" target="_blank">JQuery UI Draggable</a> 是 <a href="http://jqueryui.com/" target="_blank">JQuery UI </a>套件中用來處理元素拖放的擴充套件。</p>
+			</div><!-- .entry-content -->
+            <footer class="entry-footer">
+      <div class="entry-category-box">
+        文章分類：
+        <a href="http://tech.mozilla.com.tw/posts/category/javascript" rel="category tag">Javascript</a>      </div>
+    </footer> 
+    </article><!-- #post-3738 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+	 
+	          <a class="shareButton">我要分享這篇文章</a>
+	          <iframe id="after-share-subscribe" src="about:blank" 
+	              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+	          </iframe>
+
+							<!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+	            <div class="related-posts-scope"><a class="post_category-random" data-type="random" data-ratio="0" href="http://tech.mozilla.com.tw/posts/1069/%e4%b8%89%e6%ad%a5%e9%a9%9f%e5%ad%b8%e6%9c%83-persona%ef%bc%81%ef%bc%81" target="_blank"><div class="related-block"><div class="related-thumbnail"><img width="150" height="150" src="http://tech.mozilla.com.tw/wp-content/uploads/2012/11/Persona-ogimg-150x150.png" class="attachment-thumbnail wp-post-image" alt="Persona-ogimg" 三步驟學會_Persona！！="" /></div><div class="related-item"><p>三步驟學會 Persona！！</p></div></div></a><a class="post-all-random" data-type="random" data-ratio="0" href="http://tech.mozilla.com.tw/posts/1970/%e5%b0%8f%e5%b0%8f%e8%97%8d%e7%89%99%e7%9c%8b%e4%b8%96%e7%95%8c" target="_blank"><div class="related-block"><div class="related-thumbnail"><img width="150" height="150" src="http://tech.mozilla.com.tw/wp-content/uploads/2013/04/partners-theswoop-150x150.png" class="attachment-thumbnail wp-post-image" alt="partners-theswoop" 小小藍牙看世界="" /></div><div class="related-item"><p>小小藍牙看世界</p></div></div></a><a class="post-all-random" data-type="random" data-ratio="0" href="http://tech.mozilla.com.tw/posts/127/b2g-on-emulator-2" target="_blank"><div class="related-block"><div class="related-thumbnail"><div class="default-thumbnails moztech" title="B2G on Emulator"></div></div><div class="related-item"><p>B2G on Emulator</p></div></div></a><a class="post-all-random" data-type="random" data-ratio="0" href="http://tech.mozilla.com.tw/posts/3272/%e5%85%a8%e5%93%a1%e5%a4%a7%e9%9b%86%e5%90%88-2013-mozilla-%e5%b8%83%e9%ad%af%e5%a1%9e%e7%88%be%e9%ab%98%e5%b3%b0%e6%9c%83" target="_blank"><div class="related-block"><div class="related-thumbnail"><img width="150" height="150" src="http://tech.mozilla.com.tw/wp-content/uploads/2013/10/IMG_0695-150x150.png" class="attachment-thumbnail wp-post-image" alt="有圖有真相! 你看這位 Mozillian 多麼熱情!" 全員大集合_="" #8211;_2013_Mozilla_布魯塞爾高峰會="" /></div><div class="related-item"><p>全員大集合 &#8211; 2013 Mozilla 布魯塞爾高峰會</p></div></div></a></div>			
+				<div id="comments">
+		
+			<h3 id="comments-title">
+			共 3 則讀者回應
+		</h3>
+
+		
+		<ol class="commentlist">
+				<li class="comment even thread-even depth-1" id="li-comment-457">
+		<article id="comment-457" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='http://1.gravatar.com/avatar/bc2610cb331f68f2273f9c46b376cf66?s=40&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D40&amp;r=G' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn">T</cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="http://tech.mozilla.com.tw/posts/3738/%e7%80%8f%e8%a6%bd%e5%99%a8%e7%9a%84%e9%a0%90%e8%a8%ad-file-input-%e4%b8%8d%e5%a5%bd%e7%94%a8%ef%bc%81%e6%88%91%e6%83%b3%e8%87%aa%e8%a8%82%e7%be%8e%e8%a7%80%e5%af%a6%e7%94%a8%e7%9a%84%e7%85%a7#comment-457"><time pubdate datetime="2014-03-24T20:44:23+00:00">
+					2014 年 03 月 24 日 下午 08:44					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>簡單來說，就是弄一個div，點到這個div的時候，handler再去模擬點到(隱藏的)file input。<br />
+ExtJS的寫法可以參考：http://code.tonytuan.org/2013/08/extjs-file-field-wrapper-show-custom.html</p>
+</div>
+
+			<div class="reply">
+				<a class='comment-reply-link' href='/posts/3738/%E7%80%8F%E8%A6%BD%E5%99%A8%E7%9A%84%E9%A0%90%E8%A8%AD-file-input-%E4%B8%8D%E5%A5%BD%E7%94%A8%EF%BC%81%E6%88%91%E6%83%B3%E8%87%AA%E8%A8%82%E7%BE%8E%E8%A7%80%E5%AF%A6%E7%94%A8%E7%9A%84%E7%85%A7?replytocom=457#respond' onclick='return addComment.moveForm("comment-457", "457", "respond", "3738")'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	<ul class="children">
+	<li class="comment odd alt depth-2" id="li-comment-458">
+		<article id="comment-458" class="comment">
+			<footer>
+				<div class="comment-author vcard">
+																<img alt='' src='http://1.gravatar.com/avatar/72dc0872a2f4efe720f129d9cc2ef02d?s=40&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D40&amp;r=G' class='avatar avatar-40 photo' height='40' width='40' />										<cite class="fn"><a href='http://yshl.in' rel='external nofollow' class='url'>小y</a></cite> <span class="says"> 回應於 </span>				</div><!-- .comment-author .vcard -->
+				
+				<div class="comment-meta commentmetadata">
+					<a href="http://tech.mozilla.com.tw/posts/3738/%e7%80%8f%e8%a6%bd%e5%99%a8%e7%9a%84%e9%a0%90%e8%a8%ad-file-input-%e4%b8%8d%e5%a5%bd%e7%94%a8%ef%bc%81%e6%88%91%e6%83%b3%e8%87%aa%e8%a8%82%e7%be%8e%e8%a7%80%e5%af%a6%e7%94%a8%e7%9a%84%e7%85%a7#comment-458"><time pubdate datetime="2014-03-26T10:30:33+00:00">
+					2014 年 03 月 26 日 上午 10:30					</time></a>
+									</div><!-- .comment-meta .commentmetadata -->
+			</footer>
+
+			<div class="comment-content"><p>回樓上，用 Javascript 模擬點擊的作法會遇到我前面提到的問題， IE 會把表單資料視為不安全而無法送出。</p>
+<p>用 &lt;label&gt; 標籤即可不使用 Javascript 解決此問題。</p>
+</div>
+
+			<div class="reply">
+				<a class='comment-reply-link' href='/posts/3738/%E7%80%8F%E8%A6%BD%E5%99%A8%E7%9A%84%E9%A0%90%E8%A8%AD-file-input-%E4%B8%8D%E5%A5%BD%E7%94%A8%EF%BC%81%E6%88%91%E6%83%B3%E8%87%AA%E8%A8%82%E7%BE%8E%E8%A7%80%E5%AF%A6%E7%94%A8%E7%9A%84%E7%85%A7?replytocom=458#respond' onclick='return addComment.moveForm("comment-458", "458", "respond", "3738")'>回覆</a>			</div><!-- .reply -->
+		</article><!-- #comment-## -->
+
+	</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+	<li class="post pingback">
+		<p>參照： <a href='http://tech.mozilla.com.tw/posts/3742/%e8%b6%85%e5%a4%af%ef%bc%81%e8%a6%96%e5%b7%ae%e6%8d%b2%e8%bb%b8%e5%8b%95%e7%95%ab%e5%a4%a7%e8%a7%a3%e5%af%86%ef%bc%81' rel='external nofollow' class='url'>超夯！視差捲軸動畫大解密！ | Mozilla Tech | 謀智台客</a></p>
+	</li><!-- #comment-## -->
+		</ol>
+
+		
+	
+										<div id="respond" class="comment-respond">
+				<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/posts/3738/%E7%80%8F%E8%A6%BD%E5%99%A8%E7%9A%84%E9%A0%90%E8%A8%AD-file-input-%E4%B8%8D%E5%A5%BD%E7%94%A8%EF%BC%81%E6%88%91%E6%83%B3%E8%87%AA%E8%A8%82%E7%BE%8E%E8%A7%80%E5%AF%A6%E7%94%A8%E7%9A%84%E7%85%A7#respond" style="display:none;">取消回覆</a></small></h3>
+									<form action="http://tech.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+																			<p class="comment-notes">你的電子郵件位址並不會被公開。 必要欄位標記為 <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>												<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="發表" />
+							<input type='hidden' name='comment_post_ID' value='3738' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="bf98e7b4c9" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="171"/></p>					</form>
+							</div><!-- #respond -->
+				
+</div><!-- #comments -->
+		  		</div> <!-- #article--!>
+	</div><!-- #primary -->
+	<div class="subwarp">
+    		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="author_contact_info-2" class="widget Ataa_Widget"><h1 class="widget-title">關於作者</h1><ul class="ataa-widget"><li><span class='name-title'><a class="profile-link" href="http://tech.mozilla.com.tw/posts/author/elinmozilla-com"><span class="gravatar left"><img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg" alt="" class="avatar user-61-avatar" width='48' height='48' /></span><span class="name">小y</span></a></span><pre class="bio no-style">擅長  JavaScript、Python，
+擔任 Mozilla 網站工程師</pre><p class='contact'><span class="web"><strong>網站：</strong><a href="http://yshl.in">http://yshl.in</a></span></p></li></ul></aside><aside id="moztech_authors-2" class="widget Moztech_Authors_Widget"><h1 class="widget-title">台客編輯群</h1><div class="moztech-authors-widget"><a data-author-id="43" href="http://tech.mozilla.com.tw/posts/author/atsaimozilla-com"><img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpfull.jpg" alt="" class="avatar user-43-avatar" width='96' height='96' /></a><a data-author-id="60" href="http://tech.mozilla.com.tw/posts/author/gasolinmozilla-com"><img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpfull.jpg" alt="" class="avatar user-60-avatar" width='96' height='96' /></a><a data-author-id="41" href="http://tech.mozilla.com.tw/posts/author/rlinmozilla-com"><img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpfull.jpg" alt="" class="avatar user-41-avatar" width='96' height='96' /></a><a data-author-id="90" href="http://tech.mozilla.com.tw/posts/author/hchangmozilla-com"><img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpfull.jpg" alt="" class="avatar user-90-avatar" width='96' height='96' /></a><a data-author-id="18" href="http://tech.mozilla.com.tw/posts/author/cyumozilla-com"><img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpfull.jpg" alt="" class="avatar user-18-avatar" width='96' height='96' /></a><a data-author-id="103" href="http://tech.mozilla.com.tw/posts/author/jaliumozilla-com"><img src="http://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpfull.jpg" alt="" class="avatar user-103-avatar" width='96' height='96' /></a></div><a class="more" href="/authors">認識台客編輯群</a></aside><aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="http://tech.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="facebook_widget-2" class="widget widget_facebook_widget"><h1 class="widget-title">加入粉絲團</h1><div id="fb-root"></div>
+        <div class="fb-like-box" data-href="http://www.facebook.com/MozillaTaiwan" data-width="200" data-height="270" data-colorscheme="light" data-show-faces="1" data-header="0" data-stream="0" data-show-border="No" style=""></div></aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+</ul></div>
+		</aside><aside id="text-5" class="widget widget_text"><h1 class="widget-title">熱門文章</h1>			<div class="textwidget"><div class="fb-recommendations" data-site="tech.mozilla.com.tw" data-action="likes, recommends" data-width="200" data-height="420" data-colorscheme="light" data-header="false"  data-max-age="180"></div></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="http://tech.mozilla.com.tw/posts/category/css" >CSS</a> (14)
+</li>
+	<li class="cat-item cat-item-4"><a href="http://tech.mozilla.com.tw/posts/category/firefox" >Firefox</a> (14)
+</li>
+	<li class="cat-item cat-item-3"><a href="http://tech.mozilla.com.tw/posts/category/b2g" >Firefox OS(B2G)</a> (90)
+</li>
+	<li class="cat-item cat-item-30"><a href="http://tech.mozilla.com.tw/posts/category/interaction-design" >Interaction design</a> (1)
+</li>
+	<li class="cat-item cat-item-9"><a href="http://tech.mozilla.com.tw/posts/category/javascript" >Javascript</a> (36)
+</li>
+	<li class="cat-item cat-item-42"><a href="http://tech.mozilla.com.tw/posts/category/life-at-mozilla" >Life at Mozilla</a> (6)
+</li>
+	<li class="cat-item cat-item-5"><a href="http://tech.mozilla.com.tw/posts/category/mozilla" >Mozilla</a> (14)
+</li>
+	<li class="cat-item cat-item-7"><a href="http://tech.mozilla.com.tw/posts/category/open-source" >Open Source</a> (15)
+</li>
+	<li class="cat-item cat-item-29"><a href="http://tech.mozilla.com.tw/posts/category/ux" >UX/UE</a> (2)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<select name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			<option value="">選擇月份</option>
+
+				<option value='http://tech.mozilla.com.tw/posts/date/2014/11'> 2014 年 十一月 &nbsp;(3)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/10'> 2014 年 十月 &nbsp;(3)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/09'> 2014 年 九月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/08'> 2014 年 八月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/07'> 2014 年 七月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/05'> 2014 年 五月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/04'> 2014 年 四月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/03'> 2014 年 三月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/02'> 2014 年 二月 &nbsp;(1)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2014/01'> 2014 年 一月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/12'> 2013 年 十二月 &nbsp;(6)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/11'> 2013 年 十一月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/10'> 2013 年 十月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/09'> 2013 年 九月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/08'> 2013 年 八月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/07'> 2013 年 七月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/06'> 2013 年 六月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/05'> 2013 年 五月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/04'> 2013 年 四月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/03'> 2013 年 三月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/02'> 2013 年 二月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2013/01'> 2013 年 一月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/12'> 2012 年 十二月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/11'> 2012 年 十一月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/10'> 2012 年 十月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/09'> 2012 年 九月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/08'> 2012 年 八月 &nbsp;(4)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/07'> 2012 年 七月 &nbsp;(5)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/06'> 2012 年 六月 &nbsp;(3)</option>
+	<option value='http://tech.mozilla.com.tw/posts/date/2012/05'> 2012 年 五月 &nbsp;(3)</option>
+		</select>
+</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		   </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <div id="author-hovercard"><iframe src="about:blank"></iframe></div>
+    <footer id="footer">
+  <div id="footer-wrapper">
+    <div id="footer-logo" class="footer-content">
+      <a href="//mozilla.org/en-US/" target="_blank">
+        <img style="border:0px;" alt="mozilla" src="/media/img/sandstone/footer-mozilla.png">
+      </a>
+    </div>
+    <div id="sub-footer" class="footer-content">
+      <div id="sub-footer-contents">
+        <strong>與我們為友</strong>
+        <ul>
+          <li id="footer-Facebook">
+            <a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+          </li>
+          <li id="footer-Google+">
+            <a href="https://plus.google.com/u/0/114653167240123163859/posts">Google+</a>
+          </li>
+          <li id="footer-Plurk">
+            <a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+          </li>
+          <li id="footer-Youtube">
+            <a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+          </li>
+          <li id="footer-Flickr">
+            <a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+          </li>
+          <li id="footer-電子報">
+            <a href="http://mozilla.com.tw/join_us/">電子報</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!--end sub-footer-->
+    <div id="copyright" class="footer-content">
+      <ul>
+        <li><a href="//www.mozilla.org/zh-TW/privacy-policy.html">隱私資料政策</a>&nbsp;|</li>
+        <li><a href="//www.mozilla.org/zh-TW/about/legal.html">法律資訊</a>&nbsp;|</li>
+        <li><a href="//www.mozilla.org/zh-TW/legal/fraud-report/index.html">回報商標濫用</a>&nbsp;|</li>
+        <li><a href="//mozilla.com.tw/join_us/un_subscribe/">取消訂閱電子報</a>&nbsp;|</li>
+      </ul>
+      <p>除另有<a href="//www.mozilla.org/zh-TW/about/legal.html#site">註明</a>外，本站內容皆採用<br>
+        <a href="http://creativecommons.org/licenses/by-sa/3.0/">創用 CC 姓名標示—相同方式分享條款 3.0 </a>或更新版本授權大眾使用。</p>
+    </div>
+    <!-- end copyright-->
+  </div>
+  <!-- end of footer-wrapper -->
+</footer>
+<!-- end of footer -->    <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="http://tech.mozilla.com.tw/wp-content/themes/toolbox-child/js/main.js"></script>
+        <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+
+    <script>
+    $(".toggle").click(function(){if($(".slided-it").size()==0){$(".slide-x").addClass("slided-it");$("#body-wrapper").removeClass("body-wrapper-default").addClass("body-wrapper-lock")}else{$(".slide-x").removeClass("slided-it");$("#body-wrapper").removeClass("body-wrapper-lock").addClass("body-wrapper-default")}});$(document).ready(function(){if($("#nav-main-menu").length===0){return}var a=$('#nav-main-menu [tabindex="0"]');var f,e,b,d,c;$("#nav-main > .has-submenus > li > .submenu.has-submenus > li").bind("mouseover focusin",function(g){d=$(this);if(!e||e.attr("id")!==d.attr("id")){d.addClass("hover").find('[aria-expanded="false"]').attr("aria-expanded","true");if(e){e.dequeue("sub")}}else{e.clearQueue("sub")}}).bind("mouseout focusout",function(g){e=$(this);var h=g.toElement||g.relatedTarget;h=h?h.parentNode.parentNode:h;e.delay(100,"sub").queue("sub",function(){if(e&&(g.type=="focusout"||h==this.parentNode)){e.clearQueue("sub");e.removeClass("hover").find('[aria-expanded="true"]').attr("aria-expanded","false");e=null;if(c){c.get(0).blur()}}}).dequeue("sub")});$("#nav-main > .has-submenus > li").bind("mouseover focusin",function(g){b=$(this);if(!f||f.attr("id")!==b.attr("id")){b.addClass("hover").find('[aria-expanded="false"]').attr("aria-expanded","true");if(f){f.dequeue()}}else{f.clearQueue()}}).bind("mouseout focusout",function(g){f=$(this);f.delay(100).queue(function(){if(f){f.clearQueue();f.find(".hover").removeClass("hover");f.removeClass("hover").find('[aria-expanded="true"]').attr("aria-expanded","false");f=null;e=null;if(c){c.get(0).blur()}}})}).each(function(g){var h=$(this).find("a");h.mouseover(function(i){this.focus()}).focus(function(){c=$(this)}).each(function(i){$(this).keydown(function(j){var k;if(j.altKey||j.ctrlKey||j.metaKey||j.shiftKey){return true}switch(j.keyCode){case 33:case 36:k=h.first();break;case 34:case 35:k=h.last();break;case 38:k=(i>0)?h.eq(i-1):h.last();break;case 40:k=(i<h.length-1)?h.eq(i+1):h.first();break;case 37:k=(g>0)?a.eq(g-1):a.last();break;case 39:k=(g<a.length-1)?a.eq(g+1):a.first();break}if(k){k.get(0).focus();return false}return true})})});$("#footer-menu").attr("role","presentation")});var Tabzilla=(function(b){var h="1.7.1";var m;var j;var C;var d;var x=false;var w=("matchMedia" in window);var p=(document.documentMode===9);var A=(typeof console=="object");var n="wide";var q="-1";var i=null;var l;var y=function(){var D=c();if(n!==D){n=D;u()}};var c=function(){if(w&&matchMedia("(max-width: 719px)").matches){return"compact"}return"wide"};var u=function(){if(n==="wide"){e()}else{g()}};var e=function(){f();a();m.focus()};var g=function(){k();r()};var k=function(){j.find(">ul").attr("role","presentation");C.each(function(D){i(this).attr({id:"tab-"+D,"aria-controls":"panel-"+D,tabindex:q,role:"tab","aria-expanded":false})});if(!j.find("h2[tabindex=0]").length){j.find("h2:first").attr("tabindex",0)}j.find("div").each(function(D){i(this).attr({id:"panel-"+D,"aria-labeledby":"tab-"+D,role:"tabpanel"}).css("display","none")})};var f=function(){j.find(">ul").removeAttr("role");C.removeAttr("id aria-controls tabindex role aria-expanded");j.find("div").removeAttr("id aria-labeledby role style")};var r=function(){j.on("click.submenu","h2",function(D){D.preventDefault();var E=i(D.target).next("div");i(D.target).attr("aria-expanded",E.is(":hidden"));E.toggle()});j.on("keydown.submenu",function(D){var F=D.which;var E=i(D.target);if(F===13||F===32){D.preventDefault();E.trigger("click")}if(F===37||F===38){D.preventDefault();C.each(function(G){if(G>0&&i(this).attr("tabindex")===0){i(this).attr("tabindex",q);i(C[G-1]).attr("tabindex",0).focus();return false}})}if(F===40||F===39){D.preventDefault();C.each(function(G){if(G<(C.length-1)&&i(this).attr("tabindex")===0){i(this).attr("tabindex",q);i(C[G+1]).attr("tabindex",0).focus();return false}})}if(F===27&&E.is("a")){D.preventDefault();D.stopPropagation();E.parents("div").prev("h2").trigger("click").focus()}})};var a=function(){j.off(".submenu")};b.open=function(){x=true;m.toggleClass("open");var D=i("#tabzilla-contents").height();m.animate({height:D},200,function(){m.css("height","auto")});d.attr({"aria-expanded":"true"}).addClass("tabzilla-opened").removeClass("tabzilla-closed");m.focus();return m};b.close=function(){x=false;m.animate({height:0},200,function(){m.toggleClass("open")});d.attr({"aria-expanded":"false"}).addClass("tabzilla-closed").removeClass("tabzilla-opened");return d};b.opened=function(){if(A){console.warn("This call is soon going to be deprecated, please replace it with Tabzilla.open() instead.")}return b.open()};b.closed=function(){if(A){console.warn("This call is soon going to be deprecated, please replace it with Tabzilla.close() instead.")}return b.close()};var z=function(){i.extend(i.easing,{easeInOut:function(E,F,D,H,G){if((F/=G/2)<1){return H/2*F*F+D}return -H/2*((--F)*(F-2)-1)+D}})};var o=function(){window.matchMedia=window.matchMedia||(function(H,I){var F;var D=H.documentElement;var E=D.firstElementChild||D.firstChild;var G=H.createElement("body");var J=H.createElement("div");J.id="mq-test-1";J.style.cssText="position:absolute;top:-100em";G.style.background="none";G.appendChild(J);return function(K){J.innerHTML='&shy;<style media="'+K+'"> #mq-test-1 { width: 42px; }</style>';D.insertBefore(G,E);F=J.offsetWidth===42;D.removeChild(G);return{matches:F,media:K}}}(document))};var t=function(){if(0==i("#tabzilla-panel").length){i("body").prepend(s)}d=i("#tabzilla");m=i("#tabzilla-panel");j=i("#tabzilla-nav");C=j.find("h2");if(p&&!w){o();w=true}z();y();i(window).on("resize",function(){y()});m.on("keydown",function(D){if(D.which===27){D.preventDefault();close()}});d.attr("aria-label","Mozilla links");d.on("click",function(D){D.preventDefault();if(x){b.close()}else{b.open()}})};var B=function(F){var E=function(){l=window.jQuery.noConflict(true);i=l;F.call()};var D=document.createElement("script");if(D.readyState){D.onreadystatechange=function(){if(D.readyState==="loaded"||D.readyState==="complete"){D.onreadystatechange=null;E.call()}}}else{D.onload=E}D.src="//mozorg.cdn.mozilla.net/media/js/libs/jquery-"+h+".min.js";document.getElementsByTagName("head")[0].appendChild(D)};var v=function(E,D){E=(""+E).split(".");D=(""+D).split(".");while(E.length<D.length){E.push("0")}while(D.length<E.length){D.push("0")}for(var F=0;F<E.length;F++){if(E[F]>D[F]){return 1}if(E[F]<D[F]){return -1}}return 0};(function(){if(window.jQuery!==undefined&&v(window.jQuery.fn.jquery,h)!==-1){l=window.jQuery;i=l;i(document).ready(t)}else{B(t)}})();var s='<div id="tabzilla-panel" class="close-nav" tabindex="-1">  <div id="tabzilla-contents">    <div id="tabzilla-promo">    <div id="tabzilla-promo-webwewant" class="snippet">      <a href="https://webwewant.mozilla.org/?icn=tabz">        <h4>你想要什麼樣的網路？</h4>        <p>分享你的觀點</p>      </a>    </div><!-- end of promo-name -->    </div>    <!-- end of tabzilla-promo -->    <div id="tabzilla-nav">      <ul>        <li class="sitemap">          <h2>Firefox</h2>          <div>            <ul>              <li>                <a href="//mozilla.com.tw/firefox/download/" title="下載 Mozilla Firefox 中文桌面版" tabindex="-1">Firefox 免費下載</a>              </li>              <li>                <a href="//mozilla.com.tw/firefox/desktop/" title="下載 Mozilla Firefox 中文桌面版">Firefox 桌面版</a>              </li>              <li>                <a href="//mozilla.com.tw/firefox/mobile/" title="Mozilla Firefox 行動版">Firefox 行動版</a>              </li>              <li>                <a href="//mozilla.com.tw/firefox/channel/" title="Mozilla Firefox 未來發行版">Firefox 未來發行版</a>              </li>              <li>                <a href="https://addons.mozilla.org/zh-TW/firefox/" title="Firefox 附加元件">附加元件</a>              </li>              <li>                <a href="https://support.mozilla.com/zh-TW/home" title="Firefox 說明文件、支援中心">支援中心</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>Firefox OS</h2>          <div>            <ul>              <li>                <a title="Firefox OS 詳細介紹" href="//mozilla.com.tw/firefox/os/" tabindex="-1">詳細介紹</a>              </li>              <li>                <a title="Firefox OS 合作夥伴專區" href="//mozilla.com.tw/firefox/partners/" tabindex="-1">合作夥伴專區</a>              </li>              <li>                <a title="Firefox OS 支援中心" href="//support.mozilla.org/products/firefox-os" tabindex="-1">支援中心</a>              </li>              <li>                <a title="Firefox OS 常見問答集" href="//mozilla.com.tw/firefox/os/faq/" tabindex="-1">常見問答集</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>社群參與</h2>          <div>            <ul>              <li>                <a href="http://firefox.club.tw/" title="Firefox 活力軍">Firefox 設計品</a>              </li>              <li>                <a href="//mozilla.com.tw/community/student/" title="校園大使">校園大使</a>              </li>              <li>                <a href="//mozilla.com.tw/community/contribute/" title="社群專案">社群專案</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>訊息中心</h2>          <div>            <ul>              <li>                <a href="//blog.mozilla.com.tw/main" title="部落格">部落格</a>              </li>              <li>                <a href="//mozilla.com.tw/news/press/" title="新聞室">新聞室</a>              </li>              <li>                <a href="//blog.mozilla.com.tw/events-list" title="活動訊息">活動訊息</a>              </li>              <li>                <a href="//tech.mozilla.com.tw/" title="謀智台客">謀智台客</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>關於我們</h2>          <div>            <ul>              <li>                <a href="//mozilla.com.tw/about/manifesto/" title="Mozilla 宣言">Mozilla 宣言</a>              </li>              <li>                <a href="//mozilla.com.tw/about/space/" title="Mozilla Space">Mozilla Space</a>              </li>              <li>                <a href="//mozilla.com.tw/about/careers/" title="工作機會">工作機會</a>              </li>              <li>                <a href="//mozilla.com.tw/about/intern/" title="工作機會">實習機會</a>              </li>              <li>                <a href="//mozilla.com.tw/about/contact/" title="聯絡資訊">聯絡資訊</a>              </li>              <li>                <a href="//mozilla.org/en-US/" title="Mozilla (US)">Mozilla (US)</a>              </li>            </ul>          </div>        </li>        <!-- end of sitemap -->      </ul>    </div>    <!-- end of tabzilla-nav -->  </div>  <!-- end of tabzilla-content --></div><!-- end of tabzilla-panel -->';return b})(Tabzilla||{});    </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

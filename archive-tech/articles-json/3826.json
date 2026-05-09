@@ -12,272 +12,264 @@
   "author": "等一下先生",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=3826",
-  "archive_url": "https://web.archive.org/web/20191118134235id_/https://tech.mozilla.com.tw/?p=3826",
+  "archive_url": "https://web.archive.org/web/20191118134235/https://tech.mozilla.com.tw/?p=3826",
   "wayback_timestamp": "20191118134235",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo1.png\"><img class=\"alignnone wp-image-3845\" alt=\"cgdb_logo\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo1.png\" width=\"193\" height=\"154\" /></a></p>\n<p>我們在開發過程中，常常會使用 GDB 來找 bug，但是它是純文字介面，使用上還是有些不便，幸好現在可以找到不少 open source project 來改進這些問題，今天所介紹的 CGDB<a href=\"http://cgdb.github.io/\">[1]</a> 工具，是我使用過覺得相當好用的工具，讓你在漫漫長夜的 debug 過程中，得到一點小小的慰藉。CGDB 其實沒有 DEBUG 的能力，它底層還是需要呼叫GDB的，它使用 GDB MI<a href=\"https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI.html\">[2]</a> 的介面，重新包裝了 GDB ，讓你用更簡單的方式操作 GDB。</p>\n<h3>CGDB 的特點</h3>\n<ul>\n<li>讓你人生變彩色的 syntax highlight source window，可以不用切到其他 editor 就可查看或搜尋程式碼。</li>\n<li>簡單的 breakpoint 新增與刪除方式。</li>\n</ul>\n<p>當然 CGDB 還有其他好用的功能，網路上有完整的文件<a href=\"http://cgdb.github.io/docs/cgdb.html\">[3]</a>可以參考。</p>\n<h3>安裝 CGDB</h3>\n<p>要在 ubuntu 上安裝 CGDB 相當簡單，如果不想自己 build ，直使用 apt-get 安裝就可以了。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5dd29fcb35f65282491356\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\napt-get install cgdb</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5dd29fcb35f65282491356-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5dd29fcb35f65282491356-1\"><span class=\"crayon-v\">apt</span><span class=\"crayon-o\">-</span><span class=\"crayon-e\">get </span><span class=\"crayon-e\">install </span><span class=\"crayon-v\">cgdb</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0010 seconds] -->\r\n<p>安裝完成後，直接執行程式，看到 CGDB logo 就代表安裝成功囉。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5dd29fcb35f70626264869\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\ncgdb</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5dd29fcb35f70626264869-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5dd29fcb35f70626264869-1\"><span class=\"crayon-v\">cgdb</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo.png\"><img class=\"alignnone size-medium wp-image-3838\" alt=\"cgdb_logo\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo-300x167.png\" width=\"300\" height=\"167\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo-300x167.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo.png 912w\" sizes=\"(max-width: 300px) 100vw, 300px\" /></a></p>\n<p>若你用的是 cross compiler tool chain 也沒關係，加個參數 -d 就可以用了。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5dd29fcb35f88577756257\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n# if your debugger is arm-linux-androideabi-gdb\r\ncgdb -d arm-linux-androideabi-gdb</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5dd29fcb35f88577756257-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29fcb35f88577756257-2\">2</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5dd29fcb35f88577756257-1\"><span class=\"crayon-p\"># if your debugger is arm-linux-androideabi-gdb</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29fcb35f88577756257-2\"><span class=\"crayon-v\">cgdb</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-i\">d</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">arm</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">linux</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">androideabi</span><span class=\"crayon-o\">-</span><span class=\"crayon-v\">gdb</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0001 seconds] -->\r\n<p></p>\n<h3>CGDB 101</h3>\n<p>要在 B2G GDB debug script 改用 CGDB 很簡單，只要修改 run-gdb.sh 內容，改用 CGDB 即可。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5dd29fcb35f8b997005562\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nelse\r\n echo $GDB -x $GDBINIT $PROG\r\n #$GDB -x $GDBINIT $PROG\r\n cgdb -d $GDB -- -x $GDBINIT $PROG #&lt;---use cgdb here\r\nfi</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5dd29fcb35f8b997005562-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29fcb35f8b997005562-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5dd29fcb35f8b997005562-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dd29fcb35f8b997005562-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5dd29fcb35f8b997005562-5\">5</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5dd29fcb35f8b997005562-1\"><span class=\"crayon-st\">else</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29fcb35f8b997005562-2\"><span class=\"crayon-h\"> </span><span class=\"crayon-i\">echo</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">GDB</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-i\">x</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">$</span><span class=\"crayon-i\">GDBINIT</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">PROG</span></div><div class=\"crayon-line\" id=\"crayon-5dd29fcb35f8b997005562-3\"><span class=\"crayon-h\"> </span><span class=\"crayon-p\">#$GDB -x $GDBINIT $PROG</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dd29fcb35f8b997005562-4\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">cgdb</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-i\">d</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">GDB</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">--</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">-</span><span class=\"crayon-i\">x</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">$</span><span class=\"crayon-i\">GDBINIT</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">$</span><span class=\"crayon-v\">PROG</span><span class=\"crayon-h\"> </span><span class=\"crayon-p\">#&lt;---use cgdb here</span></div><div class=\"crayon-line\" id=\"crayon-5dd29fcb35f8b997005562-5\"><span class=\"crayon-v\">fi</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>CGDB 頁面分成 source window 及 <a href=\"http://www.nbso.ca/\">casino online</a>  GDB command window 兩部分，你可以像使用原來 GDB 一樣，在 GDB command window 輸入 command 來 debug，也可以切到 source window 看你要 debug 的程式內容，兩個 window 切換方式和 VIM 相同，使用 Esc 及 i 鍵來切換。GDB command 的教學網路上可以找到不少文章，或是可以參考<a href=\"http://www.yolinux.com/TUTORIALS/GDB-Commands.html\">[4]</a>的教學內容。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window.png\"><img class=\"alignnone wp-image-3843\" alt=\"cgdb_window\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window.png\" width=\"798\" height=\"666\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window.png 914w, https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window-300x250.png 300w\" sizes=\"(max-width: 798px) 100vw, 798px\" /></a></p>\n<p>新增及移除 break point 方法很簡單，只要切到 source window 後，使用 PageDown/PageUp 及方向鍵移到你想要新增/刪除的位置，按下空白鍵就可以輕鬆新增/刪除 break point。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point.png\"><img class=\"alignnone wp-image-3842\" alt=\"cgdb_break_point\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point.png\" width=\"798\" height=\"465\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point.png 912w, https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point-300x175.png 300w\" sizes=\"(max-width: 798px) 100vw, 798px\" /></a></p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point.png\"><img class=\"alignnone wp-image-3844\" alt=\"cgdb_delete_break_point\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point.png\" width=\"798\" height=\"449\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point.png 910w, https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point-300x169.png 300w\" sizes=\"(max-width: 798px) 100vw, 798px\" /></a></p>\n<p>CGDB 還有其他好用的功能，像是可以自定義 macros 或是用 regexp 去查找程式，值得大家花時間試用看看。</p>\n<p>Reference:<br />\n[1] <a href=\"http://cgdb.github.io/\">http://cgdb.github.io/</a><br />\n[2] <a href=\"https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI.html\">https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI.html</a><br />\n[3] <a href=\"http://cgdb.github.io/docs/cgdb.html\">http://cgdb.github.io/docs/cgdb.html</a><br />\n[4] <a href=\"http://www.yolinux.com/TUTORIALS/GDB-Commands.html\">http://www.yolinux.com/TUTORIALS/GDB-Commands.html</a></p>\n\t\t\t</div>",
   "content_text": "我們在開發過程中，常常會使用 GDB 來找 bug，但是它是純文字介面，使用上還是有些不便，幸好現在可以找到不少 open source project 來改進這些問題，今天所介紹的 CGDB [1] 工具，是我使用過覺得相當好用的工具，讓你在漫漫長夜的 debug 過程中，得到一點小小的慰藉。CGDB 其實沒有 DEBUG 的能力，它底層還是需要呼叫GDB的，它使用 GDB MI [2] 的介面，重新包裝了 GDB ，讓你用更簡單的方式操作 GDB。 CGDB 的特點 讓你人生變彩色的 syntax highlight source window，可以不用切到其他 editor 就可查看或搜尋程式碼。 簡單的 breakpoint 新增與刪除方式。 當然 CGDB 還有其他好用的功能，網路上有完整的文件 [3] 可以參考。 安裝 CGDB 要在 ubuntu 上安裝 CGDB 相當簡單，如果不想自己 build ，直使用 apt-get 安裝就可以了。 apt-get install cgdb 1 apt - get install cgdb 安裝完成後，直接執行程式，看到 CGDB logo 就代表安裝成功囉。 cgdb 1 cgdb 若你用的是 cross compiler tool chain 也沒關係，加個參數 -d 就可以用了。 # if your debugger is arm-linux-androideabi-gdb cgdb -d arm-linux-androideabi-gdb 1 2 # if your debugger is arm-linux-androideabi-gdb cgdb - d arm - linux - androideabi - gdb CGDB 101 要在 B2G GDB debug script 改用 CGDB 很簡單，只要修改 run-gdb.sh 內容，改用 CGDB 即可。 else echo $GDB -x $GDBINIT $PROG #$GDB -x $GDBINIT $PROG cgdb -d $GDB -- -x $GDBINIT $PROG #<---use cgdb here fi 1 2 3 4 5 else echo $ GDB - x $ GDBINIT $ PROG #$GDB -x $GDBINIT $PROG cgdb - d $ GDB -- - x $ GDBINIT $ PROG #<---use cgdb here fi CGDB 頁面分成 source window 及 casino online GDB command window 兩部分，你可以像使用原來 GDB 一樣，在 GDB command window 輸入 command 來 debug，也可以切到 source window 看你要 debug 的程式內容，兩個 window 切換方式和 VIM 相同，使用 Esc 及 i 鍵來切換。GDB command 的教學網路上可以找到不少文章，或是可以參考 [4] 的教學內容。 新增及移除 break point 方法很簡單，只要切到 source window 後，使用 PageDown/PageUp 及方向鍵移到你想要新增/刪除的位置，按下空白鍵就可以輕鬆新增/刪除 break point。 CGDB 還有其他好用的功能，像是可以自定義 macros 或是用 regexp 去查找程式，值得大家花時間試用看看。 Reference: [1] http://cgdb.github.io/ [2] https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI.html [3] http://cgdb.github.io/docs/cgdb.html [4] http://www.yolinux.com/TUTORIALS/GDB-Commands.html",
   "images": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/gonk-misc-folder-150x150.jpg",
+      "alt": "gonk-misc folder",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/Screen-Shot-2014-01-06-at-9.26.49-AM-150x150.png",
+      "alt": "圖五：截圖顯示",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/85/4a80fecf0506c1de45149532963c7f3a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo1.png",
       "alt": "cgdb_logo",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3826/wp-content/uploads/2014/01/cgdb_logo1.png",
-      "markdown_path": "../assets/3826/wp-content/uploads/2014/01/cgdb_logo1.png",
-      "wayback_timestamp": "20191118134235",
-      "asset_archive_url": "https://web.archive.org/web/20191118134235id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo1.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo-300x167.png",
       "alt": "cgdb_logo",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3826/wp-content/uploads/2014/01/cgdb_logo-300x167.png",
-      "markdown_path": "../assets/3826/wp-content/uploads/2014/01/cgdb_logo-300x167.png",
-      "wayback_timestamp": "20191118134235",
-      "asset_archive_url": "https://web.archive.org/web/20191118134235id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo-300x167.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo.png",
+      "alt": "cgdb_logo",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window.png",
       "alt": "cgdb_window",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3826/wp-content/uploads/2014/01/cgdb_window.png",
-      "markdown_path": "../assets/3826/wp-content/uploads/2014/01/cgdb_window.png",
-      "wayback_timestamp": "20191118134235",
-      "asset_archive_url": "https://web.archive.org/web/20191118134235id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window-300x250.png",
+      "alt": "cgdb_window",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point.png",
       "alt": "cgdb_break_point",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3826/wp-content/uploads/2014/01/cgdb_break_point.png",
-      "markdown_path": "../assets/3826/wp-content/uploads/2014/01/cgdb_break_point.png",
-      "wayback_timestamp": "20191118134235",
-      "asset_archive_url": "https://web.archive.org/web/20191118134235id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point-300x175.png",
+      "alt": "cgdb_break_point",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point.png",
       "alt": "cgdb_delete_break_point",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3826/wp-content/uploads/2014/01/cgdb_delete_break_point.png",
-      "markdown_path": "../assets/3826/wp-content/uploads/2014/01/cgdb_delete_break_point.png",
-      "wayback_timestamp": "20191118134235",
-      "asset_archive_url": "https://web.archive.org/web/20191118134235id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo.png",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point-300x169.png",
+      "alt": "cgdb_delete_break_point",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/3826/wp-content/uploads/2014/01/cgdb_logo.png",
-      "markdown_path": "../assets/3826/wp-content/uploads/2014/01/cgdb_logo.png",
-      "wayback_timestamp": "20191118134235",
-      "asset_archive_url": "https://web.archive.org/web/20191118134235id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 3826,
-      "page_type": "post",
-      "title": "CGDB – 更好用的 GDB",
-      "page_timestamp": "20191118134235",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/85/4a80fecf0506c1de45149532963c7f3a-bpthumb.jpg",
-      "source": "img",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/85/4a80fecf0506c1de45149532963c7f3a-bpthumb.jpg",
-      "archive_path": "assets/3826/wp-content/uploads/avatars/85/4a80fecf0506c1de45149532963c7f3a-bpthumb.jpg",
-      "markdown_path": "../assets/3826/wp-content/uploads/avatars/85/4a80fecf0506c1de45149532963c7f3a-bpthumb.jpg",
-      "wayback_timestamp": "20171206222839",
-      "asset_archive_url": "https://web.archive.org/web/20171206222839id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/85/4a80fecf0506c1de45149532963c7f3a-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
     },
     {
-      "post_id": 3826,
-      "page_type": "post",
-      "title": "CGDB – 更好用的 GDB",
-      "page_timestamp": "20191118134235",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window-300x250.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 5,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window.png",
-      "archive_path": "assets/3826/006-5d24236653d9.png",
-      "markdown_path": "../assets/3826/006-5d24236653d9.png",
-      "wayback_timestamp": "20160620201523",
-      "asset_archive_url": "https://web.archive.org/web/20160620201523id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 3826,
-      "page_type": "post",
-      "title": "CGDB – 更好用的 GDB",
-      "page_timestamp": "20191118134235",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point-300x175.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 7,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point.png",
-      "archive_path": "assets/3826/008-58125b60c093.png",
-      "markdown_path": "../assets/3826/008-58125b60c093.png",
-      "wayback_timestamp": "20160620194902",
-      "asset_archive_url": "https://web.archive.org/web/20160620194902id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 3826,
-      "page_type": "post",
-      "title": "CGDB – 更好用的 GDB",
-      "page_timestamp": "20191118134235",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point-300x169.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 9,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point.png",
-      "archive_path": "assets/3826/010-854565c9071f.png",
-      "markdown_path": "../assets/3826/010-854565c9071f.png",
-      "wayback_timestamp": "20160621001043",
-      "asset_archive_url": "https://web.archive.org/web/20160621001043id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "media": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/gonk-misc-folder-150x150.jpg",
+      "alt": "gonk-misc folder",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/Screen-Shot-2014-01-06-at-9.26.49-AM-150x150.png",
+      "alt": "圖五：截圖顯示",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/85/4a80fecf0506c1de45149532963c7f3a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo1.png",
       "alt": "cgdb_logo",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3826/wp-content/uploads/2014/01/cgdb_logo1.png",
-      "markdown_path": "../assets/3826/wp-content/uploads/2014/01/cgdb_logo1.png",
-      "wayback_timestamp": "20191118134235",
-      "asset_archive_url": "https://web.archive.org/web/20191118134235id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo1.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo-300x167.png",
       "alt": "cgdb_logo",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3826/wp-content/uploads/2014/01/cgdb_logo-300x167.png",
-      "markdown_path": "../assets/3826/wp-content/uploads/2014/01/cgdb_logo-300x167.png",
-      "wayback_timestamp": "20191118134235",
-      "asset_archive_url": "https://web.archive.org/web/20191118134235id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo-300x167.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo.png",
+      "alt": "cgdb_logo",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window.png",
       "alt": "cgdb_window",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3826/wp-content/uploads/2014/01/cgdb_window.png",
-      "markdown_path": "../assets/3826/wp-content/uploads/2014/01/cgdb_window.png",
-      "wayback_timestamp": "20191118134235",
-      "asset_archive_url": "https://web.archive.org/web/20191118134235id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window-300x250.png",
+      "alt": "cgdb_window",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point.png",
       "alt": "cgdb_break_point",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3826/wp-content/uploads/2014/01/cgdb_break_point.png",
-      "markdown_path": "../assets/3826/wp-content/uploads/2014/01/cgdb_break_point.png",
-      "wayback_timestamp": "20191118134235",
-      "asset_archive_url": "https://web.archive.org/web/20191118134235id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point-300x175.png",
+      "alt": "cgdb_break_point",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point.png",
       "alt": "cgdb_delete_break_point",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3826/wp-content/uploads/2014/01/cgdb_delete_break_point.png",
-      "markdown_path": "../assets/3826/wp-content/uploads/2014/01/cgdb_delete_break_point.png",
-      "wayback_timestamp": "20191118134235",
-      "asset_archive_url": "https://web.archive.org/web/20191118134235id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo.png",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point-300x169.png",
+      "alt": "cgdb_delete_break_point",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/3826/wp-content/uploads/2014/01/cgdb_logo.png",
-      "markdown_path": "../assets/3826/wp-content/uploads/2014/01/cgdb_logo.png",
-      "wayback_timestamp": "20191118134235",
-      "asset_archive_url": "https://web.archive.org/web/20191118134235id_/https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_logo.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 3826,
-      "page_type": "post",
-      "title": "CGDB – 更好用的 GDB",
-      "page_timestamp": "20191118134235",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/85/4a80fecf0506c1de45149532963c7f3a-bpthumb.jpg",
-      "source": "img",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/85/4a80fecf0506c1de45149532963c7f3a-bpthumb.jpg",
-      "archive_path": "assets/3826/wp-content/uploads/avatars/85/4a80fecf0506c1de45149532963c7f3a-bpthumb.jpg",
-      "markdown_path": "../assets/3826/wp-content/uploads/avatars/85/4a80fecf0506c1de45149532963c7f3a-bpthumb.jpg",
-      "wayback_timestamp": "20171206222839",
-      "asset_archive_url": "https://web.archive.org/web/20171206222839id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/85/4a80fecf0506c1de45149532963c7f3a-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
     },
     {
-      "post_id": 3826,
-      "page_type": "post",
-      "title": "CGDB – 更好用的 GDB",
-      "page_timestamp": "20191118134235",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window-300x250.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 5,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window.png",
-      "archive_path": "assets/3826/006-5d24236653d9.png",
-      "markdown_path": "../assets/3826/006-5d24236653d9.png",
-      "wayback_timestamp": "20160620201523",
-      "asset_archive_url": "https://web.archive.org/web/20160620201523id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_window.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 3826,
-      "page_type": "post",
-      "title": "CGDB – 更好用的 GDB",
-      "page_timestamp": "20191118134235",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point-300x175.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 7,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point.png",
-      "archive_path": "assets/3826/008-58125b60c093.png",
-      "markdown_path": "../assets/3826/008-58125b60c093.png",
-      "wayback_timestamp": "20160620194902",
-      "asset_archive_url": "https://web.archive.org/web/20160620194902id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_break_point.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
-      "post_id": 3826,
-      "page_type": "post",
-      "title": "CGDB – 更好用的 GDB",
-      "page_timestamp": "20191118134235",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point-300x169.png",
-      "source": "img-srcset",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 9,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point.png",
-      "archive_path": "assets/3826/010-854565c9071f.png",
-      "markdown_path": "../assets/3826/010-854565c9071f.png",
-      "wayback_timestamp": "20160621001043",
-      "asset_archive_url": "https://web.archive.org/web/20160621001043id_/http://tech.mozilla.com.tw/wp-content/uploads/2014/01/cgdb_delete_break_point.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -339,6 +331,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

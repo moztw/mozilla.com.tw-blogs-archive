@@ -14,44 +14,180 @@
   "author": "timdream",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=351",
-  "archive_url": "https://web.archive.org/web/20150512050547id_/https://tech.mozilla.com.tw/?p=351",
-  "wayback_timestamp": "20150512050547",
+  "archive_url": "https://web.archive.org/web/20150429225528/https://tech.mozilla.com.tw/posts/351/%e9%97%9c%e6%96%bc-b2g-%e8%a8%88%e7%95%ab%ef%bc%8c%e4%bb%a5%e5%8f%8a-web-%e7%9a%84%e8%aa%a4%e8%a7%a3",
+  "wayback_timestamp": "20150429225528",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p>過去的幾個月中，我常在不同的場合被問到一些關於 <a href=\"https://www.mozilla.org/b2g/\">Boot to Gecko</a>（B2G）專案的問題。我想在這裡整理一下一些常見的，以及對於 Web 本身的誤解做為解答。</p>\n<h3>誤解 #1：Boot to Gecko 是另一個手機 APP 開發平台</h3>\n<p>錯！如果想在 B2G （或任何有瀏覽器的手機、平板）上面執行您的 APP，只需要將程式放到你我都熟知的 Web 上就行。</p>\n<p>B2G 的目標是<em>開機就到網路（Boot to the web）</em>。此計畫希望能讓全民共有的 Open Web，在技術上能和其他手機 APP 平台競爭。對現有的 APP 開發商來說，Web 的確是另一個需重新開發的平台（您必須要把 Obj-C/Java 的程式移植到 Web），但好處是移植後的程式就真正的跨平台了，不只是 B2G APP、PhoneGap APP、或 Metro-style Windows 8 APP，所有平台的使用者只要輸入網址都能夠使用。此外，在 Web 上散佈程式也讓您不再受任何平台廠商的控制，畢竟 Web 並不是任何廠商的私有平台。</p>\n<h3>誤解 #2：執行 B2G 的手機沒網路就不能用</h3>\n<p>雖然說 B2G 上的所有程式，包含主畫面，都是網站，但離線存取的能力卻可以非常簡單的用 <a href=\"http://developers.whatwg.org/offline.html\">HTML5 Offline AppCache</a> 技術實作。這是一個目前就可以在 Web 上使用的技術，許多桌面與手機瀏覽器都已經可以支援了。您唯一需要認真處理的事情，是要確定您的 APP 到底有多需要網路連線。即便是 iOS、Twitter 或是 Facebook APP 在沒有網路的情況下也是沒有用的。您應該要在程式架構中清楚的切分資源檔以及線上即時的資訊，畢竟，Web App 已經不只是個網站而已了。</p>\n<h3>誤解 #3：就使用者體驗的觀點，Web 比「原生應用程式」差</h3>\n<p>這是一個筆者強烈反對的論點。若要說今日的手機瀏覽器比手機原生應用程式差，唯一的原因只是因為平台開發廠商不願意花費心力在瀏覽器開發上。開發瀏覽器對平台廠商是有利益衝突的。而限縮硬體 API 存取，除了權限管理的因素以外，也是因為同樣的原因。在 Mozilla，我們可以證明投入足夠的工程心力後，手機瀏覽器（或稱為 Web runtime），可以在行動裝置上順暢執行，提供所謂的「原生體驗」。對於使用 B2G 或是 <a href=\"http://en.wikipedia.org/wiki/Google_Chrome_OS\">Chrome OS</a> 作業系統的裝置來說，所謂的原生程式就是 Web APP，無論是有意或無意的，實在沒有理由讓它執行緩慢。</p>\n<h3>誤解 #4：在 B2G 上面執行的 Web APP 只能在 B2G 或是有 Mozilla Web API 的環境執行</h3>\n<p>這個說法不算全錯。如果需要特定的硬體存取，例如手機簡訊資料庫或是電話撥號，一開始 B2G 的確是唯一有提供這些功能的環境。不過，我們設計這些 Web API 的初衷就是希望它們最後能被標準化，同時，我們也和標準組織合作，讓這些 API 規格能夠完整、清楚，方便其他的廠商實作。舉例來說，我們的 <a href=\"https://wiki.mozilla.org/WebAPI\">Web API</a> 並不是放在 <code>PhoneGap.*</code>、<code>Windows.*</code>、或是 <code>Ti.*</code> 物件底下，而是原本該放的那些地方，例如 <code>navigator.*</code> （不過因為這些 API 目前都是實驗功能，都帶有 moz prefix，所以還是建議在程式碼內做好功能偵測）。</p>\n<p>如果您的 APP 是使用在包裹到原生平台方案執行，那您的 APP 才會永遠仰賴那些包裹程式提供的 API。Mozilla 認為您應該在 Web 上開發與散佈 Web APP。</p>\n<h3>誤解 #5：把 APP 放在 Web 上等於是免費提供，開發者沒有辦法藉此營利</h3>\n<p>是呀，說的好像從來沒有人因為在 Web 上提供服務或是應用，而賺大錢變成億萬富翁一樣。</p>\n<p>在 Web 上有無數的商業營利方法，當然有除了向使用者乞求 US$0.99 以外的方式。沒有錯，現在看起來，封閉的平台，以及單一的「App Store」散佈管道的確能有效的為開發者帶來營收（但同時在平台取走 30% 的處理費），不過 Mozilla 相信，無論是開發者或是使用者，選擇權是更重要的。</p>\n<p>Mozilla 同時也在探索 Web 上更有效的營利與散佈模式。我們有 <a href=\"https://developer.mozilla.org/Apps\">Open Web App</a> 計畫，以及 <a href=\"https://www.mozilla.org/en-US/apps/\">Mozilla Marketplace</a> 網站。這兩個計畫從設計開始都深深的嵌入了「給予選擇」這個目標，無論是瀏覽器內的 App API 或是店面服務網站，以及使用者認證與授權的系統（這是 <a href=\"http://www.mozilla.org/persona/\">Mozilla Persona</a>，過去稱為 BrowserID 的研究範圍）</p>\n<h3>結論</h3>\n<p>就像 Mozilla 開發 Firefox 時所希望的目標一樣，我們希望生產出很棒的產品去影響市場，進而由市場去影響其他廠商。沒有人擁有 Web，也沒有人應該獨佔 Web。Mozilla 並不是以賺錢或是成為市場霸主為目標，而是將目標放於把 Web 導向好的方向，讓 Web 在未來數個世紀能繼續帶給人們創新與機會。</p>\n<p><a href=\"http://www.opera.com/\">Opera Software</a> 的 CTO，Håkon Wium Lie <a href=\"http://www.youtube.com/watch?v=gvVda93XCEQ&amp;t=3m14s\">曾說 Web 會至少延續 500 年以上</a>，對人類文明、社會有像古騰堡活版印刷術之於歐洲社會一樣的衝擊。筆者完全同意他的看法，即便是就如他在同樣的訪問所說的，你我都不可能活到那個時候去評斷對錯。讓我們一起努力來把 Web 變得更好吧。</p>\n<p><strong>澄清：</strong>此文章為筆者的個人發言，不盡然代表 Mozilla 或是 Mozilla 公司立場。</p>\n<p>Original post in English can be found <a href=\"http://blog.timc.idv.tw/posts/common-misconceptions-about-boot-to-gecko-and-the-web/\">here</a>.</p>\n\t\t\t</div>",
   "content_text": "過去的幾個月中，我常在不同的場合被問到一些關於 Boot to Gecko （B2G）專案的問題。我想在這裡整理一下一些常見的，以及對於 Web 本身的誤解做為解答。 誤解 #1：Boot to Gecko 是另一個手機 APP 開發平台 錯！如果想在 B2G （或任何有瀏覽器的手機、平板）上面執行您的 APP，只需要將程式放到你我都熟知的 Web 上就行。 B2G 的目標是 開機就到網路（Boot to the web） 。此計畫希望能讓全民共有的 Open Web，在技術上能和其他手機 APP 平台競爭。對現有的 APP 開發商來說，Web 的確是另一個需重新開發的平台（您必須要把 Obj-C/Java 的程式移植到 Web），但好處是移植後的程式就真正的跨平台了，不只是 B2G APP、PhoneGap APP、或 Metro-style Windows 8 APP，所有平台的使用者只要輸入網址都能夠使用。此外，在 Web 上散佈程式也讓您不再受任何平台廠商的控制，畢竟 Web 並不是任何廠商的私有平台。 誤解 #2：執行 B2G 的手機沒網路就不能用 雖然說 B2G 上的所有程式，包含主畫面，都是網站，但離線存取的能力卻可以非常簡單的用 HTML5 Offline AppCache 技術實作。這是一個目前就可以在 Web 上使用的技術，許多桌面與手機瀏覽器都已經可以支援了。您唯一需要認真處理的事情，是要確定您的 APP 到底有多需要網路連線。即便是 iOS、Twitter 或是 Facebook APP 在沒有網路的情況下也是沒有用的。您應該要在程式架構中清楚的切分資源檔以及線上即時的資訊，畢竟，Web App 已經不只是個網站而已了。 誤解 #3：就使用者體驗的觀點，Web 比「原生應用程式」差 這是一個筆者強烈反對的論點。若要說今日的手機瀏覽器比手機原生應用程式差，唯一的原因只是因為平台開發廠商不願意花費心力在瀏覽器開發上。開發瀏覽器對平台廠商是有利益衝突的。而限縮硬體 API 存取，除了權限管理的因素以外，也是因為同樣的原因。在 Mozilla，我們可以證明投入足夠的工程心力後，手機瀏覽器（或稱為 Web runtime），可以在行動裝置上順暢執行，提供所謂的「原生體驗」。對於使用 B2G 或是 Chrome OS 作業系統的裝置來說，所謂的原生程式就是 Web APP，無論是有意或無意的，實在沒有理由讓它執行緩慢。 誤解 #4：在 B2G 上面執行的 Web APP 只能在 B2G 或是有 Mozilla Web API 的環境執行 這個說法不算全錯。如果需要特定的硬體存取，例如手機簡訊資料庫或是電話撥號，一開始 B2G 的確是唯一有提供這些功能的環境。不過，我們設計這些 Web API 的初衷就是希望它們最後能被標準化，同時，我們也和標準組織合作，讓這些 API 規格能夠完整、清楚，方便其他的廠商實作。舉例來說，我們的 Web API 並不是放在 PhoneGap.* 、 Windows.* 、或是 Ti.* 物件底下，而是原本該放的那些地方，例如 navigator.* （不過因為這些 API 目前都是實驗功能，都帶有 moz prefix，所以還是建議在程式碼內做好功能偵測）。 如果您的 APP 是使用在包裹到原生平台方案執行，那您的 APP 才會永遠仰賴那些包裹程式提供的 API。Mozilla 認為您應該在 Web 上開發與散佈 Web APP。 誤解 #5：把 APP 放在 Web 上等於是免費提供，開發者沒有辦法藉此營利 是呀，說的好像從來沒有人因為在 Web 上提供服務或是應用，而賺大錢變成億萬富翁一樣。 在 Web 上有無數的商業營利方法，當然有除了向使用者乞求 US$0.99 以外的方式。沒有錯，現在看起來，封閉的平台，以及單一的「App Store」散佈管道的確能有效的為開發者帶來營收（但同時在平台取走 30% 的處理費），不過 Mozilla 相信，無論是開發者或是使用者，選擇權是更重要的。 Mozilla 同時也在探索 Web 上更有效的營利與散佈模式。我們有 Open Web App 計畫，以及 Mozilla Marketplace 網站。這兩個計畫從設計開始都深深的嵌入了「給予選擇」這個目標，無論是瀏覽器內的 App API 或是店面服務網站，以及使用者認證與授權的系統（這是 Mozilla Persona ，過去稱為 BrowserID 的研究範圍） 結論 就像 Mozilla 開發 Firefox 時所希望的目標一樣，我們希望生產出很棒的產品去影響市場，進而由市場去影響其他廠商。沒有人擁有 Web，也沒有人應該獨佔 Web。Mozilla 並不是以賺錢或是成為市場霸主為目標，而是將目標放於把 Web 導向好的方向，讓 Web 在未來數個世紀能繼續帶給人們創新與機會。 Opera Software 的 CTO，Håkon Wium Lie 曾說 Web 會至少延續 500 年以上 ，對人類文明、社會有像古騰堡活版印刷術之於歐洲社會一樣的衝擊。筆者完全同意他的看法，即便是就如他在同樣的訪問所說的，你我都不可能活到那個時候去評斷對錯。讓我們一起努力來把 Web 變得更好吧。 澄清： 此文章為筆者的個人發言，不盡然代表 Mozilla 或是 Mozilla 公司立場。 Original post in English can be found here .",
   "images": [
     {
-      "post_id": 351,
-      "page_type": "post",
-      "title": "關於 B2G 計畫，以及 Web 的誤解",
-      "page_timestamp": "20150512050547",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/4/ab48642a1a745af8cdc6da3f1b6c49df-bpthumb.jpg",
-      "source": "img",
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/4/ab48642a1a745af8cdc6da3f1b6c49df-bpthumb.jpg",
-      "archive_path": "assets/351/wp-content/uploads/avatars/4/ab48642a1a745af8cdc6da3f1b6c49df-bpthumb.jpg",
-      "markdown_path": "../assets/351/wp-content/uploads/avatars/4/ab48642a1a745af8cdc6da3f1b6c49df-bpthumb.jpg",
-      "wayback_timestamp": "20150614203126",
-      "asset_archive_url": "https://web.archive.org/web/20150614203126id_/https://tech.mozilla.com.tw/wp-content/uploads/avatars/4/ab48642a1a745af8cdc6da3f1b6c49df-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/4/ab48642a1a745af8cdc6da3f1b6c49df-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/04/224549_10152223372575022_940144284_n-150x150.jpg",
+      "alt": "224549_10152223372575022_940144284_n",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/500px-Mozilla_Foundation_logo.svg_-150x143.jpg",
+      "alt": "500px-Mozilla_Foundation_logo.svg",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/channels-firefox.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
     }
   ],
   "media": [
     {
-      "post_id": 351,
-      "page_type": "post",
-      "title": "關於 B2G 計畫，以及 Web 的誤解",
-      "page_timestamp": "20150512050547",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/4/ab48642a1a745af8cdc6da3f1b6c49df-bpthumb.jpg",
-      "source": "img",
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/4/ab48642a1a745af8cdc6da3f1b6c49df-bpthumb.jpg",
-      "archive_path": "assets/351/wp-content/uploads/avatars/4/ab48642a1a745af8cdc6da3f1b6c49df-bpthumb.jpg",
-      "markdown_path": "../assets/351/wp-content/uploads/avatars/4/ab48642a1a745af8cdc6da3f1b6c49df-bpthumb.jpg",
-      "wayback_timestamp": "20150614203126",
-      "asset_archive_url": "https://web.archive.org/web/20150614203126id_/https://tech.mozilla.com.tw/wp-content/uploads/avatars/4/ab48642a1a745af8cdc6da3f1b6c49df-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/4/ab48642a1a745af8cdc6da3f1b6c49df-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/04/224549_10152223372575022_940144284_n-150x150.jpg",
+      "alt": "224549_10152223372575022_940144284_n",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/500px-Mozilla_Foundation_logo.svg_-150x143.jpg",
+      "alt": "500px-Mozilla_Foundation_logo.svg",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpfull.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://mozilla.com.tw/assets/css/img/mozcomtw/channels-firefox.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
     }
   ],
   "links": [
@@ -97,6 +233,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

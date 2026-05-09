@@ -14,236 +14,240 @@
   "author": "EragonJ",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=3560",
-  "archive_url": "https://web.archive.org/web/20200919184054id_/https://tech.mozilla.com.tw/?p=3560",
+  "archive_url": "https://web.archive.org/web/20200919184054/https://tech.mozilla.com.tw/?p=3560",
   "wayback_timestamp": "20200919184054",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg\"><img class=\"alignnone size-full wp-image-3573\" alt=\"iac\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg\" width=\"600\" height=\"300\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg 600w, https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac-300x150.jpg 300w\" sizes=\"(max-width: 600px) 100vw, 600px\" /></a></p>\n<p>在開發 App 的時候，我們有時候需要在App之間傳遞資訊，而今天我們要介紹的主角就是新引入的 <a href=\"https://wiki.mozilla.org/WebAPI/Inter_App_Communication\" target=\"_blank\">WebAPI: IAC (Inter App Communication)</a>，有了這個好東西，我們就可以輕易的在 App 間傳遞訊息，以下就用筆者遇到的例子來說明吧：</p>\n<h2>User story</h2>\n<p>當使用者拿到 Firefox OS 手機，第一次開機的時候，會自動先開啓 FTU (First Time Use) App 作導覽。當導覽進行到最後一步的時候，會看到這個畫面，可以按下「Home」鍵回到主畫面。</p>\n<p style=\"text-align: center;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile.png\"><img class=\" wp-image-3561 aligncenter\" alt=\"ftu-mobile\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile-627x1024.png\" width=\"376\" height=\"614\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile-627x1024.png 627w, https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile-183x300.png 183w, https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile.png 1078w\" sizes=\"(max-width: 376px) 100vw, 376px\" /></a></p>\n<p>而在 Firefox OS 平板上，最後一步的導覽畫面會是這樣，但是改透過由螢幕下方往上滑動的手勢回到主畫面：</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet.png\"><img class=\"alignnone size-large wp-image-3562\" alt=\"ftu-tablet\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet-1024x640.png\" width=\"640\" height=\"400\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet-1024x640.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet-300x187.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet.png 1280w\" sizes=\"(max-width: 640px) 100vw, 640px\" /></a></p>\n<p>大家可能還不是很明白為什麼這個 User Story 下面要使用 IAC，讓我解釋一下。因為在手機剛啟動的時候，我們的 FTU 是一個獨立的 App，而這個 App 是被 System App 所呼叫起來的，兩個 App 之間如果需要溝通，就需要透過 IAC 來傳遞資料。</p>\n<p>之所以 FTU App 需要跟 System App 做溝通，是因為「使用者在 FTU 導覽過程中，是無法按 Home 鍵離開的」，但很不巧的這個需求在 Firefox OS 平台是 Tablet 的時候反而變成是一種限制，怎麼說呢，因為對 Tablet 來說，我們並沒有實體的 Home 鍵，因此<strong>「Swipe 向上的手勢」</strong>就被我們定義成<strong>「使用者按 Home 鍵」</strong>，但是在先前 Mobile 的需求下，使用者在 FTU 是不允許按 Home 鍵的！！因此這就產生了一個問題，我要怎麼判別使用者現在的情境是：</p>\n<ol>\n<li>Tablet 使用者</li>\n<li>FTU 已經導覽到最後一步</li>\n<li>使用者可以透過螢幕下方往上滑動的手勢（等同按 Home 鍵）離開 FTU App</li>\n</ol>\n<p>這個時候…<span style=\"font-size: 13px;\">我們就需要 IAC 的幫助！</span></p>\n<h2>IAC , we need your help</h2>\n<p>這邊要解釋一下 FTU App、System App 及 IAC 的角色。</p>\n<p>FTU App 的功用主要是在教導使用者如何初始設定 FxOS 及透過 step by step 的教學來了解如何使用 FxOS 的裝置，所以他可以知道使用者目前的 step 到哪個階段了。</p>\n<p>System App 在這裡的功用是在處理使用者按下 Home 鍵時要處理的事情，他只知道目前使用者是不是按下 Home 鍵（在 Tablet 就是 Swipe 向上的手勢），然後依照各個平台做相對應的事情。</p>\n<p>而 IAC 的角色就是 FTU App 及 System App 溝通的橋樑，因為 System App 不知道目前 FTU App 是不是到了最後一步，所以自然就無法解除阻擋 Home 鍵這件事情，所以在這個 User Story 下，當使用者來到最後一個 Step 的時候（而且是在 Tablet 的平台），FTU App 就會透過 IAC 和 System App 溝通，然後請求 System App 可以讓我們以透過 Swipe 向上的手勢（等同按 Home 鍵）離開 FTU App。</p>\n<p>在 Gaia 我是這麼做的：</p>\n<p>In FTU App :</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f6650b64509d956040143\" class=\"crayon-syntax crayon-theme-github crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n    if (this.currentStep &gt; this.numTutorialSteps) {\r\n      Tutorial.tutorialScreen.classList.remove('show');\r\n      Tutorial.tutorialFinish.classList.add('show');\r\n\r\n      // for large devices, we have to use IAC to tell system ftu is done\r\n      if (this.layout !== 'tiny') {\r\n        navigator.mozApps.getSelf().onsuccess = function(evt) {\r\n          var app = evt.target.result;\r\n          app.connect('ftucomms').then(function onConnAccepted(ports) {\r\n            ports.forEach(function(port) {\r\n              port.postMessage('done');\r\n            });\r\n          }, function onConnRejected(reason) {\r\n            console.log('FTU is rejected');\r\n            console.log(reason);\r\n          });\r\n        };\r\n      }\r\n    }</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f6650b64509d956040143-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b64509d956040143-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b64509d956040143-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b64509d956040143-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b64509d956040143-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b64509d956040143-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b64509d956040143-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b64509d956040143-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b64509d956040143-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b64509d956040143-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b64509d956040143-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b64509d956040143-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b64509d956040143-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b64509d956040143-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b64509d956040143-15\">15</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b64509d956040143-16\">16</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b64509d956040143-17\">17</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b64509d956040143-18\">18</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b64509d956040143-19\">19</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f6650b64509d956040143-1\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">currentStep</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">numTutorialSteps</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b64509d956040143-2\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">Tutorial</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">tutorialScreen</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">classList</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">remove</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'show'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b64509d956040143-3\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">Tutorial</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">tutorialFinish</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">classList</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">add</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'show'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b64509d956040143-4\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-5f6650b64509d956040143-5\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// for large devices, we have to use IAC to tell system ftu is done</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b64509d956040143-6\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">layout</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">!==</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">'tiny'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b64509d956040143-7\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">mozApps</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">getSelf</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">onsuccess</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">evt</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b64509d956040143-8\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">app</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">evt</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">target</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">result</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b64509d956040143-9\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">app</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">connect</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'ftucomms'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">.</span><span class=\"crayon-st\">then</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">onConnAccepted</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">ports</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b64509d956040143-10\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">ports</span><span class=\"crayon-sy\">.</span><span class=\"crayon-st\">forEach</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">port</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b64509d956040143-11\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">port</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">postMessage</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'done'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b64509d956040143-12\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b64509d956040143-13\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">onConnRejected</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">reason</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b64509d956040143-14\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">console</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">log</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'FTU is rejected'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b64509d956040143-15\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">console</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">log</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">reason</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b64509d956040143-16\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b64509d956040143-17\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b64509d956040143-18\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b64509d956040143-19\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0008 seconds] -->\r\n<p>從程式碼中可以看到我們透過 app 實體去連接一個 <strong>keyword</strong>（在這個例子中就是 ftucomms），FTU App 跟 System App 之間就是透過這個 keyword 來當做識別並透過 <strong>port</strong> 來溝通，我們只需要把東西通通塞進 <strong>port.postMessage </strong>做雞精就對了！</p>\n<p>聰明的你可能會問，所以 App 只需要隨便用個 keyword 就可以連結並傳東西嗎？當然不行，<strong>接收訊息的 App （傳送訊息的不需要）</strong>還需要去它的 <strong>manifest.webapp</strong> 設定如下：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f6650b6450a8030097006\" class=\"crayon-syntax crayon-theme-github crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\n{\r\n  \"connections\": {\r\n    \"ftucomms\": {\r\n      \"description\": \"Communicate between communications/ftu and System\",\r\n      \"rules\": {}\r\n    }\r\n  }\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f6650b6450a8030097006-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b6450a8030097006-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b6450a8030097006-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b6450a8030097006-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b6450a8030097006-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b6450a8030097006-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b6450a8030097006-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b6450a8030097006-8\">8</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f6650b6450a8030097006-1\"><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b6450a8030097006-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-s\">\"connections\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b6450a8030097006-3\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-s\">\"ftucomms\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b6450a8030097006-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-s\">\"description\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">\"Communicate between communications/ftu and System\"</span><span class=\"crayon-sy\">,</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b6450a8030097006-5\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-s\">\"rules\"</span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b6450a8030097006-6\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b6450a8030097006-7\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b6450a8030097006-8\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>這樣子我們 System App 就可以接收來自 FTU App 的訊息了！在 System App 只要我們確定傳送進來的 message 是我們當初預期的 &#8216;done&#8217; 就可以放行讓使用者可以透過 Swipe 向上的手勢離開 FTU App 了！</p>\n<p>不過你可能又會問我要怎麼讓 System App 來接這個訊息呢，這是個好問題。如果你需要透過 IAC 來做資料傳遞的時候，你需要使用 mozSetMessageHandler 來掛載相對應的 Handler。</p>\n<p>下面是 IAC 的基本使用方法：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f6650b6450ac498555835\" class=\"crayon-syntax crayon-theme-github crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nwindow.navigator.mozSetMessageHandler('connection', \r\n  function onConnected(request) {\r\n   var keyword = request.keyword;\r\n   var port = request.port;\r\n\r\n   port.onmessage = function onReceivedMessage(evt) {\r\n     // this is the message you sent\r\n     var message = evt.data;\r\n     // do whatever you want to do later\r\n   };\r\n});</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f6650b6450ac498555835-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b6450ac498555835-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b6450ac498555835-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b6450ac498555835-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b6450ac498555835-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b6450ac498555835-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b6450ac498555835-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b6450ac498555835-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b6450ac498555835-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b6450ac498555835-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b6450ac498555835-11\">11</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f6650b6450ac498555835-1\"><span class=\"crayon-v\">window</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">mozSetMessageHandler</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'connection'</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b6450ac498555835-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">onConnected</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">request</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b6450ac498555835-3\"><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">keyword</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">request</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">keyword</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b6450ac498555835-4\"><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">port</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">request</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">port</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b6450ac498555835-5\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b6450ac498555835-6\"><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-v\">port</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">onmessage</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">onReceivedMessage</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">evt</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b6450ac498555835-7\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class=\"crayon-c\">// this is the message you sent</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b6450ac498555835-8\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">message</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">evt</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">data</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b6450ac498555835-9\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class=\"crayon-c\">// do whatever you want to do later</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b6450ac498555835-10\"><span class=\"crayon-h\">&nbsp;&nbsp; </span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b6450ac498555835-11\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0004 seconds] -->\r\n<p>但是要注意的是因為這個 API 只會執行最後一個掛上去的 Handler，所以當你一個 App 要做多組 IAC 資訊傳遞的時候就需要自己做額外的處理。</p>\n<p>但在寫程式的時候沒注意到件事情，所以當時 Music App 的另一個 contributor &#8211; Jim Porter 同時也自己在 System App 建立了一個 Handler，而我的 Handler 又是在他建立之前建立的，因此所有我 FTU 有關的 Handler 不會執行到，因為通通都被它的 Handler 蓋過去了。</p>\n<p>所以為了讓後面的人不要發生這個問題，之後就和 Jim Porter 討論出一個 IACHanlder，每個 App 只要引入這段 javascript ，我們就會自動幫他建好一個共用的 Handler，所有的資料都是這個 Handler 統一管理，然後以一個固定的 naming 用 Custom Event 的方式傳播出去，讓有需要的人可以自己接 Event。（有興趣了解實作的人可以看<a href=\"https://github.com/mozilla-b2g/gaia/blob/e0120f015b108d12c50cd020a1f29d88d9cc11e1/shared/js/iac_handler.js\" target=\"_blank\">這裡</a>）</p>\n<p>所以最後 System App 只要用這樣簡單一行程式碼就可以接 Event 然後做解除限制的動作了：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5f6650b6450af173204613\" class=\"crayon-syntax crayon-theme-github crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nwindow.addEventListener('iac-ftucomms', function() {\r\n  var message = evt.detail;\r\n  if (message === 'done') {\r\n    self.setBypassHome(true);\r\n  }\r\n});</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5f6650b6450af173204613-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b6450af173204613-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b6450af173204613-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b6450af173204613-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5f6650b6450af173204613-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5f6650b6450af173204613-6\">6</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5f6650b6450af173204613-1\"><span class=\"crayon-v\">window</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">addEventListener</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'iac-ftucomms'</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b6450af173204613-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">message</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">evt</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">detail</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b6450af173204613-3\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">message</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">===</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">'done'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b6450af173204613-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-r\">self</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">setBypassHome</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">true</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5f6650b6450af173204613-5\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5f6650b6450af173204613-6\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>是不是很簡單呢！希望這篇能夠幫助到也需要使用 IAC 的開發者朋友哦 🙂</p>\n<p>參考資料： <a href=\"https://wiki.mozilla.org/WebAPI/Inter_App_Communication_Alt_proposal#Music_controls_in_the_lockscreen\" target=\"_blank\">Inter App Communication wiki 文件</a></p>\n<p>&#8212;</p>\n<p>My Blog : <a href=\"http://eragonj.me\" target=\"_blank\">http://eragonj.me</a></p>\n<p>My Twitter : <a href=\"http://twitter.com/EragonJ\" target=\"_blank\">http://twitter.com/EragonJ</a></p>\n\t\t\t</div>",
   "content_text": "在開發 App 的時候，我們有時候需要在App之間傳遞資訊，而今天我們要介紹的主角就是新引入的 WebAPI: IAC (Inter App Communication) ，有了這個好東西，我們就可以輕易的在 App 間傳遞訊息，以下就用筆者遇到的例子來說明吧： User story 當使用者拿到 Firefox OS 手機，第一次開機的時候，會自動先開啓 FTU (First Time Use) App 作導覽。當導覽進行到最後一步的時候，會看到這個畫面，可以按下「Home」鍵回到主畫面。 而在 Firefox OS 平板上，最後一步的導覽畫面會是這樣，但是改透過由螢幕下方往上滑動的手勢回到主畫面： 大家可能還不是很明白為什麼這個 User Story 下面要使用 IAC，讓我解釋一下。因為在手機剛啟動的時候，我們的 FTU 是一個獨立的 App，而這個 App 是被 System App 所呼叫起來的，兩個 App 之間如果需要溝通，就需要透過 IAC 來傳遞資料。 之所以 FTU App 需要跟 System App 做溝通，是因為「使用者在 FTU 導覽過程中，是無法按 Home 鍵離開的」，但很不巧的這個需求在 Firefox OS 平台是 Tablet 的時候反而變成是一種限制，怎麼說呢，因為對 Tablet 來說，我們並沒有實體的 Home 鍵，因此 「Swipe 向上的手勢」 就被我們定義成 「使用者按 Home 鍵」 ，但是在先前 Mobile 的需求下，使用者在 FTU 是不允許按 Home 鍵的！！因此這就產生了一個問題，我要怎麼判別使用者現在的情境是： Tablet 使用者 FTU 已經導覽到最後一步 使用者可以透過螢幕下方往上滑動的手勢（等同按 Home 鍵）離開 FTU App 這個時候… 我們就需要 IAC 的幫助！ IAC , we need your help 這邊要解釋一下 FTU App、System App 及 IAC 的角色。 FTU App 的功用主要是在教導使用者如何初始設定 FxOS 及透過 step by step 的教學來了解如何使用 FxOS 的裝置，所以他可以知道使用者目前的 step 到哪個階段了。 System App 在這裡的功用是在處理使用者按下 Home 鍵時要處理的事情，他只知道目前使用者是不是按下 Home 鍵（在 Tablet 就是 Swipe 向上的手勢），然後依照各個平台做相對應的事情。 而 IAC 的角色就是 FTU App 及 System App 溝通的橋樑，因為 System App 不知道目前 FTU App 是不是到了最後一步，所以自然就無法解除阻擋 Home 鍵這件事情，所以在這個 User Story 下，當使用者來到最後一個 Step 的時候（而且是在 Tablet 的平台），FTU App 就會透過 IAC 和 System App 溝通，然後請求 System App 可以讓我們以透過 Swipe 向上的手勢（等同按 Home 鍵）離開 FTU App。 在 Gaia 我是這麼做的： In FTU App : if (this.currentStep > this.numTutorialSteps) { Tutorial.tutorialScreen.classList.remove('show'); Tutorial.tutorialFinish.classList.add('show'); // for large devices, we have to use IAC to tell system ftu is done if (this.layout !== 'tiny') { navigator.mozApps.getSelf().onsuccess = function(evt) { var app = evt.target.result; app.connect('ftucomms').then(function onConnAccepted(ports) { ports.forEach(function(port) { port.postMessage('done'); }); }, function onConnRejected(reason) { console.log('FTU is rejected'); console.log(reason); }); }; } } 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 if ( this . currentStep > this . numTutorialSteps ) { Tutorial . tutorialScreen . classList . remove ( 'show' ) ; Tutorial . tutorialFinish . classList . add ( 'show' ) ; // for large devices, we have to use IAC to tell system ftu is done if ( this . layout !== 'tiny' ) { navigator . mozApps . getSelf ( ) . onsuccess = function ( evt ) { var app = evt . target . result ; app . connect ( 'ftucomms' ) . then ( function onConnAccepted ( ports ) { ports . forEach ( function ( port ) { port . postMessage ( 'done' ) ; } ) ; } , function onConnRejected ( reason ) { console . log ( 'FTU is rejected' ) ; console . log ( reason ) ; } ) ; } ; } } 從程式碼中可以看到我們透過 app 實體去連接一個 keyword （在這個例子中就是 ftucomms），FTU App 跟 System App 之間就是透過這個 keyword 來當做識別並透過 port 來溝通，我們只需要把東西通通塞進 port.postMessage 做雞精就對了！ 聰明的你可能會問，所以 App 只需要隨便用個 keyword 就可以連結並傳東西嗎？當然不行， 接收訊息的 App （傳送訊息的不需要） 還需要去它的 manifest.webapp 設定如下： { \"connections\": { \"ftucomms\": { \"description\": \"Communicate between communications/ftu and System\", \"rules\": {} } } } 1 2 3 4 5 6 7 8 { \"connections\" : { \"ftucomms\" : { \"description\" : \"Communicate between communications/ftu and System\" , \"rules\" : { } } } } 這樣子我們 System App 就可以接收來自 FTU App 的訊息了！在 System App 只要我們確定傳送進來的 message 是我們當初預期的 ‘done’ 就可以放行讓使用者可以透過 Swipe 向上的手勢離開 FTU App 了！ 不過你可能又會問我要怎麼讓 System App 來接這個訊息呢，這是個好問題。如果你需要透過 IAC 來做資料傳遞的時候，你需要使用 mozSetMessageHandler 來掛載相對應的 Handler。 下面是 IAC 的基本使用方法： window.navigator.mozSetMessageHandler('connection', function onConnected(request) { var keyword = request.keyword; var port = request.port; port.onmessage = function onReceivedMessage(evt) { // this is the message you sent var message = evt.data; // do whatever you want to do later }; }); 1 2 3 4 5 6 7 8 9 10 11 window . navigator . mozSetMessageHandler ( 'connection' , function onConnected ( request ) { var keyword = request . keyword ; var port = request . port ; port . onmessage = function onReceivedMessage ( evt ) { // this is the message you sent var message = evt . data ; // do whatever you want to do later } ; } ) ; 但是要注意的是因為這個 API 只會執行最後一個掛上去的 Handler，所以當你一個 App 要做多組 IAC 資訊傳遞的時候就需要自己做額外的處理。 但在寫程式的時候沒注意到件事情，所以當時 Music App 的另一個 contributor – Jim Porter 同時也自己在 System App 建立了一個 Handler，而我的 Handler 又是在他建立之前建立的，因此所有我 FTU 有關的 Handler 不會執行到，因為通通都被它的 Handler 蓋過去了。 所以為了讓後面的人不要發生這個問題，之後就和 Jim Porter 討論出一個 IACHanlder，每個 App 只要引入這段 javascript ，我們就會自動幫他建好一個共用的 Handler，所有的資料都是這個 Handler 統一管理，然後以一個固定的 naming 用 Custom Event 的方式傳播出去，讓有需要的人可以自己接 Event。（有興趣了解實作的人可以看 這裡 ） 所以最後 System App 只要用這樣簡單一行程式碼就可以接 Event 然後做解除限制的動作了： window.addEventListener('iac-ftucomms', function() { var message = evt.detail; if (message === 'done') { self.setBypassHome(true); } }); 1 2 3 4 5 6 window . addEventListener ( 'iac-ftucomms' , function ( ) { var message = evt . detail ; if ( message === 'done' ) { self . setBypassHome ( true ) ; } } ) ; 是不是很簡單呢！希望這篇能夠幫助到也需要使用 IAC 的開發者朋友哦 🙂 參考資料： Inter App Communication wiki 文件 — My Blog : http://eragonj.me My Twitter : http://twitter.com/EragonJ",
   "images": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-12-03-%E4%B8%8B%E5%8D%8810.50.53-150x150.png",
+      "alt": "Firefox 刮刮樂",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/nanoblock-firefox.16.complete-150x150.png",
+      "alt": "nanoblock-firefox.16.complete",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg",
       "alt": "iac",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3560/wp-content/uploads/2013/12/iac.jpg",
-      "markdown_path": "../assets/3560/wp-content/uploads/2013/12/iac.jpg",
-      "wayback_timestamp": "20200919184054",
-      "asset_archive_url": "https://web.archive.org/web/20200919184054id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac-300x150.jpg",
       "alt": "iac",
       "kind": "image",
-      "source": "img-srcset",
-      "post_id": 3560,
-      "page_type": "post",
-      "title": "Inter App Communication – App 的溝通橋樑",
-      "page_timestamp": "20200919184054",
-      "index": 1,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg",
-      "archive_path": "assets/3560/009-6d4a6e017411.jpg",
-      "markdown_path": "../assets/3560/009-6d4a6e017411.jpg",
-      "wayback_timestamp": "20160331001736",
-      "asset_archive_url": "https://web.archive.org/web/20160331001736id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg",
-      "content_type": "image/jpeg",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile-627x1024.png",
       "alt": "ftu-mobile",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3560/wp-content/uploads/2013/12/ftu-mobile-627x1024.png",
-      "markdown_path": "../assets/3560/wp-content/uploads/2013/12/ftu-mobile-627x1024.png",
-      "wayback_timestamp": "20200919184054",
-      "asset_archive_url": "https://web.archive.org/web/20200919184054id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile-627x1024.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile-183x300.png",
       "alt": "ftu-mobile",
       "kind": "image",
-      "source": "img-srcset",
-      "post_id": 3560,
-      "page_type": "post",
-      "title": "Inter App Communication – App 的溝通橋樑",
-      "page_timestamp": "20200919184054",
-      "index": 3,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile.png",
-      "archive_path": "assets/3560/009-a9f679eb2d41.png",
-      "markdown_path": "../assets/3560/009-a9f679eb2d41.png",
-      "wayback_timestamp": "20160331054352",
-      "asset_archive_url": "https://web.archive.org/web/20160331054352id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile.png",
-      "content_type": "image/png",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile.png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile.png",
       "alt": "ftu-mobile",
       "kind": "image",
-      "source": "img-srcset",
-      "archive_path": "assets/3560/wp-content/uploads/2013/12/ftu-mobile.png",
-      "markdown_path": "../assets/3560/wp-content/uploads/2013/12/ftu-mobile.png",
-      "wayback_timestamp": "20200919184054",
-      "asset_archive_url": "https://web.archive.org/web/20200919184054id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet-1024x640.png",
       "alt": "ftu-tablet",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3560/wp-content/uploads/2013/12/ftu-tablet-1024x640.png",
-      "markdown_path": "../assets/3560/wp-content/uploads/2013/12/ftu-tablet-1024x640.png",
-      "wayback_timestamp": "20200919184054",
-      "asset_archive_url": "https://web.archive.org/web/20200919184054id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet-1024x640.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet-300x187.png",
       "alt": "ftu-tablet",
       "kind": "image",
-      "source": "img-srcset",
-      "post_id": 3560,
-      "page_type": "post",
-      "title": "Inter App Communication – App 的溝通橋樑",
-      "page_timestamp": "20200919184054",
-      "index": 6,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet.png",
-      "archive_path": "assets/3560/009-8c81247ff572.png",
-      "markdown_path": "../assets/3560/009-8c81247ff572.png",
-      "wayback_timestamp": "20160331000434",
-      "asset_archive_url": "https://web.archive.org/web/20160331000434id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet.png",
-      "content_type": "image/png",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet.png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet.png",
       "alt": "ftu-tablet",
       "kind": "image",
-      "source": "img-srcset",
-      "archive_path": "assets/3560/wp-content/uploads/2013/12/ftu-tablet.png",
-      "markdown_path": "../assets/3560/wp-content/uploads/2013/12/ftu-tablet.png",
-      "wayback_timestamp": "20200919184054",
-      "asset_archive_url": "https://web.archive.org/web/20200919184054id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "media": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-12-03-%E4%B8%8B%E5%8D%8810.50.53-150x150.png",
+      "alt": "Firefox 刮刮樂",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/nanoblock-firefox.16.complete-150x150.png",
+      "alt": "nanoblock-firefox.16.complete",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg",
       "alt": "iac",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3560/wp-content/uploads/2013/12/iac.jpg",
-      "markdown_path": "../assets/3560/wp-content/uploads/2013/12/iac.jpg",
-      "wayback_timestamp": "20200919184054",
-      "asset_archive_url": "https://web.archive.org/web/20200919184054id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac-300x150.jpg",
       "alt": "iac",
       "kind": "image",
-      "source": "img-srcset",
-      "post_id": 3560,
-      "page_type": "post",
-      "title": "Inter App Communication – App 的溝通橋樑",
-      "page_timestamp": "20200919184054",
-      "index": 1,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg",
-      "archive_path": "assets/3560/009-6d4a6e017411.jpg",
-      "markdown_path": "../assets/3560/009-6d4a6e017411.jpg",
-      "wayback_timestamp": "20160331001736",
-      "asset_archive_url": "https://web.archive.org/web/20160331001736id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg",
-      "content_type": "image/jpeg",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/iac.jpg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile-627x1024.png",
       "alt": "ftu-mobile",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3560/wp-content/uploads/2013/12/ftu-mobile-627x1024.png",
-      "markdown_path": "../assets/3560/wp-content/uploads/2013/12/ftu-mobile-627x1024.png",
-      "wayback_timestamp": "20200919184054",
-      "asset_archive_url": "https://web.archive.org/web/20200919184054id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile-627x1024.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile-183x300.png",
       "alt": "ftu-mobile",
       "kind": "image",
-      "source": "img-srcset",
-      "post_id": 3560,
-      "page_type": "post",
-      "title": "Inter App Communication – App 的溝通橋樑",
-      "page_timestamp": "20200919184054",
-      "index": 3,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile.png",
-      "archive_path": "assets/3560/009-a9f679eb2d41.png",
-      "markdown_path": "../assets/3560/009-a9f679eb2d41.png",
-      "wayback_timestamp": "20160331054352",
-      "asset_archive_url": "https://web.archive.org/web/20160331054352id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile.png",
-      "content_type": "image/png",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile.png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile.png",
       "alt": "ftu-mobile",
       "kind": "image",
-      "source": "img-srcset",
-      "archive_path": "assets/3560/wp-content/uploads/2013/12/ftu-mobile.png",
-      "markdown_path": "../assets/3560/wp-content/uploads/2013/12/ftu-mobile.png",
-      "wayback_timestamp": "20200919184054",
-      "asset_archive_url": "https://web.archive.org/web/20200919184054id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-mobile.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet-1024x640.png",
       "alt": "ftu-tablet",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3560/wp-content/uploads/2013/12/ftu-tablet-1024x640.png",
-      "markdown_path": "../assets/3560/wp-content/uploads/2013/12/ftu-tablet-1024x640.png",
-      "wayback_timestamp": "20200919184054",
-      "asset_archive_url": "https://web.archive.org/web/20200919184054id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet-1024x640.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet-300x187.png",
       "alt": "ftu-tablet",
       "kind": "image",
-      "source": "img-srcset",
-      "post_id": 3560,
-      "page_type": "post",
-      "title": "Inter App Communication – App 的溝通橋樑",
-      "page_timestamp": "20200919184054",
-      "index": 6,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet.png",
-      "archive_path": "assets/3560/009-8c81247ff572.png",
-      "markdown_path": "../assets/3560/009-8c81247ff572.png",
-      "wayback_timestamp": "20160331000434",
-      "asset_archive_url": "https://web.archive.org/web/20160331000434id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet.png",
-      "content_type": "image/png",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet.png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet.png",
       "alt": "ftu-tablet",
       "kind": "image",
-      "source": "img-srcset",
-      "archive_path": "assets/3560/wp-content/uploads/2013/12/ftu-tablet.png",
-      "markdown_path": "../assets/3560/wp-content/uploads/2013/12/ftu-tablet.png",
-      "wayback_timestamp": "20200919184054",
-      "asset_archive_url": "https://web.archive.org/web/20200919184054id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/12/ftu-tablet.png",
-      "content_type": "image/png"
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -281,6 +285,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

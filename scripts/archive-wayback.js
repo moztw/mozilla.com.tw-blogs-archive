@@ -234,6 +234,15 @@ async function main() {
     return;
   }
 
+  if (command === 'parse-local') {
+    const result = await parseLocalArchive();
+    console.log(
+      `Parsed ${result.processed_count} local articles; updated ${result.updated_count}; ` +
+      `skipped ${result.skipped_count}; failed ${result.failed_count}; manifest written to ${relative(MANIFEST_PATH)}`
+    );
+    return;
+  }
+
   throw new Error(`Unknown command: ${command}`);
 }
 
@@ -1447,35 +1456,33 @@ async function archivePost(postId, postSnapshots) {
   const errors = [];
 
   for (const snapshot of candidates) {
-    const rawUrl = waybackUrl(snapshot, true);
-    const replayUrl = waybackUrl(snapshot, false);
-
     try {
-      let html;
-      let archiveUrl = rawUrl;
+      let candidate;
 
       try {
-        html = await fetchText(rawUrl);
+        candidate = await fetchAndParseSnapshotCandidate(postId, snapshot, { preferRaw: true });
       } catch (error) {
         errors.push({ timestamp: snapshot.timestamp, stage: 'fetch_raw', reason: error.message });
-        html = await fetchText(replayUrl);
-        archiveUrl = replayUrl;
+        candidate = await fetchAndParseSnapshotCandidate(postId, snapshot, { preferRaw: false });
       }
 
-      const rawPath = path.join(RAW_DIR, `${postId}-${snapshot.timestamp}.html`);
-      await writeFile(rawPath, html, 'utf8');
-
-      const cleanedHtml = cleanWaybackHtml(html);
-      const parsed = parseArticle(cleanedHtml, snapshot.original);
+      const upgraded = await resolveLatestPermalinkCandidate(postId, candidate).catch((error) => {
+        errors.push({ timestamp: snapshot.timestamp, stage: 'permalink_latest', reason: error.message });
+        return null;
+      });
+      const chosen = upgraded && compareParsedCandidateQuality(upgraded.parsed, candidate.parsed) > 0
+        ? upgraded
+        : candidate;
+      const parsed = chosen.parsed;
       const validation = validateParsed(parsed);
 
       if (!validation.ok) {
-        errors.push({ timestamp: snapshot.timestamp, stage: 'validate', reason: validation.reason });
+        errors.push({ timestamp: chosen.snapshot.timestamp, stage: 'validate', reason: validation.reason });
         continue;
       }
 
       const assetResult = hasFlag('include-assets')
-        ? await archiveAssets(postId, parsed.media, snapshot.timestamp)
+        ? await archiveAssets(postId, parsed.media, chosen.snapshot.timestamp)
         : { images: parsed.media, asset_status: 'skipped', asset_errors: [] };
 
       const article = {
@@ -1488,8 +1495,8 @@ async function archivePost(postId, postSnapshots) {
         author: parsed.author,
         page_type: parsed.pageType,
         original_url: canonicalPostUrl(postId),
-        archive_url: archiveUrl,
-        wayback_timestamp: snapshot.timestamp,
+        archive_url: chosen.archiveUrl,
+        wayback_timestamp: chosen.snapshot.timestamp,
         content_html: parsed.contentHtml,
         content_text: parsed.contentText,
         images: assetResult.images,
@@ -1514,6 +1521,113 @@ async function archivePost(postId, postSnapshots) {
       : 'fetch_failed';
 
   return baseArticle(postId, { status, errors });
+}
+
+async function fetchAndParseSnapshotCandidate(postId, snapshot, { preferRaw }) {
+  const requestUrl = waybackUrl(snapshot, preferRaw);
+  const { html, finalUrl } = await fetchHtmlPage(requestUrl);
+  const resolvedSnapshot = snapshotFromWaybackResponse(finalUrl) || snapshot;
+  const archiveUrl = finalUrl || requestUrl;
+  const rawPath = path.join(RAW_DIR, `${postId}-${resolvedSnapshot.timestamp}.html`);
+  await writeFile(rawPath, html, 'utf8');
+  const cleanedHtml = cleanWaybackHtml(html);
+  const parsed = parseArticle(cleanedHtml, resolvedSnapshot.original);
+  return { snapshot: resolvedSnapshot, archiveUrl, html, cleanedHtml, parsed };
+}
+
+async function resolveLatestPermalinkCandidate(postId, baseCandidate) {
+  const permalinkOriginal = extractPermalinkOriginal(postId, baseCandidate);
+  if (!permalinkOriginal) {
+    return null;
+  }
+
+  const { html, finalUrl } = await fetchHtmlPage(`https://web.archive.org/web/${permalinkOriginal}`);
+  const resolvedSnapshot = snapshotFromWaybackResponse(finalUrl);
+  if (!resolvedSnapshot || !isPermalinkForPost(resolvedSnapshot.original, postId)) {
+    return null;
+  }
+  if (
+    resolvedSnapshot.timestamp === baseCandidate.snapshot.timestamp &&
+    normalizeOriginalUrl(resolvedSnapshot.original) === normalizeOriginalUrl(baseCandidate.snapshot.original)
+  ) {
+    return null;
+  }
+
+  const rawPath = path.join(RAW_DIR, `${postId}-${resolvedSnapshot.timestamp}.html`);
+  await writeFile(rawPath, html, 'utf8');
+  const cleanedHtml = cleanWaybackHtml(html);
+  const parsed = parseArticle(cleanedHtml, resolvedSnapshot.original);
+  return { snapshot: resolvedSnapshot, archiveUrl: finalUrl, html, cleanedHtml, parsed };
+}
+
+function extractPermalinkOriginal(postId, candidate) {
+  const fromFinalUrl = snapshotFromWaybackResponse(candidate.archiveUrl)?.original || '';
+  const html = candidate.cleanedHtml || '';
+  const direct = [
+    fromFinalUrl,
+    firstCapture(html, [/<link\b[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["'][^>]*>/i]),
+    firstCapture(html, [/<meta\b[^>]*property=["']og:url["'][^>]*content=["']([^"']+)["'][^>]*>/i]),
+    firstCapture(html, [/<a\b[^>]*rel=["']bookmark["'][^>]*href=["']([^"']+)["'][^>]*>/i]),
+  ].map((value) => normalizeUrl(value, candidate.snapshot.original)).filter(Boolean);
+
+  for (const url of direct) {
+    if (isPermalinkForPost(url, postId)) {
+      return url;
+    }
+  }
+
+  for (const match of html.matchAll(/href=["']([^"']+)["']/gi)) {
+    const url = normalizeUrl(match[1], candidate.snapshot.original);
+    if (isPermalinkForPost(url, postId)) {
+      return url;
+    }
+  }
+
+  return '';
+}
+
+function isPermalinkForPost(url, postId) {
+  const normalized = normalizeOriginalUrl(url);
+  return normalized.includes(`${SITE_HOST}/posts/${postId}/`);
+}
+
+function compareParsedCandidateQuality(a, b) {
+  const keys = [
+    articleQualityScore(a),
+    String(a.title || '').length,
+    a.categories.length,
+    a.tags.length,
+    a.links.length,
+    a.media.length,
+    a.contentText.length,
+  ];
+  const other = [
+    articleQualityScore(b),
+    String(b.title || '').length,
+    b.categories.length,
+    b.tags.length,
+    b.links.length,
+    b.media.length,
+    b.contentText.length,
+  ];
+  for (let index = 0; index < keys.length; index += 1) {
+    if (keys[index] !== other[index]) {
+      return keys[index] - other[index];
+    }
+  }
+  return 0;
+}
+
+function articleQualityScore(parsed) {
+  return (
+    (parsed.title ? 100 : 0) +
+    (parsed.date ? 80 : 0) +
+    (parsed.author ? 80 : 0) +
+    (parsed.categories.length * 20) +
+    (parsed.tags.length * 10) +
+    Math.min(parsed.links.length, 10) +
+    Math.min(parsed.media.length, 10)
+  );
 }
 
 function baseArticle(postId, extra = {}) {
@@ -1577,7 +1691,11 @@ function parseArticle(html, originalUrl) {
     parseDate(firstCapture(html, [/<meta\b[^>]*property=["']article:published_time["'][^>]*content=["']([^"']+)["'][^>]*>/i]));
 
   const categories = collectRelText(articleHtml, 'category');
-  const tags = collectRelText(articleHtml, 'tag');
+  const fallbackCategories = categories.length ? [] : extractCategoriesFromClassNames(`${articleClass} ${bodyClass}`);
+  const normalizedCategories = mergeCategoriesAndTags(
+    categories.length ? categories : fallbackCategories,
+    collectRelText(articleHtml, 'tag')
+  );
   const author =
     cleanText(firstCapture(articleHtml, [
       /<[^>]*class=["'][^"']*\bauthor\b[^"']*["'][^>]*>([\s\S]*?)<\/[^>]+>/i,
@@ -1588,7 +1706,20 @@ function parseArticle(html, originalUrl) {
   const links = collectLinks(contentHtml, originalUrl);
   const contentText = htmlToText(contentHtml);
 
-  return { title, date, categories, tags, author, articleClass, pageType, contentHtml, contentText, images, media, links };
+  return {
+    title,
+    date,
+    categories: normalizedCategories,
+    tags: [],
+    author,
+    articleClass,
+    pageType,
+    contentHtml,
+    contentText,
+    images,
+    media,
+    links,
+  };
 }
 
 function validateParsed(parsed) {
@@ -2428,6 +2559,244 @@ async function reindexArchive() {
   return { articles, manifest };
 }
 
+async function parseLocalArchive() {
+  const articles = await readArchivedArticles();
+  const selectedIds = await readIdsFile();
+  const start = Number(args.start ?? POST_ID_MIN);
+  const end = Number(args.end ?? POST_ID_MAX);
+  const limit = args.limit ? Number(args.limit) : Infinity;
+  const rawIndex = await indexRawHtmlFiles();
+  const selected = articles
+    .filter((article) => rawIndex.has(article.post_id))
+    .filter((article) => selectedIds ? selectedIds.includes(article.post_id) : (article.post_id >= start && article.post_id <= end))
+    .sort((a, b) => a.post_id - b.post_id)
+    .slice(0, limit);
+
+  const report = {
+    generated_at: new Date().toISOString(),
+    site_host: SITE_HOST,
+    archive_dir: relative(ARCHIVE_DIR),
+    processed_count: selected.length,
+    updated_count: 0,
+    skipped_count: 0,
+    failed_count: 0,
+    updated: [],
+    skipped: [],
+    failed: [],
+  };
+
+  for (const [index, article] of selected.entries()) {
+    try {
+      const candidates = await readLocalRawCandidates(article, rawIndex.get(article.post_id) || []);
+      if (!candidates.length) {
+        report.skipped_count += 1;
+        report.skipped.push({ post_id: article.post_id, reason: 'no_local_raw_candidates' });
+        continue;
+      }
+
+      const best = chooseBestLocalCandidate(article, candidates);
+      if (!best) {
+        report.skipped_count += 1;
+        report.skipped.push({ post_id: article.post_id, reason: 'no_candidate_beats_existing' });
+        continue;
+      }
+
+      const updated = mergeParsedArticle(article, best);
+      const changedFields = diffArticleFields(article, updated);
+      if (!changedFields.length) {
+        report.skipped_count += 1;
+        report.skipped.push({ post_id: article.post_id, reason: 'no_structural_change' });
+      } else {
+        await writeArticle(updated);
+        report.updated_count += 1;
+        report.updated.push({
+          post_id: article.post_id,
+          from_timestamp: article.wayback_timestamp || null,
+          to_timestamp: updated.wayback_timestamp,
+          changed_fields: changedFields,
+        });
+      }
+    } catch (error) {
+      report.failed_count += 1;
+      report.failed.push({ post_id: article.post_id, reason: error.message });
+    }
+
+    if ((index + 1) % Number(args.checkpointEvery || args['checkpoint-every'] || 25) === 0) {
+      await saveJson(path.join(DISCOVERY_DIR, 'parse-local-report.json'), report);
+      console.log(`Parse-local checkpoint: ${index + 1}/${selected.length}`);
+    }
+  }
+
+  await saveJson(path.join(DISCOVERY_DIR, 'parse-local-report.json'), report);
+  const reindexed = await reindexArchive();
+  return { ...report, articles: reindexed.articles, manifest: reindexed.manifest };
+}
+
+async function indexRawHtmlFiles() {
+  const files = (await readdir(RAW_DIR))
+    .filter((file) => /^\d+-\d{14}\.html$/.test(file));
+  const byPostId = new Map();
+
+  for (const file of files) {
+    const match = file.match(/^(\d+)-(\d{14})\.html$/);
+    if (!match) {
+      continue;
+    }
+    const postId = Number(match[1]);
+    const timestamp = match[2];
+    const entry = { file, timestamp, path: path.join(RAW_DIR, file) };
+    const list = byPostId.get(postId) || [];
+    list.push(entry);
+    byPostId.set(postId, list);
+  }
+
+  for (const list of byPostId.values()) {
+    list.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+  }
+
+  return byPostId;
+}
+
+async function readLocalRawCandidates(article, rawEntries) {
+  const candidates = [];
+  const fallbackOriginal = storedOriginalUrl(article);
+
+  for (const entry of rawEntries) {
+    const html = await readFile(entry.path, 'utf8');
+    const cleanedHtml = cleanWaybackHtml(html);
+    let original = fallbackOriginal;
+    let parsed = parseArticle(cleanedHtml, original);
+    const archiveUrl = waybackUrl({ timestamp: entry.timestamp, original }, false);
+    const permalinkOriginal = extractPermalinkOriginal(article.post_id, {
+      snapshot: { timestamp: entry.timestamp, original },
+      archiveUrl,
+      cleanedHtml,
+    });
+
+    if (permalinkOriginal && isPermalinkForPost(permalinkOriginal, article.post_id)) {
+      original = permalinkOriginal;
+      parsed = parseArticle(cleanedHtml, original);
+    }
+
+    candidates.push({
+      snapshot: { timestamp: entry.timestamp, original },
+      archiveUrl: waybackUrl({ timestamp: entry.timestamp, original }, false),
+      parsed,
+      cleanedHtml,
+      rawPath: entry.path,
+    });
+  }
+
+  return candidates;
+}
+
+function storedOriginalUrl(article) {
+  return normalizeOriginalUrl(
+    snapshotFromWaybackResponse(article.archive_url || '')?.original ||
+    article.original_url ||
+    canonicalPostUrl(article.post_id)
+  );
+}
+
+function chooseBestLocalCandidate(article, candidates) {
+  const currentParsed = parsedFromArticleRecord(article);
+  let best = null;
+
+  for (const candidate of candidates) {
+    const validation = validateParsed(candidate.parsed);
+    if (!validation.ok) {
+      continue;
+    }
+    if (compareParsedCandidateQuality(candidate.parsed, currentParsed) < 0) {
+      continue;
+    }
+    if (!best || compareParsedCandidateQuality(candidate.parsed, best.parsed) > 0) {
+      best = candidate;
+      continue;
+    }
+    if (
+      best &&
+      compareParsedCandidateQuality(candidate.parsed, best.parsed) === 0 &&
+      candidate.snapshot.timestamp > best.snapshot.timestamp
+    ) {
+      best = candidate;
+    }
+  }
+
+  return best;
+}
+
+function parsedFromArticleRecord(article) {
+  return {
+    title: article.title || '',
+    date: article.date || '',
+    categories: [...(article.categories || [])],
+    tags: [...(article.tags || [])],
+    author: article.author || '',
+    pageType: article.page_type || '',
+    contentHtml: article.content_html || '',
+    contentText: article.content_text || htmlToText(article.content_html || ''),
+    media: [...(article.media || article.images || [])],
+    links: [...(article.links || [])],
+  };
+}
+
+function mergeParsedArticle(article, candidate) {
+  const media = mergeParsedMedia(candidate.parsed.media, article.media || article.images || []);
+  return {
+    ...article,
+    title: candidate.parsed.title,
+    date: candidate.parsed.date,
+    ...dateParts(candidate.parsed.date),
+    categories: candidate.parsed.categories,
+    tags: candidate.parsed.tags,
+    author: candidate.parsed.author,
+    page_type: candidate.parsed.pageType,
+    archive_url: candidate.archiveUrl,
+    wayback_timestamp: candidate.snapshot.timestamp,
+    content_html: candidate.parsed.contentHtml,
+    content_text: candidate.parsed.contentText,
+    images: media,
+    media,
+    links: candidate.parsed.links,
+    status: 'ok',
+  };
+}
+
+function mergeParsedMedia(parsedMedia, existingMedia) {
+  const existingByUrl = new Map((existingMedia || []).map((item) => [item.url, item]));
+  return parsedMedia.map((item) => {
+    const existing = existingByUrl.get(item.url) || {};
+    return {
+      ...item,
+      ...existing,
+      url: item.url,
+      alt: item.alt || existing.alt || '',
+      kind: item.kind || existing.kind || 'image',
+      source: item.source || existing.source || 'img',
+    };
+  });
+}
+
+function diffArticleFields(before, after) {
+  const fields = [
+    'title',
+    'date',
+    'categories',
+    'tags',
+    'author',
+    'page_type',
+    'archive_url',
+    'wayback_timestamp',
+    'content_html',
+    'content_text',
+    'links',
+    'images',
+    'media',
+  ];
+  return fields.filter((field) => JSON.stringify(before[field] ?? null) !== JSON.stringify(after[field] ?? null));
+}
+
 async function recoverOneMedia(article, item, usedPaths) {
   const attempts = [
     ...mediaUrlRecoveryCandidates(item.url).map((url) => ({ url })),
@@ -3088,6 +3457,14 @@ async function fetchText(url) {
   return response.text();
 }
 
+async function fetchHtmlPage(url) {
+  const response = await fetchWithRetry(url, { accept: 'text/html,application/xhtml+xml' });
+  return {
+    html: await response.text(),
+    finalUrl: response.url,
+  };
+}
+
 async function fetchWithRetry(url, { accept }) {
   let lastError;
   for (let attempt = 1; attempt <= 3; attempt += 1) {
@@ -3317,6 +3694,53 @@ function parseMonth(text) {
     十二月: 12,
   };
   return zhMonths[text] ?? null;
+}
+
+function extractCategoriesFromClassNames(classNames) {
+  const values = [];
+  for (const match of String(classNames || '').matchAll(/\bcategory-([a-z0-9_-]+)/gi)) {
+    const name = categoryNameFromSlug(match[1]);
+    if (name && !values.includes(name)) {
+      values.push(name);
+    }
+  }
+  return values;
+}
+
+function categoryNameFromSlug(slug) {
+  const clean = String(slug || '').toLowerCase();
+  const techMap = {
+    b2g: 'Firefox OS(B2G)',
+    browser_id: 'Persona',
+    'browser-id': 'Persona',
+    javascript: 'Javascript',
+    firefox: 'Firefox',
+    mozilla: 'Mozilla',
+    'open-source': 'Open Source',
+    css: 'CSS',
+    ux: 'UX/UE',
+    'interaction-design': 'Interaction design',
+    'life-at-mozilla': 'Life at Mozilla',
+    'chrome-web-store': 'Chrome Web Store',
+  };
+  if (SITE_HOST === 'tech.mozilla.com.tw' && techMap[clean]) {
+    return techMap[clean];
+  }
+  return clean
+    .split(/[-_]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
+
+function mergeCategoriesAndTags(categories, tags) {
+  const merged = [];
+  for (const value of [...(categories || []), ...(tags || [])]) {
+    if (value && !merged.includes(value)) {
+      merged.push(value);
+    }
+  }
+  return merged;
 }
 
 function dateParts(date) {

@@ -13,12 +13,48 @@
   "author": "Luke",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=3366",
-  "archive_url": "https://web.archive.org/web/20200919194731id_/https://tech.mozilla.com.tw/?p=3366",
+  "archive_url": "https://web.archive.org/web/20200919194731/https://tech.mozilla.com.tw/?p=3366",
   "wayback_timestamp": "20200919194731",
   "content_html": "<div class=\"entry-content close\">\n\t\t<p style=\"text-align: center;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/11/emscripten_logo.jpg\"><img class=\" wp-image-3369 aligncenter\" alt=\"Emscripten Logo\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/11/emscripten_logo.jpg\" width=\"560\" height=\"200\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/11/emscripten_logo.jpg 700w, https://tech.mozilla.com.tw/wp-content/uploads/2013/11/emscripten_logo-300x107.jpg 300w\" sizes=\"(max-width: 560px) 100vw, 560px\" /></a></p>\n<p><!--StartFragment-->在提到 Emscripten 之前，我們先來回顧一下 JavaScript 的發展歷史。<!--EndFragment--></p>\n<h2><!--StartFragment-->JavaScript 的歷史<!--EndFragment--></h2>\n<p><!--StartFragment-->JavaScript 在 1995 年問市時，目標是在瀏覽器中打造一種輕量的腳本語言，用來輔助頁面的呈現以及與使用者互動。為了這個目的，JavaScript 被設計成非常靈活，讓開發者在撰寫過程中不會被太多的規則限制住。雖然想保有彈性的背後通常就得犧牲效能，但如果 JavaScript 只是被用來增加網頁的互動性的話，似乎也不會有什麼大問題。<!--EndFragment--></p>\n<p><!--StartFragment-->但是科技的走向總是難以預料的，應用程式的領地漸漸從作業系統裡移到了網路環境，Web Application 變成熱門關鍵字，JavaScript 的效能成為最大的瓶頸。終於在 2008 年左右，各家瀏覽器開始釋出各種支援 JIT （Just-In-Time） 編譯的 JavaScript 引擎，讓瀏覽器可以在它判斷需要時將部份的 JavaScript code 即時編譯成 native code 來執行，效能因此獲得提升。<!--EndFragment--></p>\n<p><!--StartFragment-->JIT 引擎雖然解決了當時的瓶頸，但 JavaScript 的效能還是沒有辦法與真正的 native code 相提並論，主要的限制就在於 JavaScript 的靈活性讓它不容易被最佳化。舉例來說，JavaScript 選擇採用與大部份的腳本語言相同的動態型別（dynamic typing）機制，在編輯時期沒有辦法確定變數的型態，因此 JIT 引擎就必需為未來在執行時期可能進行的各種變數型態轉換預作準備，浪費了許多資源。</p>\n<h2>asm.js 與 Emscripten</h2>\n<p>為了解決這樣的問題，David Herman、Luke Wagner 和 Alon Zakai 等人提出了一種 JavaScript 的子集，命名叫 asm.js。這個子集的目的是讓開發者避開 JavaScript 中無法最佳化的部份，例如：不直接使用 JavaScript 的物件，改成透過長陣列來模擬記憶體的管理，避免使用引擎的 garbage collection 等等。由於 asm.js 單純是 JavaScript 的子集，並未加入任何新的語法，所以寫出來的程式碼在所有的瀏覽器上都是可以被解讀且執行的，只是當瀏覽器真正支援 asm.js 的規範時，其 JIT 引擎就能採用更有效率的最佳化方式來進行編譯，進而獲得更好的執行效能。</p>\n<p style=\"text-align: center;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/11/螢幕擷圖存為-2013-11-04-170720-2.png\"><img class=\" wp-image-3398 aligncenter\" alt=\"Emscripten code sample\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/11/螢幕擷圖存為-2013-11-04-170720-2.png\" width=\"462\" height=\"250\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/11/螢幕擷圖存為-2013-11-04-170720-2.png 660w, https://tech.mozilla.com.tw/wp-content/uploads/2013/11/螢幕擷圖存為-2013-11-04-170720-2-300x162.png 300w\" sizes=\"(max-width: 462px) 100vw, 462px\" /></a></p>\n<p style=\"text-align: center;\">圖一、Emscripten 編譯出來的程式碼片段</p>\n<p>圖一是用 Emscripten 編譯出來的 JavaScript 程式碼片段，你應該可以想像如果要用人腦寫出符合 asm.js 規範的程式碼，似乎不是那麼容易（這就是為什麼它會以組合語言 asm 命名）。事實上，Mozilla 並不打算讓人直接撰寫 asm.js，他們開發了一個叫 Emscripten 的編譯器，讓開發者可以直接把 C/C++ 的原始碼「編譯」成 JavaScript 的程式碼，聽起來是不是輕鬆多了！</p>\n<p><!--StartFragment-->到底 Emscripten 有多強大呢？我們先來看看官方的 demo 好了。<a href=\"http://www.unrealengine.com/html5/\" target=\"_blank\">Unreal Engine 3</a> 是 Mozilla 與知名遊戲 3D 引擎 Unreal 合作的 demo 專案。Unreal 將他們家的 3D 引擎透過 Emscripten 轉成 JavaScript，然後在網頁中打造了一個 3D 的遊戲世界，而且是真的可以走動的喲！<!--EndFragment--></p>\n<p style=\"text-align: center;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot.png\"><img class=\" wp-image-3367 aligncenter\" alt=\"Unreal Screenshot\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png\" width=\"512\" height=\"393\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png 1024w, https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-300x230.png 300w, https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot.png 1123w\" sizes=\"(max-width: 512px) 100vw, 512px\" /></a></p>\n<p style=\"text-align: center;\"> 圖二、Unreal Engine 3 (<a href=\"http://www.unrealengine.com/html5/\" target=\"_blank\">http://www.unrealengine.com/html5/</a>)</p>\n<h2><!--StartFragment-->拼音輸入法<!--EndFragment--></h2>\n<p>終於要提到拼音輸入法了！</p>\n<p>在 Firefox OS 中，我們原先採用人工的方式將一份以 C++ 寫成的 Open Source 拼音輸入法改寫成 JavaScript 版本並放進 gaia 裡，但在手機上的效能一直不太理想，除了字詞的搜尋速度較慢外，佔用的記憶體也比想像中的多。因此在 v1.2 中，我們引入了 Emscripten 來改寫拼音輸入法，獲得了不錯的成效，讓我們一起來看看在實際應用上的一些效能分析。</p>\n<p>我們將拼音輸入法的核心引擎獨立出來，在 ubuntu 12.04 上分別以 gcc 4.6.4 與 Emscripten 編譯成 native code 與 JavaScript 版本，接著在同一台 PC 上輸入不同的字串讓引擎搜尋相關的字詞，每個字串執行 10,000 次搜尋後比較其總執行時間，其中 Emscripten version 是在 Firefox Nightly 26 上執行，以下是比較結果：</p>\n<table id=\"emscripten_table_1\" style=\"width: 300px; margin-left: auto; margin-right: auto;\">\n<tbody>\n<tr>\n<td style=\"width: 50%; padding-right: 1em;\">Native Code</p>\n<table style=\"width: 100%;\">\n<tbody>\n<tr>\n<td>a:</td>\n<td align=\"right\">0ms</td>\n</tr>\n<tr>\n<td>b:</td>\n<td align=\"right\">360ms</td>\n</tr>\n<tr>\n<td>c:</td>\n<td align=\"right\">640ms</td>\n</tr>\n<tr>\n<td>d:</td>\n<td align=\"right\">420ms</td>\n</tr>\n<tr>\n<td>e:</td>\n<td align=\"right\">20ms</td>\n</tr>\n<tr>\n<td>f:</td>\n<td align=\"right\">220ms</td>\n</tr>\n<tr>\n<td>g:</td>\n<td align=\"right\">320ms</td>\n</tr>\n<tr>\n<td>h:</td>\n<td align=\"right\">480ms</td>\n</tr>\n<tr>\n<td>z:</td>\n<td align=\"right\">1100ms</td>\n</tr>\n<tr>\n<td>ba:</td>\n<td align=\"right\">20ms</td>\n</tr>\n<tr>\n<td>da:</td>\n<td align=\"right\">20ms</td>\n</tr>\n<tr>\n<td>fa:</td>\n<td align=\"right\">0ms</td>\n</tr>\n<tr>\n<td>ga:</td>\n<td align=\"right\">0ms</td>\n</tr>\n<tr>\n<td>ha:</td>\n<td align=\"right\">0ms</td>\n</tr>\n</tbody>\n</table>\n</td>\n<td style=\"padding-left: 1em;\">Emscripten Version</p>\n<table style=\"width: 100%;\">\n<tbody>\n<tr>\n<td>a:</td>\n<td align=\"right\">72ms</td>\n</tr>\n<tr>\n<td>b:</td>\n<td align=\"right\">1078ms</td>\n</tr>\n<tr>\n<td>c:</td>\n<td align=\"right\">1577ms</td>\n</tr>\n<tr>\n<td>d:</td>\n<td align=\"right\">1182ms</td>\n</tr>\n<tr>\n<td>e:</td>\n<td align=\"right\">170ms</td>\n</tr>\n<tr>\n<td>f:</td>\n<td align=\"right\">744ms</td>\n</tr>\n<tr>\n<td>g:</td>\n<td align=\"right\">981ms</td>\n</tr>\n<tr>\n<td>h:</td>\n<td align=\"right\">1311ms</td>\n</tr>\n<tr>\n<td>z:</td>\n<td align=\"right\">2385ms</td>\n</tr>\n<tr>\n<td>ba:</td>\n<td align=\"right\">192ms</td>\n</tr>\n<tr>\n<td>da:</td>\n<td align=\"right\">176ms</td>\n</tr>\n<tr>\n<td>fa:</td>\n<td align=\"right\">157ms</td>\n</tr>\n<tr>\n<td>ga:</td>\n<td align=\"right\">153ms</td>\n</tr>\n<tr>\n<td>ha:</td>\n<td align=\"right\">124ms</td>\n</tr>\n</tbody>\n</table>\n</td>\n</tr>\n</tbody>\n</table>\n<p style=\"text-align: center;\">表一、Native Code vs. Emscripten</p>\n<p>在表一中，我們可以看到不同字串的搜尋時間相差很多，這是因為當我們輸入 “ba\" 時，引擎會幫我們找出所有開頭符合 &#8220;ba\" 的字或詞組，而不同的組合會搜尋到的結果數量亦有所不同，所以搜尋時間便會有所差異。例如在我們的字典中，符合 &#8220;a\" 開頭的文字只有 7 個，但是符合 &#8220;z\" 開頭的文字有 1,431 個。</p>\n<p>我們可以看到 Emscripten version 在 native code 版本執行時間超過 100ms 的測試項目中，執行時間大約會是 native code 的 2~3 倍，但是在 native code 低於 100ms 執行時間的測試項目中，Emscripten 花費的時間倍數就比較多，這很可能是因為其中包含了 Emscripten version 在初始化引擎資料時固定需要花費的時間。但是整體而言，對於一個腳本語言來說，這樣執行效能應該已經可以適用在更多需要大量計算的應用領域了。</p>\n<p>我們再來比較看看在實際的手機上，原先人工改寫的版本與 Emscripten version 效能上到底有什麼差異。下表是在同一台手機上，針對每個不同的字串執行 10 次搜尋後，平均出來每一次搜尋所需的執行時間比較：</p>\n<table id=\"emscripten_table_1\" style=\"width: 350px; margin-left: auto; margin-right: auto;\">\n<tbody>\n<tr>\n<td style=\"width: 50%; padding-right: 1em;\">Handwork Version</p>\n<table style=\"width: 100%;\">\n<tbody>\n<tr>\n<td>a:</td>\n<td align=\"right\">22.8ms</td>\n</tr>\n<tr>\n<td>b:</td>\n<td align=\"right\">133.1ms</td>\n</tr>\n<tr>\n<td>c:</td>\n<td align=\"right\">188.9ms</td>\n</tr>\n<tr>\n<td>n:</td>\n<td align=\"right\">80.7ms</td>\n</tr>\n<tr>\n<td>z:</td>\n<td align=\"right\">273.0ms</td>\n</tr>\n</tbody>\n</table>\n<p>Memory Usage: 19.70MB</td>\n<td style=\"padding-left: 1em;\">Emscripten Version</p>\n<table style=\"width: 100%;\">\n<tbody>\n<tr>\n<td>a:</td>\n<td align=\"right\">3.2ms</td>\n</tr>\n<tr>\n<td>b:</td>\n<td align=\"right\">47.3ms</td>\n</tr>\n<tr>\n<td>c:</td>\n<td align=\"right\">65.3ms</td>\n</tr>\n<tr>\n<td>n:</td>\n<td align=\"right\">26.7ms</td>\n</tr>\n<tr>\n<td>z:</td>\n<td align=\"right\">97.5ms</td>\n</tr>\n</tbody>\n</table>\n<p>Memory Usage: 11.82MB</td>\n</tr>\n</tbody>\n</table>\n<p style=\"text-align: center;\">表二、Handwork vs. Emscripten</p>\n<p>可以注意到在表二中，兩者使用的是相同的演算法，但 Emscripten version 明顯地獲得了三倍以上的執行效能提升，而且也將記憶體用量降低至原先的 2/3 以下，成效相當顯著！</p>\n<p>事實上，Firefox 到現在都仍不斷地在改善 JavaScript 引擎的執行效能，從 TraceMonkey、IonMonkey 到 OdinMonkey，每一代的執行效能都有明顯的進步。我們可以預期未來在全世界開發人員的貢獻下，Firefox 的 JIT 引擎還會不斷的更新，說不定 JavaScript 的效能直逼 native code 的日子就在不遠的將來！</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52.png\"><img class=\"size-medium wp-image-3368 aligncenter\" alt=\"Pinyin IME Screenshot\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png\" width=\"200\" height=\"300\" srcset=\"https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png 200w, https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52.png 320w\" sizes=\"(max-width: 200px) 100vw, 200px\" /></a></p>\n<p style=\"text-align: center;\">圖三、Firefox OS 上的拼音輸入法</p>\n<h4>參考文獻</h4>\n<ul>\n<li>asm.js: <a href=\"http://asmjs.org/\" target=\"_blank\">http://asmjs.org</a></li>\n<li>Emscripten: <a href=\"https://github.com/kripken/emscripten\" target=\"_blank\">https://github.com/kripken/emscripten</a></li>\n</ul>\n\t\t\t</div>",
   "content_text": "在提到 Emscripten 之前，我們先來回顧一下 JavaScript 的發展歷史。 JavaScript 的歷史 JavaScript 在 1995 年問市時，目標是在瀏覽器中打造一種輕量的腳本語言，用來輔助頁面的呈現以及與使用者互動。為了這個目的，JavaScript 被設計成非常靈活，讓開發者在撰寫過程中不會被太多的規則限制住。雖然想保有彈性的背後通常就得犧牲效能，但如果 JavaScript 只是被用來增加網頁的互動性的話，似乎也不會有什麼大問題。 但是科技的走向總是難以預料的，應用程式的領地漸漸從作業系統裡移到了網路環境，Web Application 變成熱門關鍵字，JavaScript 的效能成為最大的瓶頸。終於在 2008 年左右，各家瀏覽器開始釋出各種支援 JIT （Just-In-Time） 編譯的 JavaScript 引擎，讓瀏覽器可以在它判斷需要時將部份的 JavaScript code 即時編譯成 native code 來執行，效能因此獲得提升。 JIT 引擎雖然解決了當時的瓶頸，但 JavaScript 的效能還是沒有辦法與真正的 native code 相提並論，主要的限制就在於 JavaScript 的靈活性讓它不容易被最佳化。舉例來說，JavaScript 選擇採用與大部份的腳本語言相同的動態型別（dynamic typing）機制，在編輯時期沒有辦法確定變數的型態，因此 JIT 引擎就必需為未來在執行時期可能進行的各種變數型態轉換預作準備，浪費了許多資源。 asm.js 與 Emscripten 為了解決這樣的問題，David Herman、Luke Wagner 和 Alon Zakai 等人提出了一種 JavaScript 的子集，命名叫 asm.js。這個子集的目的是讓開發者避開 JavaScript 中無法最佳化的部份，例如：不直接使用 JavaScript 的物件，改成透過長陣列來模擬記憶體的管理，避免使用引擎的 garbage collection 等等。由於 asm.js 單純是 JavaScript 的子集，並未加入任何新的語法，所以寫出來的程式碼在所有的瀏覽器上都是可以被解讀且執行的，只是當瀏覽器真正支援 asm.js 的規範時，其 JIT 引擎就能採用更有效率的最佳化方式來進行編譯，進而獲得更好的執行效能。 圖一、Emscripten 編譯出來的程式碼片段 圖一是用 Emscripten 編譯出來的 JavaScript 程式碼片段，你應該可以想像如果要用人腦寫出符合 asm.js 規範的程式碼，似乎不是那麼容易（這就是為什麼它會以組合語言 asm 命名）。事實上，Mozilla 並不打算讓人直接撰寫 asm.js，他們開發了一個叫 Emscripten 的編譯器，讓開發者可以直接把 C/C++ 的原始碼「編譯」成 JavaScript 的程式碼，聽起來是不是輕鬆多了！ 到底 Emscripten 有多強大呢？我們先來看看官方的 demo 好了。 Unreal Engine 3 是 Mozilla 與知名遊戲 3D 引擎 Unreal 合作的 demo 專案。Unreal 將他們家的 3D 引擎透過 Emscripten 轉成 JavaScript，然後在網頁中打造了一個 3D 的遊戲世界，而且是真的可以走動的喲！ 圖二、Unreal Engine 3 ( http://www.unrealengine.com/html5/ ) 拼音輸入法 終於要提到拼音輸入法了！ 在 Firefox OS 中，我們原先採用人工的方式將一份以 C++ 寫成的 Open Source 拼音輸入法改寫成 JavaScript 版本並放進 gaia 裡，但在手機上的效能一直不太理想，除了字詞的搜尋速度較慢外，佔用的記憶體也比想像中的多。因此在 v1.2 中，我們引入了 Emscripten 來改寫拼音輸入法，獲得了不錯的成效，讓我們一起來看看在實際應用上的一些效能分析。 我們將拼音輸入法的核心引擎獨立出來，在 ubuntu 12.04 上分別以 gcc 4.6.4 與 Emscripten 編譯成 native code 與 JavaScript 版本，接著在同一台 PC 上輸入不同的字串讓引擎搜尋相關的字詞，每個字串執行 10,000 次搜尋後比較其總執行時間，其中 Emscripten version 是在 Firefox Nightly 26 上執行，以下是比較結果： Native Code a: 0ms b: 360ms c: 640ms d: 420ms e: 20ms f: 220ms g: 320ms h: 480ms z: 1100ms ba: 20ms da: 20ms fa: 0ms ga: 0ms ha: 0ms Emscripten Version a: 72ms b: 1078ms c: 1577ms d: 1182ms e: 170ms f: 744ms g: 981ms h: 1311ms z: 2385ms ba: 192ms da: 176ms fa: 157ms ga: 153ms ha: 124ms 表一、Native Code vs. Emscripten 在表一中，我們可以看到不同字串的搜尋時間相差很多，這是因為當我們輸入 “ba\" 時，引擎會幫我們找出所有開頭符合 “ba\" 的字或詞組，而不同的組合會搜尋到的結果數量亦有所不同，所以搜尋時間便會有所差異。例如在我們的字典中，符合 “a\" 開頭的文字只有 7 個，但是符合 “z\" 開頭的文字有 1,431 個。 我們可以看到 Emscripten version 在 native code 版本執行時間超過 100ms 的測試項目中，執行時間大約會是 native code 的 2~3 倍，但是在 native code 低於 100ms 執行時間的測試項目中，Emscripten 花費的時間倍數就比較多，這很可能是因為其中包含了 Emscripten version 在初始化引擎資料時固定需要花費的時間。但是整體而言，對於一個腳本語言來說，這樣執行效能應該已經可以適用在更多需要大量計算的應用領域了。 我們再來比較看看在實際的手機上，原先人工改寫的版本與 Emscripten version 效能上到底有什麼差異。下表是在同一台手機上，針對每個不同的字串執行 10 次搜尋後，平均出來每一次搜尋所需的執行時間比較： Handwork Version a: 22.8ms b: 133.1ms c: 188.9ms n: 80.7ms z: 273.0ms Memory Usage: 19.70MB Emscripten Version a: 3.2ms b: 47.3ms c: 65.3ms n: 26.7ms z: 97.5ms Memory Usage: 11.82MB 表二、Handwork vs. Emscripten 可以注意到在表二中，兩者使用的是相同的演算法，但 Emscripten version 明顯地獲得了三倍以上的執行效能提升，而且也將記憶體用量降低至原先的 2/3 以下，成效相當顯著！ 事實上，Firefox 到現在都仍不斷地在改善 JavaScript 引擎的執行效能，從 TraceMonkey、IonMonkey 到 OdinMonkey，每一代的執行效能都有明顯的進步。我們可以預期未來在全世界開發人員的貢獻下，Firefox 的 JIT 引擎還會不斷的更新，說不定 JavaScript 的效能直逼 native code 的日子就在不遠的將來！ 圖三、Firefox OS 上的拼音輸入法 參考文獻 asm.js: http://asmjs.org Emscripten: https://github.com/kripken/emscripten",
   "images": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/test_demo.js-150x150.png",
+      "alt": "test_demo.js",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/yDglA-150x150.jpg",
+      "alt": "犀牛",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/80/b8130bf53c09245b93f4b92cc1e59c77-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/emscripten_logo.jpg",
       "alt": "Emscripten Logo",
       "kind": "image",
@@ -46,85 +82,107 @@
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
       "alt": "Unreal Screenshot",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3366/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "markdown_path": "../assets/3366/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "wayback_timestamp": "20200919194731",
-      "asset_archive_url": "https://web.archive.org/web/20200919194731id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-300x230.png",
       "alt": "Unreal Screenshot",
       "kind": "image",
-      "source": "img-srcset",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "archive_path": "assets/3366/005-9e58aa92851d.png",
-      "markdown_path": "../assets/3366/005-9e58aa92851d.png",
-      "wayback_timestamp": "20140728044920",
-      "asset_archive_url": "https://web.archive.org/web/20140728044920id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot.png",
       "alt": "Unreal Screenshot",
       "kind": "image",
-      "source": "img-srcset",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "archive_path": "assets/3366/006-9e58aa92851d.png",
-      "markdown_path": "../assets/3366/006-9e58aa92851d.png",
-      "wayback_timestamp": "20140728044920",
-      "asset_archive_url": "https://web.archive.org/web/20140728044920id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png",
       "alt": "Pinyin IME Screenshot",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3366/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png",
-      "markdown_path": "../assets/3366/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png",
-      "wayback_timestamp": "20200919194731",
-      "asset_archive_url": "https://web.archive.org/web/20200919194731id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52.png",
       "alt": "Pinyin IME Screenshot",
       "kind": "image",
-      "source": "img-srcset",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png",
-      "archive_path": "assets/3366/004-59a835d7153d.png",
-      "markdown_path": "../assets/3366/004-59a835d7153d.png",
-      "wayback_timestamp": "20140728052327",
-      "asset_archive_url": "https://web.archive.org/web/20140728052327id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
-      "post_id": 3366,
-      "page_type": "post",
-      "title": "Emscripten 與拼音輸入法的相遇",
-      "page_timestamp": "20200919194731",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/80/b8130bf53c09245b93f4b92cc1e59c77-bpthumb.jpg",
-      "source": "img",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/80/b8130bf53c09245b93f4b92cc1e59c77-bpthumb.jpg",
-      "archive_path": "assets/3366/wp-content/uploads/avatars/80/b8130bf53c09245b93f4b92cc1e59c77-bpthumb.jpg",
-      "markdown_path": "../assets/3366/wp-content/uploads/avatars/80/b8130bf53c09245b93f4b92cc1e59c77-bpthumb.jpg",
-      "wayback_timestamp": "20140705172813",
-      "asset_archive_url": "https://web.archive.org/web/20140705172813id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/80/b8130bf53c09245b93f4b92cc1e59c77-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "media": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/test_demo.js-150x150.png",
+      "alt": "test_demo.js",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/yDglA-150x150.jpg",
+      "alt": "犀牛",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/80/b8130bf53c09245b93f4b92cc1e59c77-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/emscripten_logo.jpg",
       "alt": "Emscripten Logo",
       "kind": "image",
@@ -152,81 +210,67 @@
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
       "alt": "Unreal Screenshot",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3366/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "markdown_path": "../assets/3366/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "wayback_timestamp": "20200919194731",
-      "asset_archive_url": "https://web.archive.org/web/20200919194731id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-300x230.png",
       "alt": "Unreal Screenshot",
       "kind": "image",
-      "source": "img-srcset",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "archive_path": "assets/3366/005-9e58aa92851d.png",
-      "markdown_path": "../assets/3366/005-9e58aa92851d.png",
-      "wayback_timestamp": "20140728044920",
-      "asset_archive_url": "https://web.archive.org/web/20140728044920id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot.png",
       "alt": "Unreal Screenshot",
       "kind": "image",
-      "source": "img-srcset",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "archive_path": "assets/3366/006-9e58aa92851d.png",
-      "markdown_path": "../assets/3366/006-9e58aa92851d.png",
-      "wayback_timestamp": "20140728044920",
-      "asset_archive_url": "https://web.archive.org/web/20140728044920id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png",
       "alt": "Pinyin IME Screenshot",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/3366/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png",
-      "markdown_path": "../assets/3366/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png",
-      "wayback_timestamp": "20200919194731",
-      "asset_archive_url": "https://web.archive.org/web/20200919194731id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52.png",
       "alt": "Pinyin IME Screenshot",
       "kind": "image",
-      "source": "img-srcset",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png",
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png",
-      "archive_path": "assets/3366/004-59a835d7153d.png",
-      "markdown_path": "../assets/3366/004-59a835d7153d.png",
-      "wayback_timestamp": "20140728052327",
-      "asset_archive_url": "https://web.archive.org/web/20140728052327id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
-      "post_id": 3366,
-      "page_type": "post",
-      "title": "Emscripten 與拼音輸入法的相遇",
-      "page_timestamp": "20200919194731",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/80/b8130bf53c09245b93f4b92cc1e59c77-bpthumb.jpg",
-      "source": "img",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/80/b8130bf53c09245b93f4b92cc1e59c77-bpthumb.jpg",
-      "archive_path": "assets/3366/wp-content/uploads/avatars/80/b8130bf53c09245b93f4b92cc1e59c77-bpthumb.jpg",
-      "markdown_path": "../assets/3366/wp-content/uploads/avatars/80/b8130bf53c09245b93f4b92cc1e59c77-bpthumb.jpg",
-      "wayback_timestamp": "20140705172813",
-      "asset_archive_url": "https://web.archive.org/web/20140705172813id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/80/b8130bf53c09245b93f4b92cc1e59c77-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -267,6 +311,30 @@
   "asset_status": "partial_assets_failed",
   "asset_errors": [
     {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/test_demo.js-150x150.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/yDglA-150x150.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/80/b8130bf53c09245b93f4b92cc1e59c77-bpthumb.jpg",
+      "reason": "article_media_missing"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/emscripten_logo.jpg",
       "reason": "article_media_missing"
     },
@@ -280,6 +348,50 @@
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96%E5%AD%98%E7%82%BA-2013-11-04-170720-2-300x162.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-1024x786.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot-300x230.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/unreal_screenshot.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52-200x300.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/11/2013-11-03-22-50-52.png",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/33/1f353454f159004931f05f3952d50664-bpthumb.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "reason": "article_media_missing"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
       "reason": "article_media_missing"
     }
   ]

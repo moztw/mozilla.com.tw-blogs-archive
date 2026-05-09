@@ -14,104 +14,240 @@
   "author": "李YY",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=1638",
-  "archive_url": "https://web.archive.org/web/20160914193600id_/https://tech.mozilla.com.tw/?p=1638",
-  "wayback_timestamp": "20160914193600",
-  "content_html": "<div class=\"entry-content close\">\n\t\t<p>相信很多人都看過之前對於 WebRTC 的簡介，我們這次就稍為深入了解一下如何讓 Firefox 執行 WebRTC，以及 WebRTC 的運作流程。目前<a href=\"http://nightly.mozilla.org/\"> Firefox Nightly </a>的版本已經有支援 WebRTC，想嘗鮮的朋友可以下載後到 about:config 將 media.peerconnection.enabled 設成 true，便可開始使用。接下來我們可以連到由 media 的同事所做的一個<a href=\"http://mozilla.github.com/webrtc-landing/\">測試網頁</a>，目前測試的項目有：</p>\n<ul>\n<li><a href=\"http://dev.w3.org/2011/webrtc/editor/getusermedia.html\">getUserMedia</a>：這是跟 WebRTC 相關的另一個 spec，WebRTC 所需要的攝影機跟麥克風都是透過這個 API 取得</li>\n<li>在同一個瀏覽器裡面建立 peerConnection 連線及傳輸資料(包含文字和檔案)</li>\n<li>在不同的瀏覽器之間視訊會議</li>\n</ul>\n<p>下面這張圖介紹了不同瀏覽器 (peer) 之間建立 WebRTC 連線的流程</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg\"><img class=\"aligncenter wp-image-1719\" title=\"yy\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg\" alt=\"\" width=\"491\" height=\"249\" srcset=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy-300x152.jpg 300w, http://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg 953w\" sizes=\"(max-width: 491px) 100vw, 491px\" /></a></p>\n<p>&nbsp;</p>\n<ol>\n<li>宣告一個 peerconnection 的物件，然後將本地端的攝影機/麥克風資訊加入此物件</li>\n<li>Peer1 透過 createOffer 將 SDP 告訴 Peer2</li>\n<li>Peer2 若要接受此一連線，必須回給 Peer1 answer</li>\n<li>當前面這些資訊交換完畢之後，便透過 ICE (<span>Interactive Connectivity <a href=\"http://www.svenskkasinon.com/\">casino online</a>  Establishment</span>) 來確認兩邊連線是否 OK</li>\n<li>開始利用 RTP 傳輸影像跟聲音</li>\n</ol>\n<p>當然最常被問到的問題便是，不同的 peer 要如何知道對方的存在?基本上這個交換資訊的方式並不在 WebRTC 的定義範圍內，因為考量到不同的 App 可能會有不同的需求，甚至要找到一個大家都同意的方式可能也相當困難，因此 W3C 便只定義了 peer 要連線所需要的資訊而已，例如上面的測試網頁就是透過 Http POST 來交換不同 peer 之間的 SDP。</p>\n<p>另外，因為這個 spec 仍然還在發展中，所以這些細節都有可能會改變，這也是在 Mozilla 工作的樂趣之一，你可以關注著最新的 spec、參與 spec 的討論與實作，是不是很有趣呢？有興趣的話趕緊打開 104 加入 Mozilla 吧！</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
+  "archive_url": "https://web.archive.org/web/20170701191120/https://tech.mozilla.com.tw/posts/1638/%E9%81%8E%E5%B9%B4%E4%B8%8D%E5%BF%98%E9%95%B7%E7%9F%A5%E8%AD%98%EF%BC%81%E5%95%A5%EF%BC%9F%E7%80%8F%E8%A6%BD%E5%99%A8%E4%B9%9F%E5%8F%AF%E4%BB%A5%E9%96%8B%E8%A6%96%E8%A8%8A%E6%9C%83%E8%AD%B0%EF%BC%81",
+  "wayback_timestamp": "20170701191120",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>相信很多人都看過之前對於 WebRTC 的簡介，我們這次就稍為深入了解一下如何讓 Firefox 執行 WebRTC，以及 WebRTC 的運作流程。目前<a href=\"https://web.archive.org/web/20170701191120/http://nightly.mozilla.org/\"> Firefox Nightly </a>的版本已經有支援 WebRTC，想嘗鮮的朋友可以下載後到 about:config 將 media.peerconnection.enabled 設成 true，便可開始使用。接下來我們可以連到由 media 的同事所做的一個<a href=\"https://web.archive.org/web/20170701191120/http://mozilla.github.com/webrtc-landing/\">測試網頁</a>，目前測試的項目有：</p>\n<ul>\n<li><a href=\"https://web.archive.org/web/20170701191120/http://dev.w3.org/2011/webrtc/editor/getusermedia.html\">getUserMedia</a>：這是跟 WebRTC 相關的另一個 spec，WebRTC 所需要的攝影機跟麥克風都是透過這個 API 取得</li>\n<li>在同一個瀏覽器裡面建立 peerConnection 連線及傳輸資料(包含文字和檔案)</li>\n<li>在不同的瀏覽器之間視訊會議</li>\n</ul>\n<p>下面這張圖介紹了不同瀏覽器 (peer) 之間建立 WebRTC 連線的流程</p>\n<p><a href=\"https://web.archive.org/web/20170701191120/http://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg\"><img class=\"aligncenter wp-image-1719\" title=\"yy\" src=\"https://web.archive.org/web/20170701191120im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg\" alt=\"\" width=\"491\" height=\"249\" srcset=\"https://web.archive.org/web/20170701191120im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg 953w, https://web.archive.org/web/20170701191120im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy-300x152.jpg 300w\" sizes=\"(max-width: 491px) 100vw, 491px\"/></a></p>\n<p>&nbsp;</p>\n<ol>\n<li>宣告一個 peerconnection 的物件，然後將本地端的攝影機/麥克風資訊加入此物件</li>\n<li>Peer1 透過 createOffer 將 SDP 告訴 Peer2</li>\n<li>Peer2 若要接受此一連線，必須回給 Peer1 answer</li>\n<li>當前面這些資訊交換完畢之後，便透過 ICE (<span>Interactive Connectivity <a href=\"https://web.archive.org/web/20170701191120/http://www.svenskkasinon.com/\">casino online</a>  Establishment</span>) 來確認兩邊連線是否 OK</li>\n<li>開始利用 RTP 傳輸影像跟聲音</li>\n</ol>\n<p>當然最常被問到的問題便是，不同的 peer 要如何知道對方的存在?基本上這個交換資訊的方式並不在 WebRTC 的定義範圍內，因為考量到不同的 App 可能會有不同的需求，甚至要找到一個大家都同意的方式可能也相當困難，因此 W3C 便只定義了 peer 要連線所需要的資訊而已，例如上面的測試網頁就是透過 Http POST 來交換不同 peer 之間的 SDP。</p>\n<p>另外，因為這個 spec 仍然還在發展中，所以這些細節都有可能會改變，這也是在 Mozilla 工作的樂趣之一，你可以關注著最新的 spec、參與 spec 的討論與實作，是不是很有趣呢？有興趣的話趕緊打開 104 加入 Mozilla 吧！</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
   "content_text": "相信很多人都看過之前對於 WebRTC 的簡介，我們這次就稍為深入了解一下如何讓 Firefox 執行 WebRTC，以及 WebRTC 的運作流程。目前 Firefox Nightly 的版本已經有支援 WebRTC，想嘗鮮的朋友可以下載後到 about:config 將 media.peerconnection.enabled 設成 true，便可開始使用。接下來我們可以連到由 media 的同事所做的一個 測試網頁 ，目前測試的項目有： getUserMedia ：這是跟 WebRTC 相關的另一個 spec，WebRTC 所需要的攝影機跟麥克風都是透過這個 API 取得 在同一個瀏覽器裡面建立 peerConnection 連線及傳輸資料(包含文字和檔案) 在不同的瀏覽器之間視訊會議 下面這張圖介紹了不同瀏覽器 (peer) 之間建立 WebRTC 連線的流程 宣告一個 peerconnection 的物件，然後將本地端的攝影機/麥克風資訊加入此物件 Peer1 透過 createOffer 將 SDP 告訴 Peer2 Peer2 若要接受此一連線，必須回給 Peer1 answer 當前面這些資訊交換完畢之後，便透過 ICE ( Interactive Connectivity casino online Establishment ) 來確認兩邊連線是否 OK 開始利用 RTP 傳輸影像跟聲音 當然最常被問到的問題便是，不同的 peer 要如何知道對方的存在?基本上這個交換資訊的方式並不在 WebRTC 的定義範圍內，因為考量到不同的 App 可能會有不同的需求，甚至要找到一個大家都同意的方式可能也相當困難，因此 W3C 便只定義了 peer 要連線所需要的資訊而已，例如上面的測試網頁就是透過 Http POST 來交換不同 peer 之間的 SDP。 另外，因為這個 spec 仍然還在發展中，所以這些細節都有可能會改變，這也是在 Mozilla 工作的樂趣之一，你可以關注著最新的 spec、參與 spec 的討論與實作，是不是很有趣呢？有興趣的話趕緊打開 104 加入 Mozilla 吧！",
   "images": [
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20170701191120im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/Berlin_work_week-150x150.jpg",
+      "alt": "Berlin_work_week",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/images-150x150.jpg",
+      "alt": "Firefox, Web Apps, Marketplace",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/images.jpg",
+      "alt": "Firefox, Web Apps, Marketplace",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg",
       "alt": "",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/1638/wp-content/uploads/2013/02/yy.jpg",
-      "markdown_path": "../assets/1638/wp-content/uploads/2013/02/yy.jpg",
-      "wayback_timestamp": "20160914193600",
-      "asset_archive_url": "https://web.archive.org/web/20160914193600id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy-300x152.jpg",
       "alt": "",
       "kind": "image",
-      "source": "img-srcset",
-      "post_id": 1638,
-      "page_type": "post",
-      "title": "過年不忘長知識！啥？瀏覽器也可以開視訊會議！",
-      "page_timestamp": "20160914193600",
-      "index": 2,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg",
-      "archive_path": "assets/1638/004-8725fe59c2a8.jpg",
-      "markdown_path": "../assets/1638/004-8725fe59c2a8.jpg",
-      "wayback_timestamp": "20130515180923",
-      "asset_archive_url": "https://web.archive.org/web/20130515180923id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg",
-      "content_type": "image/jpeg",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
-      "post_id": 1638,
-      "page_type": "post",
-      "title": "過年不忘長知識！啥？瀏覽器也可以開視訊會議！",
-      "page_timestamp": "20160914193600",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
-      "source": "img",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
-      "archive_path": "assets/1638/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
-      "markdown_path": "../assets/1638/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
-      "wayback_timestamp": "20161206171747",
-      "asset_archive_url": "https://web.archive.org/web/20161206171747id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "media": [
     {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20170701191120im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/01/Berlin_work_week-150x150.jpg",
+      "alt": "Berlin_work_week",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/images-150x150.jpg",
+      "alt": "Firefox, Web Apps, Marketplace",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/images.jpg",
+      "alt": "Firefox, Web Apps, Marketplace",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg",
       "alt": "",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/1638/wp-content/uploads/2013/02/yy.jpg",
-      "markdown_path": "../assets/1638/wp-content/uploads/2013/02/yy.jpg",
-      "wayback_timestamp": "20160914193600",
-      "asset_archive_url": "https://web.archive.org/web/20160914193600id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy-300x152.jpg",
       "alt": "",
       "kind": "image",
-      "source": "img-srcset",
-      "post_id": 1638,
-      "page_type": "post",
-      "title": "過年不忘長知識！啥？瀏覽器也可以開視訊會議！",
-      "page_timestamp": "20160914193600",
-      "index": 2,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg",
-      "archive_path": "assets/1638/004-8725fe59c2a8.jpg",
-      "markdown_path": "../assets/1638/004-8725fe59c2a8.jpg",
-      "wayback_timestamp": "20130515180923",
-      "asset_archive_url": "https://web.archive.org/web/20130515180923id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg",
-      "content_type": "image/jpeg",
-      "fallback_url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/yy.jpg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "source": "img-srcset"
     },
     {
-      "post_id": 1638,
-      "page_type": "post",
-      "title": "過年不忘長知識！啥？瀏覽器也可以開視訊會議！",
-      "page_timestamp": "20160914193600",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
-      "source": "img",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
-      "archive_path": "assets/1638/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
-      "markdown_path": "../assets/1638/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
-      "wayback_timestamp": "20161206171747",
-      "asset_archive_url": "https://web.archive.org/web/20161206171747id_/http://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/18/0691e07c827bd1409ae6e9f75e02b6e2-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/43/a6cb93e0f29946536e6259520c22755e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/70/36b38fa0646d4b8abe3e14a7731a56af-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -137,6 +273,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

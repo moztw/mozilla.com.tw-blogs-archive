@@ -20,286 +20,336 @@
   "author": "gasolin",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=2835",
-  "archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/?p=2835",
-  "wayback_timestamp": "20150401192341",
-  "content_html": "<div class=\"entry-content close\">\n\t\t<div style=\"width: 363px\" class=\"wp-caption aligncenter\"><img alt=\"\" src=\"http://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Da_Vinci_Vitruve_Luc_Viatour.jpg/353px-Da_Vinci_Vitruve_Luc_Viatour.jpg\" width=\"353\" height=\"480\" /><p class=\"wp-caption-text\">credit http://en.wikipedia.org/wiki/File:Da_Vinci_Vitruve_Luc_Viatour.jpg</p></div>\n<p>使用網頁技術開發應用的好處，是讓使用者不管在什麼設備上，只要有瀏覽器支援，基本上都能使用自己習慣的服務。同時若有需要，也可以較容易地透過 <a href=\"http://cordova.apache.org/\">Apache Cordova</a> 等技術，將網頁應用封裝成不同平台的原生應用。在多種手持設備作業系統並存的今日，開發者也能在同一個（廣闊的）技術領域累積自己的技術能力，以應對越來越複雜的挑戰。</p>\n<p>因為我相信以上的想法，所以今年初因緣際會進入了 Mozilla，得以用全部的時間嘗試「開源 x 移動 x 網頁」技術（Open x Mobile x Web）。（想要參與 Firefox OS 前端開發的朋友，可以先看我整理的 <a href=\"http://www.slideshare.net/gasolin/steps-to-contribute-to-firefox-os-2\" target=\"_blank\">Steps to Contribute Gaia </a>簡報）。</p>\n<p>&nbsp;</p>\n<h2><strong>讓網頁應用支援多種設備</strong></h2>\n<p>在這邊想和大家分享近期正要解決的工程難題，並在開始動工的早期，收集大家的意見：</p>\n<blockquote><p><strong>如何讓 Gaia 網頁應用（web app）和其他的網頁應用也能支援多種設備？</strong></p></blockquote>\n<p>所謂的多種設備，需要考量的除了各種大小的手機、平板之外，還包含可能使用的電腦、電視等設備。</p>\n<p>我們想要達到的，是用最小的修改，支援盡量多的設備。經過一段研究與試驗的過程，得到要讓網頁應用支援多種設備，開發者需要根據設備的「像素密度」（Pixel Density）與「螢幕大小」（Screen Size），處理相對應的「排版」與「圖片」問題。本篇將闡述處理「像素密度」（Pixel Density）相關問題的方式。</p>\n<h2><strong>「像素密度」</strong></h2>\n<p>螢幕能顯示的大小，通常都使用「像素」來表示。例如 Firefox OS 剛開始時支援的手機螢幕解析度是 320&#215;480。表示使用的是能顯示寬 320 點像素，長 480 點像素的手機螢幕。這時基本的像素密度是 1x（x 通常代表倍數）。如果想在一樣實體大小的手機上，將螢幕解析度增加到 640&#215;960 （iPhone 4 是其中的代表），拿出其中一個維度來看，就像是在一把共 320 個刻度的尺上刻上 2 倍的刻度。為了在同樣大小的尺上擠進 2 倍的刻度，我們得將原來尺上的每一個刻度再更細地劃分成 2 個刻度（320 x 2 = 640），這時像素密度是 2x。</p>\n<p>當然像素不是尺，所以除了 2x 之外，還有 1.5x 等倍數出現。</p>\n<h2><strong><strong><strong>「設備像素」（Device Pixel）<strong><strong>和</strong></strong></strong></strong>「CSS像素」（CSS Pixel）</strong></h2>\n<p style=\"text-align: center;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution.png\"><img class=\"aligncenter\" alt=\"multiple_resolution\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution-300x76.png\" width=\"300\" height=\"76\" /></a></p>\n<p style=\"text-align: center;\">解析度翻倍，畫面更細緻，但使用者介面變得太小</p>\n<p>我們原本所理解螢幕上的像素，是螢幕上每個負責顯示圖像的物理單位。每個像素都可以顯示獨立的顏色、亮度，每個像素的大小是固定的。</p>\n<p>曾經我們在瀏覽器中使用「window.screen.width」或「window.innerWidth」等方法所取得的像素，與實際設備上的像素是一致的。但 2011 年 Apple 推出了 iPhone 4。在一樣的螢幕尺吋下，將原本 320&#215;480 解析度的螢幕一舉升級成了 640&#215;960 解析度。但這麼一來，原本透過偵測「螢幕寬度小於 320/480px，就顯示手機版」這樣的邏輯，來特化手機版網頁的眾多網站就要出問題了。</p>\n<p>為了解決相容性問題，從此在不同像素密度的機器上，網站透過瀏覽器所取得的像素，不再與實際的像素相同，透過瀏覽器所得到的像素是「<strong>實際的像素/像素密度</strong>」的值。為了區別兩種「像素」，<strong>硬體上的實際像素被稱為設備像素（Device Pixel）。而在瀏覽器中透過 CSS/JS 取得的像素值被稱為 CSS 像素（CSS Pixel）</strong>。</p>\n<p>從另一個角度來看，因為不同機種上的像素密度不同，可能會出現同樣是 960&#215;1280 解析度的機種，但一個是手機（3~5吋），一個是平板（5~10吋）的情況。考慮到手機的螢幕小多了，要是在上面使用相同的像素來顯示一樣的按鈕（介面元件），按鈕很容易小到變得難以觸摸。若使用 CSS 像素來定義介面元件大小，則可以在畫面上維持相近的排版。</p>\n<h2><strong>「像素密度」</strong> x <strong>「排版」</strong></h2>\n<p style=\"text-align: center;\"><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_2.png\"><img alt=\"multiple_resolution_2\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_2-300x76.png\" width=\"300\" height=\"76\" /></a></p>\n<p style=\"text-align: center;\">使用&#8217;rem&#8217;為排版單位，使版面維持一致</p>\n<p>我們在開發網頁時，以同尺寸、但三種不同像素密度的機種來看，實際的像素是320px（320 x 1x）、480px（320 x 1.5x）、640px（320 x 2x）（設備像素），但透過 「window.screen.width」API 一樣會取得 320px（CSS 像素），以盡量減少不同像素密度可能造成應用的排版問題。</p>\n<p>在<a title=\"伸縮自如 – Gaia 的多解析度支援\" href=\"http://tech.mozilla.com.tw/posts/2360/%e4%bc%b8%e7%b8%ae%e8%87%aa%e5%a6%82-gaia-%e7%9a%84%e5%a4%9a%e8%a7%a3%e6%9e%90%e5%ba%a6%e6%94%af%e6%8f%b4\" target=\"_blank\">前一篇文章（伸縮自如 – Gaia 的多解析度支援）</a> 裡，同事已分享了我們在目前的開發分支（v1.1.0hd）中，對不同像素密度（Pixel Density）機種所做的支援。提到了在開發分支中我們已<strong>使用<a href=\"https://developer.mozilla.org/en-US/docs/Web/CSS/length#rem\">rem</a>取代px作為基本排版單位</strong>，參照「html」標籤定義的「font-size」作縮放，讓版面在不同像素密度機種上維持排版的一致 [3]。</p>\n<p>Firefox OS 中在 1x 像素密度的環境下，將每 1 個 rem 定義成 10 個設備像素。因此在修改的過程中，我們將原本使用的 10 CSS像素 (px) 單位改為 1 rem。</p>\n<p>對於網頁應用來說，不同像素密度機種排版的特色，是整體因為從 JS/CSS 取得的寬高仍維持不變，所以排版大致維持不變。但因為實際的像素已有提升，所以在同樣尺寸的機種上，卻可以看到更多網頁內容。</p>\n<h2><strong>「像素密度」</strong> x <strong>「圖片」</strong></h2>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_3.png\"><img class=\"aligncenter\" alt=\"multiple_resolution_3\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_3-300x75.png\" width=\"300\" height=\"75\" /></a></p>\n<p style=\"text-align: center;\">使用高解析圖片並固定圖片寬度，得到相同大小但更犀利的圖片</p>\n<p>為了支援多重像素密度機種，在Gaia中已經提供了基本圖片(.png)和使用@1.5x.png、@2x.png來滿足不同像素密度的需求。</p>\n<p>至於圖片與像素密度的關係，我們先來看在 1x像素密度下的原圖（logo.png）</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser1.png\"><img class=\"size-full wp-image-2856 aligncenter\" alt=\"Browser\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser1.png\" width=\"60\" height=\"60\" /></a></p>\n<p>在 2x 像素密度的機種上，因為實際的解析度是原來的2倍，呈現在畫面上是每個像素被放大 2 倍的樣子：</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser1.png\"><img class=\"aligncenter\" alt=\"Browser\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser1.png\" width=\"118\" height=\"118\" /></a></p>\n<p>我們看到，因為原來的圖片解析度比較差，在高解析度設備上放大後可以看到細節上出現了鋸齒。</p>\n<p>我們可以做的，是提供2x解析度的圖片（logo@2x.png，通常以後綴@2x.png命名）</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png\"><img class=\"size-full wp-image-2855 aligncenter\" alt=\"Browser@2x\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png\" width=\"120\" height=\"120\" /></a></p>\n<p>有趣的是，因為在沒有設定大小的情況，圖片在網頁上排版會以它的像素大小為準，在畫面上顯示的圖片大小會是原本的2倍，於是畫面上看到的樣子是這樣：</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png\"><img class=\"aligncenter\" alt=\"Browser@2x\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png\" width=\"237\" height=\"237\" /></a></p>\n<p>解決的方法，是<strong>在每個圖片上加入寬高設定</strong>。例如原本加圖片只寫：</p>\n<blockquote><p>background: url(&#8216;/style/images/loading_spinner.png&#8217;);</p></blockquote>\n<p>要支援多重像素密度的機種，需要明確指定圖片的大小：</p>\n<blockquote><p>background: url(&#8216;/style/images/loading_spinner.png&#8217;);<br />\n<strong>background-size: 6rem;</strong></p></blockquote>\n<p>修改之後，在高像素密度設備上的圖片，終於再次回到原本應顯示的大小。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png\"><img class=\"aligncenter\" alt=\"Browser@2x\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png\" width=\"120\" height=\"120\" /></a></p>\n<p>&nbsp;</p>\n<h2><strong>Gaia 如何提供不同像素密度的圖片</strong></h2>\n<p>另一個「像素密度」 x 「圖片」的問題，是如何提供不同像素密度的圖片。因為 Gaia 的目的是提供各 Firefox OS 機種預裝，裝在同一個機種上時，只會有其中一種像素密度，並不需要同時提供不同像素密度的圖片。所以可使用編譯工具來在不同像素密度之間切換。</p>\n<p>前篇文章中使用的「HIDPI=1」參數，已被「GAIA_DEV_PIXELS_PER_PX=像素密度」替換。例如想替換成 2x 像素密度圖片，可以使用如下命令：</p>\n<blockquote><p>$ make DEBUG=1 <strong>GAIA_DEV_PIXELS_PER_PX=</strong>2</p></blockquote>\n<p>&nbsp;</p>\n<h2><strong>透過 Firefox 瀏覽器測試像素密度</strong></h2>\n<p>執行後使用 Firefox Nightly 或 Aurora 版本來執行 Gaia 測試。這時預設的像素密度還是 1x。</p>\n<p>我 們可以開啓「about:config」分頁，搜尋「pixel」，修改「layout.css.devPixelsPerPx」參數值成「2」（代表2 倍像素密度），則整個瀏覽器會被設定成對應的像素密度。（因為實際桌面的解析度並沒改變，提高像素密度的效果就是整個瀏覽器畫面「長大」了）。</p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/螢幕快照-2013-08-15-下午5.11.41.png\"><img class=\"aligncenter\" alt=\"螢幕快照 2013-08-15 下午5.11.41\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/08/螢幕快照-2013-08-15-下午5.11.41-300x150.png\" width=\"300\" height=\"150\" /></a></p>\n<h2>總結</h2>\n<p>開發者要根據設備的「像素密度」（Pixel Density）與「螢幕大小」（Screen Size），處理相對應的「排版」與「圖片」問題。</p>\n<p>要支援不同像素密度的機種：</p>\n<ul>\n<li>CSS像素 = 設備像素 / 像素密度</li>\n<li>用 rem 取代 px 作為基本排版單位</li>\n<li>圖片上加入寬高設定</li>\n</ul>\n<h2><strong>參考資料</strong></h2>\n<p>（如果讀者想知道這主題有多難寫，看看繞口的相關文章標題就可以一窺一二）</p>\n<ol>\n<li><a href=\"https://developer.mozilla.org/en-US/docs/Mozilla/Mobile/Viewport_meta_tag#A_pixel_is_not_a_pixel\">A pixel is not a pixel</a></li>\n<li><a href=\"http://www.quirksmode.org/blog/archives/2010/04/a_pixel_is_not.html\">A pixel is not a pixel is not a pixel</a></li>\n<li><a href=\"http://www.css3files.com/2012/10/11/relative-is-the-new-absolute-the-rem-unit/\">Relative is the new absolute: the rem unit</a></li>\n</ol>\n\t\t\t</div>",
+  "archive_url": "https://web.archive.org/web/20170527103800/https://tech.mozilla.com.tw/posts/2835/%E4%B8%80%E5%80%8B%E6%89%93%E5%8D%81%E5%80%8B-%E8%AE%93-gaia-%E7%B6%B2%E9%A0%81%E6%87%89%E7%94%A8%EF%BC%88webapp%EF%BC%89%E6%94%AF%E6%8F%B4%E5%A4%9A%E9%87%8D%E8%A8%AD%E5%82%99%EF%BC%88%E4%B8%80",
+  "wayback_timestamp": "20170527103800",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<div style=\"width: 363px\" class=\"wp-caption aligncenter\"><img alt=\"\" src=\"https://web.archive.org/web/20170527103800im_/http://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Da_Vinci_Vitruve_Luc_Viatour.jpg/353px-Da_Vinci_Vitruve_Luc_Viatour.jpg\" width=\"353\" height=\"480\"/><p class=\"wp-caption-text\">credit http://en.wikipedia.org/wiki/File:Da_Vinci_Vitruve_Luc_Viatour.jpg</p></div>\n<p>使用網頁技術開發應用的好處，是讓使用者不管在什麼設備上，只要有瀏覽器支援，基本上都能使用自己習慣的服務。同時若有需要，也可以較容易地透過 <a href=\"https://web.archive.org/web/20170527103800/http://cordova.apache.org/\">Apache Cordova</a> 等技術，將網頁應用封裝成不同平台的原生應用。在多種手持設備作業系統並存的今日，開發者也能在同一個（廣闊的）技術領域累積自己的技術能力，以應對越來越複雜的挑戰。</p>\n<p>因為我相信以上的想法，所以今年初因緣際會進入了 Mozilla，得以用全部的時間嘗試「開源 x 移動 x 網頁」技術（Open x Mobile x Web）。（想要參與 Firefox OS 前端開發的朋友，可以先看我整理的 <a href=\"https://web.archive.org/web/20170527103800/http://www.slideshare.net/gasolin/steps-to-contribute-to-firefox-os-2\" target=\"_blank\">Steps to Contribute Gaia </a>簡報）。</p>\n<p>&nbsp;</p>\n<h2><strong>讓網頁應用支援多種設備</strong></h2>\n<p>在這邊想和大家分享近期正要解決的工程難題，並在開始動工的早期，收集大家的意見：</p>\n<blockquote><p><strong>如何讓 Gaia 網頁應用（web app）和其他的網頁應用也能支援多種設備？</strong></p></blockquote>\n<p>所謂的多種設備，需要考量的除了各種大小的手機、平板之外，還包含可能使用的電腦、電視等設備。</p>\n<p>我們想要達到的，是用最小的修改，支援盡量多的設備。經過一段研究與試驗的過程，得到要讓網頁應用支援多種設備，開發者需要根據設備的「像素密度」（Pixel Density）與「螢幕大小」（Screen Size），處理相對應的「排版」與「圖片」問題。本篇將闡述處理「像素密度」（Pixel Density）相關問題的方式。</p>\n<h2><strong>「像素密度」</strong></h2>\n<p>螢幕能顯示的大小，通常都使用「像素」來表示。例如 Firefox OS 剛開始時支援的手機螢幕解析度是 320&#215;480。表示使用的是能顯示寬 320 點像素，長 480 點像素的手機螢幕。這時基本的像素密度是 1x（x 通常代表倍數）。如果想在一樣實體大小的手機上，將螢幕解析度增加到 640&#215;960 （iPhone 4 是其中的代表），拿出其中一個維度來看，就像是在一把共 320 個刻度的尺上刻上 2 倍的刻度。為了在同樣大小的尺上擠進 2 倍的刻度，我們得將原來尺上的每一個刻度再更細地劃分成 2 個刻度（320 x 2 = 640），這時像素密度是 2x。</p>\n<p>當然像素不是尺，所以除了 2x 之外，還有 1.5x 等倍數出現。</p>\n<h2><strong><strong><strong>「設備像素」（Device Pixel）<strong><strong>和</strong></strong></strong></strong>「CSS像素」（CSS Pixel）</strong></h2>\n<p style=\"text-align: center;\"><a href=\"https://web.archive.org/web/20170527103800/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution.png\"><img class=\"aligncenter\" alt=\"multiple_resolution\" src=\"https://web.archive.org/web/20170527103800im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution-300x76.png\" width=\"300\" height=\"76\"/></a></p>\n<p style=\"text-align: center;\">解析度翻倍，畫面更細緻，但使用者介面變得太小</p>\n<p>我們原本所理解螢幕上的像素，是螢幕上每個負責顯示圖像的物理單位。每個像素都可以顯示獨立的顏色、亮度，每個像素的大小是固定的。</p>\n<p>曾經我們在瀏覽器中使用「window.screen.width」或「window.innerWidth」等方法所取得的像素，與實際設備上的像素是一致的。但 2011 年 Apple 推出了 iPhone 4。在一樣的螢幕尺吋下，將原本 320&#215;480 解析度的螢幕一舉升級成了 640&#215;960 解析度。但這麼一來，原本透過偵測「螢幕寬度小於 320/480px，就顯示手機版」這樣的邏輯，來特化手機版網頁的眾多網站就要出問題了。</p>\n<p>為了解決相容性問題，從此在不同像素密度的機器上，網站透過瀏覽器所取得的像素，不再與實際的像素相同，透過瀏覽器所得到的像素是「<strong>實際的像素/像素密度</strong>」的值。為了區別兩種「像素」，<strong>硬體上的實際像素被稱為設備像素（Device Pixel）。而在瀏覽器中透過 CSS/JS 取得的像素值被稱為 CSS 像素（CSS Pixel）</strong>。</p>\n<p>從另一個角度來看，因為不同機種上的像素密度不同，可能會出現同樣是 960&#215;1280 解析度的機種，但一個是手機（3~5吋），一個是平板（5~10吋）的情況。考慮到手機的螢幕小多了，要是在上面使用相同的像素來顯示一樣的按鈕（介面元件），按鈕很容易小到變得難以觸摸。若使用 CSS 像素來定義介面元件大小，則可以在畫面上維持相近的排版。</p>\n<h2><strong>「像素密度」</strong> x <strong>「排版」</strong></h2>\n<p style=\"text-align: center;\"><a href=\"https://web.archive.org/web/20170527103800/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_2.png\"><img alt=\"multiple_resolution_2\" src=\"https://web.archive.org/web/20170527103800im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_2-300x76.png\" width=\"300\" height=\"76\"/></a></p>\n<p style=\"text-align: center;\">使用&#8217;rem&#8217;為排版單位，使版面維持一致</p>\n<p>我們在開發網頁時，以同尺寸、但三種不同像素密度的機種來看，實際的像素是320px（320 x 1x）、480px（320 x 1.5x）、640px（320 x 2x）（設備像素），但透過 「window.screen.width」API 一樣會取得 320px（CSS 像素），以盡量減少不同像素密度可能造成應用的排版問題。</p>\n<p>在<a title=\"伸縮自如 – Gaia 的多解析度支援\" href=\"https://web.archive.org/web/20170527103800/http://tech.mozilla.com.tw/posts/2360/%e4%bc%b8%e7%b8%ae%e8%87%aa%e5%a6%82-gaia-%e7%9a%84%e5%a4%9a%e8%a7%a3%e6%9e%90%e5%ba%a6%e6%94%af%e6%8f%b4\" target=\"_blank\">前一篇文章（伸縮自如 – Gaia 的多解析度支援）</a> 裡，同事已分享了我們在目前的開發分支（v1.1.0hd）中，對不同像素密度（Pixel Density）機種所做的支援。提到了在開發分支中我們已<strong>使用<a href=\"https://web.archive.org/web/20170527103800/https://developer.mozilla.org/en-US/docs/Web/CSS/length#rem\">rem</a>取代px作為基本排版單位</strong>，參照「html」標籤定義的「font-size」作縮放，讓版面在不同像素密度機種上維持排版的一致 [3]。</p>\n<p>Firefox OS 中在 1x 像素密度的環境下，將每 1 個 rem 定義成 10 個設備像素。因此在修改的過程中，我們將原本使用的 10 CSS像素 (px) 單位改為 1 rem。</p>\n<p>對於網頁應用來說，不同像素密度機種排版的特色，是整體因為從 JS/CSS 取得的寬高仍維持不變，所以排版大致維持不變。但因為實際的像素已有提升，所以在同樣尺寸的機種上，卻可以看到更多網頁內容。</p>\n<h2><strong>「像素密度」</strong> x <strong>「圖片」</strong></h2>\n<p><a href=\"https://web.archive.org/web/20170527103800/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_3.png\"><img class=\"aligncenter\" alt=\"multiple_resolution_3\" src=\"https://web.archive.org/web/20170527103800im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_3-300x75.png\" width=\"300\" height=\"75\"/></a></p>\n<p style=\"text-align: center;\">使用高解析圖片並固定圖片寬度，得到相同大小但更犀利的圖片</p>\n<p>為了支援多重像素密度機種，在Gaia中已經提供了基本圖片(.png)和使用@1.5x.png、@2x.png來滿足不同像素密度的需求。</p>\n<p>至於圖片與像素密度的關係，我們先來看在 1x像素密度下的原圖（logo.png）</p>\n<p><a href=\"https://web.archive.org/web/20170527103800/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser1.png\"><img class=\"size-full wp-image-2856 aligncenter\" alt=\"Browser\" src=\"https://web.archive.org/web/20170527103800im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser1.png\" width=\"60\" height=\"60\"/></a></p>\n<p>在 2x 像素密度的機種上，因為實際的解析度是原來的2倍，呈現在畫面上是每個像素被放大 2 倍的樣子：</p>\n<p><a href=\"https://web.archive.org/web/20170527103800/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser1.png\"><img class=\"aligncenter\" alt=\"Browser\" src=\"https://web.archive.org/web/20170527103800im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser1.png\" width=\"118\" height=\"118\"/></a></p>\n<p>我們看到，因為原來的圖片解析度比較差，在高解析度設備上放大後可以看到細節上出現了鋸齒。</p>\n<p>我們可以做的，是提供2x解析度的圖片（logo@2x.png，通常以後綴@2x.png命名）</p>\n<p><a href=\"https://web.archive.org/web/20170527103800/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png\"><img class=\"size-full wp-image-2855 aligncenter\" alt=\"Browser@2x\" src=\"https://web.archive.org/web/20170527103800im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png\" width=\"120\" height=\"120\"/></a></p>\n<p>有趣的是，因為在沒有設定大小的情況，圖片在網頁上排版會以它的像素大小為準，在畫面上顯示的圖片大小會是原本的2倍，於是畫面上看到的樣子是這樣：</p>\n<p><a href=\"https://web.archive.org/web/20170527103800/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png\"><img class=\"aligncenter\" alt=\"Browser@2x\" src=\"https://web.archive.org/web/20170527103800im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png\" width=\"237\" height=\"237\"/></a></p>\n<p>解決的方法，是<strong>在每個圖片上加入寬高設定</strong>。例如原本加圖片只寫：</p>\n<blockquote><p>background: url(&#8216;/style/images/loading_spinner.png&#8217;);</p></blockquote>\n<p>要支援多重像素密度的機種，需要明確指定圖片的大小：</p>\n<blockquote><p>background: url(&#8216;/style/images/loading_spinner.png&#8217;);<br/>\n<strong>background-size: 6rem;</strong></p></blockquote>\n<p>修改之後，在高像素密度設備上的圖片，終於再次回到原本應顯示的大小。</p>\n<p><a href=\"https://web.archive.org/web/20170527103800/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png\"><img class=\"aligncenter\" alt=\"Browser@2x\" src=\"https://web.archive.org/web/20170527103800im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png\" width=\"120\" height=\"120\"/></a></p>\n<p>&nbsp;</p>\n<h2><strong>Gaia 如何提供不同像素密度的圖片</strong></h2>\n<p>另一個「像素密度」 x 「圖片」的問題，是如何提供不同像素密度的圖片。因為 Gaia 的目的是提供各 Firefox OS 機種預裝，裝在同一個機種上時，只會有其中一種像素密度，並不需要同時提供不同像素密度的圖片。所以可使用編譯工具來在不同像素密度之間切換。</p>\n<p>前篇文章中使用的「HIDPI=1」參數，已被「GAIA_DEV_PIXELS_PER_PX=像素密度」替換。例如想替換成 2x 像素密度圖片，可以使用如下命令：</p>\n<blockquote><p>$ make DEBUG=1 <strong>GAIA_DEV_PIXELS_PER_PX=</strong>2</p></blockquote>\n<p>&nbsp;</p>\n<h2><strong>透過 Firefox 瀏覽器測試像素密度</strong></h2>\n<p>執行後使用 Firefox Nightly 或 Aurora 版本來執行 Gaia 測試。這時預設的像素密度還是 1x。</p>\n<p>我 們可以開啓「about:config」分頁，搜尋「pixel」，修改「layout.css.devPixelsPerPx」參數值成「2」（代表2 倍像素密度），則整個瀏覽器會被設定成對應的像素密度。（因為實際桌面的解析度並沒改變，提高像素密度的效果就是整個瀏覽器畫面「長大」了）。</p>\n<p><a href=\"https://web.archive.org/web/20170527103800/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/螢幕快照-2013-08-15-下午5.11.41.png\"><img class=\"aligncenter\" alt=\"螢幕快照 2013-08-15 下午5.11.41\" src=\"https://web.archive.org/web/20170527103800im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/08/螢幕快照-2013-08-15-下午5.11.41-300x150.png\" width=\"300\" height=\"150\"/></a></p>\n<h2>總結</h2>\n<p>開發者要根據設備的「像素密度」（Pixel Density）與「螢幕大小」（Screen Size），處理相對應的「排版」與「圖片」問題。</p>\n<p>要支援不同像素密度的機種：</p>\n<ul>\n<li>CSS像素 = 設備像素 / 像素密度</li>\n<li>用 rem 取代 px 作為基本排版單位</li>\n<li>圖片上加入寬高設定</li>\n</ul>\n<h2><strong>參考資料</strong></h2>\n<p>（如果讀者想知道這主題有多難寫，看看繞口的相關文章標題就可以一窺一二）</p>\n<ol>\n<li><a href=\"https://web.archive.org/web/20170527103800/https://developer.mozilla.org/en-US/docs/Mozilla/Mobile/Viewport_meta_tag#A_pixel_is_not_a_pixel\">A pixel is not a pixel</a></li>\n<li><a href=\"https://web.archive.org/web/20170527103800/http://www.quirksmode.org/blog/archives/2010/04/a_pixel_is_not.html\">A pixel is not a pixel is not a pixel</a></li>\n<li><a href=\"https://web.archive.org/web/20170527103800/http://www.css3files.com/2012/10/11/relative-is-the-new-absolute-the-rem-unit/\">Relative is the new absolute: the rem unit</a></li>\n</ol>\n\t\t\t</div>",
   "content_text": "credit http://en.wikipedia.org/wiki/File:Da_Vinci_Vitruve_Luc_Viatour.jpg 使用網頁技術開發應用的好處，是讓使用者不管在什麼設備上，只要有瀏覽器支援，基本上都能使用自己習慣的服務。同時若有需要，也可以較容易地透過 Apache Cordova 等技術，將網頁應用封裝成不同平台的原生應用。在多種手持設備作業系統並存的今日，開發者也能在同一個（廣闊的）技術領域累積自己的技術能力，以應對越來越複雜的挑戰。 因為我相信以上的想法，所以今年初因緣際會進入了 Mozilla，得以用全部的時間嘗試「開源 x 移動 x 網頁」技術（Open x Mobile x Web）。（想要參與 Firefox OS 前端開發的朋友，可以先看我整理的 Steps to Contribute Gaia 簡報）。 讓網頁應用支援多種設備 在這邊想和大家分享近期正要解決的工程難題，並在開始動工的早期，收集大家的意見： 如何讓 Gaia 網頁應用（web app）和其他的網頁應用也能支援多種設備？ 所謂的多種設備，需要考量的除了各種大小的手機、平板之外，還包含可能使用的電腦、電視等設備。 我們想要達到的，是用最小的修改，支援盡量多的設備。經過一段研究與試驗的過程，得到要讓網頁應用支援多種設備，開發者需要根據設備的「像素密度」（Pixel Density）與「螢幕大小」（Screen Size），處理相對應的「排版」與「圖片」問題。本篇將闡述處理「像素密度」（Pixel Density）相關問題的方式。 「像素密度」 螢幕能顯示的大小，通常都使用「像素」來表示。例如 Firefox OS 剛開始時支援的手機螢幕解析度是 320×480。表示使用的是能顯示寬 320 點像素，長 480 點像素的手機螢幕。這時基本的像素密度是 1x（x 通常代表倍數）。如果想在一樣實體大小的手機上，將螢幕解析度增加到 640×960 （iPhone 4 是其中的代表），拿出其中一個維度來看，就像是在一把共 320 個刻度的尺上刻上 2 倍的刻度。為了在同樣大小的尺上擠進 2 倍的刻度，我們得將原來尺上的每一個刻度再更細地劃分成 2 個刻度（320 x 2 = 640），這時像素密度是 2x。 當然像素不是尺，所以除了 2x 之外，還有 1.5x 等倍數出現。 「設備像素」（Device Pixel） 和 「CSS像素」（CSS Pixel） 解析度翻倍，畫面更細緻，但使用者介面變得太小 我們原本所理解螢幕上的像素，是螢幕上每個負責顯示圖像的物理單位。每個像素都可以顯示獨立的顏色、亮度，每個像素的大小是固定的。 曾經我們在瀏覽器中使用「window.screen.width」或「window.innerWidth」等方法所取得的像素，與實際設備上的像素是一致的。但 2011 年 Apple 推出了 iPhone 4。在一樣的螢幕尺吋下，將原本 320×480 解析度的螢幕一舉升級成了 640×960 解析度。但這麼一來，原本透過偵測「螢幕寬度小於 320/480px，就顯示手機版」這樣的邏輯，來特化手機版網頁的眾多網站就要出問題了。 為了解決相容性問題，從此在不同像素密度的機器上，網站透過瀏覽器所取得的像素，不再與實際的像素相同，透過瀏覽器所得到的像素是「 實際的像素/像素密度 」的值。為了區別兩種「像素」， 硬體上的實際像素被稱為設備像素（Device Pixel）。而在瀏覽器中透過 CSS/JS 取得的像素值被稱為 CSS 像素（CSS Pixel） 。 從另一個角度來看，因為不同機種上的像素密度不同，可能會出現同樣是 960×1280 解析度的機種，但一個是手機（3~5吋），一個是平板（5~10吋）的情況。考慮到手機的螢幕小多了，要是在上面使用相同的像素來顯示一樣的按鈕（介面元件），按鈕很容易小到變得難以觸摸。若使用 CSS 像素來定義介面元件大小，則可以在畫面上維持相近的排版。 「像素密度」 x 「排版」 使用’rem’為排版單位，使版面維持一致 我們在開發網頁時，以同尺寸、但三種不同像素密度的機種來看，實際的像素是320px（320 x 1x）、480px（320 x 1.5x）、640px（320 x 2x）（設備像素），但透過 「window.screen.width」API 一樣會取得 320px（CSS 像素），以盡量減少不同像素密度可能造成應用的排版問題。 在 前一篇文章（伸縮自如 – Gaia 的多解析度支援） 裡，同事已分享了我們在目前的開發分支（v1.1.0hd）中，對不同像素密度（Pixel Density）機種所做的支援。提到了在開發分支中我們已 使用 rem 取代px作為基本排版單位 ，參照「html」標籤定義的「font-size」作縮放，讓版面在不同像素密度機種上維持排版的一致 [3]。 Firefox OS 中在 1x 像素密度的環境下，將每 1 個 rem 定義成 10 個設備像素。因此在修改的過程中，我們將原本使用的 10 CSS像素 (px) 單位改為 1 rem。 對於網頁應用來說，不同像素密度機種排版的特色，是整體因為從 JS/CSS 取得的寬高仍維持不變，所以排版大致維持不變。但因為實際的像素已有提升，所以在同樣尺寸的機種上，卻可以看到更多網頁內容。 「像素密度」 x 「圖片」 使用高解析圖片並固定圖片寬度，得到相同大小但更犀利的圖片 為了支援多重像素密度機種，在Gaia中已經提供了基本圖片(.png)和使用@1.5x.png、@2x.png來滿足不同像素密度的需求。 至於圖片與像素密度的關係，我們先來看在 1x像素密度下的原圖（logo.png） 在 2x 像素密度的機種上，因為實際的解析度是原來的2倍，呈現在畫面上是每個像素被放大 2 倍的樣子： 我們看到，因為原來的圖片解析度比較差，在高解析度設備上放大後可以看到細節上出現了鋸齒。 我們可以做的，是提供2x解析度的圖片（logo@2x.png，通常以後綴@2x.png命名） 有趣的是，因為在沒有設定大小的情況，圖片在網頁上排版會以它的像素大小為準，在畫面上顯示的圖片大小會是原本的2倍，於是畫面上看到的樣子是這樣： 解決的方法，是 在每個圖片上加入寬高設定 。例如原本加圖片只寫： background: url(‘/style/images/loading_spinner.png’); 要支援多重像素密度的機種，需要明確指定圖片的大小： background: url(‘/style/images/loading_spinner.png’); background-size: 6rem; 修改之後，在高像素密度設備上的圖片，終於再次回到原本應顯示的大小。 Gaia 如何提供不同像素密度的圖片 另一個「像素密度」 x 「圖片」的問題，是如何提供不同像素密度的圖片。因為 Gaia 的目的是提供各 Firefox OS 機種預裝，裝在同一個機種上時，只會有其中一種像素密度，並不需要同時提供不同像素密度的圖片。所以可使用編譯工具來在不同像素密度之間切換。 前篇文章中使用的「HIDPI=1」參數，已被「GAIA_DEV_PIXELS_PER_PX=像素密度」替換。例如想替換成 2x 像素密度圖片，可以使用如下命令： $ make DEBUG=1 GAIA_DEV_PIXELS_PER_PX= 2 透過 Firefox 瀏覽器測試像素密度 執行後使用 Firefox Nightly 或 Aurora 版本來執行 Gaia 測試。這時預設的像素密度還是 1x。 我 們可以開啓「about:config」分頁，搜尋「pixel」，修改「layout.css.devPixelsPerPx」參數值成「2」（代表2 倍像素密度），則整個瀏覽器會被設定成對應的像素密度。（因為實際桌面的解析度並沒改變，提高像素密度的效果就是整個瀏覽器畫面「長大」了）。 總結 開發者要根據設備的「像素密度」（Pixel Density）與「螢幕大小」（Screen Size），處理相對應的「排版」與「圖片」問題。 要支援不同像素密度的機種： CSS像素 = 設備像素 / 像素密度 用 rem 取代 px 作為基本排版單位 圖片上加入寬高設定 參考資料 （如果讀者想知道這主題有多難寫，看看繞口的相關文章標題就可以一窺一二） A pixel is not a pixel A pixel is not a pixel is not a pixel Relative is the new absolute: the rem unit",
   "images": [
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20170527103800im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-10-21-%E4%B8%8B%E5%8D%884.04.141-150x150.png",
+      "alt": "螢幕快照 2013-10-21 下午4.04.14",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/frag_android_screen_res_weighted-150x150.png",
+      "alt": "frag_android_screen_res_weighted",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
     {
       "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Da_Vinci_Vitruve_Luc_Viatour.jpg/353px-Da_Vinci_Vitruve_Luc_Viatour.jpg",
       "alt": "",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2835/001-aa6077e2f43f.jpg",
-      "markdown_path": "../assets/2835/001-aa6077e2f43f.jpg",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Da_Vinci_Vitruve_Luc_Viatour.jpg/353px-Da_Vinci_Vitruve_Luc_Viatour.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution-300x76.png",
       "alt": "multiple_resolution",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/multiple_resolution-300x76.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/multiple_resolution-300x76.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution-300x76.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_2-300x76.png",
       "alt": "multiple_resolution_2",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/multiple_resolution_2-300x76.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/multiple_resolution_2-300x76.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_2-300x76.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_3-300x75.png",
       "alt": "multiple_resolution_3",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/multiple_resolution_3-300x75.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/multiple_resolution_3-300x75.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_3-300x75.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser1.png",
       "alt": "Browser",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/Browser1.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/Browser1.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser1.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png",
       "alt": "Browser@2x",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/Browser@2x.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/Browser@2x.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-08-15-%E4%B8%8B%E5%8D%885.11.41-300x150.png",
       "alt": "螢幕快照 2013-08-15 下午5.11.41",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/螢幕快照-2013-08-15-下午5.11.41-300x150.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/螢幕快照-2013-08-15-下午5.11.41-300x150.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-08-15-%E4%B8%8B%E5%8D%885.11.41-300x150.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/Da_Vinci_Vitruve_Luc_Viatour.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution.png",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/multiple_resolution.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/multiple_resolution.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution.png",
-      "content_type": "image/png"
+      "source": "a-href"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_2.png",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/multiple_resolution_2.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/multiple_resolution_2.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_2.png",
-      "content_type": "image/png"
+      "source": "a-href"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_3.png",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/multiple_resolution_3.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/multiple_resolution_3.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_3.png",
-      "content_type": "image/png"
+      "source": "a-href"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-08-15-%E4%B8%8B%E5%8D%885.11.41.png",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/螢幕快照-2013-08-15-下午5.11.41.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/螢幕快照-2013-08-15-下午5.11.41.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-08-15-%E4%B8%8B%E5%8D%885.11.41.png",
-      "content_type": "image/png"
-    },
-    {
-      "post_id": 2835,
-      "page_type": "post",
-      "title": "一個打十個 – 讓 Gaia 網頁應用（webapp）支援多重設備（一：像素密度）",
-      "page_timestamp": "20150401192341",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
-      "source": "img",
-      "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
-      "archive_path": "assets/2835/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
-      "markdown_path": "../assets/2835/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
-      "wayback_timestamp": "20150401192916",
-      "asset_archive_url": "https://web.archive.org/web/20150401192916id_/https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "a-href"
     }
   ],
   "media": [
     {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20170527103800im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-10-21-%E4%B8%8B%E5%8D%884.04.141-150x150.png",
+      "alt": "螢幕快照 2013-10-21 下午4.04.14",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/frag_android_screen_res_weighted-150x150.png",
+      "alt": "frag_android_screen_res_weighted",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Da_Vinci_Vitruve_Luc_Viatour.jpg/353px-Da_Vinci_Vitruve_Luc_Viatour.jpg",
       "alt": "",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2835/001-aa6077e2f43f.jpg",
-      "markdown_path": "../assets/2835/001-aa6077e2f43f.jpg",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Da_Vinci_Vitruve_Luc_Viatour.jpg/353px-Da_Vinci_Vitruve_Luc_Viatour.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution-300x76.png",
       "alt": "multiple_resolution",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/multiple_resolution-300x76.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/multiple_resolution-300x76.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution-300x76.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_2-300x76.png",
       "alt": "multiple_resolution_2",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/multiple_resolution_2-300x76.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/multiple_resolution_2-300x76.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_2-300x76.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_3-300x75.png",
       "alt": "multiple_resolution_3",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/multiple_resolution_3-300x75.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/multiple_resolution_3-300x75.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_3-300x75.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser1.png",
       "alt": "Browser",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/Browser1.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/Browser1.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser1.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png",
       "alt": "Browser@2x",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/Browser@2x.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/Browser@2x.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/Browser@2x.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-08-15-%E4%B8%8B%E5%8D%885.11.41-300x150.png",
       "alt": "螢幕快照 2013-08-15 下午5.11.41",
       "kind": "image",
-      "source": "img",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/螢幕快照-2013-08-15-下午5.11.41-300x150.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/螢幕快照-2013-08-15-下午5.11.41-300x150.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-08-15-%E4%B8%8B%E5%8D%885.11.41-300x150.png",
-      "content_type": "image/png"
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/59/a9ca8e53ede022e774f34248209338e4-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/10/Da_Vinci_Vitruve_Luc_Viatour.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution.png",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/multiple_resolution.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/multiple_resolution.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution.png",
-      "content_type": "image/png"
+      "source": "a-href"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_2.png",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/multiple_resolution_2.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/multiple_resolution_2.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_2.png",
-      "content_type": "image/png"
+      "source": "a-href"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_3.png",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/multiple_resolution_3.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/multiple_resolution_3.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/multiple_resolution_3.png",
-      "content_type": "image/png"
+      "source": "a-href"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-08-15-%E4%B8%8B%E5%8D%885.11.41.png",
       "alt": "",
       "kind": "image",
-      "source": "a-href",
-      "archive_path": "assets/2835/wp-content/uploads/2013/08/螢幕快照-2013-08-15-下午5.11.41.png",
-      "markdown_path": "../assets/2835/wp-content/uploads/2013/08/螢幕快照-2013-08-15-下午5.11.41.png",
-      "wayback_timestamp": "20150401192341",
-      "asset_archive_url": "https://web.archive.org/web/20150401192341id_/https://tech.mozilla.com.tw/wp-content/uploads/2013/08/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7-2013-08-15-%E4%B8%8B%E5%8D%885.11.41.png",
-      "content_type": "image/png"
-    },
-    {
-      "post_id": 2835,
-      "page_type": "post",
-      "title": "一個打十個 – 讓 Gaia 網頁應用（webapp）支援多重設備（一：像素密度）",
-      "page_timestamp": "20150401192341",
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
-      "source": "img",
-      "kind": "image",
-      "index": 0,
-      "recovered_url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
-      "archive_path": "assets/2835/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
-      "markdown_path": "../assets/2835/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
-      "wayback_timestamp": "20150401192916",
-      "asset_archive_url": "https://web.archive.org/web/20150401192916id_/https://tech.mozilla.com.tw/wp-content/uploads/avatars/60/2af25d5bedc5219a5e66b8d4012b6b11-bpthumb.jpg",
-      "content_type": "image/jpeg"
+      "source": "a-href"
     }
   ],
   "links": [
@@ -369,6 +419,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }
