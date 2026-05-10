@@ -3684,6 +3684,14 @@ function categoryNameFromSlug(slug) {
   if (SITE_HOST === 'blog.mozilla.com.tw' && CATEGORY_MAP[clean]) {
     return CATEGORY_MAP[clean];
   }
+  const blogMap = {
+    mobile: 'Firefox for Android',
+    'news-feed': '新聞訊息',
+    'news-2': '新聞訊息',
+  };
+  if (SITE_HOST === 'blog.mozilla.com.tw' && blogMap[clean]) {
+    return blogMap[clean];
+  }
   const techMap = {
     b2g: 'Firefox OS(B2G)',
     browser_id: 'Persona',
