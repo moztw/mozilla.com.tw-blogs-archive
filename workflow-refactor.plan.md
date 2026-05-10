@@ -30,7 +30,7 @@ Implemented:
   local raw HTML.
 - `localize`, `build`, `report`, and `deploy` are routed through explicit site
   profiles.
-- Build output deploys under `blog/taipei/` and `blog/tech/`.
+- Build output deploys under `taipei/` and `tech/`.
 - `--all` is intentionally unsupported.
 
 Remaining intentional compatibility surface:

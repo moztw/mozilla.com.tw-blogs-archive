@@ -13,7 +13,7 @@ const SITES = getSiteProfiles().map((profile) => ({
   name: profile.deployName,
   buildDir: profile.buildDir,
   archiveDir: profile.archiveDir,
-  baseUrl: `https://moztw.org/${profile.deployPath.replace(/^\/+|\/+$/g, '')}/`,
+  baseUrl: `https://moztw.org/${(profile.deployPath || profile.deployName).replace(/^\/+|\/+$/g, '')}/`,
 }));
 
 const args = parseArgs(process.argv.slice(2));

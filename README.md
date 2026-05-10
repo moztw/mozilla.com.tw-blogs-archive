@@ -31,7 +31,7 @@ node scripts/workflow.js deploy-both
 - `build`：只把 localized content 編譯成靜態頁面，遠端資源檢查只作為防禦性 fallback。
 - `deploy`：只同步 build output 到 `gh-pages` worktree、產生 root index 與 merged sitemap、commit/push。
 
-站台設定集中於 `scripts/lib/site-profiles.js`。deploy 目標為 `moztw.org/blog/taipei/` 與 `moztw.org/blog/tech/`。
+站台設定集中於 `scripts/lib/site-profiles.js`。deploy 目標為 `moztw.org/taipei/` 與 `moztw.org/tech/`。
 
 ```bash
 npm run site:build
@@ -47,7 +47,7 @@ npm run site:deploy
 
 1. 重新 build 兩個站
 2. 建立或重用 `gh-pages` worktree
-3. 將 `blog/` 與 `tech/` 同步到 deploy worktree 的 `blog/taipei/` 與 `blog/tech/`
+3. 將 `blog/` 與 `tech/` 同步到 deploy worktree 的 `taipei/` 與 `tech/`
 4. 產生 branch root 的 merged `sitemap.xml`
 5. commit `gh-pages`
 6. push 到指定 remote / branch
