@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/fxos-apps-workshop"
 archive_url: "https://web.archive.org/web/20170107100938id_/https://blog.mozilla.com.tw/events/fxos-apps-workshop"
 wayback_timestamp: "20170107100938"
 status: "ok"
-asset_status: "ok"
 ---
+
 地圖加載中...   			
 		
    		
@@ -56,7 +56,6 @@ asset_status: "ok"
 
 講者介紹
 
-![Evan Tseng](../assets/uploads/evan.png)
 軟體工程師 曾增仁 Evan Tseng
 
 高中開始經營自己的網站，還不知道什麼是程式語言，卻不小心在 try and error 的過程中開始寫起了 Perl。從此，似乎就跟 Web 結下了不解之緣。目前在 Mozilla 玩 Firefox OS，負責前端界面與應用程式的開發。

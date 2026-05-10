@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/1213-%e5%85%83%e6%99%ba%e5%a4%
 archive_url: "https://web.archive.org/web/20160902011656id_/https://blog.mozilla.com.tw/events/1213-%e5%85%83%e6%99%ba%e5%a4%a7%e5%ad%b8%e6%a0%a1%e5%9c%92%e6%bc%94%e8%ac%9b-mozilla-and-the-open-web"
 wayback_timestamp: "20160902011656"
 status: "ok"
-asset_status: "partial_assets_failed"
 ---
+
 地圖不可用
 
 	活動時間

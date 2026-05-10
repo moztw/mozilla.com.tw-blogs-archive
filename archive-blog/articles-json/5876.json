@@ -8,32 +8,148 @@
   "categories": [
     "Firefox"
   ],
-  "tags": [
-    "Firefox"
-  ],
+  "tags": [],
   "author": "",
+  "page_type": "post",
   "original_url": "https://blog.mozilla.com.tw/?p=5876",
-  "archive_url": "https://web.archive.org/web/20201231235959id_/https://blog.mozilla.com.tw/?p=5876",
+  "archive_url": "https://web.archive.org/web/20201231235959/https://blog.mozilla.com.tw/posts/5876/serviceworkers-and-firefox",
   "wayback_timestamp": "20201231235959",
   "content_html": "<div class=\"entry-content close\">\n    <p>從 2013 上半年開始，Mozillians 就開始參與 <a href=\"https://github.com/slightlyoff/ServiceWorker/\">Service Worker</a> 的設計過程。感謝 Google、Mozilla、三星 (Samsung)，以及其他廠商的努力，讓此屬於 Web 平台的絕佳新功能不斷演化，現已建構到不同的瀏覽器引擎之中。</p>\n<h4>什麼是 Service Workers？</h4>\n<p>簡單來說，Service Workers 指令碼可針對網頁，於用戶端提供近似代理伺服器的功能。JavaScript 程式碼可攔截網路請求、傳送 (位於快取中) 現成的回應資料，並根據 App 的特殊需求而進行分層快取 (Granular caching，也是之前 Web 平台所缺乏的功能)。此強大功能現已可讓 Web 開發者啟用之，以提供完整的離線功能。可參閱 Jake Archibald 在<a href=\"http://jakearchibald.com/2014/service-worker-first-draft/\">本篇部落格文章</a>所摘要的數項功能</p>\n<p>由於 Service Workers 是在「背景」中執行，因此之前僅限原生平台才能進行的某些作業，現在 Web 也同樣能執行。除了基本的網路功能之外，Service Workers 將來也能搭配 <a href=\"https://dvcs.w3.org/hg/push/raw-file/tip/index.html\">Push API</a> 與 <a href=\"https://github.com/slightlyoff/BackgroundSync/blob/master/explainer.md\">Background Sync API</a>，從瀏覽器傳遞訊息到 Web App。</p>\n<p><a href=\"https://jakearchibald.github.io/isserviceworkerready/\" target=\"_blank\"><img class=\"aligncenter wp-image-5879\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/serviceworker.jpg\" alt=\"serviceworker\" width=\"590\" height=\"460\" /></a></p>\n<h4>Firefox 中的 Service Workers</h4>\n<p>有許多 Mozillians 努力建構 Gecko 中的 Service Workers，而 Anne van Kesteren 與 Jonas Sicking 現正協助相關的設計與規格。<a href=\"https://developer.mozilla.org/en-US/docs/Necko\">Necko</a> 團隊成員與其他人則提供網路連線與相關概念。Nikhil Marathe 最近發表 <a href=\"http://blog.nikhilism.com/2014/05/serviceworker-implementation-status-in-firefox.html\">Service Workers 目前在 Gecko 中的狀態</a>。</p>\n<p>Service Worker 的各個部份均將通過檢查，逐一納入 Gecko 之內。隨著整個規格漸趨穩定，且其他瀏覽器引擎的實作 (尤其是 Blink) 亦快速發展，上述所有功能均可於 Gecko中透過 dom.serviceWorkers.enabled 設定而啟用。而 dom.serviceWorkers.enabled 本身預設為「false」，可另外透過 about:config 將之修改。</p>\n<p>我們規劃讓 Web 開發者短時間內就能在 <a href=\"https://www.mozilla.org/firefox/nightly\">Firefox Nightly</a> 上執行 Service Worker 的大部分功能，且只要將上述設定改為「true」即可。如果一切順利，我們希望能在 2014 年 9月底就真正上線。</p>\n<h4>Service Worker 建置現狀</h4>\n<p>Jake Archibald 特別提供可輕鬆了解 <a href=\"https://jakearchibald.github.io/isserviceworkerready/\">Service Worker 建置現狀</a>的工具。另可透過 <a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=903441\">meta bug</a>知道 gecko 的建置情形。</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2014/06/serviceworkers-and-firefox/\" target=\"_blank\">ServiceWorkers and Firefox</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
   "content_text": "從 2013 上半年開始，Mozillians 就開始參與 Service Worker 的設計過程。感謝 Google、Mozilla、三星 (Samsung)，以及其他廠商的努力，讓此屬於 Web 平台的絕佳新功能不斷演化，現已建構到不同的瀏覽器引擎之中。 什麼是 Service Workers？ 簡單來說，Service Workers 指令碼可針對網頁，於用戶端提供近似代理伺服器的功能。JavaScript 程式碼可攔截網路請求、傳送 (位於快取中) 現成的回應資料，並根據 App 的特殊需求而進行分層快取 (Granular caching，也是之前 Web 平台所缺乏的功能)。此強大功能現已可讓 Web 開發者啟用之，以提供完整的離線功能。可參閱 Jake Archibald 在 本篇部落格文章 所摘要的數項功能 由於 Service Workers 是在「背景」中執行，因此之前僅限原生平台才能進行的某些作業，現在 Web 也同樣能執行。除了基本的網路功能之外，Service Workers 將來也能搭配 Push API 與 Background Sync API ，從瀏覽器傳遞訊息到 Web App。 Firefox 中的 Service Workers 有許多 Mozillians 努力建構 Gecko 中的 Service Workers，而 Anne van Kesteren 與 Jonas Sicking 現正協助相關的設計與規格。 Necko 團隊成員與其他人則提供網路連線與相關概念。Nikhil Marathe 最近發表 Service Workers 目前在 Gecko 中的狀態 。 Service Worker 的各個部份均將通過檢查，逐一納入 Gecko 之內。隨著整個規格漸趨穩定，且其他瀏覽器引擎的實作 (尤其是 Blink) 亦快速發展，上述所有功能均可於 Gecko中透過 dom.serviceWorkers.enabled 設定而啟用。而 dom.serviceWorkers.enabled 本身預設為「false」，可另外透過 about:config 將之修改。 我們規劃讓 Web 開發者短時間內就能在 Firefox Nightly 上執行 Service Worker 的大部分功能，且只要將上述設定改為「true」即可。如果一切順利，我們希望能在 2014 年 9月底就真正上線。 Service Worker 建置現狀 Jake Archibald 特別提供可輕鬆了解 Service Worker 建置現狀 的工具。另可透過 meta bug 知道 gecko 的建置情形。 原文連結： ServiceWorkers and Firefox",
   "images": [
     {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/submit-app-stage2-150x150.png",
+      "alt": "submit-app-stage2",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/privcy-150x150.jpg",
+      "alt": "privcy",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/serviceworker.jpg",
       "alt": "serviceworker",
-      "post_id": 5876,
-      "page_type": "other",
-      "title": "ServiceWorkers 與 Firefox",
-      "page_timestamp": "20201231235959",
-      "source": "img",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/serviceworker.jpg",
-      "archive_path": "assets/5876/wp-content/uploads/serviceworker.jpg",
-      "markdown_path": "../assets/5876/wp-content/uploads/serviceworker.jpg",
-      "wayback_timestamp": "20150926001434",
-      "asset_archive_url": "https://web.archive.org/web/20150926001434id_/http://blog.mozilla.com.tw/wp-content/uploads/serviceworker.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/15-59-36-0536df-150x150.jpg",
+      "alt": "15-59-36-0536df",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/ctp-in-action1-600x478-150x150.png",
+      "alt": "ctp-in-action1-600x478",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/swoop-game-500-150x150.png",
+      "alt": "swoop-game-500",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/1230061_577013392358057_1584306501_n-150x150.jpg",
+      "alt": "1230061_577013392358057_1584306501_n",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/submit-app-stage2-150x150.png",
+      "alt": "submit-app-stage2",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/privcy-150x150.jpg",
+      "alt": "privcy",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/serviceworker.jpg",
+      "alt": "serviceworker",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/15-59-36-0536df-150x150.jpg",
+      "alt": "15-59-36-0536df",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/ctp-in-action1-600x478-150x150.png",
+      "alt": "ctp-in-action1-600x478",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/swoop-game-500-150x150.png",
+      "alt": "swoop-game-500",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/1230061_577013392358057_1584306501_n-150x150.jpg",
+      "alt": "1230061_577013392358057_1584306501_n",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -83,25 +199,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
-  "asset_errors": [],
-  "media": [
-    {
-      "url": "https://blog.mozilla.com.tw/wp-content/uploads/serviceworker.jpg",
-      "alt": "serviceworker",
-      "post_id": 5876,
-      "page_type": "other",
-      "title": "ServiceWorkers 與 Firefox",
-      "page_timestamp": "20201231235959",
-      "source": "img",
-      "kind": "image",
-      "index": 0,
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/serviceworker.jpg",
-      "archive_path": "assets/5876/wp-content/uploads/serviceworker.jpg",
-      "markdown_path": "../assets/5876/wp-content/uploads/serviceworker.jpg",
-      "wayback_timestamp": "20150926001434",
-      "asset_archive_url": "https://web.archive.org/web/20150926001434id_/http://blog.mozilla.com.tw/wp-content/uploads/serviceworker.jpg",
-      "content_type": "image/jpeg"
-    }
-  ]
+  "asset_status": "skipped",
+  "asset_errors": []
 }

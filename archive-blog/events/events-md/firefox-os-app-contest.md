@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/firefox-os-app-contest"
 archive_url: "https://web.archive.org/web/20170107084026id_/https://blog.mozilla.com.tw/events/firefox-os-app-contest"
 wayback_timestamp: "20170107084026"
 status: "ok"
-asset_status: "partial_assets_failed"
 ---
+
 地圖不可用
 
 	活動時間
@@ -38,8 +38,6 @@ asset_status: "partial_assets_failed"
 - FoxCam FoxCam 開源修圖 APP 計畫，除了自身提供夠優秀的基本濾鏡 (filter)、貼圖 (sticker) 及邊框……外，最大特色在於開放的設計讓任何人都可以貢獻相機素材(包含濾鏡貼圖邊框等等)。
 
 - 照相筆記(Shotnote) 照相筆記(Shotnote)為一可以讓使用者使用手機紀錄下日常生活中周遭事物的 APP，當使用者有任何需要記錄的事務時，可以利用此 APP 的照相功能 (圖像化方式) 將看到覺得實用的佳句、故事、點子等從書籍、雜誌擷取下來，透過此 APP 進一步整理 (如：標籤、時間及註記等)，讓使用者除了紀錄，更容易管理這些資訊。而使用者也可以透過 APP 將這些寶貴資訊跟他人分享，達到社交分享的效果。
-
-![北一區 APP 時程規劃圖](../assets/uploads/螢幕快照-2013-11-22-下午2.26.07-1024x492.png)
 
 「FoxCam 」開源修圖 APP 專案管理圖
 

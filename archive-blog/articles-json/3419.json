@@ -9,50 +9,148 @@
     "Firefox OS",
     "Web App"
   ],
-  "tags": [
-    "Firefox OS",
-    "Web App"
-  ],
+  "tags": [],
   "author": "",
+  "page_type": "post",
   "original_url": "https://blog.mozilla.com.tw/?p=3419",
-  "archive_url": "https://web.archive.org/web/20201231235959id_/https://blog.mozilla.com.tw/?p=3419",
+  "archive_url": "https://web.archive.org/web/20201231235959/https://blog.mozilla.com.tw/posts/3419/firefox-marketplace-%e8%88%87%e5%85%b6%e4%bb%96%e9%81%b8%e6%93%87",
   "wayback_timestamp": "20201231235959",
-  "content_html": "<div class=\"entry-content close\">\n    <p>「Firefox OS ─ 讓 <a title=\"HTML5\" href=\"https://developer.mozilla.org/en/html/html5\" target=\"_blank\">HTML5</a> 得以完全發揮的平台」系列影片的第四集 (另可回顧<a href=\"https://hacks.mozilla.org/2013/06/firefox-os-for-developers-the-platform-html5-deserves/\" target=\"_blank\">第一集</a>、<a href=\"http://blog.mozilla.com.tw/posts/3179/\" target=\"_blank\">第二集</a>、<a href=\"http://blog.mozilla.com.tw/posts/3277/\" target=\"_blank\">第三集</a>) 中，我們將說明 App 提交至 Firefox Marketplace 的方法，以及其他發佈 App 的方式。</p>\n<p><img class=\"alignnone size-full wp-image-3281\" alt=\"be-the-future\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/be-the-future1.png\" width=\"438\" height=\"283\" /></p>\n<p>本影片是由 Mozilla 首席技術傳教士 Chris Heilmann <a href=\"http://twitter.com/codepo8\" target=\"_blank\">@codepo8</a>，以及 Firefox OS 業務開發團隊的 Desigan Chinniah<a href=\"http://twitter.com/cyberdees\" target=\"_blank\">@cyberdees</a> 共同錄製。將讓你輕鬆在 Firefox OS 上發佈自己的 App。你也可到 YouTube 觀看此影片。<br />\n</p>\n<p>Firefox OS 與其他行動平台一樣擁有自己的 <a href=\"https://marketplace.firefox.com/\" target=\"_blank\">Marketplace</a>，可讓你依照名稱或分類找到自己想要的 App。</p>\n<p><a href=\"https://marketplace.firefox.com/\"><img class=\"alignnone size-medium wp-image-3424\" alt=\"marketplace\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/marketplace-294x300.jpg\" width=\"294\" height=\"300\" /></a></p>\n<p>開發者若要將自己的 App 提交至 Marketplace，只需要建立一個 <a href=\"https://developer.mozilla.org/en-US/docs/Web/Apps/Manifest\" target=\"_blank\">manifest 檔案</a>並將之存放於你的 App 伺服器上 (需設定正確的 MIME 類型「application/x-web-app-manifest+json」) 即可。你必須在 manifest 檔案中定義 App 的名稱、提供 App 的圖示，並要求權限以存取 <a href=\"https://wiki.mozilla.org/WebAPI/WebActivities\" target=\"_blank\">Web Activities</a> 與其他功能。當然亦可<a href=\"https://marketplace.firefox.com/developers/validator\" target=\"_blank\">線上檢驗自己的 manifest 檔案</a>，避免後續的提交作業出錯。</p>\n<p>一旦放置好 manifest 檔案之後，即可<a href=\"https://developer.mozilla.org/en-US/docs/Web/Apps/Publishing/Submitting_an_app\" target=\"_blank\">提交自己的 App</a> 到 Marketplace。開發者可於 Marketplace 中提供 App 的截圖、影片，或更完整的說明。</p>\n<p>假設 App 是存放於開發者自己的伺服器上，基本上就可執行完整的 HTML5 功能，但是卻無法存取行動裝置的相機或聯絡人資訊。如果想存取相機或聯絡人資訊等功能，則必須將自己的 App 封裝並置放於 Marketplace。如需更多相關資訊，請<a href=\"https://developer.mozilla.org/en-US/docs/Mozilla/Firefox_OS/Security/Security_model#Trusted_and_Untrusted_Apps\" target=\"_blank\">至 Wiki 參閱不同的 App 權限</a>。</p>\n<p>如果你的 App 是純粹的 HTML5 App，則不需透過 Marketplace 下載而可直接從 Web 安裝，此亦代表在安裝過程你不需離開目前瀏覽中的網站。若裝置 (需搭載 Firefox OS，或已安裝 Firefox 的 Android 裝置) 支援<a href=\"https://developer.mozilla.org/en-US/docs/Web/Apps/JAVASCRIPT-BLOCKED-BLOCKED-BLOCKED_API\" target=\"_blank\">現處於標準化審核程序的 Open WebApp</a>，且鏈結可於裝置上觸發 App 安裝作業，則只要傳送鏈結予他人即可開始安裝 App。</p>\n<p>此標準化審核程序亦屬於 <a href=\"https://wiki.mozilla.org/WebAPI\" target=\"_blank\">WebAPI 標準化提案</a>的一部分。只要幾行程式碼即可建構「Install this App」的按鈕：</p>\n<p>&nbsp;</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-55ff8ce548db4165024633\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nif (navigator.mozApps) {\r\n  function install() {\r\n    var installapp = navigator.mozApps.install(manifestURL);\r\n    installapp.onsuccess = function(data) {\r\n      // App is installed\r\n    };\r\n    installapp.onerror = function() {          \r\n      // Something went wrong,\r\n      // information is in: installapp.error.name         \r\n    };         \t\r\n  }\r\n  var button = document.createElement('button');\r\n  button.innerHTML = 'Install this app';\r\n  button.addEventListener('click', install, false);\r\n  document.body.appendChild('button');\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-15\">15</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-16\">16</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-1\"><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">mozApps</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">install</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-3\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">installapp</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">mozApps</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">install</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">manifestURL</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">installapp</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">onsuccess</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">data</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-5\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// App is installed</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-6\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-7\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">installapp</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">onerror</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-8\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// Something went wrong,</span></div><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-9\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// information is in: installapp.error.name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-10\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \t</span></div><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-11\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-12\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">button</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">document</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">createElement</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'button'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-13\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">button</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">innerHTML</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">'Install this app'</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-14\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">button</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">addEventListener</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'click'</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">install</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">false</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-15\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">document</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">body</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">appendChild</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'button'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-16\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0040 seconds] -->\r\n<p>&nbsp;</p>\n<p>如此一來，你以搜尋引擎最佳化 (SEO) 所累積的多年成果，亦可繼續用以推廣自己的 App。</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2013/08/firefox-marketplace-and-alternatives-firefox-os-for-developers-the-platform-html5-deserves/\">https://hacks.mozilla.org/2013/08/firefox-marketplace-and-alternatives-firefox-os-for-developers-the-platform-html5-deserves/</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
+  "content_html": "<div class=\"entry-content close\">\n    <p>「Firefox OS ─ 讓 <a title=\"HTML5\" href=\"https://developer.mozilla.org/en/html/html5\" target=\"_blank\">HTML5</a> 得以完全發揮的平台」系列影片的第四集 (另可回顧<a href=\"https://hacks.mozilla.org/2013/06/firefox-os-for-developers-the-platform-html5-deserves/\" target=\"_blank\">第一集</a>、<a href=\"http://blog.mozilla.com.tw/posts/3179/\" target=\"_blank\">第二集</a>、<a href=\"http://blog.mozilla.com.tw/posts/3277/\" target=\"_blank\">第三集</a>) 中，我們將說明 App 提交至 Firefox Marketplace 的方法，以及其他發佈 App 的方式。</p>\n<p><img class=\"alignnone size-full wp-image-3281\" alt=\"be-the-future\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/be-the-future1.png\" width=\"438\" height=\"283\" /></p>\n<p>本影片是由 Mozilla 首席技術傳教士 Chris Heilmann <a href=\"http://twitter.com/codepo8\" target=\"_blank\">@codepo8</a>，以及 Firefox OS 業務開發團隊的 Desigan Chinniah<a href=\"http://twitter.com/cyberdees\" target=\"_blank\">@cyberdees</a> 共同錄製。將讓你輕鬆在 Firefox OS 上發佈自己的 App。你也可到 YouTube 觀看此影片。<br />\n</p>\n<p>Firefox OS 與其他行動平台一樣擁有自己的 <a href=\"https://marketplace.firefox.com/\" target=\"_blank\">Marketplace</a>，可讓你依照名稱或分類找到自己想要的 App。</p>\n<p><a href=\"https://marketplace.firefox.com/\"><img class=\"alignnone size-medium wp-image-3424\" alt=\"marketplace\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/marketplace-294x300.jpg\" width=\"294\" height=\"300\" /></a></p>\n<p>開發者若要將自己的 App 提交至 Marketplace，只需要建立一個 <a href=\"https://developer.mozilla.org/en-US/docs/Web/Apps/Manifest\" target=\"_blank\">manifest 檔案</a>並將之存放於你的 App 伺服器上 (需設定正確的 MIME 類型「application/x-web-app-manifest+json」) 即可。你必須在 manifest 檔案中定義 App 的名稱、提供 App 的圖示，並要求權限以存取 <a href=\"https://wiki.mozilla.org/WebAPI/WebActivities\" target=\"_blank\">Web Activities</a> 與其他功能。當然亦可<a href=\"https://marketplace.firefox.com/developers/validator\" target=\"_blank\">線上檢驗自己的 manifest 檔案</a>，避免後續的提交作業出錯。</p>\n<p>一旦放置好 manifest 檔案之後，即可<a href=\"https://developer.mozilla.org/en-US/docs/Web/Apps/Publishing/Submitting_an_app\" target=\"_blank\">提交自己的 App</a> 到 Marketplace。開發者可於 Marketplace 中提供 App 的截圖、影片，或更完整的說明。</p>\n<p>假設 App 是存放於開發者自己的伺服器上，基本上就可執行完整的 HTML5 功能，但是卻無法存取行動裝置的相機或聯絡人資訊。如果想存取相機或聯絡人資訊等功能，則必須將自己的 App 封裝並置放於 Marketplace。如需更多相關資訊，請<a href=\"https://developer.mozilla.org/en-US/docs/Mozilla/Firefox_OS/Security/Security_model#Trusted_and_Untrusted_Apps\" target=\"_blank\">至 Wiki 參閱不同的 App 權限</a>。</p>\n<p>如果你的 App 是純粹的 HTML5 App，則不需透過 Marketplace 下載而可直接從 Web 安裝，此亦代表在安裝過程你不需離開目前瀏覽中的網站。若裝置 (需搭載 Firefox OS，或已安裝 Firefox 的 Android 裝置) 支援<a href=\"https://developer.mozilla.org/en-US/docs/Web/Apps/JAVASCRIPT-BLOCKED-BLOCKED-BLOCKED_API\" target=\"_blank\">現處於標準化審核程序的 Open WebApp</a>，且鏈結可於裝置上觸發 App 安裝作業，則只要傳送鏈結予他人即可開始安裝 App。</p>\n<p>此標準化審核程序亦屬於 <a href=\"https://wiki.mozilla.org/WebAPI\" target=\"_blank\">WebAPI 標準化提案</a>的一部分。只要幾行程式碼即可建構「Install this App」的按鈕：</p>\n<p>&nbsp;</p><!-- Crayon Syntax Highlighter v2.6.9 -->\n\n\t\t<div id=\"crayon-55ff8ce548db4165024633\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nif (navigator.mozApps) {\n  function install() {\n    var installapp = navigator.mozApps.install(manifestURL);\n    installapp.onsuccess = function(data) {\n      // App is installed\n    };\n    installapp.onerror = function() {          \n      // Something went wrong,\n      // information is in: installapp.error.name         \n    };         \t\n  }\n  var button = document.createElement('button');\n  button.innerHTML = 'Install this app';\n  button.addEventListener('click', install, false);\n  document.body.appendChild('button');\n}</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-55ff8ce548db4165024633-15\">15</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55ff8ce548db4165024633-16\">16</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-1\"><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">mozApps</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">install</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-3\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">installapp</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">navigator</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">mozApps</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">install</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">manifestURL</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">installapp</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">onsuccess</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">data</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-5\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// App is installed</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-6\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-7\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">installapp</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">onerror</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-8\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// Something went wrong,</span></div><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-9\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// information is in: installapp.error.name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-10\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \t</span></div><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-11\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-12\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">button</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">document</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">createElement</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'button'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-13\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">button</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">innerHTML</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-s\">'Install this app'</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-14\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">button</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">addEventListener</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'click'</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">install</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">false</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-55ff8ce548db4165024633-15\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-v\">document</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">body</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">appendChild</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'button'</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55ff8ce548db4165024633-16\"><span class=\"crayon-sy\">}</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0040 seconds] -->\n<p>&nbsp;</p>\n<p>如此一來，你以搜尋引擎最佳化 (SEO) 所累積的多年成果，亦可繼續用以推廣自己的 App。</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2013/08/firefox-marketplace-and-alternatives-firefox-os-for-developers-the-platform-html5-deserves/\">https://hacks.mozilla.org/2013/08/firefox-marketplace-and-alternatives-firefox-os-for-developers-the-platform-html5-deserves/</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
   "content_text": "「Firefox OS ─ 讓 HTML5 得以完全發揮的平台」系列影片的第四集 (另可回顧 第一集 、 第二集 、 第三集 ) 中，我們將說明 App 提交至 Firefox Marketplace 的方法，以及其他發佈 App 的方式。 本影片是由 Mozilla 首席技術傳教士 Chris Heilmann @codepo8 ，以及 Firefox OS 業務開發團隊的 Desigan Chinniah @cyberdees 共同錄製。將讓你輕鬆在 Firefox OS 上發佈自己的 App。你也可到 YouTube 觀看此影片。 Firefox OS 與其他行動平台一樣擁有自己的 Marketplace ，可讓你依照名稱或分類找到自己想要的 App。 開發者若要將自己的 App 提交至 Marketplace，只需要建立一個 manifest 檔案 並將之存放於你的 App 伺服器上 (需設定正確的 MIME 類型「application/x-web-app-manifest+json」) 即可。你必須在 manifest 檔案中定義 App 的名稱、提供 App 的圖示，並要求權限以存取 Web Activities 與其他功能。當然亦可 線上檢驗自己的 manifest 檔案 ，避免後續的提交作業出錯。 一旦放置好 manifest 檔案之後，即可 提交自己的 App 到 Marketplace。開發者可於 Marketplace 中提供 App 的截圖、影片，或更完整的說明。 假設 App 是存放於開發者自己的伺服器上，基本上就可執行完整的 HTML5 功能，但是卻無法存取行動裝置的相機或聯絡人資訊。如果想存取相機或聯絡人資訊等功能，則必須將自己的 App 封裝並置放於 Marketplace。如需更多相關資訊，請 至 Wiki 參閱不同的 App 權限 。 如果你的 App 是純粹的 HTML5 App，則不需透過 Marketplace 下載而可直接從 Web 安裝，此亦代表在安裝過程你不需離開目前瀏覽中的網站。若裝置 (需搭載 Firefox OS，或已安裝 Firefox 的 Android 裝置) 支援 現處於標準化審核程序的 Open WebApp ，且鏈結可於裝置上觸發 App 安裝作業，則只要傳送鏈結予他人即可開始安裝 App。 此標準化審核程序亦屬於 WebAPI 標準化提案 的一部分。只要幾行程式碼即可建構「Install this App」的按鈕： if (navigator.mozApps) { function install() { var installapp = navigator.mozApps.install(manifestURL); installapp.onsuccess = function(data) { // App is installed }; installapp.onerror = function() { // Something went wrong, // information is in: installapp.error.name }; } var button = document.createElement('button'); button.innerHTML = 'Install this app'; button.addEventListener('click', install, false); document.body.appendChild('button'); } 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 if ( navigator . mozApps ) { function install ( ) { var installapp = navigator . mozApps . install ( manifestURL ) ; installapp . onsuccess = function ( data ) { // App is installed } ; installapp . onerror = function ( ) { // Something went wrong, // information is in: installapp.error.name } ; } var button = document . createElement ( 'button' ) ; button . innerHTML = 'Install this app' ; button . addEventListener ( 'click' , install , false ) ; document . body . appendChild ( 'button' ) ; } 如此一來，你以搜尋引擎最佳化 (SEO) 所累積的多年成果，亦可繼續用以推廣自己的 App。 原文連結： https://hacks.mozilla.org/2013/08/firefox-marketplace-and-alternatives-firefox-os-for-developers-the-platform-html5-deserves/",
   "images": [
     {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Alcatel-One-Touch-Fire-150x150.png",
+      "alt": "Alcatel-One-Touch-Fire",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Facebook-Screenshot-600x319-150x150.png",
+      "alt": "Facebook-Screenshot-600x319",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/be-the-future1.png",
       "alt": "be-the-future",
-      "post_id": 3419,
-      "page_type": "other",
-      "title": "Firefox Marketplace 與其他選擇",
-      "page_timestamp": "20201231235959",
-      "source": "img",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/be-the-future1.png",
-      "archive_path": "assets/3419/wp-content/uploads/be-the-future1.png",
-      "markdown_path": "../assets/3419/wp-content/uploads/be-the-future1.png",
-      "wayback_timestamp": "20150921054349",
-      "asset_archive_url": "https://web.archive.org/web/20150921054349id_/http://blog.mozilla.com.tw/wp-content/uploads/be-the-future1.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/marketplace-294x300.jpg",
       "alt": "marketplace",
-      "post_id": 3419,
-      "page_type": "other",
-      "title": "Firefox Marketplace 與其他選擇",
-      "page_timestamp": "20201231235959",
-      "source": "img",
       "kind": "image",
-      "index": 1,
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/marketplace-294x300.jpg",
-      "archive_path": "assets/3419/wp-content/uploads/marketplace-294x300.jpg",
-      "markdown_path": "../assets/3419/wp-content/uploads/marketplace-294x300.jpg",
-      "wayback_timestamp": "20150924152128",
-      "asset_archive_url": "https://web.archive.org/web/20150924152128id_/http://blog.mozilla.com.tw/wp-content/uploads/marketplace-294x300.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/ZTEOpenC_eBay-600x600-150x150.jpg",
+      "alt": "ZTEOpenC_eBay-600x600",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/intro-and-hello-150x150.jpg",
+      "alt": "intro-and-hello",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/marketplace.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Alcatel-One-Touch-Fire-150x150.png",
+      "alt": "Alcatel-One-Touch-Fire",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Facebook-Screenshot-600x319-150x150.png",
+      "alt": "Facebook-Screenshot-600x319",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/be-the-future1.png",
+      "alt": "be-the-future",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/marketplace-294x300.jpg",
+      "alt": "marketplace",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/ZTEOpenC_eBay-600x600-150x150.jpg",
+      "alt": "ZTEOpenC_eBay-600x600",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/intro-and-hello-150x150.jpg",
+      "alt": "intro-and-hello",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/marketplace.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
     }
   ],
   "links": [
@@ -122,42 +220,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
-  "asset_errors": [],
-  "media": [
-    {
-      "url": "https://blog.mozilla.com.tw/wp-content/uploads/be-the-future1.png",
-      "alt": "be-the-future",
-      "post_id": 3419,
-      "page_type": "other",
-      "title": "Firefox Marketplace 與其他選擇",
-      "page_timestamp": "20201231235959",
-      "source": "img",
-      "kind": "image",
-      "index": 0,
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/be-the-future1.png",
-      "archive_path": "assets/3419/wp-content/uploads/be-the-future1.png",
-      "markdown_path": "../assets/3419/wp-content/uploads/be-the-future1.png",
-      "wayback_timestamp": "20150921054349",
-      "asset_archive_url": "https://web.archive.org/web/20150921054349id_/http://blog.mozilla.com.tw/wp-content/uploads/be-the-future1.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://blog.mozilla.com.tw/wp-content/uploads/marketplace-294x300.jpg",
-      "alt": "marketplace",
-      "post_id": 3419,
-      "page_type": "other",
-      "title": "Firefox Marketplace 與其他選擇",
-      "page_timestamp": "20201231235959",
-      "source": "img",
-      "kind": "image",
-      "index": 1,
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/marketplace-294x300.jpg",
-      "archive_path": "assets/3419/wp-content/uploads/marketplace-294x300.jpg",
-      "markdown_path": "../assets/3419/wp-content/uploads/marketplace-294x300.jpg",
-      "wayback_timestamp": "20150924152128",
-      "asset_archive_url": "https://web.archive.org/web/20150924152128id_/http://blog.mozilla.com.tw/wp-content/uploads/marketplace-294x300.jpg",
-      "content_type": "image/jpeg"
-    }
-  ]
+  "asset_status": "skipped",
+  "asset_errors": []
 }

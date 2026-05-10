@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/firefox-%e5%ad%b8%e7%94%9f%e5%
 archive_url: "https://web.archive.org/web/20160901191908id_/https://blog.mozilla.com.tw/events/firefox-%e5%ad%b8%e7%94%9f%e5%a5%bd%e5%a4%a5%e4%bc%b4-%e5%bf%ab%e9%80%9f%e3%80%81%e7%99%be%e8%ae%8a%e3%80%81%e5%a4%9a%e5%8a%9f%e8%83%bd%e7%80%8f%e8%a6%bd%e5%99%a8%ef%bc%8c%e8%bc%95%e9%ac%86"
 wayback_timestamp: "20160901191908"
 status: "ok"
-asset_status: "partial_assets_failed"
 ---
+
 地圖不可用
 
 	活動時間
@@ -35,8 +35,6 @@ Firefox 在全球擁有超過 25,000個附加元件(Add-ons)，懂得擅用Add-o
 
 [Firefox 呼朋引伴約大家一起參加 「Firefox 學生好夥伴」活動！立即造訪活動頁：http://mozilla.com.tw/events/firefoxforstudents/](http://mozilla.com.tw/events/firefoxforstudents/)
 
-[![](http://blog.mozilla.com.tw/wp-content/uploads/19-1024x575.jpg)](http://blog.mozilla.com.tw/?attachment_id=1042#main)
-
 觀賞完最精彩的 “知識小學堂"影片後，接著請點選下方學生推薦一、二、三，立馬開始使用好用的 Firefox 功能和附加元件吧!
 
 學生推薦（一）：
@@ -47,8 +45,6 @@ Firefox 在全球擁有超過 25,000個附加元件(Add-ons)，懂得擅用Add-o
 
 立即下載 [https://addons.mozilla.org/zh-TW/firefox/addon/gtranslate/?src=search](https://addons.mozilla.org/zh-TW/firefox/addon/gtranslate/?src=search)
 
-[![](http://blog.mozilla.com.tw/wp-content/uploads/32-1024x575.jpg)](http://blog.mozilla.com.tw/?attachment_id=1043#main)
-
 學生推薦（二）：
 
 – 網頁筆記：Evernote Web Clipper
@@ -57,7 +53,6 @@ Firefox 在全球擁有超過 25,000個附加元件(Add-ons)，懂得擅用Add-o
 
 立即下載 [https://addons.mozilla.org/zh-TW/firefox/addon/evernote-web-clipper/](https://addons.mozilla.org/zh-TW/firefox/addon/evernote-web-clipper/)
 
-[![](http://blog.mozilla.com.tw/wp-content/uploads/43-1024x572.jpg)](http://blog.mozilla.com.tw/?attachment_id=1044#main)
 學生推薦（三）：
 
 – 分頁管理：Firefox內建分頁群組功能
@@ -66,14 +61,8 @@ Firefox 在全球擁有超過 25,000個附加元件(Add-ons)，懂得擅用Add-o
 
 立即下載 [http://mozilla.com.tw/firefox/download/](http://mozilla.com.tw/firefox/download/)
 
-[![](http://blog.mozilla.com.tw/wp-content/uploads/61-1024x575.jpg)](http://blog.mozilla.com.tw/?attachment_id=1045#main)
-
 接著接著, 看完學生推薦後，請點選「我要推薦」參加留言、按讚、拿獎品的熱門活動！請狐迷們留言分享自己最喜愛的 Firefox 功能或附加元件，簡單說明為何好用以及推薦的理由。凡於活動期間 (2012/9/25~2012/10/29) 留言，前五名週人氣王 (最多按讚)，可獲得 Firefox 獨家電腦貼膜一份。此外，週週加碼抽出十名留言的狐迷，同樣獲得 Firefox 獨家電腦貼膜一份。最大獎全球獨家內建 Firefox 的 10.1″ 平板電腦，將由 2012/10/29 17:00 統計之最高人氣王冠軍獲得。
 
 每週中獎名單將於次週公告於 Mozilla Taiwan 粉絲團！
 
-[![](http://blog.mozilla.com.tw/wp-content/uploads/51-1024x578.jpg)](http://blog.mozilla.com.tw/?attachment_id=1046#main)
-
 同時，別忘了點選活動頁上方，加入粉絲頁、訂閱電子報、報名校園大使的行列！Firefox 因為有你而更美好！
-
-[![](http://blog.mozilla.com.tw/wp-content/uploads/24-1024x575.jpg)](http://blog.mozilla.com.tw/?attachment_id=1047#main)

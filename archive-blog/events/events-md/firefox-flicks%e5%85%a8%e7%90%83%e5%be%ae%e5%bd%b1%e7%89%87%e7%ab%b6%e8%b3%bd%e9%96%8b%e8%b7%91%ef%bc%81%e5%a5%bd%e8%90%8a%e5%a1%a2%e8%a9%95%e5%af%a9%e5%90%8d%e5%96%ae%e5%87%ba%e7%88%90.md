@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/firefox-flicks%e5%85%a8%e7%90%
 archive_url: "https://web.archive.org/web/20160901211401id_/https://blog.mozilla.com.tw/events/firefox-flicks%e5%85%a8%e7%90%83%e5%be%ae%e5%bd%b1%e7%89%87%e7%ab%b6%e8%b3%bd%e9%96%8b%e8%b7%91%ef%bc%81%e5%a5%bd%e8%90%8a%e5%a1%a2%e8%a9%95%e5%af%a9%e5%90%8d%e5%96%ae%e5%87%ba%e7%88%90"
 wayback_timestamp: "20160901211401"
 status: "ok"
-asset_status: "ok"
 ---
+
 地圖不可用
 
 	活動時間
@@ -28,8 +28,6 @@ asset_status: "ok"
 
 
 Mozilla 盛大推出全球性影片募集活動 Firefox Flicks (微影片競賽)，強力號召全球對影片拍攝有熱忱，或有獨到想法的您，本屆主題為 「行動市場總動員」號召所有影片製作高手為 Mozilla 進軍行動市場醞釀無比爆發力! 參賽者可透過影片創作說出您對 Firefox 的熱愛與對 Web 的所有想像，活動獲勝者將可獲得獎勵獎金與崇高榮譽，現在我們熱情邀請您與全球 Firefox 愛好者一同參加！
-
-[![](../assets/uploads/A6_FlicksPostcard_back_ok-011.jpg)](../assets/uploads/A6_FlicksPostcard_back_ok-011.jpg)
 
 今年的 Firefox Flicks 很榮幸地再次邀請到 Edward Norton (奧斯卡提名男演員)、Couper Samuelson (喜劇製作人) 繼續擔任評審，同時還有幾位新評審加入：Bob Harvey (Panavision 全球銷售和行銷執行副總)、Franklin Leonard (Black List 創始人) 以及Catherine Ogilvie (Dolby 歐洲、中東和非洲市場負責人)
 

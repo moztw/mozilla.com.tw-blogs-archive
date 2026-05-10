@@ -9,22 +9,184 @@
     "Firefox",
     "Web App"
   ],
-  "tags": [
-    "Firefox",
-    "Web App"
-  ],
+  "tags": [],
   "author": "",
+  "page_type": "post",
   "original_url": "https://blog.mozilla.com.tw/?p=7808",
-  "archive_url": "https://web.archive.org/web/20190825011727id_/https://blog.mozilla.com.tw/?p=7808",
-  "wayback_timestamp": "20190825011727",
-  "content_html": "<div class=\"entry-content close\">\n    <p>我們周遭有太多的裝置，且整體數字還在攀升。其中具備連線功能的裝置也越來越多，從<a href=\"http://bluesmart.com/\">登機箱</a>到<a href=\"http://www.parrot.com/usa/products/flower-power/\">盆栽</a>，甚至冰箱裡面的<a href=\"http://www.amazon.com/Minder-Wink-App-Enabled-Smart-Tray/dp/B00GN92KQ4\">蛋盒</a>都能連上你的手機！但這也造成新的問題：我們該如何找出四周的裝置，又該如何互動呢？</p>\n<p>目前的裝置互動作業，都交由智慧手機所執行的不同 App 處理。但這仍無法解決「可發現性 (Discoverability)」的問題。在我決定要安裝 App 之前，必須先知道周遭到底有哪些裝置。但站在<a href=\"http://blog.telenor.io/iot/2015/08/04/smart-meetingroom.html\">會議室</a>門口時，其實我才不在乎要安裝哪個 App，甚至會議室的名稱或代碼也不重要。我只想儘快預定會議室，或知道現在到底有沒有人預約使用這個會議室？</p>\n<h4>藍牙</h4>\n<p>Google 的 <a href=\"https://twitter.com/scottjenson\">Scott Jenson</a> 思考可發現性的問題已有一陣子，並想出了「<a href=\"https://google.github.io/physical-web/\">Physical Web</a>」專案，希望達到「走上街就能使用所有東西」。此一概念就是要透過「<a href=\"http://www.bluetooth.com/Pages/Bluetooth-Smart.aspx\">Bluetooth Smart</a>」這個藍牙的低耗電變體，將網址廣播出去。你的手機將拾取 <em>advertisment</em> 封包、進行解碼，再對使用者顯示某些資訊。輕輕點擊就會重新導至相關內容的網頁。如此就能應用於多種東西：</p>\n<ul>\n<li>會議室可廣播其排程行事曆的網址。</li>\n<li>電影海報可廣播上映時間與預告片段的網址。</li>\n<li>處方藥品可廣播藥物治療與重新領藥的資訊網址。</li>\n<li>自己看看周遭是否還有任何等你發掘的使用範例。</li>\n</ul>\n<p><img class=\"aligncenter wp-image-7809\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/bt4.png\" alt=\"bt4\" width=\"590\" height=\"332\" /></p>\n<p>但實際情況並非單行道那樣簡單，所以會造成問題。廣播網址當然有助於我獲得如電影放映時間等的資訊，但卻無法用手上裝置進一步互動。如果我想遙控<a href=\"http://www.parrot.com/usa/products/rolling-spider/\">無人空拍機</a>，當然不能只是找到我附近的空拍機而已，也要能直接與空拍機互動。我們希望找出網頁和裝置的溝通方式。</p>\n<h4>感謝</h4>\n<p>感謝台北 WebBluetooth 團隊的<a href=\"https://github.com/dwi2\">黃慈霖 (Tzu-Lin Huang)</a> 與<a href=\"https://github.com/weilonge\">李瑋倫 (Sean Lee)</a> 建構了初始的無人機程式碼。而我針對 API 所發的抱怨，台北團隊 (特別是<a href=\"https://github.com/yrliou\">劉晏如 (Jocelyn Liu)</a>) 都能迅速做出回應並提供修正檔。還有 <a href=\"https://twitter.com/voodootikigod\">Chris Williams</a> 把無人空拍機放進我的 JSConf.us 禮物袋；<a href=\"https://twitter.com/scottjenson\">Scott Jenson</a> 不厭其煩的回答我 Physical Web 問題；而且 <a href=\"http://telenordigital.com/\">Telenor Digital</a> 公司還讓我玩無人機玩了兩個禮拜。</p>\n<p></p>\n<p>另外再看到 <a href=\"https://www.w3.org/community/web-bluetooth/\">Web Bluetooth W3C 團隊</a>的工作心血，其內就包含了 Mozilla <a href=\"https://wiki.mozilla.org/B2G/Bluetooth\">藍牙團隊</a>要將 bluetooth API 帶入瀏覽器的作品。如果 Physical Web 讓我們能靠近任何裝置並取得 Web App 的網址，就能讓 WebBluetooth 接著使 Web App 連上裝置並反過來開始溝通。</p>\n<p>講到這裡，還是有一堆事情要完成。像是 bluetooth API 只能接觸 Firefox OS 上<a href=\"https://developer.mozilla.org/zh-TW/Firefox_OS/Security/Security_model\">驗證過 (Certified) 的內容</a>，因此目前還未能存取一般的網頁內容。在<a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=1053673\">真正解決</a>安全性的問題之前，還是得持續目前的狀態。第二個問題就是 Physical Web 將主導網址的廣播作業，那特定的網路資源要如何知道是哪個特定裝置廣播了網址呢？</p>\n<p>現在你就知道真的還有一堆事情等著完成了吧？既然這篇<a href=\"https://hacks.mozilla.org/2015/08/flying-a-drone-in-your-browser-with-webbluetooth/\" target=\"_blank\">原文文章登上了「Mozilla Hacks」部落格</a>，當然就是需要大家動手開發！</p>\n<p>如果你對上面描述的東西有著極高興趣，請別錯過<a href=\"https://hacks.mozilla.org/2015/08/flying-a-drone-in-your-browser-with-webbluetooth/\" target=\"_blank\">原文內所提的範例程式碼</a>，趕快動手打造自己想到的應用吧！說不定下個獲得市場共鳴的應用就是出自於你的手！</p>\n<h4>結論</h4>\n<p>Web 真是讓人驚喜不斷！隨著有越來越多裝置上線，我們應該要能輕鬆發現裝置並與之互動。透過 Physical Web 與 WebBluetooth 的整合，我們建構出順暢體驗，要讓使用者願意與實際應用＼新款裝置進行互動。雖然還有很長的一段路要走，但應該已經走上對的方向了。Mozilla 與 Google 正主動開發相關技術。我高度期待本文所提到的東西，在未來一年內都會變成極為普通的常識！</p>\n<p>如果一年的時間對你來說太長，那你也能直接開始把玩 Firefox OS 的實驗性版本。此版本已啟用了本文所提過的所有東西，並可於「<a href=\"https://developer.mozilla.org/en-US/Firefox_OS/Developer_phone_guide/Flame\">Flame</a>」開發者裝置上執行。先升級到 <a href=\"https://developer.mozilla.org/en-US/Firefox_OS/Phone_guide/Flame/Updating_your_Flame\">nightly_v3 base image</a> 再刷進<a href=\"http://rollingspider.xyz/bt-flame.zip\">此版本</a>。</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2015/08/flying-a-drone-in-your-browser-with-webbluetooth/\" target=\"_blank\">Flying a drone in your browser with WebBluetooth</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
+  "archive_url": "https://web.archive.org/web/20160730100638/https://blog.mozilla.com.tw/posts/7808/webbluetooth-drone",
+  "wayback_timestamp": "20160730100638",
+  "content_html": "<div class=\"entry-content close\">\n    <p>我們周遭有太多的裝置，且整體數字還在攀升。其中具備連線功能的裝置也越來越多，從<a href=\"https://web.archive.org/web/20160730100638/http://bluesmart.com/\">登機箱</a>到<a href=\"https://web.archive.org/web/20160730100638/http://www.parrot.com/usa/products/flower-power/\">盆栽</a>，甚至冰箱裡面的<a href=\"https://web.archive.org/web/20160730100638/http://www.amazon.com/Minder-Wink-App-Enabled-Smart-Tray/dp/B00GN92KQ4\">蛋盒</a>都能連上你的手機！但這也造成新的問題：我們該如何找出四周的裝置，又該如何互動呢？</p>\n<p>目前的裝置互動作業，都交由智慧手機所執行的不同 App 處理。但這仍無法解決「可發現性 (Discoverability)」的問題。在我決定要安裝 App 之前，必須先知道周遭到底有哪些裝置。但站在<a href=\"https://web.archive.org/web/20160730100638/http://blog.telenor.io/iot/2015/08/04/smart-meetingroom.html\">會議室</a>門口時，其實我才不在乎要安裝哪個 App，甚至會議室的名稱或代碼也不重要。我只想儘快預定會議室，或知道現在到底有沒有人預約使用這個會議室？</p>\n<h4>藍牙</h4>\n<p>Google 的 <a href=\"https://web.archive.org/web/20160730100638/https://twitter.com/scottjenson\">Scott Jenson</a> 思考可發現性的問題已有一陣子，並想出了「<a href=\"https://web.archive.org/web/20160730100638/https://google.github.io/physical-web/\">Physical Web</a>」專案，希望達到「走上街就能使用所有東西」。此一概念就是要透過「<a href=\"https://web.archive.org/web/20160730100638/http://www.bluetooth.com/Pages/Bluetooth-Smart.aspx\">Bluetooth Smart</a>」這個藍牙的低耗電變體，將網址廣播出去。你的手機將拾取 <em>advertisment</em> 封包、進行解碼，再對使用者顯示某些資訊。輕輕點擊就會重新導至相關內容的網頁。如此就能應用於多種東西：</p>\n<ul>\n<li>會議室可廣播其排程行事曆的網址。</li>\n<li>電影海報可廣播上映時間與預告片段的網址。</li>\n<li>處方藥品可廣播藥物治療與重新領藥的資訊網址。</li>\n<li>自己看看周遭是否還有任何等你發掘的使用範例。</li>\n</ul>\n<p><img class=\"aligncenter wp-image-7809\" src=\"https://web.archive.org/web/20160730100638im_/http://blog.mozilla.com.tw/wp-content/uploads/bt4.png\" alt=\"bt4\" width=\"590\" height=\"332\" srcset=\"https://web.archive.org/web/20160730100638im_/http://blog.mozilla.com.tw/wp-content/uploads/bt4-300x169.png 300w, https://web.archive.org/web/20160730100638im_/http://blog.mozilla.com.tw/wp-content/uploads/bt4.png 854w\" sizes=\"(max-width: 590px) 100vw, 590px\"/></p>\n<p>但實際情況並非單行道那樣簡單，所以會造成問題。廣播網址當然有助於我獲得如電影放映時間等的資訊，但卻無法用手上裝置進一步互動。如果我想遙控<a href=\"https://web.archive.org/web/20160730100638/http://www.parrot.com/usa/products/rolling-spider/\">無人空拍機</a>，當然不能只是找到我附近的空拍機而已，也要能直接與空拍機互動。我們希望找出網頁和裝置的溝通方式。</p>\n<h4>感謝</h4>\n<p>感謝台北 WebBluetooth 團隊的<a href=\"https://web.archive.org/web/20160730100638/https://github.com/dwi2\">黃慈霖 (Tzu-Lin Huang)</a> 與<a href=\"https://web.archive.org/web/20160730100638/https://github.com/weilonge\">李瑋倫 (Sean Lee)</a> 建構了初始的無人機程式碼。而我針對 API 所發的抱怨，台北團隊 (特別是<a href=\"https://web.archive.org/web/20160730100638/https://github.com/yrliou\">劉晏如 (Jocelyn Liu)</a>) 都能迅速做出回應並提供修正檔。還有 <a href=\"https://web.archive.org/web/20160730100638/https://twitter.com/voodootikigod\">Chris Williams</a> 把無人空拍機放進我的 JSConf.us 禮物袋；<a href=\"https://web.archive.org/web/20160730100638/https://twitter.com/scottjenson\">Scott Jenson</a> 不厭其煩的回答我 Physical Web 問題；而且 <a href=\"https://web.archive.org/web/20160730100638/http://telenordigital.com/\">Telenor Digital</a> 公司還讓我玩無人機玩了兩個禮拜。</p>\n<p></p>\n<p>另外再看到 <a href=\"https://web.archive.org/web/20160730100638/https://www.w3.org/community/web-bluetooth/\">Web Bluetooth W3C 團隊</a>的工作心血，其內就包含了 Mozilla <a href=\"https://web.archive.org/web/20160730100638/https://wiki.mozilla.org/B2G/Bluetooth\">藍牙團隊</a>要將 bluetooth API 帶入瀏覽器的作品。如果 Physical Web 讓我們能靠近任何裝置並取得 Web App 的網址，就能讓 WebBluetooth 接著使 Web App 連上裝置並反過來開始溝通。</p>\n<p>講到這裡，還是有一堆事情要完成。像是 bluetooth API 只能接觸 Firefox OS 上<a href=\"https://web.archive.org/web/20160730100638/https://developer.mozilla.org/zh-TW/Firefox_OS/Security/Security_model\">驗證過 (Certified) 的內容</a>，因此目前還未能存取一般的網頁內容。在<a href=\"https://web.archive.org/web/20160730100638/https://bugzilla.mozilla.org/show_bug.cgi?id=1053673\">真正解決</a>安全性的問題之前，還是得持續目前的狀態。第二個問題就是 Physical Web 將主導網址的廣播作業，那特定的網路資源要如何知道是哪個特定裝置廣播了網址呢？</p>\n<p>現在你就知道真的還有一堆事情等著完成了吧？既然這篇<a href=\"https://web.archive.org/web/20160730100638/https://hacks.mozilla.org/2015/08/flying-a-drone-in-your-browser-with-webbluetooth/\" target=\"_blank\">原文文章登上了「Mozilla Hacks」部落格</a>，當然就是需要大家動手開發！</p>\n<p>如果你對上面描述的東西有著極高興趣，請別錯過<a href=\"https://web.archive.org/web/20160730100638/https://hacks.mozilla.org/2015/08/flying-a-drone-in-your-browser-with-webbluetooth/\" target=\"_blank\">原文內所提的範例程式碼</a>，趕快動手打造自己想到的應用吧！說不定下個獲得市場共鳴的應用就是出自於你的手！</p>\n<h4>結論</h4>\n<p>Web 真是讓人驚喜不斷！隨著有越來越多裝置上線，我們應該要能輕鬆發現裝置並與之互動。透過 Physical Web 與 WebBluetooth 的整合，我們建構出順暢體驗，要讓使用者願意與實際應用＼新款裝置進行互動。雖然還有很長的一段路要走，但應該已經走上對的方向了。Mozilla 與 Google 正主動開發相關技術。我高度期待本文所提到的東西，在未來一年內都會變成極為普通的常識！</p>\n<p>如果一年的時間對你來說太長，那你也能直接開始把玩 Firefox OS 的實驗性版本。此版本已啟用了本文所提過的所有東西，並可於「<a href=\"https://web.archive.org/web/20160730100638/https://developer.mozilla.org/en-US/Firefox_OS/Developer_phone_guide/Flame\">Flame</a>」開發者裝置上執行。先升級到 <a href=\"https://web.archive.org/web/20160730100638/https://developer.mozilla.org/en-US/Firefox_OS/Phone_guide/Flame/Updating_your_Flame\">nightly_v3 base image</a> 再刷進<a href=\"https://web.archive.org/web/20160730100638/http://rollingspider.xyz/bt-flame.zip\">此版本</a>。</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://web.archive.org/web/20160730100638/https://hacks.mozilla.org/2015/08/flying-a-drone-in-your-browser-with-webbluetooth/\" target=\"_blank\">Flying a drone in your browser with WebBluetooth</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
   "content_text": "我們周遭有太多的裝置，且整體數字還在攀升。其中具備連線功能的裝置也越來越多，從 登機箱 到 盆栽 ，甚至冰箱裡面的 蛋盒 都能連上你的手機！但這也造成新的問題：我們該如何找出四周的裝置，又該如何互動呢？ 目前的裝置互動作業，都交由智慧手機所執行的不同 App 處理。但這仍無法解決「可發現性 (Discoverability)」的問題。在我決定要安裝 App 之前，必須先知道周遭到底有哪些裝置。但站在 會議室 門口時，其實我才不在乎要安裝哪個 App，甚至會議室的名稱或代碼也不重要。我只想儘快預定會議室，或知道現在到底有沒有人預約使用這個會議室？ 藍牙 Google 的 Scott Jenson 思考可發現性的問題已有一陣子，並想出了「 Physical Web 」專案，希望達到「走上街就能使用所有東西」。此一概念就是要透過「 Bluetooth Smart 」這個藍牙的低耗電變體，將網址廣播出去。你的手機將拾取 advertisment 封包、進行解碼，再對使用者顯示某些資訊。輕輕點擊就會重新導至相關內容的網頁。如此就能應用於多種東西： 會議室可廣播其排程行事曆的網址。 電影海報可廣播上映時間與預告片段的網址。 處方藥品可廣播藥物治療與重新領藥的資訊網址。 自己看看周遭是否還有任何等你發掘的使用範例。 但實際情況並非單行道那樣簡單，所以會造成問題。廣播網址當然有助於我獲得如電影放映時間等的資訊，但卻無法用手上裝置進一步互動。如果我想遙控 無人空拍機 ，當然不能只是找到我附近的空拍機而已，也要能直接與空拍機互動。我們希望找出網頁和裝置的溝通方式。 感謝 感謝台北 WebBluetooth 團隊的 黃慈霖 (Tzu-Lin Huang) 與 李瑋倫 (Sean Lee) 建構了初始的無人機程式碼。而我針對 API 所發的抱怨，台北團隊 (特別是 劉晏如 (Jocelyn Liu) ) 都能迅速做出回應並提供修正檔。還有 Chris Williams 把無人空拍機放進我的 JSConf.us 禮物袋； Scott Jenson 不厭其煩的回答我 Physical Web 問題；而且 Telenor Digital 公司還讓我玩無人機玩了兩個禮拜。 另外再看到 Web Bluetooth W3C 團隊 的工作心血，其內就包含了 Mozilla 藍牙團隊 要將 bluetooth API 帶入瀏覽器的作品。如果 Physical Web 讓我們能靠近任何裝置並取得 Web App 的網址，就能讓 WebBluetooth 接著使 Web App 連上裝置並反過來開始溝通。 講到這裡，還是有一堆事情要完成。像是 bluetooth API 只能接觸 Firefox OS 上 驗證過 (Certified) 的內容 ，因此目前還未能存取一般的網頁內容。在 真正解決 安全性的問題之前，還是得持續目前的狀態。第二個問題就是 Physical Web 將主導網址的廣播作業，那特定的網路資源要如何知道是哪個特定裝置廣播了網址呢？ 現在你就知道真的還有一堆事情等著完成了吧？既然這篇 原文文章登上了「Mozilla Hacks」部落格 ，當然就是需要大家動手開發！ 如果你對上面描述的東西有著極高興趣，請別錯過 原文內所提的範例程式碼 ，趕快動手打造自己想到的應用吧！說不定下個獲得市場共鳴的應用就是出自於你的手！ 結論 Web 真是讓人驚喜不斷！隨著有越來越多裝置上線，我們應該要能輕鬆發現裝置並與之互動。透過 Physical Web 與 WebBluetooth 的整合，我們建構出順暢體驗，要讓使用者願意與實際應用＼新款裝置進行互動。雖然還有很長的一段路要走，但應該已經走上對的方向了。Mozilla 與 Google 正主動開發相關技術。我高度期待本文所提到的東西，在未來一年內都會變成極為普通的常識！ 如果一年的時間對你來說太長，那你也能直接開始把玩 Firefox OS 的實驗性版本。此版本已啟用了本文所提過的所有東西，並可於「 Flame 」開發者裝置上執行。先升級到 nightly_v3 base image 再刷進 此版本 。 原文連結： Flying a drone in your browser with WebBluetooth",
   "images": [
     {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20160730100638im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/addons-150x150.jpg",
+      "alt": "addons",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/addons-50x50.jpg",
+      "alt": "addons",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/firefox-win10-dark-150x150.png",
+      "alt": "firefox-win10-dark",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/firefox-win10-dark-50x50.png",
+      "alt": "firefox-win10-dark",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/bt4.png",
       "alt": "bt4",
-      "archive_path": "assets/7808/wp-content/uploads/bt4.png",
-      "markdown_path": "../assets/7808/wp-content/uploads/bt4.png"
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/bt4-300x169.png",
+      "alt": "bt4",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20160730100638im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/addons-150x150.jpg",
+      "alt": "addons",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/addons-50x50.jpg",
+      "alt": "addons",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/firefox-win10-dark-150x150.png",
+      "alt": "firefox-win10-dark",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/firefox-win10-dark-50x50.png",
+      "alt": "firefox-win10-dark",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/bt4.png",
+      "alt": "bt4",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/bt4-300x169.png",
+      "alt": "bt4",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -126,6 +288,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

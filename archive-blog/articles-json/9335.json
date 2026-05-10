@@ -11,17 +11,122 @@
   ],
   "tags": [],
   "author": "",
+  "page_type": "post",
   "original_url": "https://blog.mozilla.com.tw/?p=9335",
-  "archive_url": "https://web.archive.org/web/20200927091734id_/https://blog.mozilla.com.tw/?p=9335",
-  "wayback_timestamp": "20200927091734",
+  "archive_url": "https://web.archive.org/web/20200927092637/https://blog.mozilla.com.tw/?p=9335",
+  "wayback_timestamp": "20200927092637",
   "content_html": "<div class=\"entry-content close\">\n    <p>Mozilla 發現中國的「沃通 (WoSign)」<a href=\"https://wiki.mozilla.org/CA:FAQ\" target=\"_blank\">憑證授權機構 (Certificate Authority；CA)</a> 發生許多<a href=\"https://wiki.mozilla.org/CA:WoSign_Issues\" target=\"_blank\">技術與管理上的錯誤</a>。最嚴重的一點，就是其他 CA 為安全性考量，已經自 2016 年 1 月 1 日起停止核發 SHA-1 SSL 憑證，但我們<a href=\"https://docs.google.com/document/d/1C6BlmbeQfn4a9zydVi2UvjBGv6szuSB4sMYUcVrR8vQ/edit?usp=sharing\" target=\"_blank\">竟然發現</a>沃通<a href=\"https://wiki.mozilla.org/CA:WoSign_Issues#Issue_S:_Backdated_SHA-1_Certs_.28January_2016.29\" target=\"_blank\">竄改</a>了該 SSL 憑證為較早日期，藉以規避此一<a href=\"https://mozillacaprogram.secure.force.com/Communications/CommunicationActionOptionResponse?CommunicationId=a04o000000M89RCAAZ&amp;Question=ACTION%20%233:%20After%20January%201,%202016\" target=\"_blank\">停止核發日期</a>。此外，我們<a href=\"https://groups.google.com/d/msg/mozilla.dev.security.policy/0pqpLJ_lCJQ/z69lmZ88DwAJ\" target=\"_blank\">還發現</a>在沃通併購同業「StartCom」並完整取得其經營權之後，也未依照 Mozilla 政策而公開揭露此一併購行為。在彙整相關有效資料證實我們所言非虛之前，沃通與 StartCom 的負責人更對上述情事一概否認。基於公司負責人展現的欺瞞行為，Mozilla 決定不再信賴此兩間公司的根憑證 (Root certificate)。</p>\n<div id=\"attachment_8707\" style=\"width: 510px\" class=\"wp-caption aligncenter\"><img class=\"wp-image-8707\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/data-breaches-notification-1024x657.jpg\" alt=\"data-breaches-notification\" width=\"500\" height=\"321\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/data-breaches-notification-1024x657.jpg 1024w, https://blog.mozilla.com.tw/wp-content/uploads/data-breaches-notification-300x192.jpg 300w, https://blog.mozilla.com.tw/wp-content/uploads/data-breaches-notification-768x492.jpg 768w, https://blog.mozilla.com.tw/wp-content/uploads/data-breaches-notification.jpg 1360w\" sizes=\"(max-width: 500px) 100vw, 500px\" /><p class=\"wp-caption-text\">圖片來源：http://www.cpapracticeadvisor.com/</p></div>\n<p>&nbsp;</p>\n<p>Mozilla 為此採取下列行動：</p>\n<ol>\n<li>針對 2016 年 10 月 21 日之後所頒發的憑證，及其相同根憑證的憑證串鍊，現一律取消其信任。如果再發現其他日期竄改行為 (不論以何種方法造成) 欲規避此一控制方式，Mozilla 將立刻且永久撤銷受影響的根憑證。\n<ul>\n<li> 此一改變將自<a href=\"https://wiki.mozilla.org/RapidRelease/Calendar\" target=\"_blank\"> Firefox 51 版本起生效</a>。</li>\n<li> 程式碼將透過下列<a href=\"https://en.wikipedia.org/wiki/X.500#X.500_data_models\" target=\"_blank\">主體唯一識別名稱 (Subject Distinguished Names)</a> 來識別根憑證，因此控制行為亦將套用到這些根憑證的<a href=\"https://en.wikipedia.org/wiki/X.509#Certificate_chains_and_cross-certification\" target=\"_blank\">互簽憑證 (Cross-certificates)</a>。\n<ul>\n<li>CN=CA 沃通根证书, OU=null, O=WoSign CA Limited, C=CN</li>\n<li>CN=Certification Authority of WoSign, OU=null, O=WoSign CA Limited, C=CN</li>\n<li>CN=Certification Authority of WoSign G2, OU=null, O=WoSign CA Limited, C=CN<br />\nCN=CA WoSign ECC Root, OU=null, O=WoSign CA Limited, C=CN</li>\n<li>CN=StartCom Certification Authority, OU=Secure Digital Certificate Signing, O=StartCom Ltd., C=IL</li>\n<li>CN=StartCom Certification Authority G2, OU=null, O=StartCom Ltd., C=IL</li>\n</ul>\n</li>\n</ul>\n</li>\n<li>先前所發現與相關根憑證串連的<a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=1309707#c2\" target=\"_blank\">日期竄改 SHA-1 憑證</a>，均列入 <a href=\"https://blog.mozilla.org/security/2015/03/03/revoking-intermediate-certificates-introducing-onecrl/\" target=\"_blank\">OneCRL</a>。</li>\n<li>不再接受安永香港 (Ernst &amp; Young Hong Kong) 的稽核報告。</li>\n<li>未來將擇期自<a href=\"https://wiki.mozilla.org/CA:Overview\" target=\"_blank\"> Mozilla 根憑證資料庫</a>中移除受影響的根憑證。如果沃通的新根憑證<a href=\"https://wiki.mozilla.org/CA:How_to_apply\" target=\"_blank\">達到可接受的標準</a>，Mozilla 可能根據沃通的規劃來調整移除憑證的確切日期，以利將其客戶整合至新的根憑證。否則 Mozilla 得以於 2017 年 3 月之後的任一時間移除根憑證。</li>\n<li>Mozilla 保留所有更進一步或其他替代行為的權利。</li>\n</ol>\n<p>&nbsp;</p>\n<p>如果你在 2016 年 10 月 21 日之後，接收到此兩間 CA 之一所核發的憑證，則該憑證將於 Mozilla 產品 (如<a href=\"https://wiki.mozilla.org/RapidRelease/Calendar\"> Firefox 51 或以後的版本</a>) 中失效，直到此兩間 CA 以不同的主體唯一識別名稱提供新的根憑證為止。你可<a href=\"https://wiki.mozilla.org/CA:UserCertDB#Importing_a_Root_Certificate\" target=\"_blank\">手動匯入</a>憑證所串連的根憑證。在 Mozilla 的根憑證資料庫納入新的根憑證之前，貴網站的消費者亦必須手動匯入新的根憑證。</p>\n<p>如 <a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=1311824\" target=\"_blank\">Bug #1311824</a>、<a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=1311832\" target=\"_blank\">Bug #1311832</a> 分別對沃通以及 StartCom 所述，此兩間 CA 均可重新申請加入新的 (替代) 根憑證。</p>\n<p>我們認為相關回應動作與 Mozilla 政策甚為一致。若其他 CA 也透過類似的欺瞞手法，企圖規避<a href=\"https://www.mozilla.org/en-US/about/governance/policies/security-group/certs/policy/\" target=\"_blank\"> Mozilla 的 CA 憑證策略</a>、<a href=\"https://cabforum.org/baseline-requirements-documents/\" target=\"_blank\">CA/Browser Forum Baseline Requirements</a>，或是 Mozilla 負責人的直接詢問，我們均將採用相同的回應方式。</p>\n<p>&nbsp;</p>\n<p style=\"text-align: right;\">─ Mozilla 安全團隊</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://blog.mozilla.org/security/2016/10/24/distrusting-new-wosign-and-startcom-certificates/\" target=\"_blank\">Distrusting New WoSign and StartCom Certificates</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
   "content_text": "Mozilla 發現中國的「沃通 (WoSign)」 憑證授權機構 (Certificate Authority；CA) 發生許多 技術與管理上的錯誤 。最嚴重的一點，就是其他 CA 為安全性考量，已經自 2016 年 1 月 1 日起停止核發 SHA-1 SSL 憑證，但我們 竟然發現 沃通 竄改 了該 SSL 憑證為較早日期，藉以規避此一 停止核發日期 。此外，我們 還發現 在沃通併購同業「StartCom」並完整取得其經營權之後，也未依照 Mozilla 政策而公開揭露此一併購行為。在彙整相關有效資料證實我們所言非虛之前，沃通與 StartCom 的負責人更對上述情事一概否認。基於公司負責人展現的欺瞞行為，Mozilla 決定不再信賴此兩間公司的根憑證 (Root certificate)。 圖片來源：http://www.cpapracticeadvisor.com/ Mozilla 為此採取下列行動： 針對 2016 年 10 月 21 日之後所頒發的憑證，及其相同根憑證的憑證串鍊，現一律取消其信任。如果再發現其他日期竄改行為 (不論以何種方法造成) 欲規避此一控制方式，Mozilla 將立刻且永久撤銷受影響的根憑證。 此一改變將自 Firefox 51 版本起生效 。 程式碼將透過下列 主體唯一識別名稱 (Subject Distinguished Names) 來識別根憑證，因此控制行為亦將套用到這些根憑證的 互簽憑證 (Cross-certificates) 。 CN=CA 沃通根证书, OU=null, O=WoSign CA Limited, C=CN CN=Certification Authority of WoSign, OU=null, O=WoSign CA Limited, C=CN CN=Certification Authority of WoSign G2, OU=null, O=WoSign CA Limited, C=CN CN=CA WoSign ECC Root, OU=null, O=WoSign CA Limited, C=CN CN=StartCom Certification Authority, OU=Secure Digital Certificate Signing, O=StartCom Ltd., C=IL CN=StartCom Certification Authority G2, OU=null, O=StartCom Ltd., C=IL 先前所發現與相關根憑證串連的 日期竄改 SHA-1 憑證 ，均列入 OneCRL 。 不再接受安永香港 (Ernst & Young Hong Kong) 的稽核報告。 未來將擇期自 Mozilla 根憑證資料庫 中移除受影響的根憑證。如果沃通的新根憑證 達到可接受的標準 ，Mozilla 可能根據沃通的規劃來調整移除憑證的確切日期，以利將其客戶整合至新的根憑證。否則 Mozilla 得以於 2017 年 3 月之後的任一時間移除根憑證。 Mozilla 保留所有更進一步或其他替代行為的權利。 如果你在 2016 年 10 月 21 日之後，接收到此兩間 CA 之一所核發的憑證，則該憑證將於 Mozilla 產品 (如 Firefox 51 或以後的版本 ) 中失效，直到此兩間 CA 以不同的主體唯一識別名稱提供新的根憑證為止。你可 手動匯入 憑證所串連的根憑證。在 Mozilla 的根憑證資料庫納入新的根憑證之前，貴網站的消費者亦必須手動匯入新的根憑證。 如 Bug #1311824 、 Bug #1311832 分別對沃通以及 StartCom 所述，此兩間 CA 均可重新申請加入新的 (替代) 根憑證。 我們認為相關回應動作與 Mozilla 政策甚為一致。若其他 CA 也透過類似的欺瞞手法，企圖規避 Mozilla 的 CA 憑證策略 、 CA/Browser Forum Baseline Requirements ，或是 Mozilla 負責人的直接詢問，我們均將採用相同的回應方式。 ─ Mozilla 安全團隊 原文連結： Distrusting New WoSign and StartCom Certificates",
   "images": [
     {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Post-Crimes-50x50.png",
+      "alt": "Post-Crimes",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Post-Crimes-150x150.png",
+      "alt": "Post-Crimes",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/data-breaches-notification-1024x657.jpg",
       "alt": "data-breaches-notification",
-      "archive_path": "assets/9335/wp-content/uploads/data-breaches-notification-1024x657.jpg",
-      "markdown_path": "../assets/9335/wp-content/uploads/data-breaches-notification-1024x657.jpg"
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/data-breaches-notification-300x192.jpg",
+      "alt": "data-breaches-notification",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/data-breaches-notification-768x492.jpg",
+      "alt": "data-breaches-notification",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/data-breaches-notification.jpg",
+      "alt": "data-breaches-notification",
+      "kind": "image",
+      "source": "img-srcset"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Post-Crimes-50x50.png",
+      "alt": "Post-Crimes",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Post-Crimes-150x150.png",
+      "alt": "Post-Crimes",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/data-breaches-notification-1024x657.jpg",
+      "alt": "data-breaches-notification",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/data-breaches-notification-300x192.jpg",
+      "alt": "data-breaches-notification",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/data-breaches-notification-768x492.jpg",
+      "alt": "data-breaches-notification",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/data-breaches-notification.jpg",
+      "alt": "data-breaches-notification",
+      "kind": "image",
+      "source": "img-srcset"
     }
   ],
   "links": [
@@ -107,6 +212,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

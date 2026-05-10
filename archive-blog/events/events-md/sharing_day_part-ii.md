@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/sharing_day_part-ii"
 archive_url: "https://web.archive.org/web/20170107120023id_/https://blog.mozilla.com.tw/events/sharing_day_part-ii"
 wayback_timestamp: "20170107120023"
 status: "ok"
-asset_status: "ok"
 ---
+
 地圖不可用
 
 	活動時間
@@ -64,7 +64,6 @@ Free
 
 工作坊下半場將由開發出著名的 Firefox 附加元件 (add-on)「QCLean: Facebook 廣告、推薦專頁與建議貼文移除器」 的 QCL 為大家帶來「快速打造 APP 經驗談」：
 
-![QCL](../assets/uploads/qcl.png)
  講者：QCL
 
 主題：迅速に APP の経験作成（快速打造 APP 經驗談 ）

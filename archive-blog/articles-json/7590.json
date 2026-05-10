@@ -8,27 +8,136 @@
   "categories": [
     "Web App"
   ],
-  "tags": [
-    "Web App"
-  ],
+  "tags": [],
   "author": "",
+  "page_type": "post",
   "original_url": "https://blog.mozilla.com.tw/?p=7590",
-  "archive_url": "https://web.archive.org/web/20190825001002id_/https://blog.mozilla.com.tw/?p=7590",
+  "archive_url": "https://web.archive.org/web/20190825001002/https://blog.mozilla.com.tw/posts/7590/html5-game",
   "wayback_timestamp": "20190825001002",
   "content_html": "<div class=\"entry-content close\">\n    <p><a href=\"http://blog.mozilla.com.tw/posts/6521/\" target=\"_blank\">Mozilla 在去年與 Humble Bundle 合作，為大家提供多款獨立開發遊戲</a>，如《超越光速 (Faster Than Light，FTL)》以及《Voxatron》。當然還有其他遊戲透過「Humble Mozilla Bundle」的助力而進入 Web 平台。我們今年規劃要以 JavaScript 的開發活動來玩更大一點，像是可支援 <a href=\"https://docs.google.com/presentation/d/1yc2NDzFJ-0yD980URiTcV3oE_2cQDVzXuH4Rss1fG8s/present#slide=id.p19\">SIMD</a> 與 SharedArrayBuffer。不用外掛程式就能在 Web 上玩遊戲實在太美妙了。玩家不會再被逼著安裝一堆自己都不知道是什麼的東西，而且一旦他們喜歡遊戲，也只要一個連結就能在社交平台上輕鬆分享。試想多位玩家如同病毒感染一樣蜂擁連線，似乎能創造無限可能！</p>\n<p></p>\n<p><a href=\"https://nickdesaulniers.github.io/RawWebGL/#/\">我最近專注於 WebGL 的即時繪圖</a>之時，才發現這玩意實在強大，讓我必須稍退一步先了解遊戲邏輯的開發作業及不同的發佈管道。我看了幾本有關遊戲開發的書，最近剛看完 Karl Bunyan 所寫的《Build an HTML5 Game》，心想應該分享一下自己的心得。接著針對 HTML5 遊戲的分享與發佈管道，再為大家解釋其他的替代方案。</p>\n<h4>簡介《Build an HTML5 Game》</h4>\n<p><a href=\"http://buildanhtml5game.com/\" target=\"_blank\"><img class=\"aligncenter size-full wp-image-7591\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/bhg_colver-250x330.jpg\" alt=\"bhg_colver-250x330\" width=\"250\" height=\"330\" /></a></p>\n<p>《<a href=\"http://buildanhtml5game.com/\">Build an HTML5 Game (BHG)</a>》一書是針對已具備程式撰寫經驗；曾寫過 HTML、CSS、JavaScript；知道該如何於本端伺服器架設程式碼；並正在開發 2D 一般遊戲的開發者所寫。從概念發想、以小型工作著手，乃至於結束整個開發作業，都用前面幾章架構出良好的閱讀脈絡。該書作者也開宗明義的說此書不會討論進階 3D 視覺效果 (將透過 WebGL 說明)，也不會談到大家所熟悉的遊戲玩法機制 (Game play mechanics) 設計。反之，此書將專心說明該如何使用 HTML5 與 CSS3 來取代 Flash 而達到一般遊戲開發目的。看完全書就能實作出類似《泡泡龍》的消泡泡遊戲。另外可至 <a href=\"http://buildanhtml5game.com/\">buildanhtml5game.com</a> 找到原始碼、遊戲展示，以及更多實作範例的解決方案。</p>\n<p><img class=\"aligncenter  wp-image-7592\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/BHG-1024x757.png\" alt=\"BHG\" width=\"590\" height=\"436\" /></p>\n<p>&nbsp;</p>\n<p>本書也提到許多遊戲所需，或值得讀者深入研究的 Web API。其中的 API、樣式、函式庫包含：<a href=\"http://modernizr.com/\">Modernizr</a>、<a href=\"http://jquery.com/\">jQuery</a>、CSS3 <a href=\"https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Using_CSS_transitions\">transitions</a>/<a href=\"https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Using_CSS_animations\">animations</a>/<a href=\"https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Using_CSS_transforms\">transforms</a>、<a href=\"https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API\">Canvas 2D</a>、<a href=\"https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio\">audio tags</a>、Sprite Atlases、DOM manipulation、<a href=\"https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Storage#localStorage\">localStorage</a>、<a href=\"https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame\">requestAnimationFrame</a>、<a href=\"https://developer.mozilla.org/en-US/docs/AJAX\">AJAX</a>、<a href=\"https://developer.mozilla.org/en-US/docs/WebSockets\">WebSockets</a>、<a href=\"https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers\">Web Workers</a>、<a href=\"https://developer.mozilla.org/en-US/docs/Web/WebGL\">WebGL</a>、<a href=\"https://developer.mozilla.org/en-US/docs/Web/API/Element/requestFullScreen\">requestFullScreen</a>、<a href=\"https://developer.mozilla.org/en-US/docs/Web/API/Touch_events\">觸控事件 (Tuch Events)</a>、<a href=\"https://developer.mozilla.org/en-US/docs/Mozilla/Mobile/Viewport_meta_tag\">「viewport」的 meta tags</a>、<a href=\"https://developer.mozilla.org/en-US/docs/Tools\">開發者工具</a>等等。</p>\n<hr />\n<p>如果你正打算開發 HTML5 遊戲，想找一本還不錯的開發參考書，當然可以試著翻閱本文提到的《<a href=\"http://buildanhtml5game.com/\">Build an HTML5 Game (BHG)</a>》。而除了這裡提到的參考書之外，你當然也應該要<a href=\"https://hacks.mozilla.org/2015/06/build-an-html5-game-and-distribute-it/\" target=\"_blank\">點擊這裡參閱原文</a>全文，其內另將為大家概述如遊戲發佈管道、執行環境的選擇、管理後續的更新檔，當然也少不了精采的程式碼。期待你開發出屬於自己的 HTML5 遊戲！</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2015/06/build-an-html5-game-and-distribute-it/\" target=\"_blank\">Build an HTML5 game—and distribute it</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
   "content_text": "Mozilla 在去年與 Humble Bundle 合作，為大家提供多款獨立開發遊戲 ，如《超越光速 (Faster Than Light，FTL)》以及《Voxatron》。當然還有其他遊戲透過「Humble Mozilla Bundle」的助力而進入 Web 平台。我們今年規劃要以 JavaScript 的開發活動來玩更大一點，像是可支援 SIMD 與 SharedArrayBuffer。不用外掛程式就能在 Web 上玩遊戲實在太美妙了。玩家不會再被逼著安裝一堆自己都不知道是什麼的東西，而且一旦他們喜歡遊戲，也只要一個連結就能在社交平台上輕鬆分享。試想多位玩家如同病毒感染一樣蜂擁連線，似乎能創造無限可能！ 我最近專注於 WebGL 的即時繪圖 之時，才發現這玩意實在強大，讓我必須稍退一步先了解遊戲邏輯的開發作業及不同的發佈管道。我看了幾本有關遊戲開發的書，最近剛看完 Karl Bunyan 所寫的《Build an HTML5 Game》，心想應該分享一下自己的心得。接著針對 HTML5 遊戲的分享與發佈管道，再為大家解釋其他的替代方案。 簡介《Build an HTML5 Game》 《 Build an HTML5 Game (BHG) 》一書是針對已具備程式撰寫經驗；曾寫過 HTML、CSS、JavaScript；知道該如何於本端伺服器架設程式碼；並正在開發 2D 一般遊戲的開發者所寫。從概念發想、以小型工作著手，乃至於結束整個開發作業，都用前面幾章架構出良好的閱讀脈絡。該書作者也開宗明義的說此書不會討論進階 3D 視覺效果 (將透過 WebGL 說明)，也不會談到大家所熟悉的遊戲玩法機制 (Game play mechanics) 設計。反之，此書將專心說明該如何使用 HTML5 與 CSS3 來取代 Flash 而達到一般遊戲開發目的。看完全書就能實作出類似《泡泡龍》的消泡泡遊戲。另外可至 buildanhtml5game.com 找到原始碼、遊戲展示，以及更多實作範例的解決方案。 本書也提到許多遊戲所需，或值得讀者深入研究的 Web API。其中的 API、樣式、函式庫包含： Modernizr 、 jQuery 、CSS3 transitions / animations / transforms 、 Canvas 2D 、 audio tags 、Sprite Atlases、DOM manipulation、 localStorage 、 requestAnimationFrame 、 AJAX 、 WebSockets 、 Web Workers 、 WebGL 、 requestFullScreen 、 觸控事件 (Tuch Events) 、 「viewport」的 meta tags 、 開發者工具 等等。 如果你正打算開發 HTML5 遊戲，想找一本還不錯的開發參考書，當然可以試著翻閱本文提到的《 Build an HTML5 Game (BHG) 》。而除了這裡提到的參考書之外，你當然也應該要 點擊這裡參閱原文 全文，其內另將為大家概述如遊戲發佈管道、執行環境的選擇、管理後續的更新檔，當然也少不了精采的程式碼。期待你開發出屬於自己的 HTML5 遊戲！ 原文連結： Build an HTML5 game—and distribute it",
   "images": [
     {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/lowenergy-150x150.jpg",
+      "alt": "lowenergy",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/cached-150x150.png",
+      "alt": "cached",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/bhg_colver-250x330.jpg",
       "alt": "bhg_colver-250x330",
-      "archive_path": "assets/7590/wp-content/uploads/bhg_colver-250x330.jpg",
-      "markdown_path": "../assets/7590/wp-content/uploads/bhg_colver-250x330.jpg"
+      "kind": "image",
+      "source": "img"
     },
     {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/BHG-1024x757.png",
       "alt": "BHG",
-      "archive_path": "assets/7590/wp-content/uploads/BHG-1024x757.png",
-      "markdown_path": "../assets/7590/wp-content/uploads/BHG-1024x757.png"
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/307671_455571977835533_735691973_n.jpg",
+      "alt": "307671_455571977835533_735691973_n",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Firefox-Marketplace1-150x150.png",
+      "alt": "Firefox Marketplace",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/lowenergy-150x150.jpg",
+      "alt": "lowenergy",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/cached-150x150.png",
+      "alt": "cached",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/bhg_colver-250x330.jpg",
+      "alt": "bhg_colver-250x330",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/BHG-1024x757.png",
+      "alt": "BHG",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/307671_455571977835533_735691973_n.jpg",
+      "alt": "307671_455571977835533_735691973_n",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Firefox-Marketplace1-150x150.png",
+      "alt": "Firefox Marketplace",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -138,6 +247,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

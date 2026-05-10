@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/2013-gsma-%e4%ba%9e%e6%b4%b2%e
 archive_url: "https://web.archive.org/web/20160901182030id_/https://blog.mozilla.com.tw/events/2013-gsma-%e4%ba%9e%e6%b4%b2%e7%a7%bb%e5%8b%95%e9%80%9a%e4%bf%a1%e5%8d%9a%e8%a6%bd%e6%9c%83-firefox-os-%e8%88%87%e4%bd%a0%e7%9b%b8%e7%b4%84%ef%bc%8c626-628-%e5%bc%95%e7%88%86%e4%b8%8a%e6%b5%b7"
 wayback_timestamp: "20160901182030"
 status: "ok"
-asset_status: "partial_assets_failed"
 ---
+
 地圖不可用
 
 	活動時間
@@ -28,8 +28,6 @@ asset_status: "partial_assets_failed"
 
 
 你好奇 Mozilla 的下一步嗎？你和我們一樣大力期待 Firefox OS 嗎？搶先宣佈我們將前往 2013 亞洲移動通信博覽會與大家面對面！今天釋出 Mozilla 展位示意圖給大家搶先看，活力充沛的 Firefox OS 小狐狸也等不及要和各位見面了！今年 Mozilla 將透過 Firefox OS、Marketplace、Firefox for Android 和 WebRTC …最令人驚喜的產品和與會人員現場交流，現場更有機會與 Firefox OS 開發團隊近距離交換意見！除此之外，精彩的有獎徵答展位活動更是少不了，歡迎大家在 6/26 – 6/28 於中國上海新國際博覽中心到 Mozilla 攤位與我們相見歡噢！
-
-[![booth](../assets/uploads/booth-1024x574.jpg)](../assets/uploads/booth.jpg)
 
 [點擊大會網址](http://www.mobileasiaexpo.com/cn/?utm_source=google&utm_medium=cpc&utm_campaign=gsma_mae_tw&utm_content=ad_016)
 

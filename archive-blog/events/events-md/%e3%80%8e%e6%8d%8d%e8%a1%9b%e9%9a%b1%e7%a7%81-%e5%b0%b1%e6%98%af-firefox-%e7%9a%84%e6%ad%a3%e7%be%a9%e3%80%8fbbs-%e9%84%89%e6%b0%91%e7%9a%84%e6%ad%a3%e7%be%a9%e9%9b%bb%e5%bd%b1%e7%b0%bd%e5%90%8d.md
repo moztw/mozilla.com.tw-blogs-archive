@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/%e3%80%8e%e6%8d%8d%e8%a1%9b%e9
 archive_url: "https://web.archive.org/web/20160901215737id_/https://blog.mozilla.com.tw/events/%e3%80%8e%e6%8d%8d%e8%a1%9b%e9%9a%b1%e7%a7%81-%e5%b0%b1%e6%98%af-firefox-%e7%9a%84%e6%ad%a3%e7%be%a9%e3%80%8fbbs-%e9%84%89%e6%b0%91%e7%9a%84%e6%ad%a3%e7%be%a9%e9%9b%bb%e5%bd%b1%e7%b0%bd%e5%90%8d"
 wayback_timestamp: "20160901215737"
 status: "ok"
-asset_status: "ok"
 ---
+
 地圖不可用
 
 	活動時間
@@ -30,8 +30,6 @@ asset_status: "ok"
 Firefox 關心網路議題，邀集您和我們一起用 Firefox 做為關鍵字留言！
 
 有機會抽中最夯『鄉民的正義』電影簽名海報一張！
-
-[![](http://blog.mozilla.com.tw/wp-content/uploads/1113-1024x578.jpg)](http://blog.mozilla.com.tw/events/%e3%80%8e%e6%8d%8d%e8%a1%9b%e9%9a%b1%e7%a7%81-%e5%b0%b1%e6%98%af-firefox-%e7%9a%84%e6%ad%a3%e7%be%a9%e3%80%8fbbs-%e9%84%89%e6%b0%91%e7%9a%84%e6%ad%a3%e7%be%a9%e9%9b%bb%e5%bd%b1%e7%b0%bd%e5%90%8d/111-3#main)
 
 您知道瀏覽器是您網路隱私的第一道守門員嗎？您知道有一雙無形的手，無時無刻想記錄監控您的網上行為嗎？以 Free, Open, Internet 為宗旨的 Firefox 給您權利說 NO~
 

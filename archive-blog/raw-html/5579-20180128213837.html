@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="提供 Mozilla 與 Firefox、Firefox OS 的五花八門最新訊息，包括 Firefox 開發、Firefox 最新功能、Firefox 使用教學、Firefox 錯誤迷思導正、Firefox 好用附加元件訊息，以及由 Mozilla Taiwan 官方舉辦的各式 Firefox 活動訊息、新聞、部落文分享" />
+<meta name="keywords" content="Firefox, Firefox Desktop, Firefox OS, Firefox for Android, Firefox 行動, Firefox 繁體中文, Firefox 正體中文, Firefox 官方, Firefox tw, Firefox blog, Firefox 文章, Firefox 部落格, Firefox 討論, Mozilla, Mozilla Taiwan, browser, 好用瀏覽器" />
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA" />
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78" />
+<title>
+DRM 與 Mozilla 服務之間的兩難 | 部落格 | Mozilla Taiwan</title>
+<link rel="shortcut icon" href="https://mozilla.com/favicon.ico" />
+<meta property="og:url" content="http://blog.mozilla.com.tw/posts/5579/drm-and-the-challenge-of-serving-users"/><meta property="og:image" content="http://blog.mozilla.com.tw/wp-content/uploads/do-good.jpg"/><link rel="stylesheet" type="text/css" media="all" href="http://blog.mozilla.com.tw/wp-content/themes/toolbox-child/style.css" />
+<!--<link rel="pingback" href="http://blog.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="http://blog.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<link rel='dns-prefetch' href='//s.w.org'>
+<link rel="alternate" type="application/rss+xml" title="訂閱 部落格 | Mozilla Taiwan &raquo;" href="http://blog.mozilla.com.tw/feed" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 部落格 | Mozilla Taiwan &raquo; 迴響" href="http://blog.mozilla.com.tw/comments/feed" />
+<link rel="alternate" type="application/rss+xml" title="訂閱 部落格 | Mozilla Taiwan &raquo; DRM 與 Mozilla 服務之間的兩難 迴響" href="http://blog.mozilla.com.tw/posts/5579/drm-and-the-challenge-of-serving-users/feed" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"http:\/\/blog.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='crayon-css'  href='http://blog.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta' type='text/css' media='all' />
+<link rel='stylesheet' id='events-manager-css'  href='http://blog.mozilla.com.tw/wp-content/plugins/events-manager/includes/css/events_manager.css?ver=5.64' type='text/css' media='all' />
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.4.1'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"http:\/\/blog.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta'></script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/core.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/widget.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/position.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/mouse.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/sortable.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/datepicker.min.js?ver=1.11.4'></script>
+<script type='text/javascript'>
+jQuery(document).ready(function(jQuery){jQuery.datepicker.setDefaults({"closeText":"\u95dc\u9589","currentText":"\u4eca\u5929","monthNames":["\u4e00\u6708","\u4e8c\u6708","\u4e09\u6708","\u56db\u6708","\u4e94\u6708","\u516d\u6708","\u4e03\u6708","\u516b\u6708","\u4e5d\u6708","\u5341\u6708","\u5341\u4e00\u6708","\u5341\u4e8c\u6708"],"monthNamesShort":["\u4e00\u6708","\u4e8c\u6708","\u4e09\u6708","\u56db\u6708","\u4e94\u6708","\u516d\u6708","\u4e03\u6708","\u516b\u6708","\u4e5d\u6708","\u5341\u6708","\u5341\u4e00\u6708","\u5341\u4e8c\u6708"],"nextText":"\u4e0b\u4e00\u6b65","prevText":"\u4e0a\u4e00\u500b","dayNames":["\u661f\u671f\u65e5","\u661f\u671f\u4e00","\u661f\u671f\u4e8c","\u661f\u671f\u4e09","\u661f\u671f\u56db","\u661f\u671f\u4e94","\u661f\u671f\u516d"],"dayNamesShort":["\u9031\u65e5","\u9031\u4e00","\u9031\u4e8c","\u9031\u4e09","\u9031\u56db","\u9031\u4e94","\u9031\u516d"],"dayNamesMin":["\u65e5","\u4e00","\u4e8c","\u4e09","\u56db","\u4e94","\u516d"],"dateFormat":"yy\/mm\/dd","firstDay":1,"isRTL":false});});
+</script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/menu.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-includes/js/wp-a11y.min.js?ver=4.6'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var uiAutocompleteL10n = {"noResults":"\u6c92\u6709\u4efb\u4f55\u641c\u5c0b\u7d50\u679c\u3002","oneResult":"\u767c\u73fe\u4e00\u500b\u7d50\u679c\u3002 \u8acb\u4f7f\u7528\u4e0a\u4e0b\u9375\u4f86\u700f\u89bd\u3002","manyResults":"\u767c\u73fe %d \u500b\u7d50\u679c\u3002\u8acb\u4f7f\u7528\u4e0a\u4e0b\u9375\u4f86\u700f\u89bd\u3002"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/autocomplete.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/resizable.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/draggable.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/button.min.js?ver=1.11.4'></script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/dialog.min.js?ver=1.11.4'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var EM = {"ajaxurl":"http:\/\/blog.mozilla.com.tw\/wp-admin\/admin-ajax.php","locationajaxurl":"http:\/\/blog.mozilla.com.tw\/wp-admin\/admin-ajax.php?action=locations_search","firstDay":"1","locale":"zh","dateFormat":"yy\/mm\/dd","ui_css":"http:\/\/blog.mozilla.com.tw\/wp-content\/plugins\/events-manager\/includes\/css\/jquery-ui.min.css","show24hours":"0","is_ssl":"","bookingInProgress":"\u5831\u540d\u6b63\u5728\u88ab\u767c\u9001\uff0c\u8acb\u7a0d\u7b49\u3002","tickets_save":"\u4fdd\u5b58\u9580\u7968","bookingajaxurl":"http:\/\/blog.mozilla.com.tw\/wp-admin\/admin-ajax.php","bookings_export_save":"\u5c0e\u51fa\u5831\u540d","bookings_settings_save":"\u4fdd\u5b58\u8a2d\u7f6e","booking_delete":"\u60a8\u78ba\u5b9a\u60f3\u8981\u522a\u9664\u55ce\uff1f","bb_full":"Sold Out","bb_book":"Book Now","bb_booking":"Booking...","bb_booked":"Booking Submitted","bb_error":"Booking Error. Try again?","bb_cancel":"Cancel","bb_canceling":"Canceling...","bb_cancelled":"Cancelled","bb_cancel_error":"Cancellation Error. Try again?","txt_search":"Search","txt_searching":"\u641c\u7d22\u4e2d...","txt_loading":"\u52a0\u8f09\u4e2d..."};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://blog.mozilla.com.tw/wp-content/plugins/events-manager/includes/js/events-manager.js?ver=5.64'></script>
+<link rel='https://api.w.org/' href='http://blog.mozilla.com.tw/wp-json/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://blog.mozilla.com.tw/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://blog.mozilla.com.tw/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='América Móvil 開始發售 Firefox OS 智慧型手機' href='http://blog.mozilla.com.tw/posts/5569/america-movil-launches-firefox-os-smartphones' />
+<link rel='next' title='淺談 Firefox 31 開發者工具' href='http://blog.mozilla.com.tw/posts/5589/editable-box-model-multiple-selection-sublime-text-keys-much-more-firefox-developer-tools-episode-31' />
+<meta name="generator" content="WordPress 4.6" />
+<link rel="canonical" href="http://blog.mozilla.com.tw/posts/5579/drm-and-the-challenge-of-serving-users" />
+<link rel='shortlink' href='http://blog.mozilla.com.tw/?p=5579' />
+<link rel="alternate" type="application/json+oembed" href="http://blog.mozilla.com.tw/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fblog.mozilla.com.tw%2Fposts%2F5579%2Fdrm-and-the-challenge-of-serving-users" />
+<link rel="stylesheet" href="http://blog.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen" />	
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-5579 single-format-standard sky">
+            <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//mozilla.org/">mozilla</a>
+                    <h2>
+            <a href="//mozilla.com.tw" title="回首頁" class="close">
+              <img src="/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href='http://mozilla.com.tw' class='home'>Home</a>
+            <b>&raquo;</b>
+                          <a href='//mozilla.com.tw/news/'>訊息中心</a>
+              <b>&raquo;</b>
+              <a href='/main/'>部落格</a>
+<b>&raquo;</b>                              <span>DRM 與 Mozilla 服務之間的兩難</span>                                    </nav>
+                  </header>
+        <div id="main">
+  <div id="social-box">
+    <div class="fg-share">
+     <div class="fb-like" data-href="http://blog.mozilla.com.tw/posts/5579/drm-and-the-challenge-of-serving-users" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>     <!-- Place this tag where you want the +1 button to render. -->
+     <div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="http://blog.mozilla.com.tw/posts/5579/drm-and-the-challenge-of-serving-users"></div></div>    </div>
+    <div class="pinterest-share"><a href="http://pinterest.com/pin/create/button/?url=http://blog.mozilla.com.tw/posts/5579/drm-and-the-challenge-of-serving-users&media=http://blog.mozilla.com.tw/wp-content/uploads/do-good-150x150.jpg" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a></div>      <div class="plurk-share">
+        <a href="javascript: void(window.open('http://www.plurk.com/?qualifier=shares&status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('&#40;') .concat(encodeURIComponent(document.title)) .concat('&#41;')));">
+          <img src="https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+        </a>
+      </div>
+      <div class="comment-share">
+      <a class="comment-button" href="#respond"><div class="count-bubble">1</div>留言</a>
+    </div>
+  </div>
+
+  	<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="http://blog.mozilla.com.tw/posts/5569/america-movil-launches-firefox-os-smartphones"><div class="post-tip"><img width="48" height="48" src="http://blog.mozilla.com.tw/wp-content/uploads/Alcatel-One-Touch-Fire-252x417-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="Alcatel-One-Touch-Fire-252x417" /><span class="meta-nav">América Móvil 開始發售 Firefox OS 智慧型手機</span></div></a></div>		
+							<div class="nav-next"><a href="http://blog.mozilla.com.tw/posts/5589/editable-box-model-multiple-selection-sublime-text-keys-much-more-firefox-developer-tools-episode-31"><div class="post-tip"><img width="48" height="48" src="http://blog.mozilla.com.tw/wp-content/uploads/eyedropper-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="eyedropper" /><span class="meta-nav">淺談 Firefox 31 開發者工具</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+	
+  <div id="primary" role="main" class="subwarp">
+    <div id="article">
+                  
+<article id="post-5579" class="post-5579 post type-post status-publish format-standard has-post-thumbnail hentry category-firefox category-mozilla tag-news tag-press">
+     <header class="entry-header">
+    <h1 class="entry-title">DRM 與 Mozilla 服務之間的兩難</h1>
+      <p class="entry-posted">
+        <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+          <a title="See all posts from May, 2014" href="http://blog.mozilla.com.tw/posts/date/2014/05" class="posted-month">5月</a>
+          <span class="posted-date">15</span>
+          <a title="See all posts from 2014" href="http://blog.mozilla.com.tw/posts/date/2014" class="posted-year">2014</a>
+        </time>
+      </p>
+  </header><!-- .entry-header -->
+
+  <div class="entry-content close">
+    <p>人生不會有完美的選擇，而 Mozilla 今天也正面臨這樣的兩難。我們必須考量到使用者想要的功能，又必須顧慮使用者的控制與隱私性。這就是我們目前的必須抉擇。</p>
+<p><img class="aligncenter size-full wp-image-5581" src="http://blog.mozilla.com.tw/wp-content/uploads/mozilla.jpg" alt="mozilla" width="500" height="375" srcset="http://blog.mozilla.com.tw/wp-content/uploads/mozilla.jpg 500w, http://blog.mozilla.com.tw/wp-content/uploads/mozilla-300x225.jpg 300w" sizes="(max-width: 500px) 100vw, 500px" /></p>
+<p>&nbsp;</p>
+<p>許多人都愛看如電影或電視劇的線上影音內容。為此，瀏覽器也必須具備影片播放功能，否則瀏覽器能迎合使用者的工具只會越來越少。許多內容版權所有者 (特別是電影與電視劇工作室) 會要求搭配特殊技術，以限制他人利用影片內容 (如防拷就是最常見的功能)。這種特殊機制即所謂的「數位著作權管理 (Digital Rights Management，DRM)」。瀏覽器往往必須跟著建置 DRM 機制，避免引起版權所有者的不快。否則版權所有者可限制該瀏覽器不得顯示相關影音內容。</p>
+<p>目前影音產業正積極佈署新的 DRM 機制。截至目前為止，瀏覽器均是透過 Adobe 的《Flash》，以及 Microsoft 的《Silverlight》而間接啟動 DRM。新版 DRM 則是使用所謂「EME」與「CDM」的機制。與舊系統相較，Mozilla 認為新機制其實仍有存在已久的相同瑕疵。新機制並不會影響目前「保護個人用戶」與「保護數位內容」之間的平衡態勢，但版權所有者必須封閉該系統的部分關鍵原始碼；這也就與 Mozilla 的基礎原則背道而馳。</p>
+<p>Mozilla 很渴望能使用不同的系統。可惜，單是 Mozilla 並無法改變影音產業目前對 DRM 的態度。Firefox 之前曾改變過產業，也希望能再次發揮本身的影響力。但我們今天並無法改變 DRM。如 Google、Microsoft、Apple 等的主要瀏覽器供應商，均已經納入了新系統。此外，舊版 DRM 亦即將退役。如果瀏覽器想要存取 DRM 控制的影音內容，新版 DRM 很快就會成為唯一的存取方式。</p>
+<p>基於這既有的瑕疵，Mozilla 曾苦思是否能不要採用新版 DRM。但是影音內容一直是網路生活極重要的部分。如果瀏覽器無法播放影片，勢必成為具有嚴重缺陷的消費性產品。Firefox 使用者不能每次想欣賞受控制的影片時，就必須改用其他瀏覽器才行；如此也會讓大家質疑 Firefox 產品的可用性。</p>
+<p>先不論 Mozilla 是否排斥 DRM。我們必須讓 Firefox 能先滿足使用者觀看 DRM 影片的需求。Mozilla 會儘量保護個人欣賞影片的權利，接著才會考量影音產業所實行的措施。Mozilla 將與 Adobe 合作開發關鍵功能。Adobe 透過 Flash 提供相關影音功能已經行之有年，而且 Adobe 早與版權所有者之間建立了密切的關係。</p>
+<p>Mozilla 是在盡可能保護使用者的前提之下，設計出必要機制；而不是要修復 DRM 的核心問題。我們也將這次設計視為往後能夠脫離 DRM 的步驟之一。舉例來說：</p>
+<ul>
+<li>每個人都能決定是否啟動 DRM 機制；否則就離開該頁面而不要觀看 DRM 控制的影音內容。</li>
+<li>我們在封閉源碼程式的外部裹上開放源碼程式。這讓我們能監控並進一步了解封閉源碼的活動範圍。</li>
+</ul>
+<p>若需要詳細資訊，請參閱 <a href="https://hacks.mozilla.org/2014/05/reconciling-mozillas-mission-and-w3c-eme/" target="_blank">Andreas Gal 的技術說明文章</a>。</p>
+<p>Mozilla 將繼續研究 DRM 的替代解決方案。我們深切希望能夠引導影音產業使用不同的解決方案，讓每一位使用者都能掌握自己的電腦與生活。我們將兼顧內容端與技術端而開發新的技術，並歡迎任何人加入替代方案的開發行列。</p>
+<p>&nbsp;</p>
+<p>以下是相關常見問題：</p>
+<p><strong>Mozilla </strong><strong>現正規劃什麼？</strong></p>
+<p>我們正逐步確認使用者能夠在 Firefox 上觀看熱門影片。版權所有者是透過 DRM 而控制影片的使用與發佈方式。在允許如 Firefox 的軟體能夠串流影片之前，都是由權限持有者要求 DRM。而為了讓 Firefox 能夠串流這些影音內容，Mozilla 將透過所謂「加密媒體擴展 (Encrypted Media Extensions，EME)」的常見規格，針對音訊與視訊新增 Adobe Access DRM 技術的整合方式。</p>
+<p>&nbsp;</p>
+<p><strong>Mozilla </strong><strong>又為何要這樣做？</strong></p>
+<p>Firefox 使用者一般只要下載如 Silverlight 與 Flash 的外掛程式，就能觀看 DRM 控制的影片。但這種方法很快就要遭到淘汰。主要瀏覽器供應商都已經建構了 EME 並逐漸成為標準機制。Mozilla 要避免使用者無法存取重要的網路內容 (如透過 Firefox 串流好萊塢的電影)。我們也不希望看到 Firefox 使用者必須轉用其他瀏覽器，才能進行重要的網路活動。</p>
+<p>&nbsp;</p>
+<p><strong>對</strong><strong> </strong><strong>Firefox </strong><strong>使用者會有什麼影響？</strong></p>
+<p>對 Firefox 使用者來說，因為不再需要先下載 Flash 或 Silverlight ，所以能更輕鬆的播放 DRM 控制的影片。在存取影片之前，Firefox 使用者能選擇是否啟用新版 DRM 機制。</p>
+<p>&nbsp;</p>
+<p><strong>何時會佈署到</strong><strong> </strong><strong>Firefox </strong><strong>呢？</strong></p>
+<p>Firefox 的整合作業細節目前尚未定案。每次在釋出新功能之前，都必須在 Firefox 開發者版本中測試數個月，才會正式提供給所有使用者。</p>
+<p>&nbsp;</p>
+<p><strong>預計哪個版本的</strong><strong> </strong><strong>Firefox </strong><strong>會佈署新的機制？</strong></p>
+<p>我們規劃先佈署於 Windows、Mac、Linux 版的 Firefox 瀏覽器。</p>
+<p>&nbsp;</p>
+<p><strong>DRM </strong><strong>不是正與</strong><strong> </strong><strong>Mozilla </strong><strong>捍衛的網路開放原則背道而馳嗎？</strong></p>
+<p>DRM 目前需要封閉系統才能運作，而且是為了收回使用者的控制權所設計。Mozilla 也正在尋找 DRM 的替代方案。在替代方案到位之前，Firefox 使用者仍可選擇是否啟用 DRM 以欣賞串流影片。</p>
+<p>&nbsp;</p>
+<p><strong>Mozilla </strong><strong>為何選擇和</strong><strong> </strong><strong>Adobe </strong><strong>合作？</strong></p>
+<p>我們與 Adobe 合作設計的新機制，將保有使用者的控制性與作業透明度，同時也會提供多樣功能 (如支援多樣的平台與視訊編碼格式)。</p>
+<p>&nbsp;</p>
+<p><strong>Firefox for Android </strong><strong>或</strong><strong> </strong><strong>Firefox OS </strong><strong>也將佈署</strong><strong> </strong><strong>DRM </strong><strong>嗎？</strong></p>
+<p>目前我們只會佈署於 Firefox 桌面版瀏覽器。</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>原文連結：<a href="https://blog.mozilla.org/blog/2014/05/14/drm-and-the-challenge-of-serving-users/" target="_blank">DRM and the Challenge of Serving Users</a></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+      </div><!-- .entry-content -->
+                                <footer class="entry-footer">
+        <div class="entry-category-box">
+          文章分類：
+          <a href="http://blog.mozilla.com.tw/posts/category/firefox" rel="category tag">Firefox</a>、<a href="http://blog.mozilla.com.tw/posts/category/mozilla" rel="category tag">Mozilla</a>        </div>
+      </footer> 
+          </article><!-- #post-5579 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+          <a class="shareButton">我要分享這篇文章</a>
+          <iframe id="after-share-subscribe" src="about:blank" 
+              data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&hide_archive=True">
+          </iframe>
+                      <!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+            <div>目前找不到相關文章</div>          
+          	<div id="comments">
+		
+			<h3 id="comments-title">
+			共 1 則讀者回應
+		</h3>
+
+		
+		<ol class="commentlist">
+				<li class="post pingback">
+		<p>參照： <a href='http://blog.mozilla.com.tw/posts/7449/firefox-drm' rel='external nofollow' class='url'>為大家更新 Firefox 與數位版權管理的消息 | 部落格 | Mozilla Taiwan</a></p>
+	</li><!-- #comment-## -->
+		</ol>
+
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/posts/5579/drm-and-the-challenge-of-serving-users#respond" style="display:none;">取消回覆</a></small></h3>				<form action="http://blog.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" aria-required='true' required='required' /></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" maxlength="100" aria-describedby="email-notes" aria-required='true' required='required' /></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30" maxlength="200" /></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表" /> <input type='hidden' name='comment_post_ID' value='5579' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="5fe60f74a8" /></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="111"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+             </div> <!-- #article -->
+  </div><!-- #primary -->
+  <div class="subwarp">
+      		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="http://blog.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s" />
+					<input type="submit" id="searchsubmit" value="搜尋" />
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&opaque=True&hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+<li id="sidebar-planet-moztw">
+<a href="http://planet.moztw.org/">Planet MozTW</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">文章分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="http://blog.mozilla.com.tw/posts/category/firefox" >Firefox</a> (354)
+</li>
+	<li class="cat-item cat-item-11"><a href="http://blog.mozilla.com.tw/posts/category/firefox/firefox-android" >Firefox for Android</a> (50)
+</li>
+	<li class="cat-item cat-item-154"><a href="http://blog.mozilla.com.tw/posts/category/firefox/firefox-ios" >Firefox for iOS</a> (3)
+</li>
+	<li class="cat-item cat-item-10"><a href="http://blog.mozilla.com.tw/posts/category/firefox-os" >Firefox OS</a> (213)
+</li>
+	<li class="cat-item cat-item-43"><a href="http://blog.mozilla.com.tw/posts/category/identity" >Identity</a> (10)
+</li>
+	<li class="cat-item cat-item-12"><a href="http://blog.mozilla.com.tw/posts/category/mozilla" >Mozilla</a> (305)
+</li>
+	<li class="cat-item cat-item-42"><a href="http://blog.mozilla.com.tw/posts/category/privacy" >Privacy</a> (57)
+</li>
+	<li class="cat-item cat-item-149"><a href="http://blog.mozilla.com.tw/posts/category/security" >Security</a> (19)
+</li>
+	<li class="cat-item cat-item-35"><a href="http://blog.mozilla.com.tw/posts/category/webapp" >Web App</a> (165)
+</li>
+	<li class="cat-item cat-item-16"><a href="http://blog.mozilla.com.tw/posts/category/news-feed" >新聞訊息</a> (132)
+</li>
+	<li class="cat-item cat-item-1"><a href="http://blog.mozilla.com.tw/posts/category/%e6%9c%aa%e5%88%86%e9%a1%9e" >未分類</a> (10)
+</li>
+	<li class="cat-item cat-item-44"><a href="http://blog.mozilla.com.tw/posts/category/student-ambassador" >校園大使</a> (12)
+</li>
+	<li class="cat-item cat-item-21"><a href="http://blog.mozilla.com.tw/posts/category/%e6%b4%bb%e5%8b%95" >活動</a> (98)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+			
+			<option value="">選擇月份</option>
+				<option value='http://blog.mozilla.com.tw/posts/date/2016/10'> 2016 年 十月 &nbsp;(10)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2016/09'> 2016 年 九月 &nbsp;(10)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2016/08'> 2016 年 八月 &nbsp;(11)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2016/07'> 2016 年 七月 &nbsp;(9)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2016/06'> 2016 年 六月 &nbsp;(6)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2016/05'> 2016 年 五月 &nbsp;(11)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2016/04'> 2016 年 四月 &nbsp;(11)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2016/03'> 2016 年 三月 &nbsp;(18)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2016/02'> 2016 年 二月 &nbsp;(11)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2016/01'> 2016 年 一月 &nbsp;(11)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2015/12'> 2015 年 十二月 &nbsp;(14)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2015/11'> 2015 年 十一月 &nbsp;(15)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2015/10'> 2015 年 十月 &nbsp;(11)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2015/09'> 2015 年 九月 &nbsp;(11)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2015/08'> 2015 年 八月 &nbsp;(15)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2015/07'> 2015 年 七月 &nbsp;(10)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2015/06'> 2015 年 六月 &nbsp;(8)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2015/05'> 2015 年 五月 &nbsp;(14)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2015/04'> 2015 年 四月 &nbsp;(15)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2015/03'> 2015 年 三月 &nbsp;(16)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2015/02'> 2015 年 二月 &nbsp;(11)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2015/01'> 2015 年 一月 &nbsp;(16)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2014/12'> 2014 年 十二月 &nbsp;(11)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2014/11'> 2014 年 十一月 &nbsp;(19)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2014/10'> 2014 年 十月 &nbsp;(21)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2014/09'> 2014 年 九月 &nbsp;(16)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2014/08'> 2014 年 八月 &nbsp;(15)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2014/07'> 2014 年 七月 &nbsp;(17)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2014/06'> 2014 年 六月 &nbsp;(15)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2014/05'> 2014 年 五月 &nbsp;(17)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2014/04'> 2014 年 四月 &nbsp;(21)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2014/03'> 2014 年 三月 &nbsp;(19)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2014/02'> 2014 年 二月 &nbsp;(23)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2014/01'> 2014 年 一月 &nbsp;(15)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2013/12'> 2013 年 十二月 &nbsp;(22)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2013/11'> 2013 年 十一月 &nbsp;(22)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2013/10'> 2013 年 十月 &nbsp;(19)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2013/09'> 2013 年 九月 &nbsp;(14)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2013/08'> 2013 年 八月 &nbsp;(19)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2013/07'> 2013 年 七月 &nbsp;(23)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2013/06'> 2013 年 六月 &nbsp;(14)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2013/05'> 2013 年 五月 &nbsp;(16)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2013/04'> 2013 年 四月 &nbsp;(23)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2013/03'> 2013 年 三月 &nbsp;(11)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2013/02'> 2013 年 二月 &nbsp;(14)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2013/01'> 2013 年 一月 &nbsp;(12)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2012/12'> 2012 年 十二月 &nbsp;(9)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2012/11'> 2012 年 十一月 &nbsp;(13)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2012/10'> 2012 年 十月 &nbsp;(19)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2012/09'> 2012 年 九月 &nbsp;(11)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2012/08'> 2012 年 八月 &nbsp;(8)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2012/07'> 2012 年 七月 &nbsp;(12)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2012/06'> 2012 年 六月 &nbsp;(7)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2012/05'> 2012 年 五月 &nbsp;(9)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2012/04'> 2012 年 四月 &nbsp;(8)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2012/03'> 2012 年 三月 &nbsp;(8)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2012/02'> 2012 年 二月 &nbsp;(6)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2012/01'> 2012 年 一月 &nbsp;(4)</option>
+	<option value='http://blog.mozilla.com.tw/posts/date/2011/12'> 2011 年 十二月 &nbsp;(6)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		  </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    
+    <noscript>
+    </noscript>
+    <script type="text/javascript" src="/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="http://blog.mozilla.com.tw/wp-content/themes/toolbox/js/main.js"></script>
+    <script type="text/javascript" src="http://blog.mozilla.com.tw/wp-content/themes/toolbox/js/simplegallery.js"></script>
+    <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://assets.pinterest.com/js/pinit.js"></script>
+		
+    <script>
+        </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>

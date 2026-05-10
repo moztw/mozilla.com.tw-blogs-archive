@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/%e5%88%b0-coscup-2013-%e6%89%b
 archive_url: "https://web.archive.org/web/20160901212524id_/https://blog.mozilla.com.tw/events/%e5%88%b0-coscup-2013-%e6%89%be-mozilla"
 wayback_timestamp: "20160901212524"
 status: "ok"
-asset_status: "ok"
 ---
+
 地圖不可用
 
 	活動時間

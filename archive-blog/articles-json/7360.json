@@ -10,35 +10,230 @@
   ],
   "tags": [],
   "author": "",
+  "page_type": "post",
   "original_url": "https://blog.mozilla.com.tw/?p=7360",
-  "archive_url": "https://web.archive.org/web/20191113180146id_/https://blog.mozilla.com.tw/?p=7360",
+  "archive_url": "https://web.archive.org/web/20191113180146/https://blog.mozilla.com.tw/?p=7360",
   "wayback_timestamp": "20191113180146",
   "content_html": "<div class=\"entry-content close\">\n    <p><a href=\"https://github.com/firebug/pixel-perfect/wiki\">Pixel Perfect</a> 本身為 Firefox 擴充套件，可讓 Web 開發者以半透明的圖像 (圖層) 覆蓋於網頁之上，接著可微調網頁內容直到確實符合該圖層為止。</p>\n<p><img class=\"aligncenter size-full wp-image-7361\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/logo_64x64.png\" alt=\"logo_64x64\" width=\"64\" height=\"64\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/logo_64x64.png 64w, https://blog.mozilla.com.tw/wp-content/uploads/logo_64x64-50x50.png 50w\" sizes=\"(max-width: 64px) 100vw, 64px\" /></p>\n<p>此擴充套件本於 2008 年時透過 Firebug 釋出，但已有數年未妥善維護。許多愛用者要求 Mozilla 能精進其功能，而<a href=\"https://getfirebug.com/wiki/index.php/Firebug_Working_Group\"> Firebug Working Group</a> 則把握機會，以 Firefox 所內建的「Remote Debugging Protocol」，再次從頭打造此擴充套件。這也讓我們能支援如<a href=\"https://developer.mozilla.org/en-US/Firefox/Multiprocess_Firefox\">多程序 (Multiprocess) Firefox</a> 與<a href=\"https://developer.mozilla.org/en-US/docs/Tools/Remote_Debugging\">遠端除錯</a>等的新功能，同時亦整合了<a href=\"https://github.com/firebug/firebug.next\"> Firebug 3</a> (也就是 Firebug.next)，但 Firebug 並非必備環境。</p>\n<p>我們為了兩個目標而打造此擴充套件：</p>\n<ul>\n<li>再次提供 Pixel Perfect 功能與特色</li>\n<li>要以 Remote Debugging Protocol 與其他 Firefox API 為基礎，建構實際的擴充套件</li>\n</ul>\n<p>本文將概述其相關功能。如果你就是擴充套件的開發者，想進一步使用最新的 Firefox API 寫出開發者或設計者工具，則可參閱其<a href=\"http://www.softwareishard.com/blog/extension-architecture/pixel-perfect-2-developer-tool-extension-architecture\">內部架構</a>。</p>\n<h4>Pixel Perfect 2 入門</h4>\n<p>你必須先安裝 Firefox 36 或更高版本，才能從 <a href=\"https://addons.mozilla.org/en-US/firefox/addon/pixel-perfect/\">addons.mozilla.org</a> 安裝最新版本的 Pixel Perfect 2 (PP2)。安裝完畢後，就能在 Firefox 主工具列上看到新的選項，其左邊為按鈕；右邊為箭頭。</p>\n<p>點擊按鈕即可開啟 PP2；點擊箭頭則會顯示選單以連接線上資源。</p>\n<p><img class=\"aligncenter size-full wp-image-7362\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/start-button.png\" alt=\"start-button\" width=\"293\" height=\"233\" /></p>\n<p>如果你也安裝了 Firebug 3 (目前為<a href=\"https://github.com/firebug/firebug.next/releases\">封閉測試版</a>)，就能從「樣式編輯器 (Style Editor)」面板上開啟 PP2。</p>\n<p><img class=\"aligncenter wp-image-7363\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/firebug-integration.png\" alt=\"firebug-integration\" width=\"570\" height=\"263\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/firebug-integration.png 567w, https://blog.mozilla.com.tw/wp-content/uploads/firebug-integration-300x139.png 300w\" sizes=\"(max-width: 570px) 100vw, 570px\" /></p>\n<p>PP2 的使用者介面 (UI) 包含一組浮動視窗，可用以新增＼移除圖層。即如上圖所示。</p>\n<p><img class=\"aligncenter size-full wp-image-7364\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/empty-panel.png\" alt=\"empty-panel\" width=\"453\" height=\"305\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/empty-panel.png 453w, https://blog.mozilla.com.tw/wp-content/uploads/empty-panel-300x202.png 300w\" sizes=\"(max-width: 453px) 100vw, 453px\" /></p>\n<p>若要新增第一圖層，則點擊「Add Layer」按鈕即可從硬碟選擇圖檔。</p>\n<p>接著就能從浮動的彈出型視窗中看到此圖層，當然亦可在網頁中看到。</p>\n<p><img class=\"aligncenter size-full wp-image-7365\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/layer-form-panel.png\" alt=\"layer-form-panel\" width=\"470\" height=\"307\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/layer-form-panel.png 470w, https://blog.mozilla.com.tw/wp-content/uploads/layer-form-panel-300x196.png 300w\" sizes=\"(max-width: 470px) 100vw, 470px\" /></p>\n<p>接著可變更其屬性，如位置與「透明度 (Opacity)」。亦可於頁面中直接拖曳圖層。</p>\n<p><img class=\"aligncenter  wp-image-7366\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/layer-form-page.png\" alt=\"layer-form-page\" width=\"565\" height=\"647\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/layer-form-page.png 566w, https://blog.mozilla.com.tw/wp-content/uploads/layer-form-page-262x300.png 262w\" sizes=\"(max-width: 565px) 100vw, 565px\" /></p>\n<p>此截圖所顯示的頁面，包含「<i>Form Editor: Contact Us</i>」文字以及一組圖層 (即以藍色虛線框住)，呈現目前頁面的顯示方式。現在即可透過開發者工具箱調整頁面，以達到最佳的呈現效果。</p>\n<p>&nbsp;</p>\n<p style=\"text-align: right;\"><strong>─ By Jan ‘Honza’ Odvarko</strong></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2015/03/pixel-perfect-2-extension-for-firefox-developer-tools/\" target=\"_blank\">Pixel Perfect 2: extension for Firefox Developer Tools</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
   "content_text": "Pixel Perfect 本身為 Firefox 擴充套件，可讓 Web 開發者以半透明的圖像 (圖層) 覆蓋於網頁之上，接著可微調網頁內容直到確實符合該圖層為止。 此擴充套件本於 2008 年時透過 Firebug 釋出，但已有數年未妥善維護。許多愛用者要求 Mozilla 能精進其功能，而 Firebug Working Group 則把握機會，以 Firefox 所內建的「Remote Debugging Protocol」，再次從頭打造此擴充套件。這也讓我們能支援如 多程序 (Multiprocess) Firefox 與 遠端除錯 等的新功能，同時亦整合了 Firebug 3 (也就是 Firebug.next)，但 Firebug 並非必備環境。 我們為了兩個目標而打造此擴充套件： 再次提供 Pixel Perfect 功能與特色 要以 Remote Debugging Protocol 與其他 Firefox API 為基礎，建構實際的擴充套件 本文將概述其相關功能。如果你就是擴充套件的開發者，想進一步使用最新的 Firefox API 寫出開發者或設計者工具，則可參閱其 內部架構 。 Pixel Perfect 2 入門 你必須先安裝 Firefox 36 或更高版本，才能從 addons.mozilla.org 安裝最新版本的 Pixel Perfect 2 (PP2)。安裝完畢後，就能在 Firefox 主工具列上看到新的選項，其左邊為按鈕；右邊為箭頭。 點擊按鈕即可開啟 PP2；點擊箭頭則會顯示選單以連接線上資源。 如果你也安裝了 Firebug 3 (目前為 封閉測試版 )，就能從「樣式編輯器 (Style Editor)」面板上開啟 PP2。 PP2 的使用者介面 (UI) 包含一組浮動視窗，可用以新增＼移除圖層。即如上圖所示。 若要新增第一圖層，則點擊「Add Layer」按鈕即可從硬碟選擇圖檔。 接著就能從浮動的彈出型視窗中看到此圖層，當然亦可在網頁中看到。 接著可變更其屬性，如位置與「透明度 (Opacity)」。亦可於頁面中直接拖曳圖層。 此截圖所顯示的頁面，包含「 Form Editor: Contact Us 」文字以及一組圖層 (即以藍色虛線框住)，呈現目前頁面的顯示方式。現在即可透過開發者工具箱調整頁面，以達到最佳的呈現效果。 ─ By Jan ‘Honza’ Odvarko 原文連結： Pixel Perfect 2: extension for Firefox Developer Tools",
   "images": [
     {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Firefox-Hello_Beta35-50x50.png",
+      "alt": "Firefox Hello 中的新對話視窗",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Firefox-Hello_Beta35-150x150.png",
+      "alt": "Firefox Hello 中的新對話視窗",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/eyedropper1-50x50.png",
+      "alt": "eyedropper",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/eyedropper1-150x150.png",
+      "alt": "eyedropper",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/logo_64x64.png",
-      "alt": "logo_64x64"
+      "alt": "logo_64x64",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/logo_64x64-50x50.png",
+      "alt": "logo_64x64",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/start-button.png",
-      "alt": "start-button"
+      "alt": "start-button",
+      "kind": "image",
+      "source": "img"
     },
     {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/firebug-integration.png",
-      "alt": "firebug-integration"
+      "alt": "firebug-integration",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/firebug-integration-300x139.png",
+      "alt": "firebug-integration",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/empty-panel.png",
-      "alt": "empty-panel"
+      "alt": "empty-panel",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/empty-panel-300x202.png",
+      "alt": "empty-panel",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/layer-form-panel.png",
-      "alt": "layer-form-panel"
+      "alt": "layer-form-panel",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/layer-form-panel-300x196.png",
+      "alt": "layer-form-panel",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/layer-form-page.png",
-      "alt": "layer-form-page"
+      "alt": "layer-form-page",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/layer-form-page-262x300.png",
+      "alt": "layer-form-page",
+      "kind": "image",
+      "source": "img-srcset"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Firefox-Hello_Beta35-50x50.png",
+      "alt": "Firefox Hello 中的新對話視窗",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Firefox-Hello_Beta35-150x150.png",
+      "alt": "Firefox Hello 中的新對話視窗",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/eyedropper1-50x50.png",
+      "alt": "eyedropper",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/eyedropper1-150x150.png",
+      "alt": "eyedropper",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/logo_64x64.png",
+      "alt": "logo_64x64",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/logo_64x64-50x50.png",
+      "alt": "logo_64x64",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/start-button.png",
+      "alt": "start-button",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/firebug-integration.png",
+      "alt": "firebug-integration",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/firebug-integration-300x139.png",
+      "alt": "firebug-integration",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/empty-panel.png",
+      "alt": "empty-panel",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/empty-panel-300x202.png",
+      "alt": "empty-panel",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/layer-form-panel.png",
+      "alt": "layer-form-panel",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/layer-form-panel-300x196.png",
+      "alt": "layer-form-panel",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/layer-form-page.png",
+      "alt": "layer-form-page",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/layer-form-page-262x300.png",
+      "alt": "layer-form-page",
+      "kind": "image",
+      "source": "img-srcset"
     }
   ],
   "links": [
@@ -80,6 +275,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

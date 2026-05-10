@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/2015-mozilla-campus-events"
 archive_url: "https://web.archive.org/web/20161017025616id_/https://blog.mozilla.com.tw/events/2015-mozilla-campus-events"
 wayback_timestamp: "20161017025616"
 status: "ok"
-asset_status: "partial_assets_failed"
 ---
+
 地圖不可用
 
 	活動時間
@@ -44,5 +44,3 @@ Mozilla Taiwan 美商謀智 校園徵才攤位暨說明會活動時間：
 除了招募徵才外，最受大家喜愛的 Firefox 火狐本尊也將親臨 Mozilla 攤位為大家加油打氣。別忘了現場給火狐一個熱烈的愛的抱抱，還有機會獲得 Mozilla 限量精美贈品喔！
 
 若你對網路抱有熱忱、支持開源專案、對新型態的智慧型手機、裝置有高度興趣，歡迎加入我們的行列，一起打造行動網路、釋放未來！
-
-![職缺表](../assets/uploads/職缺表.png)

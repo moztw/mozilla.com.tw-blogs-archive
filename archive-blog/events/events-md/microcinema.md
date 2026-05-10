@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/microcinema"
 archive_url: "https://web.archive.org/web/20170107104924id_/https://blog.mozilla.com.tw/events/microcinema"
 wayback_timestamp: "20170107104924"
 status: "ok"
-asset_status: "ok"
 ---
+
 地圖不可用
 
 	活動時間
@@ -35,7 +35,6 @@ asset_status: "ok"
 
 講者介紹
 
-![Yuna](../assets/uploads/yuna.jpg)
  創意設計師 鍾張齡 Yuna Jong
 
 自有記憶以來就喜歡動手做東西，讀的是產品設計與使用者經驗，經常透過影像來詮釋設計。熱愛旅行，喜歡透過影像、文字與攝影來記錄旅程。目前任職於 Mozilla Taiwan，負責行銷部門的相關設計。

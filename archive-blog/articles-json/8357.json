@@ -11,15 +11,122 @@
   ],
   "tags": [],
   "author": "",
+  "page_type": "post",
   "original_url": "https://blog.mozilla.com.tw/?p=8357",
-  "archive_url": "https://web.archive.org/web/20191019130628id_/https://blog.mozilla.com.tw/?p=8357",
+  "archive_url": "https://web.archive.org/web/20191019130628/https://blog.mozilla.com.tw/?p=8357",
   "wayback_timestamp": "20191019130628",
   "content_html": "<div class=\"entry-content close\">\n    <p>隨著 Firefox OS 著眼於連網裝置的趨勢，現正是針對大型螢幕開發遊戲的時候。松下電器 (Panasonic) 現已發售多款 Firefox OS 智慧電視，而相較於一般人所習慣的智慧型手機畫面，我將透過本文簡單介紹該如何對應大型電視螢幕開發 HTML5 遊戲。</p>\n<p>在〈<a href=\"http://blog.mozilla.com.tw/posts/8356/firefox-os-tv-game-1\" target=\"_blank\">為 Firefox OS 電視打造遊戲 (上)</a>〉一文中，我 (作者 <a class=\"url\" href=\"http://end3r.com\" rel=\"external me\">Andrzej Mazur</a>) 稍微解釋過第一版羅傑斯隊長的開發背景，與其所對應的執行裝置。但時至今日，逐漸普及的連網裝置讓遊戲平台也更為多元。一起來看看該如何讓電視遙控器也能化身遊戲搖桿，直接在大螢幕電視上享受遊戲！</p>\n<hr />\n<h4>動手開發</h4>\n<p>近幾年已有許多有關<a href=\"http://code.tutsplus.com/tutorials/preparing-for-firefox-os--mobile-18515\">如何針對 Firefox OS 智慧型手機打造自己的 HTML5 遊戲</a>等的資源。但隨著新媒介不斷問世，相關方式也不盡相同 (以下將討論某些例外)，所以你大方向仍是可依照這些說明文章所述來做。但要針對 Panasonic 的 Firefox OS 電視開發遊戲，就需要 Firefox Nightly 與 WebIDE。你可參閱<a href=\"https://developer.mozilla.org/en-US/docs/Mozilla/Firefox_OS/TVs_connected_devices/How_to_connect_WebIDE_to_TV_%28VIErA%29\">本篇 MDN 文章</a>，透過 WebIDE 遠端除錯的方式，逐步將遊戲推送至電視之中。</p>\n<p></p>\n<h4>考量大型螢幕</h4>\n<p>放在客廳的電視，當然與手裡握的智慧型手機大不相同。而針對新的媒介，遊戲與其他 App 的設計方式也勢必有所不同。而從我們的 Web 建構經驗可知，不論是在智慧型手機、平板電腦、筆記型電腦、電腦螢幕上，遊戲都能因應目前的螢幕尺寸自行調整，所以電視螢幕也不會是問題。</p>\n<h4>尺寸縮放</h4>\n<p>Phaser 只要一行程式碼就能解決尺寸縮放：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5dab0a54437d1915726851\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nthis.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5dab0a54437d1915726851-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5dab0a54437d1915726851-1\"><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">scale</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">scaleMode</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">Phaser</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">ScaleManager</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">SHOW_ALL</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>該行程式碼將負責遊戲 Canvas 所對應的畫面空間並維持長寬比 (Aspect ratio)，因此不致於胡亂延伸成錯誤比例。當然有其他的調整方式，但這個是最簡單、最普遍的方式，且小螢幕手機到大螢幕電視都適用。唯一要考量的就是解析度和執行效能之間的問題，最好能兼顧遊戲的執行與畫質都在可接受的範圍。至於解析度的部份，就要先看看你所要建構的遊戲類型、會有多少程式碼、畫面上執行的複雜程度等等，所以又是不同的考量要點。</p>\n<h4>控制方式</h4>\n<p>我利用遙控器來模擬鍵盤，所以如果你已經有自己的遊戲，也能利用現成的控制方式：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5dab0a54437e0232787442\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nthis.cursors = this.input.keyboard.createCursorKeys();\r\n//...\r\nif(this.cursors.right.isDown) {\r\n    this.player.body.velocity.x += forcePush;\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5dab0a54437e0232787442-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dab0a54437e0232787442-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5dab0a54437e0232787442-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dab0a54437e0232787442-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-5dab0a54437e0232787442-5\">5</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5dab0a54437e0232787442-1\"><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">cursors</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">input</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">keyboard</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">createCursorKeys</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dab0a54437e0232787442-2\"><span class=\"crayon-c\">//...</span></div><div class=\"crayon-line\" id=\"crayon-5dab0a54437e0232787442-3\"><span class=\"crayon-st\">if</span><span class=\"crayon-sy\">(</span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">cursors</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">right</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">isDown</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dab0a54437e0232787442-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">player</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">body</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">velocity</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">x</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">+=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">forcePush</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5dab0a54437e0232787442-5\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>&nbsp;</p>\n<p>本範例已經設定了上下左右方向鍵 (如果你是用桌機上測試遊戲，就同樣對應鍵盤的上下左右鍵)，且稍後即可檢查是否到位。這些方向鍵與遙控上的箭頭均為相同的按鍵碼，所以能輕鬆實作並測試之。遊戲期間只要按下向右鍵，太空船也會跟著右移。遙控器上可找到對應的功能鍵：</p>\n<p><img class=\"aligncenter wp-image-8366\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/captainrogers2-remote.png\" alt=\"captainrogers2-remote\" width=\"550\" height=\"366\" srcset=\"https://blog.mozilla.com.tw/wp-content/uploads/captainrogers2-remote.png 575w, https://blog.mozilla.com.tw/wp-content/uploads/captainrogers2-remote-300x200.png 300w\" sizes=\"(max-width: 550px) 100vw, 550px\" /></p>\n<p>四個方向鍵也有其相對應的按鍵碼，但你該如何檢查遙控器上的其他按鍵呢？只要單純的 JavaScript 就能辦到：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\r\n\r\n\t\t<div id=\"crayon-5dab0a54437e4849675124\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nwindow.addEventListener(\"keydown\", function(evt) {\r\n    console.log(evt.keyCode);\r\n}, this);</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5dab0a54437e4849675124-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-5dab0a54437e4849675124-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-5dab0a54437e4849675124-3\">3</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5dab0a54437e4849675124-1\"><span class=\"crayon-v\">window</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">addEventListener</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"keydown\"</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">function</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">evt</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-5dab0a54437e4849675124-2\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">console</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">log</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">evt</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">keyCode</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-5dab0a54437e4849675124-3\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-r\">this</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0002 seconds] -->\r\n<p>&nbsp;</p>\n<p>如此只要你按下遙控器上的按鍵，就能看到相對的按鍵程式碼列於主控台上，方便你指派其在遊戲中所對應的動作。你也能參閱〈<a href=\"https://developer.mozilla.org/en-US/docs/Mozilla/Firefox_OS/TVs_connected_devices/TV_remote_control_button_mapping_to_keyboard\">對應鍵盤的電視遙控器控制按鈕</a>〉一文就能輕鬆完成。</p>\n<h4>最佳化</h4>\n<p>另外必須注意的是，電視與其他類似裝置均有其硬體限制。若要讓遊戲運作順暢，就必須遵守某些說明並測試效能，以克服可能的瓶頸。可參閱<a href=\"http://blog.mozilla.com.tw/posts/7562/\">〈Power Surge〉一文</a>中的相關訣竅。</p>\n<h4>開放源碼</h4>\n<p>在準備新版〈Captain Rogers〉的遊戲展示時，我決定要完全開放自己在 Enclave Games 所用私人範本的原始碼，以利大家開發遊戲。你現在就能上 GitHub 找到 <a href=\"https://github.com/EnclaveGames/Enclave-Phaser-Template\">Enclave Phaser 範本</a>。我另有其他的遊戲開發專案，如 <a href=\"http://gamedevelopment.tutsplus.com/tutorials/getting-started-with-phaser-building-monster-wants-candy--cms-21723\" target=\"_blank\">Monster Wants Candy</a> 與 <a href=\"https://developer.mozilla.org/en-US/docs/Games/Workflows/HTML5_Gamedev_Phaser_Device_Orientation\" target=\"_blank\">Cyber Orb</a>，同時把這些遊戲都放在頁面上方便開發者取用還蠻不錯的。所以我另外透過 open.enclavegames.com 列出我最感興趣的開放源碼專案。</p>\n<h4>從<strong> 2014 MWC 到 2016 CES</strong></h4>\n<p>在西班牙巴塞隆納的<a href=\"http://blog.end3r.com/260/enclave-games-jedzie-na-mobile-world-congress-do-barcelony/\">世界行動通訊大會 (Mobile World Congress，MWC) 2014</a> 上，我就透過多款 Firefox OS 智慧型手機展示了第一版隊長遊戲。從那時開始，我就常與人討論 Firefox OS 的遊戲開發問題，也讓隊長遊戲作為案例研討之用。<a href=\"http://rogers2.enclavegames.com/tv/\">新版遊戲</a>已經在賭城<a href=\"https://www.cesweb.org/\">消費性電子展 (Consumer Electronics Show，CES)</a> 的 Firefox OS 電視上現身，就是松下電器 (Panasonic) <a href=\"http://blog.mozilla.com.tw/posts/8337/\">所發表的新款 UHD 電視</a>。如果你有任何疑問或想法，歡迎隨時<a href=\"https://twitter.com/end3r\">到 Twitter 上找我</a>！</p>\n<p>&nbsp;</p>\n<p style=\"text-align: right;\"><strong>── By </strong><a href=\"http://end3r.com\"><strong>Andrzej Mazur</strong> </a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2016/01/building-games-for-firefox-os-tv/\" target=\"_blank\">Building games for Firefox OS TV</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
   "content_text": "隨著 Firefox OS 著眼於連網裝置的趨勢，現正是針對大型螢幕開發遊戲的時候。松下電器 (Panasonic) 現已發售多款 Firefox OS 智慧電視，而相較於一般人所習慣的智慧型手機畫面，我將透過本文簡單介紹該如何對應大型電視螢幕開發 HTML5 遊戲。 在〈 為 Firefox OS 電視打造遊戲 (上) 〉一文中，我 (作者 Andrzej Mazur ) 稍微解釋過第一版羅傑斯隊長的開發背景，與其所對應的執行裝置。但時至今日，逐漸普及的連網裝置讓遊戲平台也更為多元。一起來看看該如何讓電視遙控器也能化身遊戲搖桿，直接在大螢幕電視上享受遊戲！ 動手開發 近幾年已有許多有關 如何針對 Firefox OS 智慧型手機打造自己的 HTML5 遊戲 等的資源。但隨著新媒介不斷問世，相關方式也不盡相同 (以下將討論某些例外)，所以你大方向仍是可依照這些說明文章所述來做。但要針對 Panasonic 的 Firefox OS 電視開發遊戲，就需要 Firefox Nightly 與 WebIDE。你可參閱 本篇 MDN 文章 ，透過 WebIDE 遠端除錯的方式，逐步將遊戲推送至電視之中。 考量大型螢幕 放在客廳的電視，當然與手裡握的智慧型手機大不相同。而針對新的媒介，遊戲與其他 App 的設計方式也勢必有所不同。而從我們的 Web 建構經驗可知，不論是在智慧型手機、平板電腦、筆記型電腦、電腦螢幕上，遊戲都能因應目前的螢幕尺寸自行調整，所以電視螢幕也不會是問題。 尺寸縮放 Phaser 只要一行程式碼就能解決尺寸縮放： this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL; 1 this . scale . scaleMode = Phaser . ScaleManager . SHOW_ALL ; 該行程式碼將負責遊戲 Canvas 所對應的畫面空間並維持長寬比 (Aspect ratio)，因此不致於胡亂延伸成錯誤比例。當然有其他的調整方式，但這個是最簡單、最普遍的方式，且小螢幕手機到大螢幕電視都適用。唯一要考量的就是解析度和執行效能之間的問題，最好能兼顧遊戲的執行與畫質都在可接受的範圍。至於解析度的部份，就要先看看你所要建構的遊戲類型、會有多少程式碼、畫面上執行的複雜程度等等，所以又是不同的考量要點。 控制方式 我利用遙控器來模擬鍵盤，所以如果你已經有自己的遊戲，也能利用現成的控制方式： this.cursors = this.input.keyboard.createCursorKeys(); //... if(this.cursors.right.isDown) { this.player.body.velocity.x += forcePush; } 1 2 3 4 5 this . cursors = this . input . keyboard . createCursorKeys ( ) ; //... if ( this . cursors . right . isDown ) { this . player . body . velocity . x += forcePush ; } 本範例已經設定了上下左右方向鍵 (如果你是用桌機上測試遊戲，就同樣對應鍵盤的上下左右鍵)，且稍後即可檢查是否到位。這些方向鍵與遙控上的箭頭均為相同的按鍵碼，所以能輕鬆實作並測試之。遊戲期間只要按下向右鍵，太空船也會跟著右移。遙控器上可找到對應的功能鍵： 四個方向鍵也有其相對應的按鍵碼，但你該如何檢查遙控器上的其他按鍵呢？只要單純的 JavaScript 就能辦到： window.addEventListener(\"keydown\", function(evt) { console.log(evt.keyCode); }, this); 1 2 3 window . addEventListener ( \"keydown\" , function ( evt ) { console . log ( evt . keyCode ) ; } , this ) ; 如此只要你按下遙控器上的按鍵，就能看到相對的按鍵程式碼列於主控台上，方便你指派其在遊戲中所對應的動作。你也能參閱〈 對應鍵盤的電視遙控器控制按鈕 〉一文就能輕鬆完成。 最佳化 另外必須注意的是，電視與其他類似裝置均有其硬體限制。若要讓遊戲運作順暢，就必須遵守某些說明並測試效能，以克服可能的瓶頸。可參閱 〈Power Surge〉一文 中的相關訣竅。 開放源碼 在準備新版〈Captain Rogers〉的遊戲展示時，我決定要完全開放自己在 Enclave Games 所用私人範本的原始碼，以利大家開發遊戲。你現在就能上 GitHub 找到 Enclave Phaser 範本 。我另有其他的遊戲開發專案，如 Monster Wants Candy 與 Cyber Orb ，同時把這些遊戲都放在頁面上方便開發者取用還蠻不錯的。所以我另外透過 open.enclavegames.com 列出我最感興趣的開放源碼專案。 從 2014 MWC 到 2016 CES 在西班牙巴塞隆納的 世界行動通訊大會 (Mobile World Congress，MWC) 2014 上，我就透過多款 Firefox OS 智慧型手機展示了第一版隊長遊戲。從那時開始，我就常與人討論 Firefox OS 的遊戲開發問題，也讓隊長遊戲作為案例研討之用。 新版遊戲 已經在賭城 消費性電子展 (Consumer Electronics Show，CES) 的 Firefox OS 電視上現身，就是松下電器 (Panasonic) 所發表的新款 UHD 電視 。如果你有任何疑問或想法，歡迎隨時 到 Twitter 上找我 ！ ── By Andrzej Mazur 原文連結： Building games for Firefox OS TV",
   "images": [
     {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/captainrogers2-cover-50x50.png",
+      "alt": "captainrogers2-cover",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/captainrogers2-cover-150x150.png",
+      "alt": "captainrogers2-cover",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Web-Technology03-50x50.jpg",
+      "alt": "圖片來源：http://nenjal.blogspot.tw/",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Web-Technology03-150x150.jpg",
+      "alt": "圖片來源：http://nenjal.blogspot.tw/",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/captainrogers2-remote.png",
-      "alt": "captainrogers2-remote"
+      "alt": "captainrogers2-remote",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/captainrogers2-remote-300x200.png",
+      "alt": "captainrogers2-remote",
+      "kind": "image",
+      "source": "img-srcset"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/captainrogers2-cover-50x50.png",
+      "alt": "captainrogers2-cover",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/captainrogers2-cover-150x150.png",
+      "alt": "captainrogers2-cover",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Web-Technology03-50x50.jpg",
+      "alt": "圖片來源：http://nenjal.blogspot.tw/",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Web-Technology03-150x150.jpg",
+      "alt": "圖片來源：http://nenjal.blogspot.tw/",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/captainrogers2-remote.png",
+      "alt": "captainrogers2-remote",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/captainrogers2-remote-300x200.png",
+      "alt": "captainrogers2-remote",
+      "kind": "image",
+      "source": "img-srcset"
     }
   ],
   "links": [
@@ -89,6 +196,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

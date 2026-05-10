@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html xml:lang="zh-TW" lang="zh-TW" class="js">
+<head><script src="//archive.org/includes/athena.js" type="text/javascript"></script>
+<script type="text/javascript">window.addEventListener('DOMContentLoaded',function(){var v=archive_analytics.values;v.service='wb';v.server_name='wwwb-app219.us.archive.org';v.server_ms=1139;archive_analytics.send_pageview({});});</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/bundle-playback.js?v=oZ57VlYl" charset="utf-8"></script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/wombat.js?v=txqj7nKC" charset="utf-8"></script>
+<script>window.RufflePlayer=window.RufflePlayer||{};window.RufflePlayer.config={"autoplay":"on","unmuteOverlay":"hidden","showSwfDownload":true};</script>
+<script type="text/javascript" src="https://web-static.archive.org/_static/js/ruffle/ruffle.js"></script>
+<script type="text/javascript">
+    __wm.init("https://web.archive.org/web");
+  __wm.wombat("http://blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits","20160623180428","https://web.archive.org/","web","https://web-static.archive.org/_static/",
+	      "1466705068");
+</script>
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3" />
+<link rel="stylesheet" type="text/css" href="https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv" />
+<!-- End Wayback Rewrite JS Include -->
+
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="提供 Mozilla 與 Firefox、Firefox OS 的五花八門最新訊息，包括 Firefox 開發、Firefox 最新功能、Firefox 使用教學、Firefox 錯誤迷思導正、Firefox 好用附加元件訊息，以及由 Mozilla Taiwan 官方舉辦的各式 Firefox 活動訊息、新聞、部落文分享"/>
+<meta name="keywords" content="Firefox, Firefox Desktop, Firefox OS, Firefox for Android, Firefox 行動, Firefox 繁體中文, Firefox 正體中文, Firefox 官方, Firefox tw, Firefox blog, Firefox 文章, Firefox 部落格, Firefox 討論, Mozilla, Mozilla Taiwan, browser, 好用瀏覽器"/>
+<meta name="google-site-verification" content="ClhuMhUFrYEw-zfAsWNx5l7JzCyXoFESHZhnirdMcsA"/>
+<meta name="msvalidate.01" content="0DCEE643E9ACDEE9FDC2E8036E0CFB78"/>
+<title>
+Songs of Diridum：Web Audio API 的極致 | 部落格 | Mozilla Taiwan</title>
+<link rel="shortcut icon" href="https://web.archive.org/web/20160623180428im_/https://mozilla.com/favicon.ico"/>
+<meta property="og:url" content="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits"/><meta property="og:image" content="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-2-1024x558.jpg"/><link rel="stylesheet" type="text/css" media="all" href="https://web.archive.org/web/20160623180428cs_/http://blog.mozilla.com.tw/wp-content/themes/toolbox-child/style.css"/>
+<!--<link rel="pingback" href="http://blog.mozilla.com.tw/xmlrpc.php" />-->
+<!--[if lt IE 9]>
+<script src="http://blog.mozilla.com.tw/wp-content/themes/toolbox/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+<link rel="alternate" type="application/rss+xml" title="訂閱 部落格 | Mozilla Taiwan »" href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/feed"/>
+<link rel="alternate" type="application/rss+xml" title="訂閱 部落格 | Mozilla Taiwan » 迴響" href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/comments/feed"/>
+<link rel="alternate" type="application/rss+xml" title="訂閱 部落格 | Mozilla Taiwan » Songs of Diridum：Web Audio API 的極致 迴響" href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits/feed"/>
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/web.archive.org\/web\/20160623180428\/https:\/\/s.w.org\/images\/core\/emoji\/72x72\/","ext":".png","source":{"concatemoji":"https:\/\/web.archive.org\/web\/20160623180428\/http:\/\/blog.mozilla.com.tw\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.4.2"}};
+			!function(a,b,c){function d(a){var c,d=b.createElement("canvas"),e=d.getContext&&d.getContext("2d"),f=String.fromCharCode;return e&&e.fillText?(e.textBaseline="top",e.font="600 32px Arial","flag"===a?(e.fillText(f(55356,56806,55356,56826),0,0),d.toDataURL().length>3e3):"diversity"===a?(e.fillText(f(55356,57221),0,0),c=e.getImageData(16,16,1,1).data.toString(),e.fillText(f(55356,57221,55356,57343),0,0),c!==e.getImageData(16,16,1,1).data.toString()):("simple"===a?e.fillText(f(55357,56835),0,0):e.fillText(f(55356,57135),0,0),0!==e.getImageData(16,16,1,1).data[0])):!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g;c.supports={simple:d("simple"),flag:d("flag"),unicode8:d("unicode8"),diversity:d("diversity")},c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.simple&&c.supports.flag&&c.supports.unicode8&&c.supports.diversity||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="crayon-css" href="https://web.archive.org/web/20160623180428cs_/http://blog.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="crayon-theme-arduino-ide-css" href="https://web.archive.org/web/20160623180428cs_/http://blog.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/themes/arduino-ide/arduino-ide.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="crayon-font-monaco-css" href="https://web.archive.org/web/20160623180428cs_/http://blog.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/fonts/monaco.css?ver=_2.7.2_beta" type="text/css" media="all"/>
+<link rel="stylesheet" id="events-manager-css" href="https://web.archive.org/web/20160623180428cs_/http://blog.mozilla.com.tw/wp-content/plugins/events-manager/includes/css/events_manager.css?ver=5.62" type="text/css" media="all"/>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-includes/js/jquery/jquery.js?ver=1.11.3"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/web.archive.org\/web\/20160623180428\/http:\/\/blog.mozilla.com.tw\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"\u4f7f\u7528 %s \u62f7\u8c9d\uff0c\u4f7f\u7528 %s \u7c98\u8cbc\u3002","minimize":"\u9ede\u64ca\u5c55\u958b\u4ee3\u78bc"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-content/plugins/crayon-syntax-highlighter/js/min/crayon.min.js?ver=_2.7.2_beta"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/core.min.js?ver=1.11.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/widget.min.js?ver=1.11.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/position.min.js?ver=1.11.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/mouse.min.js?ver=1.11.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/sortable.min.js?ver=1.11.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/datepicker.min.js?ver=1.11.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/menu.min.js?ver=1.11.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/autocomplete.min.js?ver=1.11.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/resizable.min.js?ver=1.11.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/draggable.min.js?ver=1.11.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/button.min.js?ver=1.11.4"></script>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-includes/js/jquery/ui/dialog.min.js?ver=1.11.4"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var EM = {"ajaxurl":"https:\/\/web.archive.org\/web\/20160623180428\/http:\/\/blog.mozilla.com.tw\/wp-admin\/admin-ajax.php","locationajaxurl":"https:\/\/web.archive.org\/web\/20160623180428\/http:\/\/blog.mozilla.com.tw\/wp-admin\/admin-ajax.php?action=locations_search","firstDay":"1","locale":"zh","dateFormat":"yy\/mm\/dd","ui_css":"https:\/\/web.archive.org\/web\/20160623180428\/http:\/\/blog.mozilla.com.tw\/wp-content\/plugins\/events-manager\/includes\/css\/jquery-ui.min.css","show24hours":"0","is_ssl":"","bookingInProgress":"\u5831\u540d\u6b63\u5728\u88ab\u767c\u9001\uff0c\u8acb\u7a0d\u7b49\u3002","tickets_save":"\u4fdd\u5b58\u9580\u7968","bookingajaxurl":"https:\/\/web.archive.org\/web\/20160623180428\/http:\/\/blog.mozilla.com.tw\/wp-admin\/admin-ajax.php","bookings_export_save":"\u5c0e\u51fa\u5831\u540d","bookings_settings_save":"\u4fdd\u5b58\u8a2d\u7f6e","booking_delete":"\u60a8\u78ba\u5b9a\u60f3\u8981\u522a\u9664\u55ce\uff1f","bb_full":"Sold Out","bb_book":"Book Now","bb_booking":"Booking...","bb_booked":"Booking Submitted","bb_error":"Booking Error. Try again?","bb_cancel":"Cancel","bb_canceling":"Canceling...","bb_cancelled":"Cancelled","bb_cancel_error":"Cancellation Error. Try again?","txt_search":"Search","txt_searching":"\u641c\u7d22\u4e2d...","txt_loading":"\u52a0\u8f09\u4e2d..."};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-content/plugins/events-manager/includes/js/events-manager.js?ver=5.62"></script>
+<link rel="https://api.w.org/" href="http://blog.mozilla.com.tw/wp-json/"/>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://blog.mozilla.com.tw/xmlrpc.php?rsd"/>
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://blog.mozilla.com.tw/wp-includes/wlwmanifest.xml"/> 
+<link rel="prev" title="Firefox 滿九歲了！生日快樂！" href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/4169/happy-ninth-birthday-firefox"/>
+<link rel="next" title="透過 Firefox OS 創造自己的收益" href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/4190/monetization-with-inneractive-on-firefox-os"/>
+<meta name="generator" content="WordPress 4.4.2"/>
+<link rel="canonical" href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits"/>
+<link rel="shortlink" href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/?p=4172"/>
+<link rel="alternate" type="application/json+oembed" href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fblog.mozilla.com.tw%2Fposts%2F4172%2Fsongs-of-diridum-pushing-the-web-audio-api-to-its-limits"/>
+<link rel="alternate" type="text/xml+oembed" href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fblog.mozilla.com.tw%2Fposts%2F4172%2Fsongs-of-diridum-pushing-the-web-audio-api-to-its-limits&amp;format=xml"/>
+<link rel="stylesheet" href="https://web.archive.org/web/20160623180428cs_/http://blog.mozilla.com.tw/wp-content/plugins/wp-page-numbers/classic/wp-page-numbers.css" type="text/css" media="screen"/>	
+<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-28913145-1']);
+	_gaq.push(['_setDomainName', 'mozilla.com.tw']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://web.archive.org/web/20160623180428/https://ssl' : 'https://web.archive.org/web/20160623180428/http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+</head>
+
+<body class="single single-post postid-4172 single-format-standard sky"><!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script>__wm.rw(0);</script>
+<div id="wm-ipp-base" lang="en" style="display:none;direction:ltr;" toolbar-mode="auto">
+<div id="wm-ipp" style="position:fixed;left:0;top:0;right:0;">
+<div id="donato" style="position:relative;width:100%;height:0;">
+  <div id="donato-base">
+    <iframe id="donato-if" src="https://archive.org/includes/donate.php?as_page=1&amp;platform=wb&amp;referer=https%3A//web.archive.org/web/20160623180428/http%3A//blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits"
+	    scrolling="no" frameborder="0" style="width:100%; height:100%">
+    </iframe>
+  </div>
+</div><div id="wm-ipp-inside">
+  <div id="wm-toolbar" style="position:relative;display:flex;flex-flow:row nowrap;justify-content:space-between;" nav="async">
+    <div id="wm-logo" style="/*width:110px;*/padding-top:12px;">
+      <a href="/web/" title="Wayback Machine home page"><img src="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png" srcset="https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png 1.5x, https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png 2x" alt="Wayback Machine" style="width:100px" border="0" /></a>
+    </div>
+    <div class="c" style="display:flex;flex-flow:column nowrap;justify-content:space-between;flex:1;">
+      <form class="u" style="display:flex;flex-direction:row;flex-wrap:nowrap;" target="_top" method="get" action="/web/submit" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="http://blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits" onfocus="this.focus();this.select();" style="flex:1;"/><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20160623180428" /><input type="submit" value="Go" />
+      </form>
+      <div style="display:flex;flex-flow:row nowrap;align-items:flex-end;">
+                <div class="s" id="wm-nav-captures" style="flex:1;">
+                    <a class="t" href="/web/20160623180428*/http://blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits" title="See a list of every capture for this URL">4 captures</a>
+          <div class="r" title="Timespan for captures of this URL">13 Nov 2013 - 23 Jun 2016</div>
+          </div>
+        <div class="k">
+          <a href="" id="wm-graph-anchor">
+            <div id="wm-ipp-sparkline" title="Explore captures for this URL" style="position: relative">
+              <canvas id="wm-sparkline-canvas" width="775" height="27" border="0"></canvas>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="n">
+      <table>
+        <tbody>
+          <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+          <tr class="m">
+            <td class="b" nowrap="nowrap">May</td>
+            <td class="c" id="displayMonthEl" title="You are here: 18:04:28 Jun 23, 2016">JUN</td>
+            <td class="f" nowrap="nowrap">Jul</td>
+          </tr>
+          <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+          <tr class="d">
+            <td class="b" nowrap="nowrap"><span class="ta"></span></td>
+            <td class="c" id="displayDayEl" style="width:34px;font-size:22px;white-space:nowrap;" title="You are here: 18:04:28 Jun 23, 2016">23</td>
+            <td class="f" nowrap="nowrap"><span class="ta"></span></td>
+          </tr>
+          <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+          <tr class="y">
+            <td class="b" nowrap="nowrap">2015</td>
+            <td class="c" id="displayYearEl" title="You are here: 18:04:28 Jun 23, 2016">2016</td>
+            <td class="f" nowrap="nowrap">2017</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="r" style="display:flex;flex-flow:column nowrap;align-items:flex-end;justify-content:space-between;">
+      <div id="wm-btns" style="text-align:right;height:23px;">
+                <span class="xxs">
+          <div id="wm-save-snapshot-success">success</div>
+          <div id="wm-save-snapshot-fail">fail</div>
+          <a id="wm-save-snapshot-open" href="#" title="Share via My Web Archive" >
+            <span class="iconochive-web"></span>
+          </a>
+          <a href="https://archive.org/account/login.php" title="Sign In" id="wm-sign-in">
+            <span class="iconochive-person"></span>
+          </a>
+          <span id="wm-save-snapshot-in-progress" class="iconochive-web"></span>
+        </span>
+                <a class="xxs" href="https://help.archive.org/help/category/the-wayback-machine/" title="Get some help using the Wayback Machine" style="top:-6px;"><span class="iconochive-question" style="color:rgb(87,186,244);font-size:160%;"></span></a>
+        <a id="wm-tb-close" href="#close" style="top:-2px;" title="Close the toolbar"><span class="iconochive-remove-circle" style="color:#888888;font-size:240%;"></span></a>
+      </div>
+      <div id="wm-share" class="xxs">
+        <a href="/web/20160623180428/http://web.archive.org/screenshot/http://blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits"
+           id="wm-screenshot"
+           title="screenshot">
+          <span class="wm-icon-screen-shot"></span>
+        </a>
+        <a href="#" id="wm-video" title="video">
+          <span class="iconochive-movies"></span>
+        </a>
+        <a id="wm-share-facebook" href="#" data-url="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits" title="Share on Facebook" style="margin-right:5px;" target="_blank"><span class="iconochive-facebook" style="color:#3b5998;font-size:160%;"></span></a>
+        <a id="wm-share-twitter" href="#" data-url="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits" title="Share on Twitter" style="margin-right:5px;" target="_blank"><span class="iconochive-twitter" style="color:#1dcaff;font-size:160%;"></span></a>
+      </div>
+      <div style="padding-right:2px;text-align:right;white-space:nowrap;">
+        <a id="wm-expand" class="wm-btn wm-closed" href="#expand"><span id="wm-expand-icon" class="iconochive-down-solid"></span> <span class="xxs" style="font-size:80%;">About this capture</span></a>
+      </div>
+    </div>
+  </div>
+    <div id="wm-capinfo" style="border-top:1px solid #777;display:none; overflow: hidden">
+        <div id="wm-capinfo-notice" source="api"></div>
+                <div id="wm-capinfo-collected-by">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;">COLLECTED BY</div>
+    <div style="padding:3px;position:relative" id="wm-collected-by-content">
+            <div style="display:inline-block;vertical-align:top;width:50%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/webwidecrawl);"></span>
+		Organization: <a style="color:#33f;" href="https://archive.org/details/webwidecrawl" target="_new"><span class="wm-title">Internet Archive</span></a>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  The Internet Archive discovers and captures web pages through many different web crawls.
+
+At any given time several distinct crawls are running, some for months, and some every day or longer.
+
+View the web archive through the <a href="http://archive.org/web/web.php">Wayback Machine</a>.
+	</div>
+	      </div>
+      <div style="display:inline-block;vertical-align:top;width:49%;">
+			<span class="c-logo" style="background-image:url(https://archive.org/services/img/hackernews00000)"></span>
+		<div>Collection: <a style="color:#33f;" href="https://archive.org/details/hackernews00000" target="_new"><span class="wm-title">Hackernews crawl number 0</span></a></div>
+		<div style="max-height:75px;overflow:hidden;position:relative;">
+	  <div style="position:absolute;top:0;left:0;width:100%;height:75px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 90%,rgba(255,255,255,255) 100%);"></div>
+	  Hacker News Crawl of their links.
+	</div>
+	      </div>
+    </div>
+    </div>
+    <div id="wm-capinfo-timestamps">
+    <div style="background-color:#666;color:#fff;font-weight:bold;text-align:center;padding:2px 0;" title="Timestamps for the elements of this page">TIMESTAMPS</div>
+    <div>
+      <div id="wm-capresources" style="margin:0 5px 5px 5px;max-height:250px;overflow-y:scroll !important"></div>
+      <div id="wm-capresources-loading" style="text-align:left;margin:0 20px 5px 5px;display:none"><img src="https://web-static.archive.org/_static/images/loading.gif" alt="loading" /></div>
+    </div>
+    </div>
+  </div></div></div></div><div id="wm-ipp-print">The Wayback Machine - https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits</div>
+<script type="text/javascript">//<![CDATA[
+__wm.bt(775,27,25,2,"web","http://blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits","20160623180428",1996,"https://web-static.archive.org/_static/",["https://web-static.archive.org/_static/css/banner-styles.css?v=1utQkbB3","https://web-static.archive.org/_static/css/iconochive.css?v=3PDvdIFv"], false);
+  __wm.rw(1);
+//]]></script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+ 
+    <div id="tabzilla-panel" class="close-nav" tabindex="-1">
+  <div id="tabzilla-contents">
+    <div id="tabzilla-promo">
+      <div id="tabzilla-promo-fxos" class="snippet">
+        <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/os/">
+          <h4>Firefox OS</h4>
+          <p>瞭解 Firefox OS</p>
+        </a>
+      </div>
+    </div>
+    <!-- end of tabzilla-promo -->
+    <div id="tabzilla-nav">
+      <ul>
+        <li class="sitemap">
+          <h2>Firefox</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/download/" title="下載 Mozilla Firefox 中文桌面版" tabindex="-1">Firefox 免費下載</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/desktop/" title="下載 Mozilla Firefox 中文桌面版">Firefox 桌面版</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/mobile/" title="Mozilla Firefox 行動版">Firefox 行動版</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/channel/" title="Mozilla Firefox 未來發行版">Firefox 未來發行版</a>
+              </li>
+              <li>
+                <a href="https://web.archive.org/web/20160623180428/https://addons.mozilla.org/zh-TW/firefox/" title="Firefox 附加元件">附加元件</a>
+              </li>
+              <li>
+                <a href="https://web.archive.org/web/20160623180428/https://support.mozilla.com/zh-TW/home" title="Firefox 說明文件、支援中心">支援中心</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>Firefox OS</h2>
+          <div>
+            <ul>
+              <li>
+                <a title="Firefox OS 詳細介紹" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/os/" tabindex="-1">詳細介紹</a>
+              </li>
+              <li>
+                <a title="Firefox OS 合作夥伴專區" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/partners/" tabindex="-1">合作夥伴專區</a>
+              </li>
+              <li>
+                <a title="Firefox OS 支援中心" href="//web.archive.org/web/20160623180428/http://support.mozilla.org/products/firefox-os" tabindex="-1">支援中心</a>
+              </li>
+              <li>
+                <a title="Firefox OS 常見問答集" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/os/faq/" tabindex="-1">常見問答集</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>社群參與</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="https://web.archive.org/web/20160623180428/http://firefox.club.tw/" title="Firefox 俱樂部">Firefox 設計品</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/community/student/" title="校園大使">校園大使</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/community/contribute/" title="社群專案">社群專案</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>訊息中心</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="//web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/main" title="部落格">部落格</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/news/press/" title="新聞室">新聞室</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/events-list" title="活動訊息">活動訊息</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160623180428/http://tech.mozilla.com.tw/" title="謀智台客">謀智台客</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="sitemap">
+          <h2>關於我們</h2>
+          <div>
+            <ul>
+              <li>
+                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/about/manifesto/" title="Mozilla 宣言">Mozilla 宣言</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/about/space/" title="Mozilla Space">Mozilla Space</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/about/careers/" title="工作機會">工作機會</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/about/contact/" title="聯絡資訊">聯絡資訊</a>
+              </li>
+              <li>
+                <a href="//web.archive.org/web/20160623180428/http://mozilla.org/en-US/" title="Mozilla (US)">Mozilla (US)</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <!-- end of sitemap -->
+      </ul>
+    </div>
+    <!-- end of tabzilla-nav -->
+  </div>
+  <!-- end of tabzilla-content -->
+</div>
+<!-- end of tabzilla-panel -->
+        <div id="outer-wrapper" class="slide-x">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="//web.archive.org/web/20160623180428/http://mozilla.org/">mozilla</a>
+          <nav id="nav-main" role="navigation">
+  <span class="toggle" role="button" aria-controls="nav-main-menu" tabindex="0">{{_('Menu')}}</span>
+  <ul id="nav-main-menu" class="has-submenus" role="menubar">
+    <li id="nav-main-firefox" role="menuitem" class="topMenu first">
+      <a title="Mozilla Firefox" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/" tabindex="0" aria-owns="nav-main-firefox-submenu" aria-haspopup="true">Firefox</a>
+      <ul id="nav-main-firefox-submenu" aria-expanded="false" class="submenu has-submenus">
+        <li class="first">
+          <a title="下載 Mozilla Firefox 中文桌面版" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/download/" tabindex="-1">Firefox 免費下載</a>
+        </li>
+        <li id="nav-sub-firefox-desktop" role="menuitem">
+          <a title="Mozilla Firefox 桌面版" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/desktop/" tabindex="-1" aria-owns="nav-sub-firefox-desktop-submenu" aria-haspopup="true">Firefox 桌面版</a>
+          <ul id="nav-sub-firefox-desktop-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="下載 Mozilla Firefox 中文桌面版" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/download/" tabindex="-1">下載</a>
+            </li>
+            <li>
+              <a title="Firefox 中文桌面版─自訂" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/customize/" tabindex="-1">自訂</a>
+            </li>
+            <li>
+              <a title="Firefox 中文桌面版─效能" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/performance/" tabindex="-1">效能</a>
+            </li>
+            <li>
+              <a title="Firefox 中文桌面版─技術" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/technology/" tabindex="-1">技術</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 中文桌面版─安全" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/security/" tabindex="-1">安全</a>
+            </li>
+          </ul>
+        </li>
+        <li id="nav-sub-firefox-mobile" role="menuitem">
+          <a title="Mozilla Firefox 行動版" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/mobile/" tabindex="-1" aria-owns="nav-sub-firefox-mobile-submenu" aria-haspopup="true">Firefox 行動版</a>
+          <ul id="nav-sub-firefox-mobile-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="下載 Mozilla Firefox 行動版" href="//web.archive.org/web/20160623180428/http://play.google.com/store/apps/details?id=org.mozilla.firefox" tabindex="-1">下載</a>
+            </li>
+            <li>
+              <a title="Firefox 行動版─功能特色" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/mobile/features/" tabindex="-1">功能特色</a>
+            </li>
+            <li>
+              <a title="Firefox 行動版─支援平台" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/mobile/platforms/" tabindex="-1">支援平台</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 行動版─常見問答集" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/mobile/faq/" tabindex="-1">常見問答集</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a title="Mozilla Firefox 開發者版本" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/developer/" tabindex="-1">Firefox 開發者版本</a>
+        </li>
+        <li>
+          <a title="Mozilla Firefox 未來發行版" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/channel/" tabindex="-1">Firefox 未來發行版</a>
+        </li>
+        <li id="nav-sub-services" role="menuitem">
+          <a title="相關服務" href="javascript:void(0);" tabindex="-1" aria-owns="nav-sub-services-submenu" aria-haspopup="true">相關服務</a>
+          <ul id="nav-sub-services-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="Firefox Hello" href="/web/20160623180428/http://blog.mozilla.com.tw/firefox/hello/" tabindex="-1">Hello</a>
+            </li>
+            <li class="last">
+              <a title="Firefox Sync" href="/web/20160623180428/http://blog.mozilla.com.tw/firefox/sync/" tabindex="-1">Sync</a>
+            </li>
+          </ul>
+        </li>
+        <li id="nav-sub-firefox-addons" role="menuitem">
+          <a title="Firefox 附加元件" href="//web.archive.org/web/20160623180428/http://addons.mozilla.org/zh-TW/firefox/" tabindex="-1" aria-owns="nav-sub-firefox-addons-submenu" aria-haspopup="true">附加元件</a>
+          <ul id="nav-sub-firefox-addons-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="Firefox 桌面版附加元件" href="//web.archive.org/web/20160623180428/http://addons.mozilla.org/zh-TW/firefox/" tabindex="-1">桌面版</a>
+            </li>
+            <li>
+              <a title="Firefox 行動版附加元件" href="//web.archive.org/web/20160623180428/http://addons.mozilla.org/zh-TW/android/" tabindex="-1">行動版</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 佈景主題" href="//web.archive.org/web/20160623180428/http://addons.mozilla.org/zh-TW/firefox/themes/" tabindex="-1">佈景主題</a>
+            </li>
+          </ul>
+        </li>
+        <li id="nav-sub-firefox-support" role="menuitem" class="last">
+          <a title="Firefox 說明文件、支援中心" href="https://web.archive.org/web/20160623180428/https://support.mozilla.com/zh-TW/home" tabindex="-1" aria-owns="nav-sub-firefox-support-submenu" aria-haspopup="true">支援中心</a>
+          <ul id="nav-sub-firefox-support-submenu" aria-expanded="false" class="submenu_lv2">
+            <li class="first">
+              <a title="Firefox 桌面版支援中心" href="//web.archive.org/web/20160623180428/http://support.mozilla.org/zh-TW/products/firefox" tabindex="-1">桌面版</a>
+            </li>
+            <li class="last">
+              <a title="Firefox 行動版支援中心" href="//web.archive.org/web/20160623180428/http://support.mozilla.org/zh-TW/products/mobile" tabindex="-1">行動版</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-firefoxos" role="menuitem" class="topMenu">
+      <a title="Firefox 行動作業系統" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/os/" tabindex="0" aria-owns="nav-main-firefoxos-submenu" aria-haspopup="true">Firefox OS</a>
+      <ul id="nav-main-firefoxos-submenu" aria-expanded="false" class="submenu">
+        <li class="first">
+          <a title="Firefox OS 簡介" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/os/" tabindex="-1">簡介</a>
+        </li>
+        <li>
+          <a title="Firefox OS 發佈機種" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/os/devices/" tabindex="-1">發佈機種</a>
+        </li>
+        <li>
+          <a title="Firefox OS 合作夥伴專區" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/partners/" tabindex="-1">合作夥伴專區</a>
+        </li>
+        <li>
+          <a title="Firefox OS 支援中心" href="//web.archive.org/web/20160623180428/http://support.mozilla.org/products/firefox-os" tabindex="-1">支援中心</a>
+        </li>
+        <li class="last">
+          <a title="Firefox OS 常見問答集" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/os/faq/" tabindex="-1">常見問答集</a>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-community" role="menuitem" class="topMenu">
+      <a title="社群參與" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/community/" tabindex="0" aria-owns="nav-main-community-submenu" aria-haspopup="true">社群參與</a>
+      <ul id="nav-main-community-submenu" aria-expanded="false" class="submenu has-submenus">
+        <li class="first">
+          <a title="Firefox 活力軍" href="https://web.archive.org/web/20160623180428/http://firefox.club.tw/" tabindex="-1">Firefox 設計品</a>
+        </li>
+        <li id="nav-sub-student" role="menuitem">
+          <a title="校園大使" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/community/student/" tabindex="-1" aria-owns="nav-sub-student-submenu" aria-haspopup="true">校園大使</a>
+            <ul id="nav-sub-student-submenu" aria-expanded="false" class="submenu_lv2">
+              <li class="first">
+                <a title="Firefox 校園大使詳細辦法" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/community/student/rules/" tabindex="-1">招募辦法</a>
+              </li>
+              <li>
+                <a title="Firefox 校園大使推廣任務和證書" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/community/student/mission/" tabindex="-1">任務及證書</a>
+              </li>
+              <li>
+                <a title="Firefox 校園大使酷炫工具包" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/community/student/package/" tabindex="-1">酷炫工具包</a>
+              </li>
+              <li>
+                <a title="Firefox 校園大使狐狐工作坊" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/community/student/workshop/" tabindex="-1">狐狐工作坊</a>
+              </li>
+              <li class="last">
+                <a title="Firefox 校園大使線上申請" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/contribute/universityambassadors/" tabindex="-1">線上申請</a>
+              </li>
+            </ul>
+        </li>
+        <li class="last">
+          <a title="社群專案" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/community/contribute/" tabindex="-1">社群專案</a>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-blog" role="menuitem" class="topMenu">
+      <a title="訊息中心" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/news/" tabindex="0" aria-owns="nav-main-blog-submenu" aria-haspopup="true">訊息中心</a>
+      <ul id="nav-main-blog-submenu" aria-expanded="false" class="submenu">
+        <li class="first">
+          <a title="部落格" href="//web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/main" tabindex="-1">部落格</a>
+        </li>
+        <li>
+          <a title="新聞室" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/news/press/" tabindex="-1">新聞室</a>
+        </li>
+        <li>
+          <a title="活動訊息" href="//web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/events-list" tabindex="-1">活動訊息</a>
+        </li>
+        <li class="last">
+          <a title="謀智台客" href="//web.archive.org/web/20160623180428/http://tech.mozilla.com.tw/" tabindex="-1">謀智台客</a>
+        </li>
+      </ul>
+    </li>
+    <li id="nav-main-about" role="menuitem" class="topMenu last">
+      <a title="關於我們" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/about/" tabindex="0" aria-owns="nav-main-about-submenu" aria-haspopup="true">關於我們</a>
+      <ul id="nav-main-about-submenu" aria-expanded="false" class="submenu">
+        <li class="first">
+          <a title="Mozilla 宣言" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/about/manifesto/" tabindex="-1">Mozilla 宣言</a>
+        </li>
+        <li>
+          <a title="Mozilla Space" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/about/space/" tabindex="-1">Mozilla Space</a>
+        </li>
+        <li>
+          <a title="工作機會" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/about/careers/" tabindex="-1">工作機會</a>
+        </li>
+        <li>
+          <a title="聯絡資訊" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/about/contact/" tabindex="-1">聯絡資訊</a>
+        </li>
+        <li class="last">
+          <a title="Mozilla (US)" href="//web.archive.org/web/20160623180428/http://mozilla.org/en-US/" tabindex="-1">Mozilla (US)</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+          <h2>
+            <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/" title="回首頁" class="close">
+              <img src="/web/20160623180428im_/http://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png" width="130" height="49" alt="mozilla"></a>
+            </a>
+          </h2>
+          <nav class="breadcrumbs">
+            <a href="https://web.archive.org/web/20160623180428/http://mozilla.com.tw/" class="home">Home</a>
+            <b>&raquo;</b>
+                          <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/news/">訊息中心</a>
+              <b>&raquo;</b>
+              <a href="/web/20160623180428/http://blog.mozilla.com.tw/main/">部落格</a>
+<b>&raquo;</b>                              <span>Songs of Diridum：Web Audio API 的極致</span>                                    </nav>
+                  </header>
+        <div id="main">
+  <div id="social-box">
+    <div class="fg-share">
+     <div class="fb-like" data-href="http://blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits" data-layout="box_count" data-width="40" data-show-faces="false" data-font="arial"></div>     <!-- Place this tag where you want the +1 button to render. -->
+     <div class="google-share"><div class="g-plusone" name="gplus" data-size="tall" data-annotation="bubble" data-width="40" data-href="http://blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits"></div></div>    </div>
+    <div class="pinterest-share"><a href="https://web.archive.org/web/20160623180428/http://pinterest.com/pin/create/button/?url=http://blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits&amp;media=http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-2-150x150.jpg" data-pin-do="buttonPin" data-pin-config="none" data-pin-color="red" class="pin-it-button"><img border="0" src="//web.archive.org/web/20160623180428im_/http://assets.pinterest.com/images/PinExt.png" title="Pin It"/></a></div>      <div class="plurk-share">
+        <a href="javascript: void(window.open('https://web.archive.org/web/20160623180428/http://www.plurk.com/?qualifier=shares&amp;status=' .concat(encodeURIComponent(location.href)) .concat(' ') .concat('(') .concat(encodeURIComponent(document.title)) .concat(')')));">
+          <img src="https://web.archive.org/web/20160623180428im_/https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png" border="0" alt="plurk share">
+        </a>
+      </div>
+      <div class="comment-share">
+      <a class="comment-button" href="#respond"><div class="count-bubble">0</div>留言</a>
+    </div>
+  </div>
+
+  	<nav id="nav-post">
+		<h1 class="assistive-text section-heading">Post navigation</h1>
+
+	
+							<div class="nav-previous"><a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/4169/happy-ninth-birthday-firefox"><div class="post-tip"><img width="48" height="48" src="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/HBDFx.jpg-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="HBDFx.jpg" srcset="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/HBDFx.jpg-150x150.png 150w, https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/HBDFx.jpg-300x300.png 300w, https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/HBDFx.jpg.png 384w" sizes="(max-width: 48px) 100vw, 48px"/><span class="meta-nav">Firefox 滿九歲了！生日快樂！</span></div></a></div>		
+							<div class="nav-next"><a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/4190/monetization-with-inneractive-on-firefox-os"><div class="post-tip"><img width="48" height="48" src="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Screen-Shot-2013-10-28-at-10.48.57-AM-150x150.png" class="attachment-48x48 size-48x48 wp-post-image" alt="Screen-Shot-2013-10-28-at-10.48.57-AM"/><span class="meta-nav">透過 Firefox OS 創造自己的收益</span></div></a></div>		
+	
+	</nav><!-- #nav-post -->
+	
+  <div id="primary" role="main" class="subwarp">
+    <div id="article">
+                  
+<article id="post-4172" class="post-4172 post type-post status-publish format-standard has-post-thumbnail hentry category-webapp">
+     <header class="entry-header">
+    <h1 class="entry-title">Songs of Diridum：Web Audio API 的極致</h1>
+      <p class="entry-posted">
+        <time datetime="2014-05-14T10:01:17+00:00" title="2014-05-14T10:01:17+00:00" class="published">
+          <a title="See all posts from May, 2014" href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/date/2013/11" class="posted-month">11月</a>
+          <span class="posted-date">12</span>
+          <a title="See all posts from 2014" href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/date/2013" class="posted-year">2013</a>
+        </time>
+      </p>
+  </header><!-- .entry-header -->
+
+  <div class="entry-content close">
+    <p>才聽到 Mozilla Firefox 即將支援 Web Audio API 之後，我們馬上就開始構思 Web Audio API所能應用的地方。</p>
+<p>我們找到「Legend of Diridum」(細節可參閱下方說明) 遊戲開發團隊並討論了專案細節，最後以該遊戲背景的舞台，設計了一處小市集和一組爵士小樂團。我們想呈現實際生活中的市集感覺：樂團還在調音熱身，逛市集的人潮還沒出現。時間正好是晚風徐徐，某個派對開始前的傍晚。</p>
+<p>我們稱此展示為「<a href="https://web.archive.org/web/20160623180428/http://www.gooengine.com/mozilla-web-audio-demo-built-in-goo-engine/">Songs of Diridum</a>」。</p>
+<p><img class="aligncenter size-large wp-image-4174" alt="Songs-of-Diridum-5" src="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-5-1024x558.jpg" width="640" height="348" srcset="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-5-300x163.jpg 300w, https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-5-1024x558.jpg 1024w, https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-5.jpg 1264w" sizes="(max-width: 640px) 100vw, 640px"/></p>
+<h3>Web Audio API 能達到的效果</h3>
+<p>先從三個角度來簡單看一下 Web 音訊系統：遊戲設計、音訊工程、程式設計。</p>
+<p>對遊戲設計者而言，Web Audio API 可微調遊戲的聲景 (Soundscape)。我們同步執行多個獨立音效並調整音效的特色，以符合環境或遊戲機制的要求。你可調整為如同門後傳來的悶響，亦可開啟濾音器造成如同開門之後的清晰音效 (而且都是即時產生效果)。用遊戲角色走過教堂的走道時，也能加入環境所反射的腳步聲。街道的環境聲音也能隨著腳步聲產生回音效果。我們也對法師所發出的火球加上火焰燃燒聲，投出之後就能聽到火球朝著目標飛去。另可透過都卜勒效應的移調 (Pitch shift)，聽到警車鳴笛由遠而近呼嘯而過。而且不需管理音訊引擎的產出狀況，就能使用這些功能。Web Audio API 已可順利運作。</p>
+<p>而從音訊工程的角度來看，我們可將 Web Audio API 視為磁帶機與混音器的大型配線槽。我們不需耗費太多心力處理初階作業 (如調整音量)。系統的基本功能可在播放音效時順利調整音量，而不會在改變其他音效樣本的音量時造成數位失真。系統亦能針對此類調整而執行必要的插補 (Interpolation)。我們也能自行設計不同的音效，並根據需要而隨時應用。只要不是過於龐雜的系統，Web Audio API 甚至可當做音樂工作室使用。</p>
+<p>另從程式設計師的角度來看，我們可以輕鬆針對自己的專案撰寫出程式碼。遇到問題也能在網路上尋找解決方案。我們不用再耗時去學某些說明文件貧乏的專利音訊引擎。大多數的問題，可能都是與程式碼的結構相關。我們只需解決音效的載入作業與載入時機，另考量應該使用哪些合適的資料結構或其他設計管道，以順利將音效提供給遊戲設計者。我們也能與其他團隊合作，仔細評估音效系統的預算、能佔用多少資料量、能同時播放哪些音效、目標平台又能使用幾種音效等問題。這裡最困難的問題與技術風險，大概就是該如何處理 Web 上執行的多樣硬體與瀏覽器。</p>
+<h3>關於 Legend of Diridum</h3>
+<p>我們取名的「Songs of Diridum」，就是以「<a href="https://web.archive.org/web/20160623180428/http://www.lodsaga.com/">LOD: Legend of Diridum</a>」遊戲的圖像與設定為背景。而 LOD 團隊是由 Michael Stenmark 這位遊戲設計老手所帶領。</p>
+<p><img class="aligncenter size-full wp-image-4176" alt="Songs-of-Diridum-3" src="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-3.jpg" width="1002" height="602" srcset="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-3-300x180.jpg 300w, https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-3.jpg 1002w" sizes="(max-width: 1002px) 100vw, 1002px"/></p>
+<p>LOD 是能簡單上手的角色扮演遊戲，以自創的特定世界為舞台。此遊戲取材自《冒險奇譚 (Grandia)》、《最終幻想 (Final Fantasy，舊譯為太空戰士)》、《薩爾達傳說(Zelda)》，混合了日系奇幻風格與角色扮演的要素，而遊戲方式就類似《動物之森(Animal Crossing)》與《當個創世神 (Minecraft)》。</p>
+<p>此遊戲設定為大型的奇幻世界，時間是在慘烈的魔法戰爭之後。整個世界充滿了怪獸、鬼魂、殭屍 (部分是由巫師所操控的軍隊)，而玩家一開始是直屬於帝國的抓鬼獵人，必須清除邪惡勢力以保護 Diridum 的人民。LOD 是以 Goo Engine 所打造，不需另外下載任何程式就能直接在幾乎所有 Web 瀏覽器上執行。</p>
+<h3>關於音樂</h3>
+<p>歌曲和音樂對於氣氛營造極為重要，更能強化夏夜派對的火熱感覺。而混音師 Adam Hagstrand 確實達到了此目的。我們很喜歡他所設計的慵懶爵士音樂風，聽起來就是樂團在人潮出現之前的樂器調整與暖身活動。</p>
+<h3>用 Goo 引擎迅速建立 3D 遊戲</h3>
+<p>我們喜愛 Web 與 <a title="HTML5" href="https://web.archive.org/web/20160623180428/https://developer.mozilla.org/en/html/html5">HTML5</a>。多款裝置的瀏覽器均可執行 HTML5，而且不需下載或安裝其他特殊的用戶端軟體。由於可在瀏覽器中直接執行遊戲，因此幾乎任何網站均可發佈遊戲；進而造就絕佳的商機與社交媒體整合方式。</p>
+<p>我們想把 Songs of Diridum 設計成 HTML5 的瀏覽器遊戲，但又要如何達到 3D 效果呢？答案就是 <a title="WebGL" href="https://web.archive.org/web/20160623180428/https://developer.mozilla.org/en/WebGL">WebGL</a>。WebGL 是 HTML5 的新標準，可讓遊戲如同原生 App 一樣存取硬體加速功能。HTML5 帶入 WebGL 又再次造成瀏覽器的大躍進，達到之前所沒有的圖像品質。WebGL 除了強化 HTML5 之外，遊戲期間也不需太高的頻寬。因為遊戲進行之前與進行期間，早已下載了相關遊戲要素 (即預先快取)，所以對網路連線速度的要求也不高。</p>
+<p>但從頭建構 WebGL 遊戲是項大工程。由 Goo Technologies 所提供的 <a href="https://web.archive.org/web/20160623180428/http://www.gooengine.com/">Goo Platform</a> 則可簡化 WebGL 遊戲與應用程式的建構過程。另將於 11 月發表更簡單易用的 Goo Create。</p>
+<p>Goo 就是 HTML5 與 WebGL 架構的圖形開發平台，可強化新一代的 Web App 與遊戲。Goo一開始即針對圖像的效能與順暢性所設計，並嘗試簡化圖像工程師的工作。因為 Goo 就是 HTML5，所以工程師不需再下載特殊的軟體或瀏覽器外掛程式，就能在 Web 上建構並發佈高階的互動式圖像。透過 Goo，工程師能在平板電腦、行動裝置、桌上型電腦、筆記型電腦、智慧型電視上發佈硬體加速的 App 與遊戲。除了能迅速描繪出平滑又豐富的圖像之外，也達到之前無法想像的瀏覽器遊戲經驗。</p>
+<p><img class="aligncenter size-large wp-image-4178" alt="Songs-of-Diridum-2" src="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-2-1024x558.jpg" width="640" height="348" srcset="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-2-300x163.jpg 300w, https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-2-1024x558.jpg 1024w, https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-2.jpg 1264w" sizes="(max-width: 640px) 100vw, 640px"/></p>
+<h3>撰寫 Songs of Diridum</h3>
+<p>我們集結團隊中的七個人設計出展示專案，而且相對所耗的時間也更短。其他的團隊成員則不定時更新我們的資料與程式碼。大抵說來，我們並未按照正規的開發程序進行，但卻達到之前必須投入大量人力才能有的成果。</p>
+<p>此展示的程式設計可清楚分為「建構場景」與「組織音效系統」共二個部分。由於使用者介面 (UI) 主要將控制音效系統的狀態，因此直接以 UI 呈現音效系統。方法簡單，也需解決相對簡單的問題。建立這種小型 3D 世界的大多數工作，就是要將模型資料載入到3D 空間中的不同位置。我們以 Goo 引擎完成所有初步的程式設計作業，包含以正確的顏色描繪整個場景，並處理物件的外觀形狀；因此這些部分完全不需再另外撰寫程式碼。</p>
+<p>為了將模型資料添增至場景中，我們定義了簡易的資料格式，另可為遊戲世界添增音效與較複雜的系統 (如水流冒泡音效與角色動畫)。</p>
+<p>你可試著玩玩這個小型的混音器面板，可變更音效系統動態產生的混音效果：</p>
+<p><img class="aligncenter size-full wp-image-4179" alt="Songs-of-Diridum-1" src="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-1.png" width="470" height="243" srcset="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-1-300x155.png 300w, https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-1.png 470w" sizes="(max-width: 470px) 100vw, 470px"/></p>
+<p>因為我們想讓觸控裝置也能執行此 App，所以此 UI 選用了可點擊的按鈕。但目前市面上的行動裝置琳琅滿目，時間不夠我們測試其他控制介面是否合用。</p>
+<h3>在 3D 世界中使用 Web Audio API</h3>
+<p>為了建構 3D 世界的聲景，我們必須將音源與玩家的耳朵進行「空間定位(Spatialization)」。聲音與聽者的空間概念可歸納為方向、速度、位置共三方面。各個音源能以定向錐 (Directional cone) 的方式發出聲音。簡言之，這個方法將模擬前、後端揚聲器的差異。但因為鋼琴的聲音在所有方向中聽起來幾乎都一樣，所以這裡並未特別設計鋼琴琴音的方向性。但擴音器的方向性相對就較高，因此在擴音器前方聽到的音量應大於後方音量。</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->
+
+		<div id="crayon-576c24ac9d4ac906243993" class="crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate" data-settings=" minimize scroll-mouseover" style=" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;">
+		
+			<div class="crayon-plain-wrap"><textarea wrap="soft" class="crayon-plain print-no" data-settings="dblclick" readonly style="-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;">
+if (is3dSource) {
+    // 3D sound source
+    this.panNode = this.context.createPanner();
+    this.gainNode.connect(this.panNode);
+    this.lastPos = [0,0,0];
+    this.panNode.rolloffFactor = 0.5;
+} else {
+    // Stereo sound source “hack”
+    this.panNode = mixNodeFactory.buildStereoChannelSplitter(this.gainNode, context);
+    this.panNode.setPosition(0, this.context.currentTime);
+}
+</textarea></div>
+			<div class="crayon-main" style="">
+				<table class="crayon-table">
+					<tr class="crayon-row">
+				<td class="crayon-nums " data-settings="show">
+					<div class="crayon-nums-content" style="font-size: 12px !important; line-height: 15px !important;"><div class="crayon-num" data-line="crayon-576c24ac9d4ac906243993-1">1</div><div class="crayon-num crayon-striped-num" data-line="crayon-576c24ac9d4ac906243993-2">2</div><div class="crayon-num" data-line="crayon-576c24ac9d4ac906243993-3">3</div><div class="crayon-num crayon-striped-num" data-line="crayon-576c24ac9d4ac906243993-4">4</div><div class="crayon-num" data-line="crayon-576c24ac9d4ac906243993-5">5</div><div class="crayon-num crayon-striped-num" data-line="crayon-576c24ac9d4ac906243993-6">6</div><div class="crayon-num" data-line="crayon-576c24ac9d4ac906243993-7">7</div><div class="crayon-num crayon-striped-num" data-line="crayon-576c24ac9d4ac906243993-8">8</div><div class="crayon-num" data-line="crayon-576c24ac9d4ac906243993-9">9</div><div class="crayon-num crayon-striped-num" data-line="crayon-576c24ac9d4ac906243993-10">10</div><div class="crayon-num" data-line="crayon-576c24ac9d4ac906243993-11">11</div><div class="crayon-num crayon-striped-num" data-line="crayon-576c24ac9d4ac906243993-12">12</div></div>
+				</td>
+						<td class="crayon-code"><div class="crayon-pre" style="font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;"><div class="crayon-line" id="crayon-576c24ac9d4ac906243993-1"><span class="crayon-st">if</span><span class="crayon-h"> </span><span class="crayon-sy">(</span><span class="crayon-v">is3dSource</span><span class="crayon-sy">)</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-576c24ac9d4ac906243993-2"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// 3D sound source</span></div><div class="crayon-line" id="crayon-576c24ac9d4ac906243993-3"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">panNode</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">context</span><span class="crayon-sy">.</span><span class="crayon-e">createPanner</span><span class="crayon-sy">(</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-576c24ac9d4ac906243993-4"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">gainNode</span><span class="crayon-sy">.</span><span class="crayon-e">connect</span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">panNode</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-576c24ac9d4ac906243993-5"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">lastPos</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-sy">[</span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-cn">0</span><span class="crayon-sy">]</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-576c24ac9d4ac906243993-6"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">panNode</span><span class="crayon-sy">.</span><span class="crayon-v">rolloffFactor</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-cn">0.5</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-576c24ac9d4ac906243993-7"><span class="crayon-sy">}</span><span class="crayon-h"> </span><span class="crayon-st">else</span><span class="crayon-h"> </span><span class="crayon-sy">{</span></div><div class="crayon-line crayon-striped-line" id="crayon-576c24ac9d4ac906243993-8"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-c">// Stereo sound source “hack”</span></div><div class="crayon-line" id="crayon-576c24ac9d4ac906243993-9"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">panNode</span><span class="crayon-h"> </span><span class="crayon-o">=</span><span class="crayon-h"> </span><span class="crayon-v">mixNodeFactory</span><span class="crayon-sy">.</span><span class="crayon-e">buildStereoChannelSplitter</span><span class="crayon-sy">(</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">gainNode</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-v">context</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line crayon-striped-line" id="crayon-576c24ac9d4ac906243993-10"><span class="crayon-h">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">panNode</span><span class="crayon-sy">.</span><span class="crayon-e">setPosition</span><span class="crayon-sy">(</span><span class="crayon-cn">0</span><span class="crayon-sy">,</span><span class="crayon-h"> </span><span class="crayon-r">this</span><span class="crayon-sy">.</span><span class="crayon-v">context</span><span class="crayon-sy">.</span><span class="crayon-v">currentTime</span><span class="crayon-sy">)</span><span class="crayon-sy">;</span></div><div class="crayon-line" id="crayon-576c24ac9d4ac906243993-11"><span class="crayon-sy">}</span></div><div class="crayon-line crayon-striped-line" id="crayon-576c24ac9d4ac906243993-12">&nbsp;</div></div></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+<!-- [Format Time: 0.0036 seconds] -->
+<p>聲音位置將決定左右相位 (Panning，將聲音放置於左右喇叭之間形成的立體音場中，以產生出空間感) 的效果；也就是決定應發出較大音量的揚聲器，及其音量的高低。</p>
+<p>「聲音的速度」加上「音源與聽者的位置」，均將提供相關資訊，以利此世界中的所有音源進行都卜勒頻移 (Doppler shift)。而針對其他環境的影響 ─ 如上述門後的模糊悶響，或以空間效果 (Reverb) 變更房間內的聲音 ─ 我們必須另外撰寫程式碼並配置處理節點，以達到所需的效果。</p>
+<p>在將聲音添增到 UI 並產生類似的環境效果時，我們可直接加入聲音而略過空間化，讓整個作業更簡單。當然，開發者仍能夠處理相關效果，並照自己的意思自由發揮；甚至可隨時在滑鼠點擊之處，讓既有聲音產生位移的效果。</p>
+<h3>使用 Web Audio API</h3>
+<p>使用 Web Audio 之前的設定程序很簡單。比較麻煩的部份，就是必須先估算所應預載的聲音，後續又該載入多少聲音。而載入聲音包含二組可能極為緩慢的非同步作業，這也是必須考量的部份：分別是下載作業，以及從小型格式 (如 OGG 或 MP3) 轉為 arraybuffer的解壓縮作業。如果是在本端電腦上開發，你會發現解壓縮速度比下載速度慢。而各個使用者的設備與網路速度不甚相同，因此下載速度又因人而異。</p>
+<p><img class="aligncenter size-large wp-image-4181" alt="Songs-of-Diridum-6" src="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-6-1024x558.jpg" width="640" height="348" srcset="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-6-300x163.jpg 300w, https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-6-1024x558.jpg 1024w, https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-6.jpg 1264w" sizes="(max-width: 640px) 100vw, 640px"/></p>
+<h3>來玩玩聲音串流</h3>
+<p>一旦將某個聲音解壓縮完畢，即可用以建立一組音源。音源屬於相對較初階的物件，可在某個速度之下，將本身的聲音資料串流至特定的目標節點。而簡易系統中的目標節點，應該就是揚聲器輸出。但即使是這種簡易系統，你仍可以設定聲音的播放速率，以改變其音高 (Pitch) 與音長 (Duration)。而 Web Audio API 具備的另項絕妙功能，就是可隨時插入變化的效果 (例如調整音高與音長)，以滿足開發者的需要。</p>
+<h3>添增音效：失真、延遲、空間效果</h3>
+<p>若要為這個簡易系統添增音效，則可於音源與揚聲器之間放置處理器節點。我們的音訊工程師則是將音源分為「乾 (Dry)、「濕 (Wet)」共二項元件；前者代表未處理過的聲音，後者則為處理過的聲音。接著將此二項元件傳送到揚聲器，並分別對此二項音軌添加增益節點 (Gain node)，以調整二者之間的混音。工程領域所謂的「增益」其實就是「音量」。你可照自己喜好，在音源與揚聲器之間添加任何節點，進而造成同步效果或連續效果。在撰寫自己的系統時，最好能考慮到各個既定節點，讓變更接線的方式越簡單越好。</p>
+<h3>結論</h3>
+<p>我們很高興能看到「Songs of Diridum」的成果，也著實驚豔於目前 Web 瀏覽器所能提供的 3D 與音訊效能。希望行動裝置能很快滿足消費者的效能需求，而 HTML5 也將成為最全面性的跨平台遊戲環境。</p>
+<p>現在就<a href="https://web.archive.org/web/20160623180428/http://www.gooengine.com/mozilla-web-audio-demo-built-in-goo-engine/">來玩「Songs of Diridum」</a>吧！</p>
+<p><img class="aligncenter size-large wp-image-4183" alt="Songs-of-Diridum-4" src="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-4-1024x558.jpg" width="640" height="348" srcset="https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-4-300x163.jpg 300w, https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-4-1024x558.jpg 1024w, https://web.archive.org/web/20160623180428im_/http://blog.mozilla.com.tw/wp-content/uploads/Songs-of-Diridum-4.jpg 1264w" sizes="(max-width: 640px) 100vw, 640px"/></p>
+<p>&nbsp;</p>
+<p>原文連結：<a href="https://web.archive.org/web/20160623180428/https://hacks.mozilla.org/2013/10/songs-of-diridum-pushing-the-web-audio-api-to-its-limits/" target="_blank">Songs of Diridum: Pushing the Web Audio API to Its Limits</a></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+      </div><!-- .entry-content -->
+                                <footer class="entry-footer">
+        <div class="entry-category-box">
+          文章分類：
+          <a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/category/webapp" rel="category tag">Web App</a>        </div>
+      </footer> 
+          </article><!-- #post-4172 -->
+<!-- <div class="fb-like" data-href="https://www.facebook.com/MozillaTaiwan" data-send="false" data-layout="button_count" data-width="400" data-show-faces="false"></div>馬上按讚 加入Mozilla Taiwan粉絲團 -->
+          <a class="shareButton">我要分享這篇文章</a>
+          <iframe id="after-share-subscribe" src="about:blank" data-src="https://mozilla.com.tw/newsletter/subscribe/embed/?title=感謝分享！若你喜歡此類文章，請訂閱 Firefox 電子報&amp;hide_archive=True">
+          </iframe>
+                      <!--Recommendation System -->
+<h3>您可能也會喜歡</h3>
+
+            <div class="related-posts-scope"></div>          
+          	<div id="comments">
+		
+	
+						<div id="respond" class="comment-respond">
+			<h3 id="reply-title" class="comment-reply-title"><h3>對此文章發表回應</h3> <small><a rel="nofollow" id="cancel-comment-reply-link" href="/web/20160623180428/http://blog.mozilla.com.tw/posts/4172/songs-of-diridum-pushing-the-web-audio-api-to-its-limits#respond" style="display:none;">取消回覆</a></small></h3>				<form action="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+					<p class="comment-notes"><span id="email-notes">你的電子郵件位址並不會被公開。</span> 必要欄位標記為 <span class="required">*</span></p><p class="comment-form-comment"><label for="comment">迴響</label> <textarea id="comment" name="comment" cols="45" rows="8" aria-required="true" required="required"></textarea></p><p class="comment-form-author"><label for="author">名稱 <span class="required">*</span></label> <input id="author" name="author" type="text" value="" size="30" aria-required="true" required="required"/></p>
+<p class="comment-form-email"><label for="email">電子郵件 <span class="required">*</span></label> <input id="email" name="email" type="text" value="" size="30" aria-describedby="email-notes" aria-required="true" required="required"/></p>
+<p class="comment-form-url"><label for="url">個人網站</label> <input id="url" name="url" type="text" value="" size="30"/></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="發表"/> <input type="hidden" name="comment_post_ID" value="4172" id="comment_post_ID"/>
+<input type="hidden" name="comment_parent" id="comment_parent" value="0"/>
+</p><p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="7465f5c395"/></p><p style="display: none;"><input type="hidden" id="ak_js" name="ak_js" value="26"/></p>				</form>
+					</div><!-- #respond -->
+			
+</div><!-- #comments -->
+             </div> <!-- #article -->
+  </div><!-- #primary -->
+  <div class="subwarp">
+      		<div id="secondary" class="widget-area" role="complementary">
+						<aside id="search-2" class="widget widget_search"><h1 class="widget-title">文章搜尋</h1><form role="search" method="get" id="searchform" class="searchform" action="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/">
+				<div>
+					<label class="screen-reader-text" for="s">搜尋關於：</label>
+					<input type="text" value="" name="s" id="s"/>
+					<input type="submit" id="searchsubmit" value="搜尋"/>
+				</div>
+			</form></aside><aside id="text-4" class="widget widget_text">			<div class="textwidget"><iframe class="subscription-form" src="https://web.archive.org/web/20160623180428if_/https://mozilla.com.tw/newsletter/subscribe/embed/?title=訂閱電子報&amp;opaque=True&amp;hide_archive=True" style="border: none; margin-left: -20px; width: 260px;"></iframe></div>
+		</aside><aside id="text-2" class="widget widget_text"><h1 class="widget-title">追蹤我們</h1>			<div class="textwidget"><ul>
+<li id="sidebar-facebook">
+<a href="https://web.archive.org/web/20160623180428/https://www.facebook.com/MozillaTaiwan">Facebook</a>
+</li>
+<li id="sidebar-google">
+<a href="https://web.archive.org/web/20160623180428/https://plus.google.com/u/0/114653167240123163859/posts">Google</a>
+</li>
+<li id="sidebar-plurk">
+<a href="https://web.archive.org/web/20160623180428/http://plurk.com/MozillaTaiwan">Plurk</a>
+</li>
+<li id="sidebar-youtube">
+<a href="https://web.archive.org/web/20160623180428/http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+</li>
+<li id="sidebar-flickr">
+<a href="https://web.archive.org/web/20160623180428/http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+</li>
+<li id="sidebar-planet-moztw">
+<a href="https://web.archive.org/web/20160623180428/http://planet.moztw.org/">Planet MozTW</a>
+</li>
+</ul></div>
+		</aside><aside id="categories-2" class="widget widget_categories"><h1 class="widget-title">文章分類</h1>		<ul>
+	<li class="cat-item cat-item-8"><a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/category/firefox">Firefox</a> (337)
+</li>
+	<li class="cat-item cat-item-11"><a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/category/firefox/firefox-android">Firefox for Android</a> (49)
+</li>
+	<li class="cat-item cat-item-154"><a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/category/firefox/firefox-ios">Firefox for iOS</a> (2)
+</li>
+	<li class="cat-item cat-item-10"><a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/category/firefox-os">Firefox OS</a> (213)
+</li>
+	<li class="cat-item cat-item-43"><a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/category/identity">Identity</a> (10)
+</li>
+	<li class="cat-item cat-item-12"><a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/category/mozilla">Mozilla</a> (287)
+</li>
+	<li class="cat-item cat-item-42"><a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/category/privacy">Privacy</a> (47)
+</li>
+	<li class="cat-item cat-item-149"><a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/category/security">Security</a> (6)
+</li>
+	<li class="cat-item cat-item-35"><a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/category/webapp">Web App</a> (163)
+</li>
+	<li class="cat-item cat-item-16"><a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/category/news-feed">新聞訊息</a> (130)
+</li>
+	<li class="cat-item cat-item-1"><a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/category/%e6%9c%aa%e5%88%86%e9%a1%9e">未分類</a> (6)
+</li>
+	<li class="cat-item cat-item-44"><a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/category/student-ambassador">校園大使</a> (12)
+</li>
+	<li class="cat-item cat-item-21"><a href="https://web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/posts/category/%e6%b4%bb%e5%8b%95">活動</a> (93)
+</li>
+		</ul>
+</aside><aside id="archives-2" class="widget widget_archive"><h1 class="widget-title">月份彙整</h1>		<label class="screen-reader-text" for="archives-dropdown-2">月份彙整</label>
+		<select id="archives-dropdown-2" name="archive-dropdown" onchange="document.location.href=this.options[this.selectedIndex].value;">
+			
+			<option value="">選擇月份</option>
+				<option value="http://blog.mozilla.com.tw/posts/date/2016/06"> 2016 年 六月 &nbsp;(4)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2016/05"> 2016 年 五月 &nbsp;(11)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2016/04"> 2016 年 四月 &nbsp;(11)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2016/03"> 2016 年 三月 &nbsp;(18)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2016/02"> 2016 年 二月 &nbsp;(11)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2016/01"> 2016 年 一月 &nbsp;(11)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2015/12"> 2015 年 十二月 &nbsp;(14)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2015/11"> 2015 年 十一月 &nbsp;(15)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2015/10"> 2015 年 十月 &nbsp;(11)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2015/09"> 2015 年 九月 &nbsp;(11)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2015/08"> 2015 年 八月 &nbsp;(15)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2015/07"> 2015 年 七月 &nbsp;(10)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2015/06"> 2015 年 六月 &nbsp;(8)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2015/05"> 2015 年 五月 &nbsp;(14)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2015/04"> 2015 年 四月 &nbsp;(15)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2015/03"> 2015 年 三月 &nbsp;(16)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2015/02"> 2015 年 二月 &nbsp;(11)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2015/01"> 2015 年 一月 &nbsp;(16)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2014/12"> 2014 年 十二月 &nbsp;(11)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2014/11"> 2014 年 十一月 &nbsp;(19)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2014/10"> 2014 年 十月 &nbsp;(21)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2014/09"> 2014 年 九月 &nbsp;(16)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2014/08"> 2014 年 八月 &nbsp;(15)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2014/07"> 2014 年 七月 &nbsp;(17)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2014/06"> 2014 年 六月 &nbsp;(15)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2014/05"> 2014 年 五月 &nbsp;(17)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2014/04"> 2014 年 四月 &nbsp;(21)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2014/03"> 2014 年 三月 &nbsp;(19)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2014/02"> 2014 年 二月 &nbsp;(23)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2014/01"> 2014 年 一月 &nbsp;(15)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2013/12"> 2013 年 十二月 &nbsp;(22)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2013/11"> 2013 年 十一月 &nbsp;(22)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2013/10"> 2013 年 十月 &nbsp;(19)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2013/09"> 2013 年 九月 &nbsp;(14)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2013/08"> 2013 年 八月 &nbsp;(19)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2013/07"> 2013 年 七月 &nbsp;(23)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2013/06"> 2013 年 六月 &nbsp;(14)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2013/05"> 2013 年 五月 &nbsp;(16)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2013/04"> 2013 年 四月 &nbsp;(23)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2013/03"> 2013 年 三月 &nbsp;(11)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2013/02"> 2013 年 二月 &nbsp;(14)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2013/01"> 2013 年 一月 &nbsp;(12)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2012/12"> 2012 年 十二月 &nbsp;(9)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2012/11"> 2012 年 十一月 &nbsp;(13)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2012/10"> 2012 年 十月 &nbsp;(19)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2012/09"> 2012 年 九月 &nbsp;(11)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2012/08"> 2012 年 八月 &nbsp;(8)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2012/07"> 2012 年 七月 &nbsp;(12)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2012/06"> 2012 年 六月 &nbsp;(7)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2012/05"> 2012 年 五月 &nbsp;(9)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2012/04"> 2012 年 四月 &nbsp;(8)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2012/03"> 2012 年 三月 &nbsp;(8)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2012/02"> 2012 年 二月 &nbsp;(6)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2012/01"> 2012 年 一月 &nbsp;(4)</option>
+	<option value="http://blog.mozilla.com.tw/posts/date/2011/12"> 2011 年 十二月 &nbsp;(6)</option>
+
+		</select>
+		</aside><aside id="text-3" class="widget widget_text">			<div class="textwidget"><ul>
+<li>
+<a href="https://web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/" class="button">
+<span class="download-logo"></span>
+<span class="download-title">下載 Firefox</span>
+</a>
+</li>
+</ul></div>
+		</aside>		</div><!-- #secondary .widget-area -->
+
+		  </div>
+
+					</div><!-- #main -->
+      </div><!--end of doc-->
+     </div><!--end of wrapper-->
+    </div><!-- end #outer-wrapper -->
+    <footer id="footer">
+  <div id="footer-wrapper">
+    <div id="footer-logo" class="footer-content">
+      <a href="//web.archive.org/web/20160623180428/http://mozilla.org/en-US/" target="_blank">
+        <img style="border:0px;" alt="mozilla" src="/web/20160623180428im_/http://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png">
+      </a>
+    </div>
+    <div id="sub-footer" class="footer-content">
+      <div id="sub-footer-contents">
+        <strong>與我們為友</strong>
+        <ul>
+          <li id="footer-Facebook">
+            <a href="https://web.archive.org/web/20160623180428/https://www.facebook.com/MozillaTaiwan">Facebook</a>
+          </li>
+          <li id="footer-Youtube">
+            <a href="https://web.archive.org/web/20160623180428/http://www.youtube.com/user/MozillaTaiwan">Youtube</a>
+          </li>
+          <li id="footer-Flickr">
+            <a href="https://web.archive.org/web/20160623180428/http://www.flickr.com/photos/mozillataiwan/">Flickr</a>
+          </li>
+          <li id="footer-電子報">
+            <a href="https://web.archive.org/web/20160623180428/http://mozilla.com.tw/join_us/">電子報</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!--end sub-footer-->
+    <div id="copyright" class="footer-content">
+      <ul>
+        <li><a href="//web.archive.org/web/20160623180428/http://www.mozilla.org/zh-TW/privacy-policy.html">隱私資料政策</a>&nbsp;|</li>
+        <li><a href="//web.archive.org/web/20160623180428/http://www.mozilla.org/zh-TW/about/legal.html">法律資訊</a>&nbsp;|</li>
+        <li><a href="//web.archive.org/web/20160623180428/http://www.mozilla.org/zh-TW/legal/fraud-report/index.html">回報商標濫用</a>&nbsp;|</li>
+        <li><a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/join_us/un_subscribe/">取消訂閱電子報</a>&nbsp;|</li>
+      </ul>
+      <p>除另有<a href="//web.archive.org/web/20160623180428/http://www.mozilla.org/zh-TW/about/legal.html#site">註明</a>外，本站內容皆採用<br>
+        <a href="https://web.archive.org/web/20160623180428/http://creativecommons.org/licenses/by-sa/3.0/">創用 CC 姓名標示—相同方式分享條款 3.0 </a>或更新版本授權大眾使用。</p>
+    </div>
+    <!-- end copyright-->
+  </div>
+  <!-- end of footer-wrapper -->
+</footer>
+<!-- end of footer -->
+    <noscript>
+    </noscript>
+    <script type="text/javascript" src="/web/20160623180428js_/http://blog.mozilla.com.tw/media/js/libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="/web/20160623180428js_/http://blog.mozilla.com.tw/media/js/libs/jquery.waypoints.min.js"></script>
+    <script type="text/javascript" src="/web/20160623180428js_/http://blog.mozilla.com.tw/media/js/libs/jquery.waypoints-sticky.min.js"></script>
+    <script type="text/javascript" src="/web/20160623180428js_/http://blog.mozilla.com.tw/media/js/libs/enquire.min.js"></script>
+    <script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-content/themes/toolbox/js/main.js"></script>
+    <script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/http://blog.mozilla.com.tw/wp-content/themes/toolbox/js/simplegallery.js"></script>
+    <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '135467439980355',
+          xfbml      : true,
+          version    : 'v2.0'
+        });
+      };
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//web.archive.org/web/20160623180428/http://connect.facebook.net/zh_TW/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+     </script>
+    <!-- Place this tag after the last +1 button tag. -->
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'zh-TW'};
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://web.archive.org/web/20160623180428/https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+    <script type="text/javascript" src="https://web.archive.org/web/20160623180428js_/https://assets.pinterest.com/js/pinit.js"></script>
+		
+    <script>
+    $(".toggle").click(function(){if($(".slided-it").size()==0){$(".slide-x").addClass("slided-it");$("#body-wrapper").removeClass("body-wrapper-default").addClass("body-wrapper-lock")}else{$(".slide-x").removeClass("slided-it");$("#body-wrapper").removeClass("body-wrapper-lock").addClass("body-wrapper-default")}});$(document).ready(function(){if($("#nav-main-menu").length===0){return}var a=$('#nav-main-menu [tabindex="0"]');var f,e,b,d,c;$("#nav-main > .has-submenus > li > .submenu.has-submenus > li").bind("mouseover focusin",function(g){d=$(this);if(!e||e.attr("id")!==d.attr("id")){d.addClass("hover").find('[aria-expanded="false"]').attr("aria-expanded","true");if(e){e.dequeue("sub")}}else{e.clearQueue("sub")}}).bind("mouseout focusout",function(g){e=$(this);var h=g.toElement||g.relatedTarget;h=h?h.parentNode.parentNode:h;e.delay(100,"sub").queue("sub",function(){if(e&&(g.type=="focusout"||h==this.parentNode)){e.clearQueue("sub");e.removeClass("hover").find('[aria-expanded="true"]').attr("aria-expanded","false");e=null;if(c){c.get(0).blur()}}}).dequeue("sub")});$("#nav-main > .has-submenus > li").bind("mouseover focusin",function(g){b=$(this);if(!f||f.attr("id")!==b.attr("id")){b.addClass("hover").find('[aria-expanded="false"]').attr("aria-expanded","true");if(f){f.dequeue()}}else{f.clearQueue()}}).bind("mouseout focusout",function(g){f=$(this);f.delay(100).queue(function(){if(f){f.clearQueue();f.find(".hover").removeClass("hover");f.removeClass("hover").find('[aria-expanded="true"]').attr("aria-expanded","false");f=null;e=null;if(c){c.get(0).blur()}}})}).each(function(g){var h=$(this).find("a");h.mouseover(function(i){this.focus()}).focus(function(){c=$(this)}).each(function(i){$(this).keydown(function(j){var k;if(j.altKey||j.ctrlKey||j.metaKey||j.shiftKey){return true}switch(j.keyCode){case 33:case 36:k=h.first();break;case 34:case 35:k=h.last();break;case 38:k=(i>0)?h.eq(i-1):h.last();break;case 40:k=(i<h.length-1)?h.eq(i+1):h.first();break;case 37:k=(g>0)?a.eq(g-1):a.last();break;case 39:k=(g<a.length-1)?a.eq(g+1):a.first();break}if(k){k.get(0).focus();return false}return true})})});$("#footer-menu").attr("role","presentation")});var Tabzilla=(function(b){var h="1.7.1";var m;var j;var C;var d;var x=false;var w=("matchMedia" in window);var p=(document.documentMode===9);var A=(typeof console=="object");var n="wide";var q="-1";var i=null;var l;var y=function(){var D=c();if(n!==D){n=D;u()}};var c=function(){if(w&&matchMedia("(max-width: 719px)").matches){return"compact"}return"wide"};var u=function(){if(n==="wide"){e()}else{g()}};var e=function(){f();a();m.focus()};var g=function(){k();r()};var k=function(){j.find(">ul").attr("role","presentation");C.each(function(D){i(this).attr({id:"tab-"+D,"aria-controls":"panel-"+D,tabindex:q,role:"tab","aria-expanded":false})});if(!j.find("h2[tabindex=0]").length){j.find("h2:first").attr("tabindex",0)}j.find("div").each(function(D){i(this).attr({id:"panel-"+D,"aria-labeledby":"tab-"+D,role:"tabpanel"}).css("display","none")})};var f=function(){j.find(">ul").removeAttr("role");C.removeAttr("id aria-controls tabindex role aria-expanded");j.find("div").removeAttr("id aria-labeledby role style")};var r=function(){j.on("click.submenu","h2",function(D){D.preventDefault();var E=i(D.target).next("div");i(D.target).attr("aria-expanded",E.is(":hidden"));E.toggle()});j.on("keydown.submenu",function(D){var F=D.which;var E=i(D.target);if(F===13||F===32){D.preventDefault();E.trigger("click")}if(F===37||F===38){D.preventDefault();C.each(function(G){if(G>0&&i(this).attr("tabindex")===0){i(this).attr("tabindex",q);i(C[G-1]).attr("tabindex",0).focus();return false}})}if(F===40||F===39){D.preventDefault();C.each(function(G){if(G<(C.length-1)&&i(this).attr("tabindex")===0){i(this).attr("tabindex",q);i(C[G+1]).attr("tabindex",0).focus();return false}})}if(F===27&&E.is("a")){D.preventDefault();D.stopPropagation();E.parents("div").prev("h2").trigger("click").focus()}})};var a=function(){j.off(".submenu")};b.open=function(){x=true;m.toggleClass("open");var D=i("#tabzilla-contents").height();m.animate({height:D},200,function(){m.css("height","auto")});d.attr({"aria-expanded":"true"}).addClass("tabzilla-opened").removeClass("tabzilla-closed");m.focus();return m};b.close=function(){x=false;m.animate({height:0},200,function(){m.toggleClass("open")});d.attr({"aria-expanded":"false"}).addClass("tabzilla-closed").removeClass("tabzilla-opened");return d};b.opened=function(){if(A){console.warn("This call is soon going to be deprecated, please replace it with Tabzilla.open() instead.")}return b.open()};b.closed=function(){if(A){console.warn("This call is soon going to be deprecated, please replace it with Tabzilla.close() instead.")}return b.close()};var z=function(){i.extend(i.easing,{easeInOut:function(E,F,D,H,G){if((F/=G/2)<1){return H/2*F*F+D}return -H/2*((--F)*(F-2)-1)+D}})};var o=function(){window.matchMedia=window.matchMedia||(function(H,I){var F;var D=H.documentElement;var E=D.firstElementChild||D.firstChild;var G=H.createElement("body");var J=H.createElement("div");J.id="mq-test-1";J.style.cssText="position:absolute;top:-100em";G.style.background="none";G.appendChild(J);return function(K){J.innerHTML='&shy;<style media="'+K+'"> #mq-test-1 { width: 42px; }</style>';D.insertBefore(G,E);F=J.offsetWidth===42;D.removeChild(G);return{matches:F,media:K}}}(document))};var t=function(){if(0==i("#tabzilla-panel").length){i("body").prepend(s)}d=i("#tabzilla");m=i("#tabzilla-panel");j=i("#tabzilla-nav");C=j.find("h2");if(p&&!w){o();w=true}z();y();i(window).on("resize",function(){y()});m.on("keydown",function(D){if(D.which===27){D.preventDefault();close()}});d.attr("aria-label","Mozilla links");d.on("click",function(D){D.preventDefault();if(x){b.close()}else{b.open()}})};var B=function(F){var E=function(){l=window.jQuery.noConflict(true);i=l;F.call()};var D=document.createElement("script");if(D.readyState){D.onreadystatechange=function(){if(D.readyState==="loaded"||D.readyState==="complete"){D.onreadystatechange=null;E.call()}}}else{D.onload=E}D.src="//web.archive.org/web/20160623180428/http://mozorg.cdn.mozilla.net/media/js/libs/jquery-"+h+".min.js";document.getElementsByTagName("head")[0].appendChild(D)};var v=function(E,D){E=(""+E).split(".");D=(""+D).split(".");while(E.length<D.length){E.push("0")}while(D.length<E.length){D.push("0")}for(var F=0;F<E.length;F++){if(E[F]>D[F]){return 1}if(E[F]<D[F]){return -1}}return 0};(function(){if(window.jQuery!==undefined&&v(window.jQuery.fn.jquery,h)!==-1){l=window.jQuery;i=l;i(document).ready(t)}else{B(t)}})();var s='<div id="tabzilla-panel" class="close-nav" tabindex="-1">  <div id="tabzilla-contents">    <div id="tabzilla-promo">    <div id="tabzilla-promo-webwewant" class="snippet">      <a href="https://web.archive.org/web/20160623180428/https://webwewant.mozilla.org/?icn=tabz">        <h4>你想要什麼樣的網路？</h4>        <p>分享你的觀點</p>      </a>    </div><!-- end of promo-name -->    </div>    <!-- end of tabzilla-promo -->    <div id="tabzilla-nav">      <ul>        <li class="sitemap">          <h2>Firefox</h2>          <div>            <ul>              <li>                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/download/" title="下載 Mozilla Firefox 中文桌面版" tabindex="-1">Firefox 免費下載</a>              </li>              <li>                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/desktop/" title="下載 Mozilla Firefox 中文桌面版">Firefox 桌面版</a>              </li>              <li>                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/mobile/" title="Mozilla Firefox 行動版">Firefox 行動版</a>              </li>              <li>                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/channel/" title="Mozilla Firefox 未來發行版">Firefox 未來發行版</a>              </li>              <li>                <a href="https://web.archive.org/web/20160623180428/https://addons.mozilla.org/zh-TW/firefox/" title="Firefox 附加元件">附加元件</a>              </li>              <li>                <a href="https://web.archive.org/web/20160623180428/https://support.mozilla.com/zh-TW/home" title="Firefox 說明文件、支援中心">支援中心</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>Firefox OS</h2>          <div>            <ul>              <li>                <a title="Firefox OS 詳細介紹" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/os/" tabindex="-1">詳細介紹</a>              </li>              <li>                <a title="Firefox OS 合作夥伴專區" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/partners/" tabindex="-1">合作夥伴專區</a>              </li>              <li>                <a title="Firefox OS 支援中心" href="//web.archive.org/web/20160623180428/http://support.mozilla.org/products/firefox-os" tabindex="-1">支援中心</a>              </li>              <li>                <a title="Firefox OS 常見問答集" href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/firefox/os/faq/" tabindex="-1">常見問答集</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>社群參與</h2>          <div>            <ul>              <li>                <a href="https://web.archive.org/web/20160623180428/http://firefox.club.tw/" title="Firefox 活力軍">Firefox 設計品</a>              </li>              <li>                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/community/student/" title="校園大使">校園大使</a>              </li>              <li>                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/community/contribute/" title="社群專案">社群專案</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>訊息中心</h2>          <div>            <ul>              <li>                <a href="//web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/main" title="部落格">部落格</a>              </li>              <li>                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/news/press/" title="新聞室">新聞室</a>              </li>              <li>                <a href="//web.archive.org/web/20160623180428/http://blog.mozilla.com.tw/events-list" title="活動訊息">活動訊息</a>              </li>              <li>                <a href="//web.archive.org/web/20160623180428/http://tech.mozilla.com.tw/" title="謀智台客">謀智台客</a>              </li>            </ul>          </div>        </li>        <li class="sitemap">          <h2>關於我們</h2>          <div>            <ul>              <li>                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/about/manifesto/" title="Mozilla 宣言">Mozilla 宣言</a>              </li>              <li>                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/about/space/" title="Mozilla Space">Mozilla Space</a>              </li>              <li>                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/about/careers/" title="工作機會">工作機會</a>              </li>              <li>                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/about/intern/" title="工作機會">實習機會</a>              </li>              <li>                <a href="//web.archive.org/web/20160623180428/http://mozilla.com.tw/about/contact/" title="聯絡資訊">聯絡資訊</a>              </li>              <li>                <a href="//web.archive.org/web/20160623180428/http://mozilla.org/en-US/" title="Mozilla (US)">Mozilla (US)</a>              </li>            </ul>          </div>        </li>        <!-- end of sitemap -->      </ul>    </div>    <!-- end of tabzilla-nav -->  </div>  <!-- end of tabzilla-content --></div><!-- end of tabzilla-panel -->';return b})(Tabzilla||{});    </script>
+    <noscript>
+      <style>
+      div#default-header{
+        height:150px;
+      }
+      </style>
+    </noscript>
+		</body>
+</html>
+<!--
+     FILE ARCHIVED ON 18:04:28 Jun 23, 2016 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 13:51:16 May 09, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 0.549
+  exclusion.robots: 0.078
+  exclusion.robots.policy: 0.067
+  esindex: 0.009
+  cdx.remote: 64.768
+  LoadShardBlock: 928.053 (3)
+  PetaboxLoader3.datanode: 69.485 (4)
+  PetaboxLoader3.resolve: 94.764 (2)
+  load_resource: 117.274
+  nav: 0.112 (6)
+-->

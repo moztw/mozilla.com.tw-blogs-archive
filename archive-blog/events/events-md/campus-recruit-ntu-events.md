@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/campus-recruit-ntu-events"
 archive_url: "https://web.archive.org/web/20161017024104id_/https://blog.mozilla.com.tw/events/campus-recruit-ntu-events"
 wayback_timestamp: "20161017024104"
 status: "ok"
-asset_status: "partial_assets_failed"
 ---
+
 地圖不可用
 
 	活動時間
@@ -38,8 +38,6 @@ asset_status: "partial_assets_failed"
 - 加碼送 ：現場手機分享 MyFirefox 文章，即贈火狐小徽章
 
 - 加碼抽 ：現場留下個人相關徵才資料，除獲贈小禮物外，還有機會抽中 Firefox OS 手機一只 (台灣未上市)
-
-![free hugs](../assets/uploads/free-hugs.png)
 
 若你是尚未畢業的學生，秉持開放精神的 Mozilla 同樣提供你參與的機會，包括熱血的社群志工、全球性 Firefox 校園大使專案、Mozilla 實習生專案、即使不具備就業身份，依然有機會對網路世界作出貢獻、並於過程中體驗最新知識技能、於學生時期開始培養自身實力與經驗！
 

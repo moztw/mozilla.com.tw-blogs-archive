@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/firefox-os-make-every-moment-c
 archive_url: "https://web.archive.org/web/20160902024801id_/https://blog.mozilla.com.tw/events/firefox-os-make-every-moment-count"
 wayback_timestamp: "20160902024801"
 status: "ok"
-asset_status: "ok"
 ---
+
 地圖不可用
 
 	活動時間
@@ -40,5 +40,3 @@ Firefox 將使用者擺在第一位，提供全新的選擇與創新，進而從
 活動時程：
 
 本活動 10/1 開跑，除了上傳照片者有機會得到好禮，投票者一樣可以參與抽獎！趕快拍下你生活中美好一刻的照片，這將是你大展身手的時刻！
-
-[![Firefox OS 讓你盡情享受每一刻！](../assets/uploads/banner.jpg)](http://firefox.club.tw/campaign/every-moment/)

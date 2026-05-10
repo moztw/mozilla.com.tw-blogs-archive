@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/firefox-os-apps-workshop"
 archive_url: "https://web.archive.org/web/20170107085541id_/https://blog.mozilla.com.tw/events/firefox-os-apps-workshop"
 wayback_timestamp: "20170107085541"
 status: "ok"
-asset_status: "ok"
 ---
+
 地圖不可用
 
 	活動時間

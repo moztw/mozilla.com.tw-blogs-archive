@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/mozilla-taiwan-campus-recruit"
 archive_url: "https://web.archive.org/web/20161017022226id_/https://blog.mozilla.com.tw/events/mozilla-taiwan-campus-recruit"
 wayback_timestamp: "20161017022226"
 status: "ok"
-asset_status: "partial_assets_failed"
 ---
+
 地圖不可用
 
 	活動時間
@@ -42,5 +42,3 @@ Mozilla Taiwan 預計將有三場校園徵才活動, 分別是：
 Mozilla Taiwan 首次參與台灣校園徵才活動, 現場將以最誠摯的心, 和就業市場的青年面對面, 屆時並將邀請神秘嘉賓, 與徵才現場的同學們互動。歡迎自認對網路有熱忱有想法有能力的你, 把握加入 Mozilla Taiwan 與國際接軌、參與國際專案核心的好機會!
 
 Mozilla 與你, 2014 校園徵才見!
-
-![maxresdefault](../assets/uploads/maxresdefault-1024x576.jpg)

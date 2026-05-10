@@ -8,16 +8,138 @@
   "categories": [
     "Firefox"
   ],
-  "tags": [
-    "Firefox"
-  ],
+  "tags": [],
   "author": "",
+  "page_type": "post",
   "original_url": "https://blog.mozilla.com.tw/?p=2215",
-  "archive_url": "https://web.archive.org/web/20201231235959id_/https://blog.mozilla.com.tw/?p=2215",
+  "archive_url": "https://web.archive.org/web/20201231235959/https://blog.mozilla.com.tw/posts/2215/webrtc-%e8%bc%95%e9%ac%86%e4%b8%8a%e6%89%8b-%e4%bd%bf%e7%94%a8-conversat-io-%e5%af%a6%e9%9a%9b%e7%8e%a9%ef%bc%81%ef%bc%88part-2%ef%bc%89",
   "wayback_timestamp": "20201231235959",
-  "content_html": "<div class=\"entry-content close\">\n    <h4>接續文章：http://blog.mozilla.com.tw/posts/2152/</h4>\n<p>&#8212;&#8212;-</p>\n<h2>發訊伺服器 (Signaling server)</h2>\n<p>上面提到的範例，會連接到現成的發訊伺服器。這個是由我們自己維護的伺服器，且我們隨時都在注意其是否順暢運作。</p>\n<p>我們的後續目標，是要讓大家都能透過這個伺服器而玩玩看 SimpleWebRTC。當然，我們以後並不會真正永久運轉這組伺服器，所以隨時會關閉或重新開機。</p>\n<p>如果你要根據這組程式碼而實際建立 App，那你也可以自己運作 1 組伺服器。如果你不想再多接觸太麻煩的東西而且想隨時更新，我們也可以協助你運作或調整伺服器。這組伺服器的程式碼就放在 <a href=\"https://github.com/andyet/signalmaster\">on github</a>。</p>\n<p>在開始啟動自己的 <code>webrtc</code> 物件時，只要送出 1 組「url」選項，就可將 1 組URL 傳送至不同的 signaling server，作為 config 的一部分。</p>\n<h2>所以檯面下到底會做些什麼？</h2>\n<p>你可以看看用戶端函式庫的完整原始碼：<a href=\"https://github.com/HenrikJoreteg/SimpleWebRTC/blob/master/simplewebrtc.js\">https://github.com/HenrikJoreteg/SimpleWebRTC/blob/master/simplewebrtc.js</a></p>\n<p>signaling server 的則是：</p>\n<p><a href=\"https://github.com/andyet/signalmaster/blob/master/server.js\">https://github.com/andyet/signalmaster/blob/master/server.js</a></p>\n<p><strong> </strong></p>\n<p><strong>在</strong><strong> conversat.io </strong><strong>中啟動視訊電話的過程，應該要像這樣：</strong></p>\n<ol>\n<li>先連線至發訊伺服器。使用 socket.io 就會連至我們現成的發訊伺服器，位於：\n<p>http://signaling.simplewebrtc.com:8888</li>\n<li>針對<a href=\"https://hacks.mozilla.org/2013/03/making-webrtc-simple-with-conversat-io/\">「具備個別瀏覽器前置字串的 getUserMedia」</a>，在呼叫之後即可請求存取本端視訊相機。</li>\n</ol>\n<p>建立或取得本端視訊元素，再將我們從 <code>getUserMedia </code>所取得的串流，附加到視訊元素上即可。</p>\n<p>firefox:</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-56009e483f803424282946\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nelement.mozSrcObject = stream; element.play();</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-56009e483f803424282946-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-56009e483f803424282946-1\"><span class=\"crayon-v\">element</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">mozSrcObject</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">stream</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">element</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">play</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0009 seconds] -->\r\n<p>webkit:</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-56009e483f815300342301\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nelement.autoplay = true;\r\nelement.src = webkitURL.createObjectURL(stream);</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-56009e483f815300342301-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56009e483f815300342301-2\">2</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-56009e483f815300342301-1\"><span class=\"crayon-v\">element</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">autoplay</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">true</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56009e483f815300342301-2\"><span class=\"crayon-v\">element</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">src</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">webkitURL</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">createObjectURL</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">stream</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0011 seconds] -->\r\n<p>&nbsp;</p>\n<ol>\n<li>若 <code>joinRoom</code> 負責傳送 socket.io 訊息至發訊伺服器，則一旦呼叫此 <code>joinRoom</code>，等於告知其所要連接的聊天室名稱。若聊天室不存在，則發訊伺服器將建立聊天室；若聊天室已存在，就會加入該聊天室。這裡我所說的「聊天室」，就是以聊天室名稱所聚集而成的特定 socket.io session ID。接著針對已連上聊天室的用戶端，我們即可廣播「加入/離開聊天室」的相關訊息。</li>\n<li>在我們等其他人加入聊天室的時候，還可以順便玩一下 <a href=\"http://twitter.com/fritzy\">@fritzy</a> 所撰寫的好玩火箭遊戲：</li>\n<li>一旦有人加入這個聊天室，我們就會廣播告知其他已連線的使用者。而我們所建立的 Conversation 物件，其中將包含可連接雙方瀏覽器的 peerConnection。你可能已經猜到這個 peerConnection 所代表的，其實就是你和對方之間的連線。</li>\n<li>針對新的 socket.io session ID，signaling server 將廣播給聊天室中的所有使用者。而進入聊天室中的其他人，各使用者的用戶端另將建立 Conversation 物件。</li>\n<li>在此時，我們可以知道應連接哪位使用者，並可分別對他們的階段直接送出訊息。</li>\n<li>現在我們使用 peerConnection 建立 1 組「offer」，儲存我們本端的「offer」之後，再於我們的 peerConnection 中將之設定為本端描述 (Local description)；其中的資訊，將說明其他用戶端是如何找到並溝通我們的瀏覽器。</li>\n<li>只要用戶端接收到，且我們將「offer」新增至我們的 peerConnection 之後：\n<p>就會呼叫 peerConnection.createAnswer() 而產生 1 組應答，接著再將應答送回用戶端 (此用戶端為我們所取得「offer」的源頭)。</li>\n</ol>\n<ol start=\"11\">\n<li>收到應答之後，我們將之設定為遠端描述 (Remote description)。接著再以類似方式建立/傳送 ICE Candidates。如此將會交涉 (Negotiate) 連線並連上我們。</li>\n<li>如果這些過程順利，我們就會收到 peerConnection 所發出的 onaddstream 事件，接著即可建立視訊元素並附加上串流。此時應已開始執行視訊呼叫。</li>\n</ol>\n<p>若要再進一步了解，可至 <a href=\"https://github.com/HenrikJoreteg/SimpleWebRTC\">SimpleWebRTC project</a>，針對 github 發出 Pull request 與檔案問題。</p>\n<h2><strong>未來展望<br />\n</strong></h2>\n<p>這些不過是剛開始。幫我們一起改善這個程式吧！</p>\n<p>我們希望看到更多的可能：</p>\n<ol start=\"1\">\n<li>往後能標準化所有發訊部位。一旦建立了標準，往後大家只要更改某些必要的部份，整體都不會有太大的問題。</li>\n<li>新支援視訊與音訊的暫停/恢復功能。</li>\n<li>讓大家知道目前正在發言的人，且一旦換人發言，即可發出事件以通知聊天室中的其他人。</li>\n<li>能更妥善控制後續需求的處理 (Handling)/拒絕 (Rejecting) 作業。</li>\n<li>以 <a title=\"HTML5\" href=\"https://developer.mozilla.org/en/html/html5\">HTML5</a> 的連線 API 為基礎，設定最大連線數。</li>\n</ol>\n<p>如果你針對這個程式做出有趣的東西、遇上任何問題，甚或想和我討論，都可以到我的 Twitter (<a href=\"http://twitter.com/henrikjoreteg\">@henrikjoreteg</a>) 上敲我。我隨時都很樂意聽到任何訊息。</p>\n<p>讓我們這些熱心的網民們，繼續提供有趣的網路小工具吧！</p>\n<p>英文原文: https://hacks.mozilla.org/2013/03/making-webrtc-simple-with-conversat-io/</p>\n<p>—</p>\n<p>作者介紹：</p>\n<p>Henrik Joreteg 是 &amp;yet 的合作夥伴，已經用十幾種方法撰寫了幾十種即時 App。他在 &amp;yet 上主持 And Bang，針對 JavaScript 與 HTML5 應用提供相關的諮詢和訓練服務。</p>\n<p>Robert 身為 Mozilla 的技術傳教士，並負責編輯 Mozilla Hacks 內的文章。</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
+  "content_html": "<div class=\"entry-content close\">\n    <h4>接續文章：http://blog.mozilla.com.tw/posts/2152/</h4>\n<p>&#8212;&#8212;-</p>\n<h2>發訊伺服器 (Signaling server)</h2>\n<p>上面提到的範例，會連接到現成的發訊伺服器。這個是由我們自己維護的伺服器，且我們隨時都在注意其是否順暢運作。</p>\n<p>我們的後續目標，是要讓大家都能透過這個伺服器而玩玩看 SimpleWebRTC。當然，我們以後並不會真正永久運轉這組伺服器，所以隨時會關閉或重新開機。</p>\n<p>如果你要根據這組程式碼而實際建立 App，那你也可以自己運作 1 組伺服器。如果你不想再多接觸太麻煩的東西而且想隨時更新，我們也可以協助你運作或調整伺服器。這組伺服器的程式碼就放在 <a href=\"https://github.com/andyet/signalmaster\">on github</a>。</p>\n<p>在開始啟動自己的 <code>webrtc</code> 物件時，只要送出 1 組「url」選項，就可將 1 組URL 傳送至不同的 signaling server，作為 config 的一部分。</p>\n<h2>所以檯面下到底會做些什麼？</h2>\n<p>你可以看看用戶端函式庫的完整原始碼：<a href=\"https://github.com/HenrikJoreteg/SimpleWebRTC/blob/master/simplewebrtc.js\">https://github.com/HenrikJoreteg/SimpleWebRTC/blob/master/simplewebrtc.js</a></p>\n<p>signaling server 的則是：</p>\n<p><a href=\"https://github.com/andyet/signalmaster/blob/master/server.js\">https://github.com/andyet/signalmaster/blob/master/server.js</a></p>\n<p><strong> </strong></p>\n<p><strong>在</strong><strong> conversat.io </strong><strong>中啟動視訊電話的過程，應該要像這樣：</strong></p>\n<ol>\n<li>先連線至發訊伺服器。使用 socket.io 就會連至我們現成的發訊伺服器，位於：\n<p>http://signaling.simplewebrtc.com:8888</li>\n<li>針對<a href=\"https://hacks.mozilla.org/2013/03/making-webrtc-simple-with-conversat-io/\">「具備個別瀏覽器前置字串的 getUserMedia」</a>，在呼叫之後即可請求存取本端視訊相機。</li>\n</ol>\n<p>建立或取得本端視訊元素，再將我們從 <code>getUserMedia </code>所取得的串流，附加到視訊元素上即可。</p>\n<p>firefox:</p><!-- Crayon Syntax Highlighter v2.6.9 -->\n\n\t\t<div id=\"crayon-56009e483f803424282946\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nelement.mozSrcObject = stream; element.play();</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-56009e483f803424282946-1\">1</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-56009e483f803424282946-1\"><span class=\"crayon-v\">element</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">mozSrcObject</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">stream</span><span class=\"crayon-sy\">;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">element</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">play</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0009 seconds] -->\n<p>webkit:</p><!-- Crayon Syntax Highlighter v2.6.9 -->\n\n\t\t<div id=\"crayon-56009e483f815300342301\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nelement.autoplay = true;\nelement.src = webkitURL.createObjectURL(stream);</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-56009e483f815300342301-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-56009e483f815300342301-2\">2</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-56009e483f815300342301-1\"><span class=\"crayon-v\">element</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">autoplay</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-t\">true</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-56009e483f815300342301-2\"><span class=\"crayon-v\">element</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">src</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">webkitURL</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">createObjectURL</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">stream</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0011 seconds] -->\n<p>&nbsp;</p>\n<ol>\n<li>若 <code>joinRoom</code> 負責傳送 socket.io 訊息至發訊伺服器，則一旦呼叫此 <code>joinRoom</code>，等於告知其所要連接的聊天室名稱。若聊天室不存在，則發訊伺服器將建立聊天室；若聊天室已存在，就會加入該聊天室。這裡我所說的「聊天室」，就是以聊天室名稱所聚集而成的特定 socket.io session ID。接著針對已連上聊天室的用戶端，我們即可廣播「加入/離開聊天室」的相關訊息。</li>\n<li>在我們等其他人加入聊天室的時候，還可以順便玩一下 <a href=\"http://twitter.com/fritzy\">@fritzy</a> 所撰寫的好玩火箭遊戲：</li>\n<li>一旦有人加入這個聊天室，我們就會廣播告知其他已連線的使用者。而我們所建立的 Conversation 物件，其中將包含可連接雙方瀏覽器的 peerConnection。你可能已經猜到這個 peerConnection 所代表的，其實就是你和對方之間的連線。</li>\n<li>針對新的 socket.io session ID，signaling server 將廣播給聊天室中的所有使用者。而進入聊天室中的其他人，各使用者的用戶端另將建立 Conversation 物件。</li>\n<li>在此時，我們可以知道應連接哪位使用者，並可分別對他們的階段直接送出訊息。</li>\n<li>現在我們使用 peerConnection 建立 1 組「offer」，儲存我們本端的「offer」之後，再於我們的 peerConnection 中將之設定為本端描述 (Local description)；其中的資訊，將說明其他用戶端是如何找到並溝通我們的瀏覽器。</li>\n<li>只要用戶端接收到，且我們將「offer」新增至我們的 peerConnection 之後：\n<p>就會呼叫 peerConnection.createAnswer() 而產生 1 組應答，接著再將應答送回用戶端 (此用戶端為我們所取得「offer」的源頭)。</li>\n</ol>\n<ol start=\"11\">\n<li>收到應答之後，我們將之設定為遠端描述 (Remote description)。接著再以類似方式建立/傳送 ICE Candidates。如此將會交涉 (Negotiate) 連線並連上我們。</li>\n<li>如果這些過程順利，我們就會收到 peerConnection 所發出的 onaddstream 事件，接著即可建立視訊元素並附加上串流。此時應已開始執行視訊呼叫。</li>\n</ol>\n<p>若要再進一步了解，可至 <a href=\"https://github.com/HenrikJoreteg/SimpleWebRTC\">SimpleWebRTC project</a>，針對 github 發出 Pull request 與檔案問題。</p>\n<h2><strong>未來展望<br />\n</strong></h2>\n<p>這些不過是剛開始。幫我們一起改善這個程式吧！</p>\n<p>我們希望看到更多的可能：</p>\n<ol start=\"1\">\n<li>往後能標準化所有發訊部位。一旦建立了標準，往後大家只要更改某些必要的部份，整體都不會有太大的問題。</li>\n<li>新支援視訊與音訊的暫停/恢復功能。</li>\n<li>讓大家知道目前正在發言的人，且一旦換人發言，即可發出事件以通知聊天室中的其他人。</li>\n<li>能更妥善控制後續需求的處理 (Handling)/拒絕 (Rejecting) 作業。</li>\n<li>以 <a title=\"HTML5\" href=\"https://developer.mozilla.org/en/html/html5\">HTML5</a> 的連線 API 為基礎，設定最大連線數。</li>\n</ol>\n<p>如果你針對這個程式做出有趣的東西、遇上任何問題，甚或想和我討論，都可以到我的 Twitter (<a href=\"http://twitter.com/henrikjoreteg\">@henrikjoreteg</a>) 上敲我。我隨時都很樂意聽到任何訊息。</p>\n<p>讓我們這些熱心的網民們，繼續提供有趣的網路小工具吧！</p>\n<p>英文原文: https://hacks.mozilla.org/2013/03/making-webrtc-simple-with-conversat-io/</p>\n<p>—</p>\n<p>作者介紹：</p>\n<p>Henrik Joreteg 是 &amp;yet 的合作夥伴，已經用十幾種方法撰寫了幾十種即時 App。他在 &amp;yet 上主持 And Bang，針對 JavaScript 與 HTML5 應用提供相關的諮詢和訓練服務。</p>\n<p>Robert 身為 Mozilla 的技術傳教士，並負責編輯 Mozilla Hacks 內的文章。</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
   "content_text": "接續文章：http://blog.mozilla.com.tw/posts/2152/ ——- 發訊伺服器 (Signaling server) 上面提到的範例，會連接到現成的發訊伺服器。這個是由我們自己維護的伺服器，且我們隨時都在注意其是否順暢運作。 我們的後續目標，是要讓大家都能透過這個伺服器而玩玩看 SimpleWebRTC。當然，我們以後並不會真正永久運轉這組伺服器，所以隨時會關閉或重新開機。 如果你要根據這組程式碼而實際建立 App，那你也可以自己運作 1 組伺服器。如果你不想再多接觸太麻煩的東西而且想隨時更新，我們也可以協助你運作或調整伺服器。這組伺服器的程式碼就放在 on github 。 在開始啟動自己的 webrtc 物件時，只要送出 1 組「url」選項，就可將 1 組URL 傳送至不同的 signaling server，作為 config 的一部分。 所以檯面下到底會做些什麼？ 你可以看看用戶端函式庫的完整原始碼： https://github.com/HenrikJoreteg/SimpleWebRTC/blob/master/simplewebrtc.js signaling server 的則是： https://github.com/andyet/signalmaster/blob/master/server.js 在 conversat.io 中啟動視訊電話的過程，應該要像這樣： 先連線至發訊伺服器。使用 socket.io 就會連至我們現成的發訊伺服器，位於： http://signaling.simplewebrtc.com:8888 針對 「具備個別瀏覽器前置字串的 getUserMedia」 ，在呼叫之後即可請求存取本端視訊相機。 建立或取得本端視訊元素，再將我們從 getUserMedia 所取得的串流，附加到視訊元素上即可。 firefox: element.mozSrcObject = stream; element.play(); 1 element . mozSrcObject = stream ; element . play ( ) ; webkit: element.autoplay = true; element.src = webkitURL.createObjectURL(stream); 1 2 element . autoplay = true ; element . src = webkitURL . createObjectURL ( stream ) ; 若 joinRoom 負責傳送 socket.io 訊息至發訊伺服器，則一旦呼叫此 joinRoom ，等於告知其所要連接的聊天室名稱。若聊天室不存在，則發訊伺服器將建立聊天室；若聊天室已存在，就會加入該聊天室。這裡我所說的「聊天室」，就是以聊天室名稱所聚集而成的特定 socket.io session ID。接著針對已連上聊天室的用戶端，我們即可廣播「加入/離開聊天室」的相關訊息。 在我們等其他人加入聊天室的時候，還可以順便玩一下 @fritzy 所撰寫的好玩火箭遊戲： 一旦有人加入這個聊天室，我們就會廣播告知其他已連線的使用者。而我們所建立的 Conversation 物件，其中將包含可連接雙方瀏覽器的 peerConnection。你可能已經猜到這個 peerConnection 所代表的，其實就是你和對方之間的連線。 針對新的 socket.io session ID，signaling server 將廣播給聊天室中的所有使用者。而進入聊天室中的其他人，各使用者的用戶端另將建立 Conversation 物件。 在此時，我們可以知道應連接哪位使用者，並可分別對他們的階段直接送出訊息。 現在我們使用 peerConnection 建立 1 組「offer」，儲存我們本端的「offer」之後，再於我們的 peerConnection 中將之設定為本端描述 (Local description)；其中的資訊，將說明其他用戶端是如何找到並溝通我們的瀏覽器。 只要用戶端接收到，且我們將「offer」新增至我們的 peerConnection 之後： 就會呼叫 peerConnection.createAnswer() 而產生 1 組應答，接著再將應答送回用戶端 (此用戶端為我們所取得「offer」的源頭)。 收到應答之後，我們將之設定為遠端描述 (Remote description)。接著再以類似方式建立/傳送 ICE Candidates。如此將會交涉 (Negotiate) 連線並連上我們。 如果這些過程順利，我們就會收到 peerConnection 所發出的 onaddstream 事件，接著即可建立視訊元素並附加上串流。此時應已開始執行視訊呼叫。 若要再進一步了解，可至 SimpleWebRTC project ，針對 github 發出 Pull request 與檔案問題。 未來展望 這些不過是剛開始。幫我們一起改善這個程式吧！ 我們希望看到更多的可能： 往後能標準化所有發訊部位。一旦建立了標準，往後大家只要更改某些必要的部份，整體都不會有太大的問題。 新支援視訊與音訊的暫停/恢復功能。 讓大家知道目前正在發言的人，且一旦換人發言，即可發出事件以通知聊天室中的其他人。 能更妥善控制後續需求的處理 (Handling)/拒絕 (Rejecting) 作業。 以 HTML5 的連線 API 為基礎，設定最大連線數。 如果你針對這個程式做出有趣的東西、遇上任何問題，甚或想和我討論，都可以到我的 Twitter ( @henrikjoreteg ) 上敲我。我隨時都很樂意聽到任何訊息。 讓我們這些熱心的網民們，繼續提供有趣的網路小工具吧！ 英文原文: https://hacks.mozilla.org/2013/03/making-webrtc-simple-with-conversat-io/ — 作者介紹： Henrik Joreteg 是 &yet 的合作夥伴，已經用十幾種方法撰寫了幾十種即時 App。他在 &yet 上主持 And Bang，針對 JavaScript 與 HTML5 應用提供相關的諮詢和訓練服務。 Robert 身為 Mozilla 的技術傳教士，並負責編輯 Mozilla Hacks 內的文章。",
-  "images": [],
+  "images": [
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/155-150x150.jpg",
+      "alt": "155",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/FB_151-150x150.jpg",
+      "alt": "FB_15",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/%E6%9C%AA%E5%91%BD%E5%90%8D.jpg",
+      "alt": "未命名",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/firefox-beta-011-150x150.png",
+      "alt": "firefox-beta-01",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/conversat.io_-150x150.png",
+      "alt": "conversat.io_",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/conversat.io_.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/155-150x150.jpg",
+      "alt": "155",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/FB_151-150x150.jpg",
+      "alt": "FB_15",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/%E6%9C%AA%E5%91%BD%E5%90%8D.jpg",
+      "alt": "未命名",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/firefox-beta-011-150x150.png",
+      "alt": "firefox-beta-01",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/conversat.io_-150x150.png",
+      "alt": "conversat.io_",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/conversat.io_.png",
+      "alt": "",
+      "kind": "image",
+      "source": "og:image"
+    }
+  ],
   "links": [
     {
       "url": "https://github.com/andyet/signalmaster",

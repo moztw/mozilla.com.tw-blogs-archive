@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/sharing_day_part-iii"
 archive_url: "https://web.archive.org/web/20170107084033id_/https://blog.mozilla.com.tw/events/sharing_day_part-iii"
 wayback_timestamp: "20170107084033"
 status: "ok"
-asset_status: "ok"
 ---
+
 地圖不可用
 
 	活動時間

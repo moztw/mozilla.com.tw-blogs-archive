@@ -9,33 +9,124 @@
     "Firefox OS",
     "Web App"
   ],
-  "tags": [
-    "Firefox OS",
-    "Web App"
-  ],
+  "tags": [],
   "author": "",
+  "page_type": "post",
   "original_url": "https://blog.mozilla.com.tw/?p=5130",
-  "archive_url": "https://web.archive.org/web/20201231235959id_/https://blog.mozilla.com.tw/?p=5130",
+  "archive_url": "https://web.archive.org/web/20201231235959/https://blog.mozilla.com.tw/posts/5130/creating-your-own-store",
   "wayback_timestamp": "20201231235959",
   "content_html": "<div class=\"entry-content close\">\n    <p>你是熱血的 Firefox OS 開發者，而且早已設計了許多 App 準備大展身手嗎？開發者除了能在 <a href=\"https://marketplace.firefox.com/\" target=\"_blank\">Firefox Marketplace</a> 上推銷自己的 App 之外，其實也能自己設立 App 商店。如果你想在自己的市集上推銷自己的 App，可先來看看這一篇概略說明，並讓自己的開發作業更順利。</p>\n<p style=\"text-align: center;\"><a href=\"https://marketplace.firefox.com/\"><img class=\"aligncenter  wp-image-5132\" alt=\"marketplacesubmit\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/marketplacesubmit-1024x574.jpg\" width=\"550\" height=\"308\" /></a></p>\n<p>任何 Web 網站若具備豐富的圖片與互動經驗，則 Web 瀏覽器可透過 Mozilla 的 App 專案平台，將這類網站識別為「Web App」，進而能跨裝置安裝並同步這些網站。開發者現可透過此項特性，將已發佈的 App 整理到目錄與商店中。接著說明相關步驟。</p>\n<h3></h3>\n<h3 id=\".E8.88.87.E7.80.8F.E8.A6.BD.E5.99.A8.E6.95.B4.E5.90.88\">與瀏覽器整合</h3>\n<p>App 平台即提供「<a title=\"Returns an Apps object you can use to install, manage, and control Open Web Apps in the browser.\" href=\"https://developer.mozilla.org/en-US/docs/Web/API/navigator.mozApps\"><code>navigator.mozApps</code></a>」這個 JavaScript 物件，可作為商店與瀏覽器之間的溝通橋樑。</p>\n<p>Web App 是根據其網域所辨識而得。而一個來源網域就只會有一個 App。針對目錄或商店，開發者可透過 <a href=\"https://developer.mozilla.org/en-US/Apps/Developing/JavaScript_API\">App Installation API 與 App Management API</a>，讓瀏覽器觸發 <a title=\"Triggers the installation of an app. During the installation process, the app is validated and the user is prompted to approve the installation.\" href=\"https://developer.mozilla.org/en-US/docs/Web/API/apps.install\"><code>apps.install</code></a> 函式並提示 App 的安裝作業，另提供 App 的 manifest 檔案網址，以及任何想要補充的後設資料 (metadata)。開發者可存取此筆後設資料，以查閱消費者的購買資訊、確認單一登入狀態 (SSO)，或其他服務。</p>\n<h4 id=\".E4.BD.BF.E7.94.A8_getInstalled()\">使用 getInstalled()</h4>\n<p>只要 App 是根據你的網域而安裝於目前的瀏覽器上，均可透過 <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/Apps.getInstalled\"><code>navigator.mozApps.getInstalled()</code></a> 函式取得此類 App 的清單。另請注意，開發者不會看到其他網域所安裝的 App，只會看到放在自己網域中的 App。</p>\n<p>開發者可透過此函式而了解消費者安裝的 App 是否符合你的預期。即使消費者是以新帳戶登入你的網站，亦可透過「resync」功能而再次安裝既有的 App。</p>\n<h3></h3>\n<h3 id=\".E5.88.B0.E5.BA.95.E8.A9.B2.E4.B8.8D.E8.A9.B2.E6.89.98.E7.AE.A1.EF.BC.9F\">到底該不該托管？</h3>\n<p>針對托管式 App，商店只需該網站的 manifest 網址，即可觸發 App 的安裝作業 (<a title=\"Triggers the installation of an app. During the installation process, the app is validated and the user is prompted to approve the installation.\" href=\"https://developer.mozilla.org/en-US/docs/Web/API/apps.install\"><code>apps.install</code></a>)。該 App 檔案不一定要儲存於商店或目錄之下。</p>\n<p>如果 App 沒有伺服器的邏輯元件 (也就是完全以用戶端 JavaScript、HTML、CSS 所建構的 App)，開發者就可能會想建構出托管功能。此時必須為各 App 指派不同的網域名稱，並針對各 App 的 manifest 檔案建構伺服邏輯，才能使用托管功能。</p>\n<p>如果你現在正自行托管 App 邏輯，則可輕鬆維護和消費者之間的會話 (Session)，進而追蹤消費者的喜好、購買證明，或其他服務。如果你要針對遠端網站提供服務，就必須完成額外作業，才能支援分散式的認證系統。</p>\n<p>&nbsp;</p>\n<blockquote><p><strong>注意：</strong><a href=\"http://firefox-marketplace-api.readthedocs.org/en/latest/\">Firefox Marketplace API</a> 內含的功能，讓開發者只耗費最小程度的心血，即可迅速設立自己的 App 商店。</p></blockquote>\n<p>&nbsp;</p>\n<p>Mozilla 開發者社群網站 (MDN) 原文連結：<a href=\"https://developer.mozilla.org/en-US/Marketplace/Publishing/Creating_a_store\" target=\"_blank\">Creating your own store</a></p>\n<p>你也可參閱中文版《<a href=\"https://developer.mozilla.org/zh-TW/docs/Mozilla/Marketplace/Publishing/Creating_a_store\" target=\"_blank\">設立自己的 App 商店</a>》；並參閱 MDN 的更多 Firefox OS 或 Marketplace 相關文章。</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
   "content_text": "你是熱血的 Firefox OS 開發者，而且早已設計了許多 App 準備大展身手嗎？開發者除了能在 Firefox Marketplace 上推銷自己的 App 之外，其實也能自己設立 App 商店。如果你想在自己的市集上推銷自己的 App，可先來看看這一篇概略說明，並讓自己的開發作業更順利。 任何 Web 網站若具備豐富的圖片與互動經驗，則 Web 瀏覽器可透過 Mozilla 的 App 專案平台，將這類網站識別為「Web App」，進而能跨裝置安裝並同步這些網站。開發者現可透過此項特性，將已發佈的 App 整理到目錄與商店中。接著說明相關步驟。 與瀏覽器整合 App 平台即提供「 navigator.mozApps 」這個 JavaScript 物件，可作為商店與瀏覽器之間的溝通橋樑。 Web App 是根據其網域所辨識而得。而一個來源網域就只會有一個 App。針對目錄或商店，開發者可透過 App Installation API 與 App Management API ，讓瀏覽器觸發 apps.install 函式並提示 App 的安裝作業，另提供 App 的 manifest 檔案網址，以及任何想要補充的後設資料 (metadata)。開發者可存取此筆後設資料，以查閱消費者的購買資訊、確認單一登入狀態 (SSO)，或其他服務。 使用 getInstalled() 只要 App 是根據你的網域而安裝於目前的瀏覽器上，均可透過 navigator.mozApps.getInstalled() 函式取得此類 App 的清單。另請注意，開發者不會看到其他網域所安裝的 App，只會看到放在自己網域中的 App。 開發者可透過此函式而了解消費者安裝的 App 是否符合你的預期。即使消費者是以新帳戶登入你的網站，亦可透過「resync」功能而再次安裝既有的 App。 到底該不該托管？ 針對托管式 App，商店只需該網站的 manifest 網址，即可觸發 App 的安裝作業 ( apps.install )。該 App 檔案不一定要儲存於商店或目錄之下。 如果 App 沒有伺服器的邏輯元件 (也就是完全以用戶端 JavaScript、HTML、CSS 所建構的 App)，開發者就可能會想建構出托管功能。此時必須為各 App 指派不同的網域名稱，並針對各 App 的 manifest 檔案建構伺服邏輯，才能使用托管功能。 如果你現在正自行托管 App 邏輯，則可輕鬆維護和消費者之間的會話 (Session)，進而追蹤消費者的喜好、購買證明，或其他服務。如果你要針對遠端網站提供服務，就必須完成額外作業，才能支援分散式的認證系統。 注意： Firefox Marketplace API 內含的功能，讓開發者只耗費最小程度的心血，即可迅速設立自己的 App 商店。 Mozilla 開發者社群網站 (MDN) 原文連結： Creating your own store 你也可參閱中文版《 設立自己的 App 商店 》；並參閱 MDN 的更多 Firefox OS 或 Marketplace 相關文章。",
   "images": [
     {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/marketplace_submit-150x150.jpg",
+      "alt": "marketplace_submit",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/vizicities-150x150.jpg",
+      "alt": "vizicities",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/marketplacesubmit-1024x574.jpg",
       "alt": "marketplacesubmit",
-      "post_id": 5130,
-      "page_type": "other",
-      "title": "Firefox Marketplace：設立自己的 App 商店",
-      "page_timestamp": "20201231235959",
-      "source": "img",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/marketplacesubmit-1024x574.jpg",
-      "archive_path": "assets/5130/wp-content/uploads/marketplacesubmit-1024x574.jpg",
-      "markdown_path": "../assets/5130/wp-content/uploads/marketplacesubmit-1024x574.jpg",
-      "wayback_timestamp": "20150915120134",
-      "asset_archive_url": "https://web.archive.org/web/20150915120134id_/http://blog.mozilla.com.tw/wp-content/uploads/marketplacesubmit-1024x574.jpg",
-      "content_type": "image/jpeg"
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Firefox-Marketplace-150x150.png",
+      "alt": "Firefox-Marketplace",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/find-the-movie-150x150.jpg",
+      "alt": "find the movie",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/marketplace_submit-150x150.jpg",
+      "alt": "marketplace_submit",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/vizicities-150x150.jpg",
+      "alt": "vizicities",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/marketplacesubmit-1024x574.jpg",
+      "alt": "marketplacesubmit",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Firefox-Marketplace-150x150.png",
+      "alt": "Firefox-Marketplace",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/find-the-movie-150x150.jpg",
+      "alt": "find the movie",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -81,25 +172,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
-  "asset_errors": [],
-  "media": [
-    {
-      "url": "https://blog.mozilla.com.tw/wp-content/uploads/marketplacesubmit-1024x574.jpg",
-      "alt": "marketplacesubmit",
-      "post_id": 5130,
-      "page_type": "other",
-      "title": "Firefox Marketplace：設立自己的 App 商店",
-      "page_timestamp": "20201231235959",
-      "source": "img",
-      "kind": "image",
-      "index": 0,
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/marketplacesubmit-1024x574.jpg",
-      "archive_path": "assets/5130/wp-content/uploads/marketplacesubmit-1024x574.jpg",
-      "markdown_path": "../assets/5130/wp-content/uploads/marketplacesubmit-1024x574.jpg",
-      "wayback_timestamp": "20150915120134",
-      "asset_archive_url": "https://web.archive.org/web/20150915120134id_/http://blog.mozilla.com.tw/wp-content/uploads/marketplacesubmit-1024x574.jpg",
-      "content_type": "image/jpeg"
-    }
-  ]
+  "asset_status": "skipped",
+  "asset_errors": []
 }

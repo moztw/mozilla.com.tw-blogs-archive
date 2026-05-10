@@ -8,27 +8,124 @@
   "categories": [
     "Firefox"
   ],
-  "tags": [
-    "Firefox"
-  ],
+  "tags": [],
   "author": "",
+  "page_type": "post",
   "original_url": "https://blog.mozilla.com.tw/?p=6824",
-  "archive_url": "https://web.archive.org/web/20201231235959id_/https://blog.mozilla.com.tw/?p=6824",
+  "archive_url": "https://web.archive.org/web/20201231235959/https://blog.mozilla.com.tw/posts/6824/using-polyfills",
   "wayback_timestamp": "20201231235959",
-  "content_html": "<div class=\"entry-content close\">\n    <p>自動補完函式庫 (即 Polyfill)，是讓舊版瀏覽器也能支援新程式碼的絕妙方法。但目前 polyfill 的使用方式實屬不易，我們《金融時報 (<a href=\"http://www.ft.com\">Financial Times</a>，FT)》則自行建構了新的服務，以期能更輕鬆的利用這類函式庫。希望你也能<a href=\"https://cdn.polyfill.io/\">一同使用</a>，並<a href=\"https://github.com/Financial-Times/polyfill-service\">協助改善</a>。</p>\n<div id=\"attachment_6826\" style=\"width: 560px\" class=\"wp-caption aligncenter\"><img class=\"wp-image-6826\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/unicorn.jpg\" alt=\"unicorn\" width=\"550\" height=\"275\" /><p class=\"wp-caption-text\">打個比方，一匹普通的馬裝上自動補完函式庫就成了獨角獸。</p></div>\n<h3>難題</h3>\n<p>我們想要解決的幾個問題：</p>\n<ul>\n<li>開發者不一定知道需補完哪項功能。往往是一堆使用者照樣沿用舊版 IE 載入網站之後，才發現整個網站根本沒用。這時輪到你開始除錯，設法找出是哪項功能出了問題。問題起源有時明顯好找，但大多數情況下都很難發現；而且舊版瀏覽器也往往缺乏新的開發者工具。</li>\n<li>每一種功能往往有多個補完函式庫可用，但不容易知道哪個函式庫可達到最佳效益。</li>\n<li>某些補完函式庫需搭配開發者用不到的一堆函式庫，才能提供完整的功能集 (如 ES6)。若需要修正某些很簡單的東西，應該不用將這些程式碼全數加入瀏覽器。</li>\n<li>較新版的瀏覽器可能不需要補完函式庫，但一般補完函式庫可用於所有瀏覽器。若只為了要改善舊版瀏覽器的相容性，卻會影響新版瀏覽器的效能。我們不想因此對效能妥協。只有在瀏覽器缺乏某項功能的原生實作時，我們才會提供補完函式庫。</li>\n</ul>\n<h3>我們的解決方案：自動補完函式庫當做一項服務</h3>\n<p>為了解決這些問題，我們建立了補完函式庫的服務。這個概念有點像驗光。先檢查你的眼睛，再針對視力問題配付合適的眼鏡。我們對瀏覽器執行類似的流程：</p>\n<ol>\n<li>開發者先在自己的頁面中插入指令碼標籤\r\n\t\t\t<span id=\"crayon-5602897c7012d234637551\" class=\"crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco\" style=\"font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;\"><span class=\"crayon-pre crayon-code\" style=\"font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><span class=\"crayon-o\">&lt;</span><span class=\"crayon-v\">script</span><span class=\"crayon-o\">&gt;</span></span></span>用來載入並執行此補完函式庫服務。</li>\n<li>該服務將分析瀏覽器的「user-agent」標頭，以及所需功能的清單 (或使用可補完的所有事項預設清單)，再列出此瀏覽器所需的補完函式庫清單。</li>\n<li>補完函式庫將透過拓撲排序，以根據相依性的次序完成排列。</li>\n<li>將此套件最小化並透過 CDN 提供 (感謝 Fastly 的支援)。</li>\n</ol>\n<p>我們真的需要這種解決方案嗎？看看「<a href=\"http://modernizr.com/\">Modernizr</a>」這個功能偵測大福袋是如何使用的吧！一般合理的情況都能透過自訂的 Modernizr 套件包解決。但是絕大部分的 Modernizr 使用者只用了預設版本，通常取自於 cdnjs.com 或 <a href=\"https://github.com/h5bp/html5-boilerplate/blob/master/src/index.html\">html5boilerplate 的一部分</a>。如果你根本用不到 Modernizr 的功能偵測，又何必把整個東西裝進來呢？或許你誤解了函式庫的功能，也把 Modernizr 當做只是「修理工具」？我必須承認，第一次聽到這個函式庫的名稱時就是這樣想。而且當我發現 Modernizr 只是用來偵測瀏覽器功能的新舊，而非真正補強整個瀏覽器所缺乏的功能時，心裡很是失望。</p>\n<p>從另一個方面來看，補完函式庫的服務其實就是修理工具。如果你不想耗時間只是初步了解舊款瀏覽器的小缺點，那也情有可原。只要讓其他人找出這些小缺點，則我們不需又耗時費力去了解細節，就能承接前人的工作成果也不錯。</p>\n<p>&nbsp;</p>\n<p>看到這裡，你是否對自動補完函式庫感興趣呢？可參閱原文內所提供的程式碼進一步了解！</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2014/11/an-easier-way-of-using-polyfills/\" target=\"_blank\">An easier way of using polyfills</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
+  "content_html": "<div class=\"entry-content close\">\n    <p>自動補完函式庫 (即 Polyfill)，是讓舊版瀏覽器也能支援新程式碼的絕妙方法。但目前 polyfill 的使用方式實屬不易，我們《金融時報 (<a href=\"http://www.ft.com\">Financial Times</a>，FT)》則自行建構了新的服務，以期能更輕鬆的利用這類函式庫。希望你也能<a href=\"https://cdn.polyfill.io/\">一同使用</a>，並<a href=\"https://github.com/Financial-Times/polyfill-service\">協助改善</a>。</p>\n<div id=\"attachment_6826\" style=\"width: 560px\" class=\"wp-caption aligncenter\"><img class=\"wp-image-6826\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/unicorn.jpg\" alt=\"unicorn\" width=\"550\" height=\"275\" /><p class=\"wp-caption-text\">打個比方，一匹普通的馬裝上自動補完函式庫就成了獨角獸。</p></div>\n<h3>難題</h3>\n<p>我們想要解決的幾個問題：</p>\n<ul>\n<li>開發者不一定知道需補完哪項功能。往往是一堆使用者照樣沿用舊版 IE 載入網站之後，才發現整個網站根本沒用。這時輪到你開始除錯，設法找出是哪項功能出了問題。問題起源有時明顯好找，但大多數情況下都很難發現；而且舊版瀏覽器也往往缺乏新的開發者工具。</li>\n<li>每一種功能往往有多個補完函式庫可用，但不容易知道哪個函式庫可達到最佳效益。</li>\n<li>某些補完函式庫需搭配開發者用不到的一堆函式庫，才能提供完整的功能集 (如 ES6)。若需要修正某些很簡單的東西，應該不用將這些程式碼全數加入瀏覽器。</li>\n<li>較新版的瀏覽器可能不需要補完函式庫，但一般補完函式庫可用於所有瀏覽器。若只為了要改善舊版瀏覽器的相容性，卻會影響新版瀏覽器的效能。我們不想因此對效能妥協。只有在瀏覽器缺乏某項功能的原生實作時，我們才會提供補完函式庫。</li>\n</ul>\n<h3>我們的解決方案：自動補完函式庫當做一項服務</h3>\n<p>為了解決這些問題，我們建立了補完函式庫的服務。這個概念有點像驗光。先檢查你的眼睛，再針對視力問題配付合適的眼鏡。我們對瀏覽器執行類似的流程：</p>\n<ol>\n<li>開發者先在自己的頁面中插入指令碼標籤\n\t\t\t<span id=\"crayon-5602897c7012d234637551\" class=\"crayon-syntax crayon-syntax-inline  crayon-theme-arduino-ide crayon-theme-arduino-ide-inline crayon-font-monaco\" style=\"font-size: 12px !important; line-height: 15px !important;font-size: 12px !important;\"><span class=\"crayon-pre crayon-code\" style=\"font-size: 12px !important; line-height: 15px !important;font-size: 12px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><span class=\"crayon-o\">&lt;</span><span class=\"crayon-v\">script</span><span class=\"crayon-o\">&gt;</span></span></span>用來載入並執行此補完函式庫服務。</li>\n<li>該服務將分析瀏覽器的「user-agent」標頭，以及所需功能的清單 (或使用可補完的所有事項預設清單)，再列出此瀏覽器所需的補完函式庫清單。</li>\n<li>補完函式庫將透過拓撲排序，以根據相依性的次序完成排列。</li>\n<li>將此套件最小化並透過 CDN 提供 (感謝 Fastly 的支援)。</li>\n</ol>\n<p>我們真的需要這種解決方案嗎？看看「<a href=\"http://modernizr.com/\">Modernizr</a>」這個功能偵測大福袋是如何使用的吧！一般合理的情況都能透過自訂的 Modernizr 套件包解決。但是絕大部分的 Modernizr 使用者只用了預設版本，通常取自於 cdnjs.com 或 <a href=\"https://github.com/h5bp/html5-boilerplate/blob/master/src/index.html\">html5boilerplate 的一部分</a>。如果你根本用不到 Modernizr 的功能偵測，又何必把整個東西裝進來呢？或許你誤解了函式庫的功能，也把 Modernizr 當做只是「修理工具」？我必須承認，第一次聽到這個函式庫的名稱時就是這樣想。而且當我發現 Modernizr 只是用來偵測瀏覽器功能的新舊，而非真正補強整個瀏覽器所缺乏的功能時，心裡很是失望。</p>\n<p>從另一個方面來看，補完函式庫的服務其實就是修理工具。如果你不想耗時間只是初步了解舊款瀏覽器的小缺點，那也情有可原。只要讓其他人找出這些小缺點，則我們不需又耗時費力去了解細節，就能承接前人的工作成果也不錯。</p>\n<p>&nbsp;</p>\n<p>看到這裡，你是否對自動補完函式庫感興趣呢？可參閱原文內所提供的程式碼進一步了解！</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2014/11/an-easier-way-of-using-polyfills/\" target=\"_blank\">An easier way of using polyfills</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
   "content_text": "自動補完函式庫 (即 Polyfill)，是讓舊版瀏覽器也能支援新程式碼的絕妙方法。但目前 polyfill 的使用方式實屬不易，我們《金融時報 ( Financial Times ，FT)》則自行建構了新的服務，以期能更輕鬆的利用這類函式庫。希望你也能 一同使用 ，並 協助改善 。 打個比方，一匹普通的馬裝上自動補完函式庫就成了獨角獸。 難題 我們想要解決的幾個問題： 開發者不一定知道需補完哪項功能。往往是一堆使用者照樣沿用舊版 IE 載入網站之後，才發現整個網站根本沒用。這時輪到你開始除錯，設法找出是哪項功能出了問題。問題起源有時明顯好找，但大多數情況下都很難發現；而且舊版瀏覽器也往往缺乏新的開發者工具。 每一種功能往往有多個補完函式庫可用，但不容易知道哪個函式庫可達到最佳效益。 某些補完函式庫需搭配開發者用不到的一堆函式庫，才能提供完整的功能集 (如 ES6)。若需要修正某些很簡單的東西，應該不用將這些程式碼全數加入瀏覽器。 較新版的瀏覽器可能不需要補完函式庫，但一般補完函式庫可用於所有瀏覽器。若只為了要改善舊版瀏覽器的相容性，卻會影響新版瀏覽器的效能。我們不想因此對效能妥協。只有在瀏覽器缺乏某項功能的原生實作時，我們才會提供補完函式庫。 我們的解決方案：自動補完函式庫當做一項服務 為了解決這些問題，我們建立了補完函式庫的服務。這個概念有點像驗光。先檢查你的眼睛，再針對視力問題配付合適的眼鏡。我們對瀏覽器執行類似的流程： 開發者先在自己的頁面中插入指令碼標籤 < script > 用來載入並執行此補完函式庫服務。 該服務將分析瀏覽器的「user-agent」標頭，以及所需功能的清單 (或使用可補完的所有事項預設清單)，再列出此瀏覽器所需的補完函式庫清單。 補完函式庫將透過拓撲排序，以根據相依性的次序完成排列。 將此套件最小化並透過 CDN 提供 (感謝 Fastly 的支援)。 我們真的需要這種解決方案嗎？看看「 Modernizr 」這個功能偵測大福袋是如何使用的吧！一般合理的情況都能透過自訂的 Modernizr 套件包解決。但是絕大部分的 Modernizr 使用者只用了預設版本，通常取自於 cdnjs.com 或 html5boilerplate 的一部分 。如果你根本用不到 Modernizr 的功能偵測，又何必把整個東西裝進來呢？或許你誤解了函式庫的功能，也把 Modernizr 當做只是「修理工具」？我必須承認，第一次聽到這個函式庫的名稱時就是這樣想。而且當我發現 Modernizr 只是用來偵測瀏覽器功能的新舊，而非真正補強整個瀏覽器所缺乏的功能時，心裡很是失望。 從另一個方面來看，補完函式庫的服務其實就是修理工具。如果你不想耗時間只是初步了解舊款瀏覽器的小缺點，那也情有可原。只要讓其他人找出這些小缺點，則我們不需又耗時費力去了解細節，就能承接前人的工作成果也不錯。 看到這裡，你是否對自動補完函式庫感興趣呢？可參閱原文內所提供的程式碼進一步了解！ 原文連結： An easier way of using polyfills",
   "images": [
     {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/b2g-desktop-150x150.png",
+      "alt": "b2g-desktop",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/DSC_0580-150x150.jpg",
+      "alt": "DSC_0580",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/unicorn.jpg",
       "alt": "unicorn",
-      "fallback_url": "https://blog.mozilla.com.tw/wp-content/uploads/unicorn.jpg",
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/unicorn.jpg",
-      "archive_path": "assets/6824/wp-content/uploads/unicorn.jpg",
-      "markdown_path": "../assets/6824/wp-content/uploads/unicorn.jpg",
-      "wayback_timestamp": "20150326070002",
-      "asset_archive_url": "https://web.archive.org/web/20150326070002id_/https://blog.mozilla.com.tw/wp-content/uploads/unicorn.jpg",
-      "content_type": "image/jpeg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Firefox-Marketplace-150x150.png",
+      "alt": "Firefox-Marketplace",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/robot1.jpg",
+      "alt": "robot",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/b2g-desktop-150x150.png",
+      "alt": "b2g-desktop",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/DSC_0580-150x150.jpg",
+      "alt": "DSC_0580",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/unicorn.jpg",
+      "alt": "unicorn",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/Firefox-Marketplace-150x150.png",
+      "alt": "Firefox-Marketplace",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/robot1.jpg",
+      "alt": "robot",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -58,20 +155,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
-  "asset_errors": [],
-  "media": [
-    {
-      "url": "https://blog.mozilla.com.tw/wp-content/uploads/unicorn.jpg",
-      "alt": "unicorn",
-      "fallback_url": "https://blog.mozilla.com.tw/wp-content/uploads/unicorn.jpg",
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/unicorn.jpg",
-      "archive_path": "assets/6824/wp-content/uploads/unicorn.jpg",
-      "markdown_path": "../assets/6824/wp-content/uploads/unicorn.jpg",
-      "wayback_timestamp": "20150326070002",
-      "asset_archive_url": "https://web.archive.org/web/20150326070002id_/https://blog.mozilla.com.tw/wp-content/uploads/unicorn.jpg",
-      "content_type": "image/jpeg",
-      "fallback_reason": "same_directory_wordpress_size_variant"
-    }
-  ]
+  "asset_status": "skipped",
+  "asset_errors": []
 }

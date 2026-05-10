@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/sharing_day"
 archive_url: "https://web.archive.org/web/20170107113214id_/https://blog.mozilla.com.tw/events/sharing_day"
 wayback_timestamp: "20170107113214"
 status: "ok"
-asset_status: "ok"
 ---
+
 地圖加載中...   			
 		
    		

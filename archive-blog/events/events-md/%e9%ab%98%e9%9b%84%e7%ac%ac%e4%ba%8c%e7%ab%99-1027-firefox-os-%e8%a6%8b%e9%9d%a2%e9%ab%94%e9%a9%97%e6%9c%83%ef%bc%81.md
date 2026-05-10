@@ -6,8 +6,8 @@ original_url: "https://blog.mozilla.com.tw/events/%e9%ab%98%e9%9b%84%e7%ac%ac%e4
 archive_url: "https://web.archive.org/web/20160901183419id_/https://blog.mozilla.com.tw/events/%e9%ab%98%e9%9b%84%e7%ac%ac%e4%ba%8c%e7%ab%99-1027-firefox-os-%e8%a6%8b%e9%9d%a2%e9%ab%94%e9%a9%97%e6%9c%83%ef%bc%81"
 wayback_timestamp: "20160901183419"
 status: "ok"
-asset_status: "partial_assets_failed"
 ---
+
 地圖不可用
 
 	活動時間
@@ -37,7 +37,3 @@ asset_status: "partial_assets_failed"
 地點：黃金愛河 (愛河河畔，電影圖書館旁，詳細位置請見地圖圖示 B 點)
 
 [立馬報名點選此處](https://docs.google.com/spreadsheet/viewform?formkey=dHVPQXE4ZThGS2JZbDJKbDl1MkQwX1E6MQ#gid=0)
-
-[![](../assets/uploads/297712_180373588698999_4318342_n.jpg)](http://blog.mozilla.com.tw/?attachment_id=1340#main)
-
-[![](../assets/uploads/20120929_212508.jpg)](http://blog.mozilla.com.tw/?attachment_id=1342#main)

@@ -8,45 +8,280 @@
   "categories": [
     "Firefox"
   ],
-  "tags": [
-    "Firefox"
-  ],
+  "tags": [],
   "author": "",
+  "page_type": "post",
   "original_url": "https://blog.mozilla.com.tw/?p=7764",
-  "archive_url": "https://web.archive.org/web/20190824011143id_/https://blog.mozilla.com.tw/?p=7764",
-  "wayback_timestamp": "20190824011143",
-  "content_html": "<div class=\"entry-content close\">\n    <p>〈Trainspotting〉系列文章將重點提示 Firefox 最新版本的已上線功能。Firefox 現固定每六個星期釋出新版本，而我們稱此種模式為「Release trains」。</p>\n<hr />\n<p>&nbsp;</p>\n<p>新版 Firefox 就如同大型噴射機一樣再度起飛！來看看哪些有趣的新東西可給使用者與開發者享受的吧。</p>\n<p>若要完整知道相關細節，請參閱 <a href=\"https://www.mozilla.org/en-US/firefox/40.0/releasenotes/\">Firefox 40 版本說明</a><em>。</em></p>\n<h4>開發者工具</h4>\n<p>你可曾在「檢測器 (Inspector)」中找到自己需要的東西，卻不知道位在網頁的何處嗎？現在可透過檢測器中的「Markup View」，直接捲動找到所需的元素：</p>\n<p><img class=\"aligncenter wp-image-7765\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/scroll-into-view.gif\" alt=\"scroll-into-view\" width=\"590\" height=\"393\" /></p>\n<p>&nbsp;</p>\n<p>透過 CSS 規則篩選，可更輕鬆找出複雜的樣式表 (Stylesheets)：</p>\n<p><img class=\"aligncenter wp-image-7766\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/css-filtered-1024x665.png\" alt=\"css-filtered\" width=\"590\" height=\"383\" /></p>\n<p>&nbsp;</p>\n<p>在「規則 (Rule)」檢視面板中，只要按住 Shift 再於色彩之上點擊滑鼠，就能看到色彩的呈現方式：</p>\n<p><img class=\"aligncenter size-full wp-image-7767\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/color-rotate.gif\" alt=\"color-rotate\" width=\"500\" height=\"100\" /></p>\n<p>&nbsp;</p>\n<p>若在 return 陳述式之後有任何程式碼，「網頁主控台 (Web Console)」將警告有某段執行不到 (Unreachable) 的程式碼。</p>\n<p><img class=\"aligncenter wp-image-7768\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/unreachable-1024x42.png\" alt=\"unreachable\" width=\"590\" height=\"24\" /></p>\n<p>&nbsp;</p>\n<p>開發者工具另加入了強大的「Performance」效能分析工具集，並已透過<a href=\"http://blog.mozilla.com.tw/posts/7600/\">此篇文章</a>搭配 Firefox 40 開發者工具來展示相關範例。</p>\n<h4>已簽署的附加元件</h4>\n<p><img class=\"aligncenter wp-image-7769\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/extension-warning.png\" alt=\"extension-warning\" width=\"590\" height=\"300\" /></p>\n<p>對所有瀏覽器來說，惡意的擴充套件一直是揮之不去的問題。因為 Firefox 附加元件 (Add-on) 功能強大，所以應該要有更好的方式保護使用者，避免惡意程式碼自行偷跑。而從 Firefox 42 開始，所有 Firefox 附加元件都<strong>必須</strong>完成簽署，才得以讓消費者安裝。在目前的 Firefox 40 中，使用者會收到未簽署擴充套件的警示，但仍可繼續逕自安裝。你可以進一步了解<a href=\"https://blog.mozilla.org/addons/2015/04/15/the-case-for-extension-signing/\">為何需要簽署擴充套件</a>，並透過<a href=\"https://wiki.mozilla.org/Addons/Extension_Signing\">整體規劃</a>來產出已簽署的擴充套件。</p>\n<h4>offsetX 與 offsetY 事件</h4>\n<p>有時候好東西就是好東西，即便耗時 <a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=69787\">14 年</a>也還是好東西！Firefox 現可支援<a href=\"https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent\">MouseEvents</a> 的 <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/offsetX\">offsetX</a> 與 <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/offsetX\">offsetY</a> 屬性。往後只要是滑鼠於網頁元素中的位移事件，能更容易透過程式碼進行追蹤，而不用先取得該元素在網頁中的位置。一如既往，應先執行功能檢查以確保程式碼可跨瀏覽器運作：</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-55fd292122a9e175902730\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nel.addEventListener(function (e) {\r\n  var x, y;\r\n  if ('offsetX' in e) {\r\n     x = e.offsetX;\r\n     y = e.offsetY;\r\n  } else {\r\n    // addition needed for every offsetParent up the chain\r\n    x = e.clientX + e.target.offsetLeft /* ... */;\r\n    y = e.clientY + e.target.offsetTop /* ... */;\r\n  }\r\n  addGlitterMouseTrails(x, y);\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-55fd292122a9e175902730-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55fd292122a9e175902730-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-55fd292122a9e175902730-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55fd292122a9e175902730-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-55fd292122a9e175902730-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55fd292122a9e175902730-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-55fd292122a9e175902730-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55fd292122a9e175902730-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-55fd292122a9e175902730-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55fd292122a9e175902730-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-55fd292122a9e175902730-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-55fd292122a9e175902730-12\">12</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-55fd292122a9e175902730-1\"><span class=\"crayon-v\">el</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">addEventListener</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55fd292122a9e175902730-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">x</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">y</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-55fd292122a9e175902730-3\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'offsetX'</span><span class=\"crayon-h\"> </span><span class=\"crayon-st\">in</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55fd292122a9e175902730-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class=\"crayon-v\">x</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">offsetX</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-55fd292122a9e175902730-5\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class=\"crayon-v\">y</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">offsetY</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55fd292122a9e175902730-6\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span><span class=\"crayon-h\"> </span><span class=\"crayon-st\">else</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-55fd292122a9e175902730-7\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// addition needed for every offsetParent up the chain</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55fd292122a9e175902730-8\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">x</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">clientX</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">+</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">target</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">offsetLeft</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">/* ... */</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-55fd292122a9e175902730-9\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">y</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">clientY</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">+</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">target</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">offsetTop</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">/* ... */</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55fd292122a9e175902730-10\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-55fd292122a9e175902730-11\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-e\">addGlitterMouseTrails</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">x</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">y</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-55fd292122a9e175902730-12\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0036 seconds] -->\r\n<p></p>\n<h4>還沒完呢！</h4>\n<p>新版本 Firefox 釋出之前，往往先修正了許多錯誤並進行多項更正，只為了提供更好的瀏覽與開發經驗 (我當然只舉出其中兩個例子而已)。最後要提到 <a href=\"https://blog.mozilla.org/community/2015/08/10/firefox-40-new-contributors/\">55 名首次貢獻此版本 Firefox 的開發者</a>，而且其中 49 位還是真正第一次加入的貢獻者。謝謝大家！</p>\n<p>若要了解所有細節，請參閱<a href=\"https://developer.mozilla.org/en-US/Firefox/Releases/40\">開發者 (Developer) 版本說明</a>，也有<a href=\"https://bugzilla.mozilla.org/buglist.cgi?j_top=OR&amp;f1=target_milestone&amp;o3=equals&amp;v3=Firefox%2040&amp;o1=equals&amp;resolution=FIXED&amp;o2=anyexact&amp;query_format=advanced&amp;f3=target_milestone&amp;f2=cf_status_firefox40&amp;bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;bug_status=CLOSED&amp;v1=mozilla40&amp;v2=fixed%2Cverified&amp;limit=0\">已修復錯誤的完整清單</a>。祝瀏覽愉快！</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://hacks.mozilla.org/2015/08/trainspotting-firefox-40/\" target=\"_blank\">Trainspotting: Firefox 40</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
+  "archive_url": "https://web.archive.org/web/20160730151018/https://blog.mozilla.com.tw/posts/7764/trainspotting-firefox-40",
+  "wayback_timestamp": "20160730151018",
+  "content_html": "<div class=\"entry-content close\">\n    <p>〈Trainspotting〉系列文章將重點提示 Firefox 最新版本的已上線功能。Firefox 現固定每六個星期釋出新版本，而我們稱此種模式為「Release trains」。</p>\n<hr/>\n<p>&nbsp;</p>\n<p>新版 Firefox 就如同大型噴射機一樣再度起飛！來看看哪些有趣的新東西可給使用者與開發者享受的吧。</p>\n<p>若要完整知道相關細節，請參閱 <a href=\"https://web.archive.org/web/20160730151018/https://www.mozilla.org/en-US/firefox/40.0/releasenotes/\">Firefox 40 版本說明</a><em>。</em></p>\n<h4>開發者工具</h4>\n<p>你可曾在「檢測器 (Inspector)」中找到自己需要的東西，卻不知道位在網頁的何處嗎？現在可透過檢測器中的「Markup View」，直接捲動找到所需的元素：</p>\n<p><img class=\"aligncenter wp-image-7765\" src=\"https://web.archive.org/web/20160730151018im_/http://blog.mozilla.com.tw/wp-content/uploads/scroll-into-view.gif\" alt=\"scroll-into-view\" width=\"590\" height=\"393\"/></p>\n<p>&nbsp;</p>\n<p>透過 CSS 規則篩選，可更輕鬆找出複雜的樣式表 (Stylesheets)：</p>\n<p><img class=\"aligncenter wp-image-7766\" src=\"https://web.archive.org/web/20160730151018im_/http://blog.mozilla.com.tw/wp-content/uploads/css-filtered-1024x665.png\" alt=\"css-filtered\" width=\"590\" height=\"383\" srcset=\"https://web.archive.org/web/20160730151018im_/http://blog.mozilla.com.tw/wp-content/uploads/css-filtered-300x195.png 300w, https://web.archive.org/web/20160730151018im_/http://blog.mozilla.com.tw/wp-content/uploads/css-filtered-1024x665.png 1024w, https://web.archive.org/web/20160730151018im_/http://blog.mozilla.com.tw/wp-content/uploads/css-filtered.png 1176w\" sizes=\"(max-width: 590px) 100vw, 590px\"/></p>\n<p>&nbsp;</p>\n<p>在「規則 (Rule)」檢視面板中，只要按住 Shift 再於色彩之上點擊滑鼠，就能看到色彩的呈現方式：</p>\n<p><img class=\"aligncenter size-full wp-image-7767\" src=\"https://web.archive.org/web/20160730151018im_/http://blog.mozilla.com.tw/wp-content/uploads/color-rotate.gif\" alt=\"color-rotate\" width=\"500\" height=\"100\"/></p>\n<p>&nbsp;</p>\n<p>若在 return 陳述式之後有任何程式碼，「網頁主控台 (Web Console)」將警告有某段執行不到 (Unreachable) 的程式碼。</p>\n<p><img class=\"aligncenter wp-image-7768\" src=\"https://web.archive.org/web/20160730151018im_/http://blog.mozilla.com.tw/wp-content/uploads/unreachable-1024x42.png\" alt=\"unreachable\" width=\"590\" height=\"24\" srcset=\"https://web.archive.org/web/20160730151018im_/http://blog.mozilla.com.tw/wp-content/uploads/unreachable-300x12.png 300w, https://web.archive.org/web/20160730151018im_/http://blog.mozilla.com.tw/wp-content/uploads/unreachable-1024x42.png 1024w, https://web.archive.org/web/20160730151018im_/http://blog.mozilla.com.tw/wp-content/uploads/unreachable.png 1072w\" sizes=\"(max-width: 590px) 100vw, 590px\"/></p>\n<p>&nbsp;</p>\n<p>開發者工具另加入了強大的「Performance」效能分析工具集，並已透過<a href=\"https://web.archive.org/web/20160730151018/http://blog.mozilla.com.tw/posts/7600/\">此篇文章</a>搭配 Firefox 40 開發者工具來展示相關範例。</p>\n<h4>已簽署的附加元件</h4>\n<p><img class=\"aligncenter wp-image-7769\" src=\"https://web.archive.org/web/20160730151018im_/http://blog.mozilla.com.tw/wp-content/uploads/extension-warning.png\" alt=\"extension-warning\" width=\"590\" height=\"300\" srcset=\"https://web.archive.org/web/20160730151018im_/http://blog.mozilla.com.tw/wp-content/uploads/extension-warning-300x153.png 300w, https://web.archive.org/web/20160730151018im_/http://blog.mozilla.com.tw/wp-content/uploads/extension-warning.png 806w\" sizes=\"(max-width: 590px) 100vw, 590px\"/></p>\n<p>對所有瀏覽器來說，惡意的擴充套件一直是揮之不去的問題。因為 Firefox 附加元件 (Add-on) 功能強大，所以應該要有更好的方式保護使用者，避免惡意程式碼自行偷跑。而從 Firefox 42 開始，所有 Firefox 附加元件都<strong>必須</strong>完成簽署，才得以讓消費者安裝。在目前的 Firefox 40 中，使用者會收到未簽署擴充套件的警示，但仍可繼續逕自安裝。你可以進一步了解<a href=\"https://web.archive.org/web/20160730151018/https://blog.mozilla.org/addons/2015/04/15/the-case-for-extension-signing/\">為何需要簽署擴充套件</a>，並透過<a href=\"https://web.archive.org/web/20160730151018/https://wiki.mozilla.org/Addons/Extension_Signing\">整體規劃</a>來產出已簽署的擴充套件。</p>\n<h4>offsetX 與 offsetY 事件</h4>\n<p>有時候好東西就是好東西，即便耗時 <a href=\"https://web.archive.org/web/20160730151018/https://bugzilla.mozilla.org/show_bug.cgi?id=69787\">14 年</a>也還是好東西！Firefox 現可支援<a href=\"https://web.archive.org/web/20160730151018/https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent\">MouseEvents</a> 的 <a href=\"https://web.archive.org/web/20160730151018/https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/offsetX\">offsetX</a> 與 <a href=\"https://web.archive.org/web/20160730151018/https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/offsetX\">offsetY</a> 屬性。往後只要是滑鼠於網頁元素中的位移事件，能更容易透過程式碼進行追蹤，而不用先取得該元素在網頁中的位置。一如既往，應先執行功能檢查以確保程式碼可跨瀏覽器運作：</p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-579cc35b40b0d896228010\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nel.addEventListener(function (e) {\n  var x, y;\n  if ('offsetX' in e) {\n     x = e.offsetX;\n     y = e.offsetY;\n  } else {\n    // addition needed for every offsetParent up the chain\n    x = e.clientX + e.target.offsetLeft /* ... */;\n    y = e.clientY + e.target.offsetTop /* ... */;\n  }\n  addGlitterMouseTrails(x, y);\n}</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-579cc35b40b0d896228010-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579cc35b40b0d896228010-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-579cc35b40b0d896228010-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579cc35b40b0d896228010-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-579cc35b40b0d896228010-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579cc35b40b0d896228010-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-579cc35b40b0d896228010-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579cc35b40b0d896228010-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-579cc35b40b0d896228010-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579cc35b40b0d896228010-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-579cc35b40b0d896228010-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579cc35b40b0d896228010-12\">12</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-579cc35b40b0d896228010-1\"><span class=\"crayon-v\">el</span><span class=\"crayon-sy\">.</span><span class=\"crayon-e\">addEventListener</span><span class=\"crayon-sy\">(</span><span class=\"crayon-t\">function</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579cc35b40b0d896228010-2\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-t\">var</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">x</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">y</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-579cc35b40b0d896228010-3\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-st\">if</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">'offsetX'</span><span class=\"crayon-h\"> </span><span class=\"crayon-st\">in</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579cc35b40b0d896228010-4\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class=\"crayon-v\">x</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">offsetX</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-579cc35b40b0d896228010-5\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp; </span><span class=\"crayon-v\">y</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">offsetY</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579cc35b40b0d896228010-6\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span><span class=\"crayon-h\"> </span><span class=\"crayon-st\">else</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-579cc35b40b0d896228010-7\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-c\">// addition needed for every offsetParent up the chain</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579cc35b40b0d896228010-8\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">x</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">clientX</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">+</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">target</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">offsetLeft</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">/* ... */</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-579cc35b40b0d896228010-9\"><span class=\"crayon-h\">&nbsp;&nbsp;&nbsp;&nbsp;</span><span class=\"crayon-v\">y</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">clientY</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">+</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">e</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">target</span><span class=\"crayon-sy\">.</span><span class=\"crayon-v\">offsetTop</span><span class=\"crayon-h\"> </span><span class=\"crayon-c\">/* ... */</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579cc35b40b0d896228010-10\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-579cc35b40b0d896228010-11\"><span class=\"crayon-h\">&nbsp;&nbsp;</span><span class=\"crayon-e\">addGlitterMouseTrails</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">x</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">y</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579cc35b40b0d896228010-12\"><span class=\"crayon-sy\">}</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0074 seconds] -->\n<p></p>\n<h4>還沒完呢！</h4>\n<p>新版本 Firefox 釋出之前，往往先修正了許多錯誤並進行多項更正，只為了提供更好的瀏覽與開發經驗 (我當然只舉出其中兩個例子而已)。最後要提到 <a href=\"https://web.archive.org/web/20160730151018/https://blog.mozilla.org/community/2015/08/10/firefox-40-new-contributors/\">55 名首次貢獻此版本 Firefox 的開發者</a>，而且其中 49 位還是真正第一次加入的貢獻者。謝謝大家！</p>\n<p>若要了解所有細節，請參閱<a href=\"https://web.archive.org/web/20160730151018/https://developer.mozilla.org/en-US/Firefox/Releases/40\">開發者 (Developer) 版本說明</a>，也有<a href=\"https://web.archive.org/web/20160730151018/https://bugzilla.mozilla.org/buglist.cgi?j_top=OR&amp;f1=target_milestone&amp;o3=equals&amp;v3=Firefox%2040&amp;o1=equals&amp;resolution=FIXED&amp;o2=anyexact&amp;query_format=advanced&amp;f3=target_milestone&amp;f2=cf_status_firefox40&amp;bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;bug_status=CLOSED&amp;v1=mozilla40&amp;v2=fixed%2Cverified&amp;limit=0\">已修復錯誤的完整清單</a>。祝瀏覽愉快！</p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n<p>原文連結：<a href=\"https://web.archive.org/web/20160730151018/https://hacks.mozilla.org/2015/08/trainspotting-firefox-40/\" target=\"_blank\">Trainspotting: Firefox 40</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
   "content_text": "〈Trainspotting〉系列文章將重點提示 Firefox 最新版本的已上線功能。Firefox 現固定每六個星期釋出新版本，而我們稱此種模式為「Release trains」。 新版 Firefox 就如同大型噴射機一樣再度起飛！來看看哪些有趣的新東西可給使用者與開發者享受的吧。 若要完整知道相關細節，請參閱 Firefox 40 版本說明 。 開發者工具 你可曾在「檢測器 (Inspector)」中找到自己需要的東西，卻不知道位在網頁的何處嗎？現在可透過檢測器中的「Markup View」，直接捲動找到所需的元素： 透過 CSS 規則篩選，可更輕鬆找出複雜的樣式表 (Stylesheets)： 在「規則 (Rule)」檢視面板中，只要按住 Shift 再於色彩之上點擊滑鼠，就能看到色彩的呈現方式： 若在 return 陳述式之後有任何程式碼，「網頁主控台 (Web Console)」將警告有某段執行不到 (Unreachable) 的程式碼。 開發者工具另加入了強大的「Performance」效能分析工具集，並已透過 此篇文章 搭配 Firefox 40 開發者工具來展示相關範例。 已簽署的附加元件 對所有瀏覽器來說，惡意的擴充套件一直是揮之不去的問題。因為 Firefox 附加元件 (Add-on) 功能強大，所以應該要有更好的方式保護使用者，避免惡意程式碼自行偷跑。而從 Firefox 42 開始，所有 Firefox 附加元件都 必須 完成簽署，才得以讓消費者安裝。在目前的 Firefox 40 中，使用者會收到未簽署擴充套件的警示，但仍可繼續逕自安裝。你可以進一步了解 為何需要簽署擴充套件 ，並透過 整體規劃 來產出已簽署的擴充套件。 offsetX 與 offsetY 事件 有時候好東西就是好東西，即便耗時 14 年 也還是好東西！Firefox 現可支援 MouseEvents 的 offsetX 與 offsetY 屬性。往後只要是滑鼠於網頁元素中的位移事件，能更容易透過程式碼進行追蹤，而不用先取得該元素在網頁中的位置。一如既往，應先執行功能檢查以確保程式碼可跨瀏覽器運作： el.addEventListener(function (e) { var x, y; if ('offsetX' in e) { x = e.offsetX; y = e.offsetY; } else { // addition needed for every offsetParent up the chain x = e.clientX + e.target.offsetLeft /* ... */; y = e.clientY + e.target.offsetTop /* ... */; } addGlitterMouseTrails(x, y); } 1 2 3 4 5 6 7 8 9 10 11 12 el . addEventListener ( function ( e ) { var x , y ; if ( 'offsetX' in e ) { x = e . offsetX ; y = e . offsetY ; } else { // addition needed for every offsetParent up the chain x = e . clientX + e . target . offsetLeft /* ... */ ; y = e . clientY + e . target . offsetTop /* ... */ ; } addGlitterMouseTrails ( x , y ) ; } 還沒完呢！ 新版本 Firefox 釋出之前，往往先修正了許多錯誤並進行多項更正，只為了提供更好的瀏覽與開發經驗 (我當然只舉出其中兩個例子而已)。最後要提到 55 名首次貢獻此版本 Firefox 的開發者 ，而且其中 49 位還是真正第一次加入的貢獻者。謝謝大家！ 若要了解所有細節，請參閱 開發者 (Developer) 版本說明 ，也有 已修復錯誤的完整清單 。祝瀏覽愉快！ 原文連結： Trainspotting: Firefox 40",
   "images": [
     {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20160730151018im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/w10-en-150x150.jpg",
+      "alt": "w10-en",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/w10-en-50x50.jpg",
+      "alt": "w10-en",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/tp-pbm-start-page-small-FINAL-150x150.jpg",
+      "alt": "tp-pbm-start-page-small-FINAL",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/tp-pbm-start-page-small-FINAL-50x50.jpg",
+      "alt": "tp-pbm-start-page-small-FINAL",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/scroll-into-view.gif",
       "alt": "scroll-into-view",
-      "archive_path": "assets/7764/wp-content/uploads/scroll-into-view.gif",
-      "markdown_path": "../assets/7764/wp-content/uploads/scroll-into-view.gif"
+      "kind": "image",
+      "source": "img"
     },
     {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/css-filtered-1024x665.png",
       "alt": "css-filtered",
-      "archive_path": "assets/7764/wp-content/uploads/css-filtered-1024x665.png",
-      "markdown_path": "../assets/7764/wp-content/uploads/css-filtered-1024x665.png"
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/css-filtered-300x195.png",
+      "alt": "css-filtered",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/css-filtered.png",
+      "alt": "css-filtered",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/color-rotate.gif",
       "alt": "color-rotate",
-      "archive_path": "assets/7764/wp-content/uploads/color-rotate.gif",
-      "markdown_path": "../assets/7764/wp-content/uploads/color-rotate.gif"
+      "kind": "image",
+      "source": "img"
     },
     {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/unreachable-1024x42.png",
       "alt": "unreachable",
-      "archive_path": "assets/7764/wp-content/uploads/unreachable-1024x42.png",
-      "markdown_path": "../assets/7764/wp-content/uploads/unreachable-1024x42.png"
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/unreachable-300x12.png",
+      "alt": "unreachable",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/unreachable.png",
+      "alt": "unreachable",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/extension-warning.png",
       "alt": "extension-warning",
-      "archive_path": "assets/7764/wp-content/uploads/extension-warning.png",
-      "markdown_path": "../assets/7764/wp-content/uploads/extension-warning.png"
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/extension-warning-300x153.png",
+      "alt": "extension-warning",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20160730151018im_/http://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/w10-en-150x150.jpg",
+      "alt": "w10-en",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/w10-en-50x50.jpg",
+      "alt": "w10-en",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/tp-pbm-start-page-small-FINAL-150x150.jpg",
+      "alt": "tp-pbm-start-page-small-FINAL",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/tp-pbm-start-page-small-FINAL-50x50.jpg",
+      "alt": "tp-pbm-start-page-small-FINAL",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/scroll-into-view.gif",
+      "alt": "scroll-into-view",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/css-filtered-1024x665.png",
+      "alt": "css-filtered",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/css-filtered-300x195.png",
+      "alt": "css-filtered",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/css-filtered.png",
+      "alt": "css-filtered",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/color-rotate.gif",
+      "alt": "color-rotate",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/unreachable-1024x42.png",
+      "alt": "unreachable",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/unreachable-300x12.png",
+      "alt": "unreachable",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/unreachable.png",
+      "alt": "unreachable",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/extension-warning.png",
+      "alt": "extension-warning",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/extension-warning-300x153.png",
+      "alt": "extension-warning",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -100,6 +335,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
+  "asset_status": "skipped",
   "asset_errors": []
 }

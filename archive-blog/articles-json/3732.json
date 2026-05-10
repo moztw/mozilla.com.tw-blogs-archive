@@ -8,90 +8,232 @@
   "categories": [
     "Firefox OS"
   ],
-  "tags": [
-    "Firefox OS"
-  ],
+  "tags": [],
   "author": "",
+  "page_type": "post",
   "original_url": "https://blog.mozilla.com.tw/?p=3732",
-  "archive_url": "https://web.archive.org/web/20201231235959id_/https://blog.mozilla.com.tw/?p=3732",
-  "wayback_timestamp": "20201231235959",
-  "content_html": "<div class=\"entry-content close\">\n    <p>中興通訊 (ZTE) 針對開發者與初期使用者，發表了 Firefox OS 行動電話 ─ <a href=\"https://fxosphone.mozilla.com.tw/zteopen/\">ZTE Open</a>。本篇文章將說明應如何設定桌面環境並連接手機，再透過 Firefox OS 模擬器 (Firefox OS Simulator) 將 Apps 送進 ZTE Open。</p>\n<h3>設定 ZTE Open</h3>\n<p>在將 Apps 送進 ZTE Open，或對 ZTE Open 內的 Apps 進行除錯之前，都必須先啟動手機上的遠端除錯 (Remote debugging) 功能。請進入手機的「Settings」App 再點選 Device information -&gt; More Information -&gt; Developer -&gt; Remote debugging 即可。</p>\n<p><img class=\"aligncenter size-full wp-image-3733\" alt=\"simulatordebug\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/simulatordebug.png\" width=\"434\" height=\"640\" /></p>\n<h3>Windows 系統</h3>\n<p>若要在 Windows 系統中銜接模擬器與 ZTE Open，則需要特定的 USB 驅動程式。ZTE Open 手機已內建了執行檔，可安裝正確的驅動程式。另可透過<a href=\"http://devicedownload.zte.com.cn/cn/UpLoadFiles/product/270/soft/2013082714510868.zip\"><span style=\"text-decoration: underline;\">中興通訊的鏈結</span></a>下載此執行檔。</p>\n<p>先將 Zip 壓縮檔下載至自己熟悉的路徑之後並解壓縮，接著以隨附的 USB 纜線銜接手機與電腦，最後執行資料夾中的「ZTE_Handset_USB_Driver.exe」可執行檔。</p>\n<p><img class=\"aligncenter size-full wp-image-3734\" alt=\"execname\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/execname.png\" width=\"508\" height=\"185\" /></p>\n<p>依照設定精靈的步驟安裝驅動程式即可。</p>\n<p><img class=\"aligncenter size-full wp-image-3735\" alt=\"ztesetup\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/ztesetup.png\" width=\"586\" height=\"475\" /></p>\n<p>驅動程式安裝完畢，就能將 Apps 送進手機了。你亦可透過 Windows 的「裝置管理員」確認是否安裝妥善。列於「Android Phone」之下的「ZTE Kernel Debug Interface」就是 ZTE 手機。</p>\n<p><img class=\"aligncenter size-full wp-image-3736\" alt=\"devicemgr\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/devicemgr.png\" width=\"380\" height=\"309\" /></p>\n<p>啟動 Firefox OS 模擬器，可看到 Dashboard 顯示「Push」按鈕與「Device connected」的訊息。</p>\n<p><img class=\"aligncenter size-large wp-image-3737\" alt=\"browser\" src=\"http://blog.mozilla.com.tw/wp-content/uploads/browser-1024x520.png\" width=\"640\" height=\"325\" /></p>\n<p>現在即可將自己的 Firefox OS Apps 添增至模擬器中，並以「Push」按鈕將 Apps 送進手機之中。</p>\n<h3>Linux 系統</h3>\n<p>若你是在 Linux 平台上開發 Apps，則必須新增 udev 規則才能銜接 ZTE Open 手機。請參閱 Android 開發文件《<a href=\"https://developer.android.com/tools/device.html\"><span style=\"text-decoration: underline;\">Setting up a Device for Development</span></a>》並完成其中的 3.a 與 3.b 步驟。ZTE Open 會將「19d2」作為 idVendor 屬性。該項規則如下所示：</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-5605d69b4be54708178836\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nSUBSYSTEM==”usb”, ATTR{idVendor}==”19d2”, MODE=”0666”, GROUP=”plugdev”</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5605d69b4be54708178836-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5605d69b4be54708178836-1\"><span class=\"crayon-v\">SUBSYSTEM</span><span class=\"crayon-o\">==</span>”<span class=\"crayon-i\">usb</span>”<span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">ATTR</span><span class=\"crayon-sy\">{</span><span class=\"crayon-v\">idVendor</span><span class=\"crayon-sy\">}</span><span class=\"crayon-o\">==</span>”<span class=\"crayon-cn\">19d2</span>”<span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">MODE</span><span class=\"crayon-o\">=</span>”<span class=\"crayon-cn\">0666</span>”<span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">GROUP</span><span class=\"crayon-o\">=</span>”<span class=\"crayon-i\">plugdev</span>”</div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0011 seconds] -->\r\n<p>完成上述變更之後，請重新啟動系統或 udev 服務：</p><!-- Crayon Syntax Highlighter v2.6.9 -->\r\n\r\n\t\t<div id=\"crayon-5605d69b4be68600335341\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nsudo service udev restart</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5605d69b4be68600335341-1\">1</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5605d69b4be68600335341-1\"><span class=\"crayon-e\">sudo </span><span class=\"crayon-e\">service </span><span class=\"crayon-e\">udev </span><span class=\"crayon-v\">restart</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0004 seconds] -->\r\n<p>如果模擬器的 Dashboard 並未出現「Push」按鈕，則請參閱此篇<a href=\"https://github.com/mozilla/r2d2b2g/issues/515\"><span style=\"text-decoration: underline;\">問題回報</span></a>。</p>\n<h3>Mac 系統</h3>\n<p>如果你是在 Mac 上執行模擬器，則不需額外設定即可啟動「Push」按鈕。</p>\n<h3>參考資料</h3>\n<p>若要透過模擬器將 Apps 送進裝置或除錯，可先參閱<a href=\"https://developer.mozilla.org/zh-TW/docs/Tools/Firefox_OS_Simulator\"><span style=\"text-decoration: underline;\">《</span><span style=\"text-decoration: underline;\">Firefox OS </span><span style=\"text-decoration: underline;\">模擬器》</span></a>內的相關資訊。</p>\n<p>&nbsp;</p>\n<p>原文鏈結：<a href=\"https://hacks.mozilla.org/2013/08/pushing-a-firefox-os-web-app-to-zte-open-phone/\">https://hacks.mozilla.org/2013/08/pushing-a-firefox-os-web-app-to-zte-open-phone/</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
+  "archive_url": "https://web.archive.org/web/20150925231953/https://blog.mozilla.com.tw/posts/3732/%e6%8a%8a-firefox-os-web-apps-%e9%80%81%e9%80%b2-zte-open-%e6%89%8b%e6%a9%9f",
+  "wayback_timestamp": "20150925231953",
+  "content_html": "<div class=\"entry-content close\">\n    <p>中興通訊 (ZTE) 針對開發者與初期使用者，發表了 Firefox OS 行動電話 ─ <a href=\"https://web.archive.org/web/20150925231953/https://fxosphone.mozilla.com.tw/zteopen/\">ZTE Open</a>。本篇文章將說明應如何設定桌面環境並連接手機，再透過 Firefox OS 模擬器 (Firefox OS Simulator) 將 Apps 送進 ZTE Open。</p>\n<h3>設定 ZTE Open</h3>\n<p>在將 Apps 送進 ZTE Open，或對 ZTE Open 內的 Apps 進行除錯之前，都必須先啟動手機上的遠端除錯 (Remote debugging) 功能。請進入手機的「Settings」App 再點選 Device information -&gt; More Information -&gt; Developer -&gt; Remote debugging 即可。</p>\n<p><img class=\"aligncenter size-full wp-image-3733\" alt=\"simulatordebug\" src=\"https://web.archive.org/web/20150925231953im_/http://blog.mozilla.com.tw/wp-content/uploads/simulatordebug.png\" width=\"434\" height=\"640\"/></p>\n<h3>Windows 系統</h3>\n<p>若要在 Windows 系統中銜接模擬器與 ZTE Open，則需要特定的 USB 驅動程式。ZTE Open 手機已內建了執行檔，可安裝正確的驅動程式。另可透過<a href=\"https://web.archive.org/web/20150925231953/http://devicedownload.zte.com.cn/cn/UpLoadFiles/product/270/soft/2013082714510868.zip\"><span style=\"text-decoration: underline;\">中興通訊的鏈結</span></a>下載此執行檔。</p>\n<p>先將 Zip 壓縮檔下載至自己熟悉的路徑之後並解壓縮，接著以隨附的 USB 纜線銜接手機與電腦，最後執行資料夾中的「ZTE_Handset_USB_Driver.exe」可執行檔。</p>\n<p><img class=\"aligncenter size-full wp-image-3734\" alt=\"execname\" src=\"https://web.archive.org/web/20150925231953im_/http://blog.mozilla.com.tw/wp-content/uploads/execname.png\" width=\"508\" height=\"185\"/></p>\n<p>依照設定精靈的步驟安裝驅動程式即可。</p>\n<p><img class=\"aligncenter size-full wp-image-3735\" alt=\"ztesetup\" src=\"https://web.archive.org/web/20150925231953im_/http://blog.mozilla.com.tw/wp-content/uploads/ztesetup.png\" width=\"586\" height=\"475\"/></p>\n<p>驅動程式安裝完畢，就能將 Apps 送進手機了。你亦可透過 Windows 的「裝置管理員」確認是否安裝妥善。列於「Android Phone」之下的「ZTE Kernel Debug Interface」就是 ZTE 手機。</p>\n<p><img class=\"aligncenter size-full wp-image-3736\" alt=\"devicemgr\" src=\"https://web.archive.org/web/20150925231953im_/http://blog.mozilla.com.tw/wp-content/uploads/devicemgr.png\" width=\"380\" height=\"309\"/></p>\n<p>啟動 Firefox OS 模擬器，可看到 Dashboard 顯示「Push」按鈕與「Device connected」的訊息。</p>\n<p><img class=\"aligncenter size-large wp-image-3737\" alt=\"browser\" src=\"https://web.archive.org/web/20150925231953im_/http://blog.mozilla.com.tw/wp-content/uploads/browser-1024x520.png\" width=\"640\" height=\"325\"/></p>\n<p>現在即可將自己的 Firefox OS Apps 添增至模擬器中，並以「Push」按鈕將 Apps 送進手機之中。</p>\n<h3>Linux 系統</h3>\n<p>若你是在 Linux 平台上開發 Apps，則必須新增 udev 規則才能銜接 ZTE Open 手機。請參閱 Android 開發文件《<a href=\"https://web.archive.org/web/20150925231953/https://developer.android.com/tools/device.html\"><span style=\"text-decoration: underline;\">Setting up a Device for Development</span></a>》並完成其中的 3.a 與 3.b 步驟。ZTE Open 會將「19d2」作為 idVendor 屬性。該項規則如下所示：</p><!-- Crayon Syntax Highlighter v2.6.9 -->\n\n\t\t<div id=\"crayon-5605d69b4be54708178836\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nSUBSYSTEM==”usb”, ATTR{idVendor}==”19d2”, MODE=”0666”, GROUP=”plugdev”</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5605d69b4be54708178836-1\">1</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5605d69b4be54708178836-1\"><span class=\"crayon-v\">SUBSYSTEM</span><span class=\"crayon-o\">==</span>”<span class=\"crayon-i\">usb</span>”<span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">ATTR</span><span class=\"crayon-sy\">{</span><span class=\"crayon-v\">idVendor</span><span class=\"crayon-sy\">}</span><span class=\"crayon-o\">==</span>”<span class=\"crayon-cn\">19d2</span>”<span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">MODE</span><span class=\"crayon-o\">=</span>”<span class=\"crayon-cn\">0666</span>”<span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">GROUP</span><span class=\"crayon-o\">=</span>”<span class=\"crayon-i\">plugdev</span>”</div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0011 seconds] -->\n<p>完成上述變更之後，請重新啟動系統或 udev 服務：</p><!-- Crayon Syntax Highlighter v2.6.9 -->\n\n\t\t<div id=\"crayon-5605d69b4be68600335341\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nsudo service udev restart</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-5605d69b4be68600335341-1\">1</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-5605d69b4be68600335341-1\"><span class=\"crayon-e\">sudo </span><span class=\"crayon-e\">service </span><span class=\"crayon-e\">udev </span><span class=\"crayon-v\">restart</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0004 seconds] -->\n<p>如果模擬器的 Dashboard 並未出現「Push」按鈕，則請參閱此篇<a href=\"https://web.archive.org/web/20150925231953/https://github.com/mozilla/r2d2b2g/issues/515\"><span style=\"text-decoration: underline;\">問題回報</span></a>。</p>\n<h3>Mac 系統</h3>\n<p>如果你是在 Mac 上執行模擬器，則不需額外設定即可啟動「Push」按鈕。</p>\n<h3>參考資料</h3>\n<p>若要透過模擬器將 Apps 送進裝置或除錯，可先參閱<a href=\"https://web.archive.org/web/20150925231953/https://developer.mozilla.org/zh-TW/docs/Tools/Firefox_OS_Simulator\"><span style=\"text-decoration: underline;\">《</span><span style=\"text-decoration: underline;\">Firefox OS </span><span style=\"text-decoration: underline;\">模擬器》</span></a>內的相關資訊。</p>\n<p>&nbsp;</p>\n<p>原文鏈結：<a href=\"https://web.archive.org/web/20150925231953/https://hacks.mozilla.org/2013/08/pushing-a-firefox-os-web-app-to-zte-open-phone/\">https://hacks.mozilla.org/2013/08/pushing-a-firefox-os-web-app-to-zte-open-phone/</a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n      </div>",
   "content_text": "中興通訊 (ZTE) 針對開發者與初期使用者，發表了 Firefox OS 行動電話 ─ ZTE Open 。本篇文章將說明應如何設定桌面環境並連接手機，再透過 Firefox OS 模擬器 (Firefox OS Simulator) 將 Apps 送進 ZTE Open。 設定 ZTE Open 在將 Apps 送進 ZTE Open，或對 ZTE Open 內的 Apps 進行除錯之前，都必須先啟動手機上的遠端除錯 (Remote debugging) 功能。請進入手機的「Settings」App 再點選 Device information -> More Information -> Developer -> Remote debugging 即可。 Windows 系統 若要在 Windows 系統中銜接模擬器與 ZTE Open，則需要特定的 USB 驅動程式。ZTE Open 手機已內建了執行檔，可安裝正確的驅動程式。另可透過 中興通訊的鏈結 下載此執行檔。 先將 Zip 壓縮檔下載至自己熟悉的路徑之後並解壓縮，接著以隨附的 USB 纜線銜接手機與電腦，最後執行資料夾中的「ZTE_Handset_USB_Driver.exe」可執行檔。 依照設定精靈的步驟安裝驅動程式即可。 驅動程式安裝完畢，就能將 Apps 送進手機了。你亦可透過 Windows 的「裝置管理員」確認是否安裝妥善。列於「Android Phone」之下的「ZTE Kernel Debug Interface」就是 ZTE 手機。 啟動 Firefox OS 模擬器，可看到 Dashboard 顯示「Push」按鈕與「Device connected」的訊息。 現在即可將自己的 Firefox OS Apps 添增至模擬器中，並以「Push」按鈕將 Apps 送進手機之中。 Linux 系統 若你是在 Linux 平台上開發 Apps，則必須新增 udev 規則才能銜接 ZTE Open 手機。請參閱 Android 開發文件《 Setting up a Device for Development 》並完成其中的 3.a 與 3.b 步驟。ZTE Open 會將「19d2」作為 idVendor 屬性。該項規則如下所示： SUBSYSTEM==”usb”, ATTR{idVendor}==”19d2”, MODE=”0666”, GROUP=”plugdev” 1 SUBSYSTEM == ” usb ” , ATTR { idVendor } == ” 19d2 ” , MODE = ” 0666 ” , GROUP = ” plugdev ” 完成上述變更之後，請重新啟動系統或 udev 服務： sudo service udev restart 1 sudo service udev restart 如果模擬器的 Dashboard 並未出現「Push」按鈕，則請參閱此篇 問題回報 。 Mac 系統 如果你是在 Mac 上執行模擬器，則不需額外設定即可啟動「Push」按鈕。 參考資料 若要透過模擬器將 Apps 送進裝置或除錯，可先參閱 《 Firefox OS 模擬器》 內的相關資訊。 原文鏈結： https://hacks.mozilla.org/2013/08/pushing-a-firefox-os-web-app-to-zte-open-phone/",
   "images": [
     {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20150925231953im_/https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/firefox_tip_Tip_small1.png",
+      "alt": "firefox_tip_Tip_small1",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/9263835250_c4a28a2089_z-500x333-150x150.jpg",
+      "alt": "9263835250_c4a28a2089_z-500x333",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/simulatordebug.png",
       "alt": "simulatordebug",
-      "post_id": 3732,
-      "page_type": "other",
-      "title": "把 Firefox OS Web Apps 送進 ZTE Open 手機",
-      "page_timestamp": "20201231235959",
-      "source": "img",
       "kind": "image",
-      "index": 0,
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/simulatordebug.png",
-      "archive_path": "assets/3732/wp-content/uploads/simulatordebug.png",
-      "markdown_path": "../assets/3732/wp-content/uploads/simulatordebug.png",
-      "wayback_timestamp": "20150927003843",
-      "asset_archive_url": "https://web.archive.org/web/20150927003843id_/http://blog.mozilla.com.tw/wp-content/uploads/simulatordebug.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/execname.png",
       "alt": "execname",
-      "post_id": 3732,
-      "page_type": "other",
-      "title": "把 Firefox OS Web Apps 送進 ZTE Open 手機",
-      "page_timestamp": "20201231235959",
-      "source": "img",
       "kind": "image",
-      "index": 1,
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/execname.png",
-      "archive_path": "assets/3732/wp-content/uploads/execname.png",
-      "markdown_path": "../assets/3732/wp-content/uploads/execname.png",
-      "wayback_timestamp": "20150927032621",
-      "asset_archive_url": "https://web.archive.org/web/20150927032621id_/http://blog.mozilla.com.tw/wp-content/uploads/execname.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/ztesetup.png",
       "alt": "ztesetup",
-      "post_id": 3732,
-      "page_type": "other",
-      "title": "把 Firefox OS Web Apps 送進 ZTE Open 手機",
-      "page_timestamp": "20201231235959",
-      "source": "img",
       "kind": "image",
-      "index": 2,
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/ztesetup.png",
-      "archive_path": "assets/3732/wp-content/uploads/ztesetup.png",
-      "markdown_path": "../assets/3732/wp-content/uploads/ztesetup.png",
-      "wayback_timestamp": "20150927045441",
-      "asset_archive_url": "https://web.archive.org/web/20150927045441id_/http://blog.mozilla.com.tw/wp-content/uploads/ztesetup.png",
-      "content_type": "image/png"
+      "source": "img"
     },
     {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/devicemgr.png",
       "alt": "devicemgr",
-      "fallback_url": "https://blog.mozilla.com.tw/wp-content/uploads/devicemgr.png",
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/devicemgr.png",
-      "archive_path": "assets/3732/wp-content/uploads/devicemgr.png",
-      "markdown_path": "../assets/3732/wp-content/uploads/devicemgr.png",
-      "wayback_timestamp": "20140422042213",
-      "asset_archive_url": "https://web.archive.org/web/20140422042213id_/https://blog.mozilla.com.tw/wp-content/uploads/devicemgr.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "kind": "image",
+      "source": "img"
     },
     {
       "url": "https://blog.mozilla.com.tw/wp-content/uploads/browser-1024x520.png",
       "alt": "browser",
-      "fallback_url": "https://blog.mozilla.com.tw/wp-content/uploads/browser-1024x520.png",
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/browser-1024x520.png",
-      "archive_path": "assets/3732/wp-content/uploads/browser-1024x520.png",
-      "markdown_path": "../assets/3732/wp-content/uploads/browser-1024x520.png",
-      "wayback_timestamp": "20140422041850",
-      "asset_archive_url": "https://web.archive.org/web/20140422041850id_/https://blog.mozilla.com.tw/wp-content/uploads/browser-1024x520.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/dev-tools-image-previews-150x150.png",
+      "alt": "dev-tools-image-previews",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/fb_social_avatar_403x403-150x150.png",
+      "alt": "fb_social_avatar_403x403",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/mhealth-150x150.jpg",
+      "alt": "mhealth",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    }
+  ],
+  "media": [
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/firefox/template/header-logo.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web.archive.org/web/20150925231953im_/https://assets.pinterest.com/images/PinExt.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "alt": "plurk share",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/firefox_tip_Tip_small1.png",
+      "alt": "firefox_tip_Tip_small1",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/9263835250_c4a28a2089_z-500x333-150x150.jpg",
+      "alt": "9263835250_c4a28a2089_z-500x333",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/simulatordebug.png",
+      "alt": "simulatordebug",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/execname.png",
+      "alt": "execname",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/ztesetup.png",
+      "alt": "ztesetup",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/devicemgr.png",
+      "alt": "devicemgr",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/browser-1024x520.png",
+      "alt": "browser",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/dev-tools-image-previews-150x150.png",
+      "alt": "dev-tools-image-previews",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/fb_social_avatar_403x403-150x150.png",
+      "alt": "fb_social_avatar_403x403",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/wp-content/uploads/mhealth-150x150.jpg",
+      "alt": "mhealth",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://blog.mozilla.com.tw/media/img/sandstone/footer-mozilla.png",
+      "alt": "mozilla",
+      "kind": "image",
+      "source": "img"
     }
   ],
   "links": [
@@ -121,83 +263,6 @@
     }
   ],
   "status": "ok",
-  "asset_status": "ok",
-  "asset_errors": [],
-  "media": [
-    {
-      "url": "https://blog.mozilla.com.tw/wp-content/uploads/simulatordebug.png",
-      "alt": "simulatordebug",
-      "post_id": 3732,
-      "page_type": "other",
-      "title": "把 Firefox OS Web Apps 送進 ZTE Open 手機",
-      "page_timestamp": "20201231235959",
-      "source": "img",
-      "kind": "image",
-      "index": 0,
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/simulatordebug.png",
-      "archive_path": "assets/3732/wp-content/uploads/simulatordebug.png",
-      "markdown_path": "../assets/3732/wp-content/uploads/simulatordebug.png",
-      "wayback_timestamp": "20150927003843",
-      "asset_archive_url": "https://web.archive.org/web/20150927003843id_/http://blog.mozilla.com.tw/wp-content/uploads/simulatordebug.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://blog.mozilla.com.tw/wp-content/uploads/execname.png",
-      "alt": "execname",
-      "post_id": 3732,
-      "page_type": "other",
-      "title": "把 Firefox OS Web Apps 送進 ZTE Open 手機",
-      "page_timestamp": "20201231235959",
-      "source": "img",
-      "kind": "image",
-      "index": 1,
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/execname.png",
-      "archive_path": "assets/3732/wp-content/uploads/execname.png",
-      "markdown_path": "../assets/3732/wp-content/uploads/execname.png",
-      "wayback_timestamp": "20150927032621",
-      "asset_archive_url": "https://web.archive.org/web/20150927032621id_/http://blog.mozilla.com.tw/wp-content/uploads/execname.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://blog.mozilla.com.tw/wp-content/uploads/ztesetup.png",
-      "alt": "ztesetup",
-      "post_id": 3732,
-      "page_type": "other",
-      "title": "把 Firefox OS Web Apps 送進 ZTE Open 手機",
-      "page_timestamp": "20201231235959",
-      "source": "img",
-      "kind": "image",
-      "index": 2,
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/ztesetup.png",
-      "archive_path": "assets/3732/wp-content/uploads/ztesetup.png",
-      "markdown_path": "../assets/3732/wp-content/uploads/ztesetup.png",
-      "wayback_timestamp": "20150927045441",
-      "asset_archive_url": "https://web.archive.org/web/20150927045441id_/http://blog.mozilla.com.tw/wp-content/uploads/ztesetup.png",
-      "content_type": "image/png"
-    },
-    {
-      "url": "https://blog.mozilla.com.tw/wp-content/uploads/devicemgr.png",
-      "alt": "devicemgr",
-      "fallback_url": "https://blog.mozilla.com.tw/wp-content/uploads/devicemgr.png",
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/devicemgr.png",
-      "archive_path": "assets/3732/wp-content/uploads/devicemgr.png",
-      "markdown_path": "../assets/3732/wp-content/uploads/devicemgr.png",
-      "wayback_timestamp": "20140422042213",
-      "asset_archive_url": "https://web.archive.org/web/20140422042213id_/https://blog.mozilla.com.tw/wp-content/uploads/devicemgr.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
-    },
-    {
-      "url": "https://blog.mozilla.com.tw/wp-content/uploads/browser-1024x520.png",
-      "alt": "browser",
-      "fallback_url": "https://blog.mozilla.com.tw/wp-content/uploads/browser-1024x520.png",
-      "recovered_url": "https://blog.mozilla.com.tw/wp-content/uploads/browser-1024x520.png",
-      "archive_path": "assets/3732/wp-content/uploads/browser-1024x520.png",
-      "markdown_path": "../assets/3732/wp-content/uploads/browser-1024x520.png",
-      "wayback_timestamp": "20140422041850",
-      "asset_archive_url": "https://web.archive.org/web/20140422041850id_/https://blog.mozilla.com.tw/wp-content/uploads/browser-1024x520.png",
-      "content_type": "image/png",
-      "fallback_reason": "same_directory_wordpress_size_variant"
-    }
-  ]
+  "asset_status": "skipped",
+  "asset_errors": []
 }
