@@ -4,6 +4,9 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { setDefaultResultOrder } from 'node:dns';
+import { fetchArchivedHtml as sharedFetchArchivedHtml, fetchJson as sharedFetchJson, fetchWithRetry as sharedFetchWithRetry } from './lib/fetch-utils.js';
+import { assetUrlVariants as sharedAssetUrlVariants, timestampFromWaybackUrl as sharedTimestampFromWaybackUrl, waybackAssetUrl as sharedWaybackAssetUrl, waybackUrl as sharedWaybackUrl } from './lib/url-utils.js';
+import { isDefinitive404ErrorMessage, parseArgs as sharedParseArgs, relativePath, sleep, writeJson as sharedWriteJson } from './lib/workflow-utils.js';
 
 setDefaultResultOrder('ipv4first');
 
@@ -22,6 +25,7 @@ const ASSETS_DIR = path.join(ARCHIVE_DIR, 'assets', 'authors');
 const ARTICLE_JSON_DIR = path.join(ARCHIVE_DIR, 'articles-json');
 const USER_AGENT = `MozillaTaiwanTechAuthorArchive/0.1 (+${SITE_ORIGIN} author recovery)`;
 const ASSET_HOSTS = new Set([SITE_HOST]);
+const command = ARGS._?.[0] || 'all';
 
 main().catch((error) => {
   console.error(error.stack || error.message);
@@ -29,6 +33,16 @@ main().catch((error) => {
 });
 
 async function main() {
+  if (command === 'parse-local') {
+    const result = await parseLocalAuthors();
+    console.log(`Parsed ${result.author_count} local author pages into ${relative(AUTHORS_DIR)}`);
+    return;
+  }
+
+  if (command !== 'all' && command !== 'fetch') {
+    throw new Error(`Unknown authors command: ${command}`);
+  }
+
   const inputPath = await resolveInputPath();
   const rows = JSON.parse(await readFile(inputPath, 'utf8'));
   const header = rows[0] || [];
@@ -149,6 +163,75 @@ async function main() {
   console.log(`Archived ${authors.length} author pages into ${relative(AUTHORS_DIR)}`);
 }
 
+async function parseLocalAuthors() {
+  await Promise.all([AUTHORS_DIR, RAW_DIR, JSON_DIR, MD_DIR].map((dir) => mkdir(dir, { recursive: true })));
+  const existingIndex = await readExistingAuthorsIndex();
+  const rawHtmlIndex = await loadRawHtmlIndex();
+  const slugs = new Set((existingIndex.authors || []).map((author) => author.slug).filter(Boolean));
+  for (const slug of rawHtmlIndex.keys()) slugs.add(slug);
+
+  const authors = [];
+  for (const slug of [...slugs].sort((a, b) => a.localeCompare(b))) {
+    const existing = await readExistingAuthor(slug);
+    const rawPath = await resolvePreferredRawPath(slug, existing?.wayback_timestamp, rawHtmlIndex);
+    if (!rawPath) continue;
+
+    const html = await readFile(rawPath, 'utf8');
+    const rawTimestamp = rawPath.match(/-(\d{14})\.html$/)?.[1] || existing?.wayback_timestamp || '';
+    const originalUrl = existing?.original_url || `${SITE_ORIGIN}/posts/author/${slug}/`;
+    const parsed = parseAuthorPage(html, originalUrl);
+    const images = existing?.images?.length ? existing.images : parsed.images;
+    const author = {
+      ...(existing || {}),
+      slug,
+      title: parsed.title || existing?.title || slug,
+      original_url: originalUrl,
+      archive_url: existing?.archive_url || waybackUrl(rawTimestamp, originalUrl),
+      wayback_timestamp: rawTimestamp,
+      avatar_url: parsed.avatarUrl || existing?.avatar_url || '',
+      local_avatar_path: existing?.local_avatar_path || findLocalAssetPath(images, parsed.avatarUrl || existing?.avatar_url || ''),
+      content_html: parsed.contentHtml,
+      content_text: parsed.contentText,
+      images,
+      asset_status: existing?.asset_status || 'not_localized',
+      asset_errors: existing?.asset_errors || [],
+      links: parsed.links,
+      status: parsed.contentHtml ? 'ok' : 'parse_failed',
+      source_json: existing?.source_json || 'local-raw-html',
+    };
+
+    await writeJson(path.join(JSON_DIR, `${slug}.json`), author);
+    await writeFile(path.join(MD_DIR, `${slug}.md`), authorToMarkdown(author), 'utf8');
+    authors.push(author);
+  }
+
+  const index = {
+    generated_at: new Date().toISOString(),
+    source_json: existingIndex.source_json || 'local-raw-html',
+    author_count: authors.length,
+    authors: authors.map((author) => ({
+      slug: author.slug,
+      title: author.title,
+      status: author.status,
+      original_url: author.original_url,
+      archive_url: author.archive_url,
+      wayback_timestamp: author.wayback_timestamp,
+      asset_status: author.asset_status,
+      asset_errors: author.asset_errors?.length || 0,
+    })),
+  };
+  await writeJson(INDEX_PATH, index);
+  return index;
+}
+
+async function readExistingAuthorsIndex() {
+  try {
+    return JSON.parse(await readFile(INDEX_PATH, 'utf8'));
+  } catch {
+    return { authors: [] };
+  }
+}
+
 async function resolveInputPath() {
   for (const candidate of INPUT_CANDIDATES) {
     try {
@@ -178,7 +261,7 @@ function authorSlug(pathname) {
 }
 
 function waybackUrl(timestamp, original) {
-  return `https://web.archive.org/web/${timestamp}id_/${original}`;
+  return sharedWaybackUrl(timestamp, original);
 }
 
 async function chooseSnapshot(original) {
@@ -514,7 +597,7 @@ function assetSnapshotUrl(snapshot) {
 }
 
 function waybackAssetUrl(timestamp, url) {
-  return `https://web.archive.org/web/${timestamp}id_/${url}`;
+  return sharedWaybackAssetUrl(timestamp, url);
 }
 
 function snapshotFromWaybackUrl(url) {
@@ -523,31 +606,7 @@ function snapshotFromWaybackUrl(url) {
 }
 
 function assetUrlVariants(url) {
-  const variants = new Set([url]);
-
-  try {
-    const parsed = new URL(url);
-    if (/\.mozilla\.com\.tw$/i.test(parsed.hostname) || parsed.hostname === 'tech.mozilla.com.tw') {
-      const alternate = new URL(parsed.href);
-      alternate.protocol = parsed.protocol === 'https:' ? 'http:' : 'https:';
-      variants.add(alternate.href);
-    }
-
-    const decodedPath = decodeURIComponent(parsed.pathname);
-    if (decodedPath !== parsed.pathname) {
-      const decoded = new URL(parsed.href);
-      decoded.pathname = decodedPath;
-      variants.add(decoded.href);
-
-      if (/\.mozilla\.com\.tw$/i.test(parsed.hostname) || parsed.hostname === 'tech.mozilla.com.tw') {
-        const decodedAlternate = new URL(decoded.href);
-        decodedAlternate.protocol = decoded.protocol === 'https:' ? 'http:' : 'https:';
-        variants.add(decodedAlternate.href);
-      }
-    }
-  } catch {}
-
-  return [...variants];
+  return sharedAssetUrlVariants(url);
 }
 
 function chooseAssetPath(slug, imageUrl, index, buffer, contentType, usedPaths) {
@@ -740,78 +799,29 @@ function yamlLine(key, value) {
 }
 
 async function fetchJson(url) {
-  const response = await fetchWithRetry(url, 'application/json');
-  return response.json();
+  return sharedFetchJson(url, { userAgent: USER_AGENT });
 }
 
 async function fetchArchivedHtml(url) {
-  const response = await fetchWithRetry(url, 'text/html,application/xhtml+xml');
-  return { html: await response.text(), finalUrl: response.url || url };
+  return sharedFetchArchivedHtml(url, { userAgent: USER_AGENT });
 }
 
 async function fetchWithRetry(url, accept) {
-  let lastError;
-  const maxAttempts = 3;
-  const timeoutMs = 5_000;
-  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), timeoutMs);
-      const response = await fetch(url, {
-        headers: { 'user-agent': USER_AGENT, accept },
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-      if (!response.ok) throw new Error(`http_${response.status}`);
-      return response;
-    } catch (error) {
-      lastError = error;
-      if (isNotFoundResponseError(error)) break;
-      if (attempt < maxAttempts) await sleep(5_000);
-    }
-  }
-  throw lastError;
-}
-
-function isNotFoundResponseError(error) {
-  return String(error?.message || '').includes('http_404');
-}
-
-function isDefinitive404ErrorMessage(message) {
-  const parts = String(message || '').split('|').map((part) => part.trim()).filter(Boolean);
-  return parts.length > 0 && parts.every((part) => part.includes('http_404'));
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return sharedFetchWithRetry(url, { accept, userAgent: USER_AGENT });
 }
 
 function timestampFromWaybackUrl(url) {
-  return String(url || '').match(/\/web\/(\d{14})/)?.[1] || '';
+  return sharedTimestampFromWaybackUrl(url);
 }
 
 async function writeJson(filePath, value) {
-  await mkdir(path.dirname(filePath), { recursive: true });
-  await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+  await sharedWriteJson(filePath, value);
 }
 
 function relative(filePath) {
-  return path.relative(ROOT, filePath) || '.';
+  return relativePath(ROOT, filePath);
 }
 
 function parseArgs(argv) {
-  const parsed = {};
-  for (let index = 0; index < argv.length; index += 1) {
-    const value = argv[index];
-    if (!value.startsWith('--')) continue;
-    const key = value.slice(2);
-    const next = argv[index + 1];
-    if (!next || next.startsWith('--')) {
-      parsed[key] = true;
-      continue;
-    }
-    parsed[key] = next;
-    index += 1;
-  }
-  return parsed;
+  return sharedParseArgs(argv);
 }

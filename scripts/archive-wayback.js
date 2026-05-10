@@ -4,6 +4,9 @@ import { createHash } from 'node:crypto';
 import { setDefaultResultOrder } from 'node:dns';
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { fetchWithRetry as sharedFetchWithRetry } from './lib/fetch-utils.js';
+import { normalizeOriginalUrl as sharedNormalizeOriginalUrl, normalizeUrl as sharedNormalizeUrl, waybackAssetUrl as sharedWaybackAssetUrl, waybackUrl as sharedWaybackUrl } from './lib/url-utils.js';
+import { hasFlag as sharedHasFlag, isDefinitive404ErrorMessage, parseArgs as sharedParseArgs, randomDelay as sharedRandomDelay, relativePath, sleep, writeJson as sharedWriteJson } from './lib/workflow-utils.js';
 
 setDefaultResultOrder('ipv4first');
 
@@ -3444,12 +3447,11 @@ function isSyntheticCutoffSnapshot(snapshot) {
 }
 
 function waybackUrl(snapshot, raw) {
-  const marker = raw ? `${snapshot.timestamp}id_` : snapshot.timestamp;
-  return `https://web.archive.org/web/${marker}/${snapshot.original}`;
+  return sharedWaybackUrl(snapshot.timestamp, snapshot.original, raw ? 'id_' : '');
 }
 
 function waybackAssetUrl(timestamp, url) {
-  return `https://web.archive.org/web/${timestamp}id_/${url}`;
+  return sharedWaybackAssetUrl(timestamp, url);
 }
 
 async function fetchText(url) {
@@ -3466,41 +3468,7 @@ async function fetchHtmlPage(url) {
 }
 
 async function fetchWithRetry(url, { accept }) {
-  let lastError;
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 5_000);
-      const response = await fetch(url, {
-        headers: { 'user-agent': USER_AGENT, accept },
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-
-      if (!response.ok) {
-        throw new Error(`http_${response.status}`);
-      }
-      return response;
-    } catch (error) {
-      lastError = error;
-      if (isNotFoundResponseError(error)) {
-        break;
-      }
-      if (attempt < 3) {
-        await sleep(5_000);
-      }
-    }
-  }
-  throw lastError;
-}
-
-function isNotFoundResponseError(error) {
-  return String(error?.message || '').includes('http_404');
-}
-
-function isDefinitive404ErrorMessage(message) {
-  const parts = String(message || '').split('|').map((part) => part.trim()).filter(Boolean);
-  return parts.length > 0 && parts.every((part) => part.includes('http_404'));
+  return sharedFetchWithRetry(url, { accept, userAgent: USER_AGENT });
 }
 
 async function ensureArchiveDirs() {
@@ -3508,28 +3476,11 @@ async function ensureArchiveDirs() {
 }
 
 async function saveJson(filePath, value) {
-  await mkdir(path.dirname(filePath), { recursive: true });
-  await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+  await sharedWriteJson(filePath, value);
 }
 
 function parseArgs(argv) {
-  const parsed = { _: [] };
-  for (let index = 0; index < argv.length; index += 1) {
-    const arg = argv[index];
-    if (!arg.startsWith('--')) {
-      parsed._.push(arg);
-      continue;
-    }
-    const key = arg.slice(2);
-    const next = argv[index + 1];
-    if (!next || next.startsWith('--')) {
-      parsed[key] = true;
-    } else {
-      parsed[key] = next;
-      index += 1;
-    }
-  }
-  return parsed;
+  return sharedParseArgs(argv);
 }
 
 function getPostId(url) {
@@ -3556,22 +3507,11 @@ function isCanonicalPostUrl(url) {
 }
 
 function normalizeOriginalUrl(url) {
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url.replace(/^http:\/\//, 'https://');
-  }
-  return `https://${url.replace(/^\/+/, '')}`;
+  return sharedNormalizeOriginalUrl(url);
 }
 
 function normalizeUrl(url, baseUrl) {
-  if (!url) {
-    return '';
-  }
-  const withoutWayback = url.replace(/^https?:\/\/web\.archive\.org\/web\/\d+(?:[a-z_]+)?\//i, '');
-  try {
-    return new URL(withoutWayback, baseUrl).href.replace(/^http:\/\//, 'https://');
-  } catch {
-    return url;
-  }
+  return sharedNormalizeUrl(url, baseUrl);
 }
 
 function attr(attrs, name) {
@@ -3825,18 +3765,13 @@ function summaryForManifest(result) {
 function randomDelay() {
   const min = Number(args.delayMin ?? args['delay-min'] ?? 1000);
   const max = Number(args.delayMax ?? args['delay-max'] ?? 3000);
-  return Math.floor(min + Math.random() * Math.max(0, max - min));
+  return sharedRandomDelay({ min, max });
 }
 
 function hasFlag(name) {
-  const camelName = name.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-  return Boolean(args[name] || args[camelName]);
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return sharedHasFlag(args, name);
 }
 
 function relative(filePath) {
-  return path.relative(ROOT, filePath);
+  return relativePath(ROOT, filePath);
 }

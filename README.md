@@ -17,12 +17,21 @@ node scripts/workflow.js deploy --site blog
 若要處理兩個站，使用明確命名的雙站命令：
 
 ```bash
+node scripts/workflow.js report-both
 node scripts/workflow.js localize-both
 node scripts/workflow.js build-both
 node scripts/workflow.js deploy-both
 ```
 
-其中 `localize` 會讀取 `articles-json` 裡的 asset mapping，將 Markdown 內容中可對應到本地檔案的遠端資源 URL 改寫成 `../assets/...`。`build` 只負責把 localized content 編譯成靜態頁面。
+階段責任：
+
+- `archive`：抓 Wayback 原始 HTML、資源與 recovery 報告。
+- `parse`：只從本地 raw HTML 產生 canonical JSON / Markdown / metadata；blog events 與 tech authors 也在這個階段重建。
+- `localize`：讀取 parsed content 與 asset mapping，將可對應到本地檔案的遠端資源 URL 改寫成 `../assets/...`。
+- `build`：只把 localized content 編譯成靜態頁面，遠端資源檢查只作為防禦性 fallback。
+- `deploy`：只同步 build output 到 `gh-pages` worktree、產生 root index 與 merged sitemap、commit/push。
+
+站台設定集中於 `scripts/lib/site-profiles.js`。deploy 目標為 `moztw.org/blog/taipei/` 與 `moztw.org/blog/tech/`。
 
 ```bash
 npm run site:build
@@ -38,7 +47,7 @@ npm run site:deploy
 
 1. 重新 build 兩個站
 2. 建立或重用 `gh-pages` worktree
-3. 將 `blog/` 與 `tech/` 同步到 deploy worktree
+3. 將 `blog/` 與 `tech/` 同步到 deploy worktree 的 `blog/taipei/` 與 `blog/tech/`
 4. 產生 branch root 的 merged `sitemap.xml`
 5. commit `gh-pages`
 6. push 到指定 remote / branch

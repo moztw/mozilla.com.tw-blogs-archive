@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { setDefaultResultOrder } from 'node:dns';
+import { fetchArchivedHtml as fetchArchivedHtmlWithRetry, fetchJson as fetchJsonWithRetry } from './lib/fetch-utils.js';
+import { timestampFromWaybackUrl, waybackUrl as makeWaybackUrl } from './lib/url-utils.js';
+import { parseArgs, relativePath, writeJson } from './lib/workflow-utils.js';
 
 setDefaultResultOrder('ipv4first');
 
@@ -19,6 +22,8 @@ const INDEX_PATH = path.join(EVENTS_DIR, 'events-index.json');
 const PLAN_PATH = path.join(ROOT, 'redirect-rule.plan.md');
 const SNAPSHOT_CUTOFF = '20170106132456';
 const USER_AGENT = `MozillaTaiwanBlogArchiveEvents/0.1 (+${SITE_ORIGIN} event recovery)`;
+const args = parseArgs(process.argv.slice(2));
+const command = args._[0] || 'all';
 
 const LISTING_PAGES = [
   { page: 1, path: '/events-list', timestamp: '20161229022035' },
@@ -37,6 +42,16 @@ main().catch((error) => {
 
 async function main() {
   await Promise.all([EVENTS_DIR, LISTING_DIR, RAW_DIR, JSON_DIR, MD_DIR].map((dir) => mkdir(dir, { recursive: true })));
+
+  if (command === 'parse-local') {
+    const result = await parseLocalEvents();
+    console.log(`Parsed ${result.event_count} local events into ${relative(EVENTS_DIR)}`);
+    return;
+  }
+
+  if (command !== 'all' && command !== 'fetch') {
+    throw new Error(`Unknown events command: ${command}`);
+  }
 
   const listings = [];
   const eventRefs = new Map();
@@ -125,6 +140,95 @@ async function main() {
   console.log(`Archived ${events.length} events into ${relative(EVENTS_DIR)}`);
 }
 
+async function parseLocalEvents() {
+  const existingIndex = await readExistingEventsIndex();
+  const rawIndex = await loadEventRawHtmlIndex();
+  const events = [];
+
+  for (const item of existingIndex.events || []) {
+    const slug = item.slug;
+    const raw = rawIndex.get(slug);
+    if (!raw) continue;
+    const html = await readFile(raw.filePath, 'utf8');
+    const originalUrl = item.original_url || `${SITE_ORIGIN}/events/${slug}`;
+    const parsed = parseEvent(html, originalUrl);
+    const existing = await readExistingEvent(slug);
+    const event = {
+      ...(existing || {}),
+      slug,
+      title: parsed.title || item.title || existing?.title || slug,
+      date: parsed.date || item.date || existing?.date || '',
+      original_url: originalUrl,
+      archive_url: existing?.archive_url || item.archive_url || waybackUrl(raw.timestamp, originalUrl),
+      wayback_timestamp: raw.timestamp,
+      listing_pages: existing?.listing_pages || item.listing_pages || [],
+      content_html: parsed.contentHtml,
+      content_text: parsed.contentText,
+      links: parsed.links,
+      status: parsed.contentHtml ? 'ok' : 'parse_failed',
+    };
+    await writeJson(path.join(JSON_DIR, `${slug}.json`), event);
+    await writeFile(path.join(MD_DIR, `${slug}.md`), eventToMarkdown(event), 'utf8');
+    events.push(event);
+  }
+
+  const index = {
+    generated_at: new Date().toISOString(),
+    snapshot_cutoff: existingIndex.snapshot_cutoff || SNAPSHOT_CUTOFF,
+    listing_pages: existingIndex.listing_pages || [],
+    event_count: events.length,
+    events: events.map((event) => ({
+      slug: event.slug,
+      title: event.title,
+      date: event.date,
+      status: event.status,
+      original_url: event.original_url,
+      archive_url: event.archive_url,
+      wayback_timestamp: event.wayback_timestamp,
+      listing_pages: (event.listing_pages || []).map((page) => page.page || page),
+    })),
+  };
+  await writeJson(INDEX_PATH, index);
+  return index;
+}
+
+async function readExistingEventsIndex() {
+  try {
+    return JSON.parse(await readFile(INDEX_PATH, 'utf8'));
+  } catch {
+    return { events: [] };
+  }
+}
+
+async function readExistingEvent(slug) {
+  try {
+    return JSON.parse(await readFile(path.join(JSON_DIR, `${slug}.json`), 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+async function loadEventRawHtmlIndex() {
+  const index = new Map();
+  let files = [];
+  try {
+    files = (await readdir(RAW_DIR)).filter((file) => file.endsWith('.html')).sort();
+  } catch {
+    return index;
+  }
+
+  for (const file of files) {
+    const match = file.match(/^(.+)-(\d{14})\.html$/);
+    if (!match) continue;
+    const [, slug, timestamp] = match;
+    const existing = index.get(slug);
+    if (!existing || timestamp > existing.timestamp) {
+      index.set(slug, { timestamp, filePath: path.join(RAW_DIR, file) });
+    }
+  }
+  return index;
+}
+
 async function chooseEventSnapshot(original) {
   try {
     const { finalUrl } = await fetchArchivedHtml(waybackUrl(SNAPSHOT_CUTOFF, original));
@@ -168,7 +272,7 @@ function originalUrl(pathname) {
 }
 
 function waybackUrl(timestamp, original) {
-  return `https://web.archive.org/web/${timestamp}id_/${original}`;
+  return makeWaybackUrl(timestamp, original);
 }
 
 function discoverEventLinks(html) {
@@ -388,54 +492,18 @@ async function updatePlan(index) {
 }
 
 async function fetchJson(url) {
-  const response = await fetchWithRetry(url, 'application/json');
-  return response.json();
+  return fetchJsonWithRetry(url, { userAgent: USER_AGENT });
 }
 
 async function fetchText(url) {
-  const response = await fetchWithRetry(url, 'text/html,application/xhtml+xml');
-  return response.text();
+  const response = await fetchArchivedHtmlWithRetry(url, { userAgent: USER_AGENT });
+  return response.html;
 }
 
 async function fetchArchivedHtml(url) {
-  const response = await fetchWithRetry(url, 'text/html,application/xhtml+xml');
-  return { html: await response.text(), finalUrl: response.url || url };
-}
-
-async function fetchWithRetry(url, accept) {
-  let lastError;
-  for (let attempt = 1; attempt <= 5; attempt += 1) {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 60_000);
-      const response = await fetch(url, {
-        headers: { 'user-agent': USER_AGENT, accept },
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-      if (!response.ok) throw new Error(`http_${response.status}`);
-      return response;
-    } catch (error) {
-      lastError = error;
-      if (attempt < 3) await sleep(500 * attempt);
-    }
-  }
-  throw lastError;
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function timestampFromWaybackUrl(url) {
-  return String(url || '').match(/\/web\/(\d{14})/)?.[1] || '';
-}
-
-async function writeJson(filePath, value) {
-  await mkdir(path.dirname(filePath), { recursive: true });
-  await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+  return fetchArchivedHtmlWithRetry(url, { userAgent: USER_AGENT });
 }
 
 function relative(filePath) {
-  return path.relative(ROOT, filePath) || '.';
+  return relativePath(ROOT, filePath);
 }

@@ -4,23 +4,17 @@ import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getSiteProfiles } from './lib/site-profiles.js';
+import { parseArgs as sharedParseArgs, relativePath } from './lib/workflow-utils.js';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 
-const SITES = [
-  {
-    name: 'taipei',
-    buildDir: 'blog',
-    archiveDir: 'archive-blog',
-    baseUrl: 'https://moztw.org/blog/taipei/',
-  },
-  {
-    name: 'tech',
-    buildDir: 'tech',
-    archiveDir: 'archive-tech',
-    baseUrl: 'https://moztw.org/blog/tech/',
-  },
-];
+const SITES = getSiteProfiles().map((profile) => ({
+  name: profile.deployName,
+  buildDir: profile.buildDir,
+  archiveDir: profile.archiveDir,
+  baseUrl: `https://moztw.org/${profile.deployPath.replace(/^\/+|\/+$/g, '')}/`,
+}));
 
 const args = parseArgs(process.argv.slice(2));
 
@@ -132,7 +126,7 @@ function escapeXml(value) {
 }
 
 function relative(filePath) {
-  return path.relative(ROOT, filePath) || '.';
+  return relativePath(ROOT, filePath);
 }
 
 function existingGhPagesWorktree() {
@@ -158,14 +152,7 @@ function existingGhPagesWorktree() {
 }
 
 function parseArgs(values) {
-  const parsed = {};
-  for (let i = 0; i < values.length; i += 1) {
-    const value = values[i];
-    if (value === '--output') {
-      parsed.output = values[++i];
-    }
-  }
-  return parsed;
+  return sharedParseArgs(values, { collectPositionals: false });
 }
 
 main().catch((error) => {

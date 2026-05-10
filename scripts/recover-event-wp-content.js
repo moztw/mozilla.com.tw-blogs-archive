@@ -4,6 +4,9 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { setDefaultResultOrder } from 'node:dns';
+import { fetchWithRetry as sharedFetchWithRetry } from './lib/fetch-utils.js';
+import { waybackAssetUrl as sharedWaybackAssetUrl } from './lib/url-utils.js';
+import { isDefinitive404ErrorMessage, sleep } from './lib/workflow-utils.js';
 
 setDefaultResultOrder('ipv4first');
 
@@ -327,44 +330,11 @@ async function collectOtherMissing(wpIndex) {
 }
 
 async function fetchWithRetry(url, { accept }) {
-  let lastError;
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 5_000);
-      const response = await fetch(url, {
-        headers: { 'user-agent': USER_AGENT, accept },
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-      if (!response.ok) {
-        throw new Error(`http_${response.status}`);
-      }
-      return response;
-    } catch (error) {
-      lastError = error;
-      if (isNotFoundResponseError(error)) {
-        break;
-      }
-      if (attempt < 3) {
-        await sleep(5_000);
-      }
-    }
-  }
-  throw lastError;
-}
-
-function isNotFoundResponseError(error) {
-  return String(error?.message || '').includes('http_404');
-}
-
-function isDefinitive404ErrorMessage(message) {
-  const parts = String(message || '').split('|').map((part) => part.trim()).filter(Boolean);
-  return parts.length > 0 && parts.every((part) => part.includes('http_404'));
+  return sharedFetchWithRetry(url, { accept, userAgent: USER_AGENT });
 }
 
 function waybackAssetUrl(timestamp, url) {
-  return `https://web.archive.org/web/${timestamp}id_/${url}`;
+  return sharedWaybackAssetUrl(timestamp, url);
 }
 
 function extensionFromUrlOrType(pathname, contentType) {

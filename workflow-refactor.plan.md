@@ -14,6 +14,32 @@ The refactor also merges duplicated blog and tech behavior behind shared site
 profiles and shared workflow tools. Every stage must target one explicit site.
 There is no `--all` option for any stage.
 
+## Current Status
+
+Implemented:
+
+- Shared site profiles are the source of truth for archive/build/deploy paths,
+  hosts, feature flags, and deploy paths.
+- Shared workflow helpers now cover CLI arg parsing, JSON report writing,
+  relative paths, sleep/delay, retry/404 behavior, Wayback URL construction,
+  and URL normalization.
+- `workflow.js` is the user-facing stage runner.
+- `parse --site blog` rebuilds both articles and blog event JSON/Markdown from
+  local raw HTML.
+- `parse --site tech` rebuilds both articles and tech author JSON/Markdown from
+  local raw HTML.
+- `localize`, `build`, `report`, and `deploy` are routed through explicit site
+  profiles.
+- Build output deploys under `blog/taipei/` and `blog/tech/`.
+- `--all` is intentionally unsupported.
+
+Remaining intentional compatibility surface:
+
+- Low-level `archive-wayback.js` subcommands such as `scan`, `discover`,
+  `media-recover`, and `wp-content-crosscheck` remain available for targeted
+  recovery work. The workflow runner uses them as workers rather than deleting
+  their direct CLI surface.
+
 ## CLI Contract
 
 Single-site stages:

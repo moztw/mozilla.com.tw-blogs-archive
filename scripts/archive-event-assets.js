@@ -4,6 +4,9 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { setDefaultResultOrder } from 'node:dns';
+import { fetchWithRetry as sharedFetchWithRetry } from './lib/fetch-utils.js';
+import { waybackAssetUrl as sharedWaybackAssetUrl } from './lib/url-utils.js';
+import { isDefinitive404ErrorMessage, parseArgs as sharedParseArgs, sleep } from './lib/workflow-utils.js';
 
 setDefaultResultOrder('ipv4first');
 
@@ -632,7 +635,7 @@ function assetSnapshotUrl(snapshot) {
 }
 
 function waybackAssetUrl(timestamp, url) {
-  return `https://web.archive.org/web/${timestamp}id_/${url}`;
+  return sharedWaybackAssetUrl(timestamp, url);
 }
 
 function snapshotFromWaybackResponse(url) {
@@ -641,42 +644,14 @@ function snapshotFromWaybackResponse(url) {
 }
 
 async function fetchWithRetry(url, { accept }) {
-  let lastError;
   const timeoutMs = Number(args.timeoutMs ?? args['timeout-ms'] ?? 5_000);
   const maxAttempts = Number(args.attempts ?? 3);
-  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), timeoutMs);
-      const response = await fetch(url, {
-        headers: { 'user-agent': USER_AGENT, accept },
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-      if (!response.ok) {
-        throw new Error(`http_${response.status}`);
-      }
-      return response;
-    } catch (error) {
-      lastError = error;
-      if (isNotFoundResponseError(error)) {
-        break;
-      }
-      if (attempt < maxAttempts) {
-        await sleep(5_000);
-      }
-    }
-  }
-  throw lastError;
-}
-
-function isNotFoundResponseError(error) {
-  return String(error?.message || '').includes('http_404');
-}
-
-function isDefinitive404ErrorMessage(message) {
-  const parts = String(message || '').split('|').map((part) => part.trim()).filter(Boolean);
-  return parts.length > 0 && parts.every((part) => part.includes('http_404'));
+  return sharedFetchWithRetry(url, {
+    accept,
+    userAgent: USER_AGENT,
+    timeoutMs,
+    attempts: maxAttempts,
+  });
 }
 
 function normalizeOriginalUrl(url) {
@@ -733,23 +708,7 @@ function yamlLine(key, value) {
 }
 
 function parseArgs(argv) {
-  const parsed = { _: [] };
-  for (let index = 0; index < argv.length; index += 1) {
-    const arg = argv[index];
-    if (!arg.startsWith('--')) {
-      parsed._.push(arg);
-      continue;
-    }
-    const key = arg.slice(2);
-    const next = argv[index + 1];
-    if (!next || next.startsWith('--')) {
-      parsed[key] = true;
-    } else {
-      parsed[key] = next;
-      index += 1;
-    }
-  }
-  return parsed;
+  return sharedParseArgs(argv);
 }
 
 function randomDelay() {
@@ -761,8 +720,4 @@ function randomDelay() {
 function hasFlag(name) {
   const camelName = name.replace(/-([a-z])/g, (_match, letter) => letter.toUpperCase());
   return Boolean(args[name] || args[camelName]);
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }

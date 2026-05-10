@@ -17,6 +17,7 @@ const commitMessage = args.message || 'Publish static site';
 const TARGETS = (args.site ? [getSiteProfile(args.site)] : getSiteProfiles()).map((profile) => ({
   ...profile,
   name: profile.deployName,
+  outputPath: profile.deployPath || profile.deployName,
   buildDir: path.join(ROOT, profile.buildDir),
   buildArgs: buildSiteArgs(profile),
 }));
@@ -85,7 +86,7 @@ async function syncBuild() {
 
   await writeRootIndex();
   for (const target of TARGETS) {
-    const outputDir = path.join(worktreePath, target.name);
+    const outputDir = path.join(worktreePath, target.outputPath);
     await rm(outputDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
     await mkdir(outputDir, { recursive: true });
     for (const entry of await readdir(target.buildDir)) {
@@ -100,7 +101,7 @@ async function syncBuild() {
 
 async function writeRootIndex() {
   const labels = getSiteProfiles().map((profile) => ({
-    name: profile.deployName,
+    href: `${profile.deployPath || profile.deployName}/`,
     label: targetLabel(profile),
   }));
   await writeFile(path.join(worktreePath, 'index.html'), `<!DOCTYPE html>
@@ -118,7 +119,7 @@ async function writeRootIndex() {
 <body>
   <h1>Mozilla Taiwan Archive</h1>
   <ul>
-    ${labels.map((target) => `<li><a href="${target.name}/">${target.label}</a></li>`).join('\n    ')}
+    ${labels.map((target) => `<li><a href="${target.href}">${target.label}</a></li>`).join('\n    ')}
   </ul>
 </body>
 </html>

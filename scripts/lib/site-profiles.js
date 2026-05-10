@@ -9,8 +9,10 @@ const SITE_PROFILES = {
     siteHost: 'blog.mozilla.com.tw',
     archiveDir: 'archive-blog',
     buildDir: 'blog',
+    deployPath: 'blog/taipei',
     timemapPath: 'json-blog.json',
     wpContentPath: 'blog-wp-content.json',
+    eventsDir: path.join('archive-blog', 'events'),
     themeAssetsDir: path.join('archive-blog', 'theme-assets'),
     siteTitle: 'Mozilla Taiwan 部落格',
     siteSubtitle: '最新部落格文章，提供各式 Mozilla 產品與專案相關訊息',
@@ -26,8 +28,10 @@ const SITE_PROFILES = {
     siteHost: 'tech.mozilla.com.tw',
     archiveDir: 'archive-tech',
     buildDir: 'tech',
+    deployPath: 'blog/tech',
     timemapPath: 'json-tech.json',
     wpContentPath: 'tech-wp-content.json',
+    authorsDir: path.join('archive-tech', 'authors'),
     themeAssetsDir: path.join('archive-blog', 'theme-assets'),
     siteTitle: '謀智台客',
     siteSubtitle: 'Firefox OS 研發工程師團隊共筆資料庫，提供各式 Firefox OS 開發心得與甘苦談',
@@ -61,6 +65,8 @@ export function buildSiteArgs(profile) {
     profile.buildDir,
     '--archive-dir',
     profile.archiveDir,
+    '--site-host',
+    profile.siteHost,
     '--theme-assets',
     profile.themeAssetsDir,
     '--site-title',
@@ -84,4 +90,3 @@ export function archiveSiteArgs(profile) {
     profile.wpContentPath,
   ];
 }
-

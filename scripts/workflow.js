@@ -97,6 +97,12 @@ function runArchive(profile) {
 
 function runParse(profile) {
   runNode(['scripts/archive-wayback.js', 'parse-local', ...archiveSiteArgs(profile), ...passThroughArgs()]);
+  if (profile.hasEvents) {
+    runNode(['scripts/archive-events.js', 'parse-local']);
+  }
+  if (profile.hasAuthors) {
+    runNode(['scripts/archive-authors.js', 'parse-local']);
+  }
 }
 
 function runLocalize(profile) {
