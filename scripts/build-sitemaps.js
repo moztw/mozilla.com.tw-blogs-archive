@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
-import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getSiteProfiles } from './lib/site-profiles.js';
 import { parseArgs as sharedParseArgs, relativePath } from './lib/workflow-utils.js';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const DEFAULT_OUTPUT = path.join(ROOT, 'site-build', 'sitemap.xml');
 
 const SITES = getSiteProfiles().map((profile) => ({
   name: profile.deployName,
@@ -108,12 +108,7 @@ function sitemapOutputPath() {
   if (explicitOutput) {
     return path.resolve(ROOT, explicitOutput);
   }
-
-  const worktreePath = existingGhPagesWorktree();
-  if (!worktreePath) {
-    throw new Error('No gh-pages worktree found. Run deploy first or pass --output <path>.');
-  }
-  return path.join(worktreePath, 'sitemap.xml');
+  return DEFAULT_OUTPUT;
 }
 
 function escapeXml(value) {
@@ -127,28 +122,6 @@ function escapeXml(value) {
 
 function relative(filePath) {
   return relativePath(ROOT, filePath);
-}
-
-function existingGhPagesWorktree() {
-  const result = spawnSync('git', ['worktree', 'list', '--porcelain'], {
-    cwd: ROOT,
-    encoding: 'utf8',
-    stdio: 'pipe',
-  });
-  if (result.status !== 0) {
-    return '';
-  }
-
-  const records = result.stdout.trim().split(/\n\n+/);
-  for (const record of records) {
-    const lines = record.split('\n');
-    const worktree = lines.find((line) => line.startsWith('worktree '))?.slice('worktree '.length);
-    const branch = lines.find((line) => line.startsWith('branch '))?.slice('branch '.length);
-    if (worktree && branch === 'refs/heads/gh-pages') {
-      return worktree;
-    }
-  }
-  return '';
 }
 
 function parseArgs(values) {

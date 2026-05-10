@@ -2,10 +2,11 @@ import { cp, mkdir, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { buildSiteArgs, getSiteProfile, getSiteProfiles } from './lib/site-profiles.js';
+import { getSiteProfile, getSiteProfiles } from './lib/site-profiles.js';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const DEFAULT_WORKTREE = path.join('/private/tmp', `${path.basename(ROOT)}-gh-pages-deploy`);
+const SITEMAP_PATH = path.join(ROOT, 'site-build', 'sitemap.xml');
 
 const args = parseArgs(process.argv.slice(2));
 const explicitWorktree = args.worktree || process.env.GH_PAGES_WORKTREE || '';
@@ -19,14 +20,11 @@ const TARGETS = (args.site ? [getSiteProfile(args.site)] : getSiteProfiles()).ma
   name: profile.deployName,
   outputPath: profile.deployPath || profile.deployName,
   buildDir: path.join(ROOT, profile.buildDir),
-  buildArgs: buildSiteArgs(profile),
 }));
 
 async function main() {
-  buildTargets();
   await ensureWorktree();
   await syncBuild();
-  writeSitemap();
   run('git', ['add', '.'], worktreePath);
 
   const status = run('git', ['status', '--porcelain'], worktreePath, { capture: true });
@@ -41,16 +39,6 @@ async function main() {
   } else {
     console.log('Skipped push because --no-push was provided.');
   }
-}
-
-function buildTargets() {
-  for (const target of TARGETS) {
-    run('node', ['scripts/build-site.js', ...target.buildArgs], ROOT);
-  }
-}
-
-function writeSitemap() {
-  run('node', ['scripts/build-sitemaps.js', '--output', path.join(worktreePath, 'sitemap.xml')], ROOT);
 }
 
 async function ensureWorktree() {
@@ -85,6 +73,10 @@ async function syncBuild() {
   }
 
   await writeRootIndex();
+  if (!(await exists(SITEMAP_PATH))) {
+    throw new Error(`Missing ${path.relative(ROOT, SITEMAP_PATH)}. Run node scripts/workflow.js build-both before deploy.`);
+  }
+  await cp(SITEMAP_PATH, path.join(worktreePath, 'sitemap.xml'));
   for (const target of TARGETS) {
     const outputDir = path.join(worktreePath, target.outputPath);
     await rm(outputDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });

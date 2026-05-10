@@ -30,6 +30,9 @@ Implemented:
   local raw HTML.
 - `localize`, `build`, `report`, and `deploy` are routed through explicit site
   profiles.
+- `build` now writes the merged root sitemap to `site-build/sitemap.xml`.
+- `deploy` copies existing build output and `site-build/sitemap.xml`; it no
+  longer rebuilds or regenerates the sitemap.
 - Build output deploys under `taipei/` and `tech/`.
 - `--all` is intentionally unsupported.
 
@@ -166,6 +169,7 @@ Responsibilities:
 - Copy already-localized assets.
 - Build posts, category pages, month pages, event pages, author pages, and
   compatibility aliases according to the site profile.
+- Generate the merged root sitemap after build output is in place.
 - Keep defensive URL rewriting only as a fallback.
 
 Non-responsibilities:
@@ -181,7 +185,8 @@ Purpose: publish build output.
 Responsibilities:
 
 - Sync build output to a `gh-pages` worktree.
-- Generate the root index and merged sitemap.
+- Copy `site-build/sitemap.xml` to the branch root.
+- Generate the root index.
 - Commit and push to the configured remote and branch.
 - Support explicit single-site deploy and explicit `deploy-both`.
 

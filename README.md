@@ -38,8 +38,8 @@ node scripts/workflow.js deploy-both
 - `archive`：抓 Wayback 原始 HTML、資源與 recovery 報告。
 - `parse`：只從本地 raw HTML 產生 canonical JSON / Markdown / metadata；blog events 與 tech authors 也在這個階段重建。
 - `localize`：讀取 parsed content 與 asset mapping，將可對應到本地檔案的遠端資源 URL 改寫成 `../assets/...`。
-- `build`：只把 localized content 編譯成靜態頁面，遠端資源檢查只作為防禦性 fallback。
-- `deploy`：只同步 build output 到 `gh-pages` worktree、產生 root index 與 merged sitemap、commit/push。
+- `build`：只把 localized content 編譯成靜態頁面，遠端資源檢查只作為防禦性 fallback；最後產生 `site-build/sitemap.xml`。
+- `deploy`：只同步 build output 與 `site-build/sitemap.xml` 到 `gh-pages` worktree、產生 root index、commit/push。
 
 站台設定集中於 `scripts/lib/site-profiles.js`。deploy 目標為 `moztw.org/taipei/` 與 `moztw.org/tech/`。
 
@@ -53,12 +53,18 @@ npm run site:build
 npm run site:deploy
 ```
 
-執行完整發布流程：
+同步已完成的 build output 到 `gh-pages` worktree。發布前應先執行：
 
-1. 重新 build 兩個站
-2. 建立或重用 `gh-pages` worktree
-3. 將 `blog/` 與 `tech/` 同步到 deploy worktree 的 `taipei/` 與 `tech/`
-4. 產生 branch root 的 merged `sitemap.xml`
+```bash
+node scripts/workflow.js build-both
+```
+
+deploy 階段只做：
+
+1. 建立或重用 `gh-pages` worktree
+2. 將 `blog/` 與 `tech/` 同步到 deploy worktree 的 `taipei/` 與 `tech/`
+3. 將 `site-build/sitemap.xml` 複製到 branch root
+4. 產生 branch root 的 index
 5. commit `gh-pages`
 6. push 到指定 remote / branch
 

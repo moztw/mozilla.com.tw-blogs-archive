@@ -53,7 +53,8 @@ function runBoth(bothCommand) {
   }
 
   if (bothCommand === 'build-both') {
-    for (const profile of profiles) runBuild(profile);
+    for (const profile of profiles) runBuildSite(profile);
+    runSitemap();
     return;
   }
 
@@ -110,7 +111,16 @@ function runLocalize(profile) {
 }
 
 function runBuild(profile) {
+  runBuildSite(profile);
+  runSitemap();
+}
+
+function runBuildSite(profile) {
   runNode(['scripts/build-site.js', ...buildSiteArgs(profile), ...passThroughArgs()]);
+}
+
+function runSitemap() {
+  runNode(['scripts/build-sitemaps.js']);
 }
 
 function runDeploy({ site, extraArgs }) {
