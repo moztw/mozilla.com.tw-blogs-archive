@@ -2,6 +2,16 @@
 
 這個 repo 保存並重建 `blog.mozilla.com.tw` 的 Wayback Machine 封存內容，輸出為可由 GitHub Pages 發布的靜態 HTML。
 
+## 文件索引
+
+中間計畫與盤點文件已整理到 `docs/`：
+
+- `docs/workflow-refactor.plan.md`：archive / parse / localize / build / deploy workflow refactor 計畫與狀態。
+- `docs/redirect-rule.plan.md`：舊網址 inventory 與 GitHub Pages redirect 規則。
+- `docs/blog-event.plan.md`：blog events 封存、資源與靜態頁規劃。
+- `docs/tech-author.plan.md`：tech authors 封存、資源與靜態頁規劃。
+- `docs/legacy-wayback-plan.md`：早期 Wayback 封存完整計畫，保留作歷史參考。
+
 ## 常用指令
 
 新的 workflow 入口以明確階段與明確站台為主，不提供 `--all`：
