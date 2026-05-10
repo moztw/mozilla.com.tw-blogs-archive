@@ -87,12 +87,12 @@ function runStage(stage, profile) {
 }
 
 function runArchive(profile) {
-  runNode(['scripts/archive-wayback.js', 'fetch', ...archiveSiteArgs(profile), ...passThroughArgs()]);
+  runNode(['scripts/archive-wayback.js', 'fetch-raw', ...archiveSiteArgs(profile), ...passThroughArgs()]);
   if (profile.hasEvents) {
-    runNode(['scripts/archive-events.js']);
+    runNode(['scripts/archive-events.js', 'fetch-raw']);
   }
   if (profile.hasAuthors) {
-    runNode(['scripts/archive-authors.js']);
+    runNode(['scripts/archive-authors.js', 'fetch-raw']);
   }
 }
 

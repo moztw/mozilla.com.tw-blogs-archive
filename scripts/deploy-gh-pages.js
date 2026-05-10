@@ -74,7 +74,7 @@ async function syncBuild() {
 
   await writeRootIndex();
   if (!(await exists(SITEMAP_PATH))) {
-    throw new Error(`Missing ${path.relative(ROOT, SITEMAP_PATH)}. Run node scripts/workflow.js build-both before deploy.`);
+    throw new Error(`Missing ${path.relative(ROOT, SITEMAP_PATH)}. Run node scripts/workflow.js build before deploy.`);
   }
   await cp(SITEMAP_PATH, path.join(worktreePath, 'sitemap.xml'));
   for (const target of TARGETS) {

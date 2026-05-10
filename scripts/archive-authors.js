@@ -39,9 +39,10 @@ async function main() {
     return;
   }
 
-  if (command !== 'all' && command !== 'fetch') {
+  if (command !== 'all' && command !== 'fetch' && command !== 'fetch-raw') {
     throw new Error(`Unknown authors command: ${command}`);
   }
+  const shouldParse = command !== 'fetch-raw';
 
   const inputPath = await resolveInputPath();
   const rows = JSON.parse(await readFile(inputPath, 'utf8'));
@@ -115,31 +116,24 @@ async function main() {
       await writeFile(path.join(RAW_DIR, rawName), html, 'utf8');
     }
 
-    const parsed = parseAuthorPage(html, entry.original_url);
-    const assetResult = ARGS['skip-assets']
-      ? { images: parsed.images, asset_status: 'skipped', asset_errors: [] }
-      : await archiveAssets(entry.slug, parsed.images, resolvedTimestamp, existingAssetIndex);
-    const localAvatarPath = findLocalAssetPath(assetResult.images, parsed.avatarUrl);
-    const author = {
-      slug: entry.slug,
-      title: parsed.title || entry.slug,
-      original_url: entry.original_url,
-      archive_url: finalUrl,
-      wayback_timestamp: resolvedTimestamp,
-      avatar_url: parsed.avatarUrl,
-      local_avatar_path: localAvatarPath,
-      content_html: parsed.contentHtml,
-      content_text: parsed.contentText,
-      images: assetResult.images,
-      asset_status: assetResult.asset_status,
-      asset_errors: assetResult.asset_errors,
-      links: parsed.links,
-      status: parsed.contentHtml ? 'ok' : 'parse_failed',
-      source_json: path.basename(inputPath),
-    };
+    const author = shouldParse
+      ? await authorFromHtml(entry, html, finalUrl, resolvedTimestamp, existingAssetIndex, inputPath)
+      : {
+        slug: entry.slug,
+        title: entry.slug,
+        original_url: entry.original_url,
+        archive_url: finalUrl,
+        wayback_timestamp: resolvedTimestamp,
+        asset_status: 'raw_fetched',
+        asset_errors: [],
+        status: 'raw_fetched',
+        source_json: path.basename(inputPath),
+      };
 
-    await writeJson(path.join(JSON_DIR, `${entry.slug}.json`), author);
-    await writeFile(path.join(MD_DIR, `${entry.slug}.md`), authorToMarkdown(author), 'utf8');
+    if (shouldParse) {
+      await writeJson(path.join(JSON_DIR, `${entry.slug}.json`), author);
+      await writeFile(path.join(MD_DIR, `${entry.slug}.md`), authorToMarkdown(author), 'utf8');
+    }
     authors.push(author);
     console.log(`Author ${index + 1}/${bySlug.size}: ${entry.slug} (${author.status})`);
   }
@@ -160,7 +154,32 @@ async function main() {
     })),
   });
 
-  console.log(`Archived ${authors.length} author pages into ${relative(AUTHORS_DIR)}`);
+  console.log(`${shouldParse ? 'Archived' : 'Fetched raw'} ${authors.length} author pages into ${relative(AUTHORS_DIR)}`);
+}
+
+async function authorFromHtml(entry, html, finalUrl, resolvedTimestamp, existingAssetIndex, inputPath) {
+  const parsed = parseAuthorPage(html, entry.original_url);
+  const assetResult = ARGS['skip-assets']
+    ? { images: parsed.images, asset_status: 'skipped', asset_errors: [] }
+    : await archiveAssets(entry.slug, parsed.images, resolvedTimestamp, existingAssetIndex);
+  const localAvatarPath = findLocalAssetPath(assetResult.images, parsed.avatarUrl);
+  return {
+    slug: entry.slug,
+    title: parsed.title || entry.slug,
+    original_url: entry.original_url,
+    archive_url: finalUrl,
+    wayback_timestamp: resolvedTimestamp,
+    avatar_url: parsed.avatarUrl,
+    local_avatar_path: localAvatarPath,
+    content_html: parsed.contentHtml,
+    content_text: parsed.contentText,
+    images: assetResult.images,
+    asset_status: assetResult.asset_status,
+    asset_errors: assetResult.asset_errors,
+    links: parsed.links,
+    status: parsed.contentHtml ? 'ok' : 'parse_failed',
+    source_json: path.basename(inputPath),
+  };
 }
 
 async function parseLocalAuthors() {

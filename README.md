@@ -35,13 +35,15 @@ node scripts/workflow.js deploy-both
 
 階段責任：
 
-- `archive`：抓 Wayback 原始 HTML、資源與 recovery 報告。
+- `archive`：抓 Wayback 原始 HTML 與來源清單；不產生 canonical JSON / Markdown。
 - `parse`：只從本地 raw HTML 產生 canonical JSON / Markdown / metadata；blog events 與 tech authors 也在這個階段重建。
 - `localize`：讀取 parsed content 與 asset mapping，將可對應到本地檔案的遠端資源 URL 改寫成 `../assets/...`。
-- `build`：只把 localized content 編譯成靜態頁面，遠端資源檢查只作為防禦性 fallback；最後產生 `site-build/sitemap.xml`。
-- `deploy`：只同步 build output 與 `site-build/sitemap.xml` 到 `gh-pages` worktree、產生 root index、commit/push。
+- `build`：只把 localized content 編譯成靜態頁面，遠端資源檢查只作為防禦性 fallback；每次 build 最後產生合併的 `site-build/sitemap.xml`。
+- `deploy`：只同步 build output 與既有 `site-build/sitemap.xml` 到 `gh-pages` worktree、產生 root index、commit/push。
 
 站台設定集中於 `scripts/lib/site-profiles.js`。deploy 目標為 `moztw.org/taipei/` 與 `moztw.org/tech/`。
+
+只需要重產 sitemap 時可直接執行 `node scripts/build-sitemaps.js` 或 `npm run site:sitemap`；它只讀取目前的 `blog/` 與 `tech/` build output，不會重新 build。
 
 ```bash
 npm run site:build

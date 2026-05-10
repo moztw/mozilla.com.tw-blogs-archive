@@ -75,6 +75,34 @@ const CATEGORY_COUNTS = {
   44: 12,
   21: 98,
 };
+const TECH_CATEGORY_MAP = {
+  1: '未分類',
+  3: 'Firefox OS(B2G)',
+  4: 'Firefox',
+  5: 'Mozilla',
+  6: 'Persona',
+  7: 'Open Source',
+  8: 'CSS',
+  9: 'Javascript',
+  29: 'UX/UE',
+  30: 'Interaction design',
+  42: 'Life at Mozilla',
+};
+const TECH_CATEGORY_SLUG_MAP = {
+  b2g: 'Firefox OS(B2G)',
+  browser_id: 'Persona',
+  'browser-id': 'Persona',
+  javascript: 'Javascript',
+  firefox: 'Firefox',
+  mozilla: 'Mozilla',
+  'open-source': 'Open Source',
+  css: 'CSS',
+  ux: 'UX/UE',
+  'ux-ue': 'UX/UE',
+  'interaction-design': 'Interaction design',
+  'life-at-mozilla': 'Life at Mozilla',
+  'chrome-web-store': 'Chrome Web Store',
+};
 const CATEGORY_LISTING_TIMESTAMP = '20200805155022';
 const MONTH_START = 201112;
 const MONTH_END = 201610;
@@ -181,6 +209,15 @@ async function main() {
     return;
   }
 
+  if (command === 'fetch-raw') {
+    const snapshots = await readCdx();
+    const result = await fetchRawPosts(snapshots);
+    console.log(
+      `Fetched ${result.success_count}/${result.total_count} raw article pages; report written to ${relative(result.report_path)}`
+    );
+    return;
+  }
+
   if (command === 'assets') {
     const result = await fetchMissingAssets();
     console.log(
@@ -253,7 +290,7 @@ function printHelp() {
   console.log(`Usage:
   npm run archive:scan
   npm run archive -- discover --sources tag --synthesize-cdx
-  npm run archive:fetch -- --limit 10 --include-assets
+  npm run archive:fetch -- --limit 10
   npm run archive -- assets --delay-min 500 --delay-max 1500
   npm run archive -- --start 74 --end 9335 --delay-min 1000 --delay-max 3000
 
@@ -273,7 +310,9 @@ Commands:
          Query individual post ids inferred from monthly missing ranges
   probe-urls
          Query post ids listed in urls.txt but missing from cdx-snapshots.json
-  fetch  Read archive-blog/cdx-snapshots.json and archive posts
+  fetch-raw
+         Read archive-blog/cdx-snapshots.json and fetch raw post HTML only
+  fetch  Legacy combined fetch+parse command for targeted recovery
   assets Retry only missing article image assets from archive-blog/articles-json
   media-report
          Report media referenced inside each raw <article>
@@ -1437,6 +1476,91 @@ async function fetchPosts(snapshots) {
   return { articles, manifest };
 }
 
+async function fetchRawPosts(snapshots) {
+  const ids = await selectedPostIds(snapshots);
+  const report = {
+    generated_at: new Date().toISOString(),
+    site_host: SITE_HOST,
+    archive_dir: relative(ARCHIVE_DIR),
+    total_count: ids.length,
+    success_count: 0,
+    failed_count: 0,
+    fetched: [],
+    failed: [],
+    report_path: relative(path.join(DISCOVERY_DIR, 'fetch-raw-report.json')),
+  };
+
+  for (const [index, postId] of ids.entries()) {
+    const candidates = [...(snapshots[postId] ?? [])]
+      .sort(compareSnapshots)
+      .slice(0, Number(args.maxAttempts ?? MAX_SNAPSHOT_ATTEMPTS));
+    let fetched = null;
+    const errors = [];
+
+    for (const snapshot of candidates) {
+      for (const preferRaw of [true, false]) {
+        try {
+          fetched = await fetchRawSnapshot(postId, snapshot, { preferRaw });
+          break;
+        } catch (error) {
+          errors.push({
+            timestamp: snapshot.timestamp,
+            mode: preferRaw ? 'raw' : 'normal',
+            reason: error.message,
+          });
+        }
+      }
+      if (fetched) break;
+    }
+
+    if (fetched) {
+      report.success_count += 1;
+      report.fetched.push(fetched);
+    } else {
+      report.failed_count += 1;
+      report.failed.push({ post_id: postId, errors });
+    }
+
+    if ((index + 1) % Number(args.checkpointEvery || args['checkpoint-every'] || 25) === 0) {
+      await saveJson(path.join(DISCOVERY_DIR, 'fetch-raw-report.json'), report);
+      console.log(`Fetch-raw checkpoint: ${index + 1}/${ids.length}`);
+    }
+
+    console.log(`Fetched raw ${index + 1}/${ids.length}: ${postId} ${fetched ? 'ok' : 'failed'}`);
+    await sleep(randomDelay());
+  }
+
+  await saveJson(path.join(DISCOVERY_DIR, 'fetch-raw-report.json'), report);
+  return { ...report, report_path: path.join(DISCOVERY_DIR, 'fetch-raw-report.json') };
+}
+
+async function selectedPostIds(snapshots) {
+  const start = Number(args.start ?? POST_ID_MIN);
+  const end = Number(args.end ?? POST_ID_MAX);
+  const limit = args.limit ? Number(args.limit) : Infinity;
+  const selectedIds = await readIdsFile();
+  return (selectedIds ?? Object.keys(snapshots).map(Number))
+    .filter((id) => snapshots[id])
+    .filter((id) => selectedIds || (id >= start && id <= end))
+    .sort((a, b) => a - b)
+    .slice(0, limit);
+}
+
+async function fetchRawSnapshot(postId, snapshot, { preferRaw }) {
+  const requestUrl = waybackUrl(snapshot, preferRaw);
+  const { html, finalUrl } = await fetchHtmlPage(requestUrl);
+  const resolvedSnapshot = snapshotFromWaybackResponse(finalUrl) || snapshot;
+  const rawPath = path.join(RAW_DIR, `${postId}-${resolvedSnapshot.timestamp}.html`);
+  await writeFile(rawPath, html, 'utf8');
+  return {
+    post_id: postId,
+    original_url: resolvedSnapshot.original,
+    archive_url: finalUrl || requestUrl,
+    wayback_timestamp: resolvedSnapshot.timestamp,
+    raw_path: relative(rawPath),
+  };
+}
+
 async function readIdsFile() {
   const idsFile = args.idsFile ?? args['ids-file'];
   if (!idsFile) {
@@ -2564,15 +2688,16 @@ async function reindexArchive() {
 
 async function parseLocalArchive() {
   const articles = await readArchivedArticles();
+  const articleById = new Map(articles.map((article) => [Number(article.post_id), article]));
   const selectedIds = await readIdsFile();
   const start = Number(args.start ?? POST_ID_MIN);
   const end = Number(args.end ?? POST_ID_MAX);
   const limit = args.limit ? Number(args.limit) : Infinity;
   const rawIndex = await indexRawHtmlFiles();
-  const selected = articles
-    .filter((article) => rawIndex.has(article.post_id))
-    .filter((article) => selectedIds ? selectedIds.includes(article.post_id) : (article.post_id >= start && article.post_id <= end))
-    .sort((a, b) => a.post_id - b.post_id)
+  const rawPostIds = [...rawIndex.keys()].sort((a, b) => a - b);
+  const selected = rawPostIds
+    .filter((postId) => selectedIds ? selectedIds.includes(postId) : (postId >= start && postId <= end))
+    .map((postId) => articleById.get(postId) || baseArticle(postId, { original_url: canonicalPostUrl(postId), asset_status: 'not_localized' }))
     .slice(0, limit);
 
   const report = {
@@ -3410,12 +3535,38 @@ function collectRelText(html, rel, baseUrl = SITE_ORIGIN) {
     if (!isRelLink(match[1], rel, baseUrl)) {
       continue;
     }
-    const value = cleanText(match[2]);
+    const value = normalizeRelText(match[1], cleanText(match[2]), rel, baseUrl);
     if (value && !values.includes(value)) {
       values.push(value);
     }
   }
   return values;
+}
+
+function normalizeRelText(attrs, text, rel, baseUrl) {
+  if (SITE_HOST !== 'tech.mozilla.com.tw' || rel !== 'category') {
+    return text;
+  }
+
+  const href = attr(attrs, 'href');
+  if (!href) {
+    return text;
+  }
+
+  try {
+    const parsed = new URL(normalizeUrl(href, baseUrl));
+    const catId = parsed.searchParams.get('cat');
+    if (catId && TECH_CATEGORY_MAP[catId]) {
+      return TECH_CATEGORY_MAP[catId];
+    }
+
+    const slug = decodeURIComponent(parsed.pathname.split('/').filter(Boolean).pop() || '').toLowerCase();
+    if (TECH_CATEGORY_SLUG_MAP[slug]) {
+      return TECH_CATEGORY_SLUG_MAP[slug];
+    }
+  } catch {}
+
+  return text;
 }
 
 function isRelLink(attrs, rel, baseUrl) {
@@ -3692,22 +3843,11 @@ function categoryNameFromSlug(slug) {
   if (SITE_HOST === 'blog.mozilla.com.tw' && blogMap[clean]) {
     return blogMap[clean];
   }
-  const techMap = {
-    b2g: 'Firefox OS(B2G)',
-    browser_id: 'Persona',
-    'browser-id': 'Persona',
-    javascript: 'Javascript',
-    firefox: 'Firefox',
-    mozilla: 'Mozilla',
-    'open-source': 'Open Source',
-    css: 'CSS',
-    ux: 'UX/UE',
-    'interaction-design': 'Interaction design',
-    'life-at-mozilla': 'Life at Mozilla',
-    'chrome-web-store': 'Chrome Web Store',
-  };
-  if (SITE_HOST === 'tech.mozilla.com.tw' && techMap[clean]) {
-    return techMap[clean];
+  if (/^\d+$/.test(clean)) {
+    return SITE_HOST === 'tech.mozilla.com.tw' ? '' : clean;
+  }
+  if (SITE_HOST === 'tech.mozilla.com.tw' && TECH_CATEGORY_SLUG_MAP[clean]) {
+    return TECH_CATEGORY_SLUG_MAP[clean];
   }
   return clean
     .split(/[-_]+/)

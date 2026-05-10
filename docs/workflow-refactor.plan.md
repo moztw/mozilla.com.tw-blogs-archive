@@ -33,6 +33,9 @@ Implemented:
 - `build` now writes the merged root sitemap to `site-build/sitemap.xml`.
 - `deploy` copies existing build output and `site-build/sitemap.xml`; it no
   longer rebuilds or regenerates the sitemap.
+- `build-sitemaps.js` can be run directly when only the sitemap needs to be
+  refreshed; it scans existing `blog/` and `tech/` build output and does not
+  rebuild either site.
 - Build output deploys under `taipei/` and `tech/`.
 - `--all` is intentionally unsupported.
 
@@ -42,6 +45,9 @@ Remaining intentional compatibility surface:
   `media-recover`, and `wp-content-crosscheck` remain available for targeted
   recovery work. The workflow runner uses them as workers rather than deleting
   their direct CLI surface.
+- `recover-assets` is an auxiliary recovery command after `parse`; it is kept
+  outside the five-stage happy path so `archive` does not need to parse content
+  just to discover media URLs.
 
 ## CLI Contract
 
@@ -114,8 +120,7 @@ Purpose: fetch external source material and record recovery status.
 Responsibilities:
 
 - Fetch Wayback HTML snapshots.
-- Fetch assets and retry recoverable missing assets.
-- Produce raw HTML, local asset files, and recovery reports.
+- Produce raw HTML and source/recovery reports.
 - Use shared fetch, retry, timeout, URL normalization, and Wayback fallback
   helpers.
 - Keep blog events and tech authors as site feature workers.
@@ -124,6 +129,8 @@ Non-responsibilities:
 
 - Do not generate final site pages.
 - Do not modify deploy output.
+- Do not write canonical `articles-json`, `articles-md`, `events-json`,
+  `events-md`, `authors-json`, or `authors-md`; that belongs to `parse`.
 
 ### parse
 
@@ -169,7 +176,9 @@ Responsibilities:
 - Copy already-localized assets.
 - Build posts, category pages, month pages, event pages, author pages, and
   compatibility aliases according to the site profile.
-- Generate the merged root sitemap after build output is in place.
+- Generate the merged root sitemap after every build, using the current build
+  output trees for both sites.
+- Allow direct sitemap refresh via `build-sitemaps.js` without rebuilding.
 - Keep defensive URL rewriting only as a fallback.
 
 Non-responsibilities:
@@ -185,7 +194,7 @@ Purpose: publish build output.
 Responsibilities:
 
 - Sync build output to a `gh-pages` worktree.
-- Copy `site-build/sitemap.xml` to the branch root.
+- Copy existing `site-build/sitemap.xml` to the branch root.
 - Generate the root index.
 - Commit and push to the configured remote and branch.
 - Support explicit single-site deploy and explicit `deploy-both`.
@@ -193,6 +202,7 @@ Responsibilities:
 Non-responsibilities:
 
 - Do not archive, parse, or repair content.
+- Do not build static pages or generate sitemap.
 
 ## Refactor Targets
 
@@ -219,12 +229,15 @@ Non-responsibilities:
 ## Acceptance Checks
 
 - `node --check` passes for all new and changed scripts.
-- `node scripts/workflow.js build --site blog` builds the blog site only.
-- `node scripts/workflow.js build --site tech` builds the tech site only.
+- `node scripts/workflow.js build --site blog` builds the blog site and then
+  writes the merged `site-build/sitemap.xml`.
+- `node scripts/workflow.js build --site tech` builds the tech site and then
+  writes the merged `site-build/sitemap.xml`.
 - `node scripts/workflow.js localize --site blog` localizes blog content only.
 - `node scripts/workflow.js localize --site tech` localizes tech content only.
 - `node scripts/workflow.js localize-both` localizes both sites explicitly.
-- `node scripts/workflow.js build-both` builds both sites explicitly.
+- `node scripts/workflow.js build-both` builds both sites explicitly and then
+  writes the merged `site-build/sitemap.xml`.
 - `node scripts/workflow.js build --all` fails because `--all` is unsupported.
 - `node scripts/workflow.js build` fails because `--site` is required.
 - Blog event pages still build:

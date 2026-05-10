@@ -49,9 +49,10 @@ async function main() {
     return;
   }
 
-  if (command !== 'all' && command !== 'fetch') {
+  if (command !== 'all' && command !== 'fetch' && command !== 'fetch-raw') {
     throw new Error(`Unknown events command: ${command}`);
   }
+  const shouldParse = command !== 'fetch-raw';
 
   const listings = [];
   const eventRefs = new Map();
@@ -97,23 +98,23 @@ async function main() {
     const rawPath = path.join(RAW_DIR, `${ref.slug}-${timestamp}.html`);
     await writeFile(rawPath, html, 'utf8');
 
-    const parsed = parseEvent(html, ref.original_url);
-    const event = {
-      slug: ref.slug,
-      title: parsed.title || ref.slug,
-      date: parsed.date,
-      original_url: ref.original_url,
-      archive_url: finalUrl,
-      wayback_timestamp: timestamp,
-      listing_pages: ref.listing_pages,
-      content_html: parsed.contentHtml,
-      content_text: parsed.contentText,
-      links: parsed.links,
-      status: parsed.contentHtml ? 'ok' : 'parse_failed',
-    };
+    const event = shouldParse
+      ? eventFromHtml(ref, html, finalUrl, timestamp)
+      : {
+        slug: ref.slug,
+        title: ref.slug,
+        date: '',
+        original_url: ref.original_url,
+        archive_url: finalUrl,
+        wayback_timestamp: timestamp,
+        listing_pages: ref.listing_pages,
+        status: 'raw_fetched',
+      };
 
-    await writeJson(path.join(JSON_DIR, `${ref.slug}.json`), event);
-    await writeFile(path.join(MD_DIR, `${ref.slug}.md`), eventToMarkdown(event), 'utf8');
+    if (shouldParse) {
+      await writeJson(path.join(JSON_DIR, `${ref.slug}.json`), event);
+      await writeFile(path.join(MD_DIR, `${ref.slug}.md`), eventToMarkdown(event), 'utf8');
+    }
     events.push(event);
     console.log(`Event ${index + 1}/${eventRefs.size}: ${ref.slug} (${event.status})`);
   }
@@ -135,9 +136,28 @@ async function main() {
     })),
   };
   await writeJson(INDEX_PATH, index);
-  await updatePlan(index);
+  if (shouldParse) {
+    await updatePlan(index);
+  }
 
-  console.log(`Archived ${events.length} events into ${relative(EVENTS_DIR)}`);
+  console.log(`${shouldParse ? 'Archived' : 'Fetched raw'} ${events.length} events into ${relative(EVENTS_DIR)}`);
+}
+
+function eventFromHtml(ref, html, finalUrl, timestamp) {
+  const parsed = parseEvent(html, ref.original_url);
+  return {
+    slug: ref.slug,
+    title: parsed.title || ref.slug,
+    date: parsed.date,
+    original_url: ref.original_url,
+    archive_url: finalUrl,
+    wayback_timestamp: timestamp,
+    listing_pages: ref.listing_pages,
+    content_html: parsed.contentHtml,
+    content_text: parsed.contentText,
+    links: parsed.links,
+    status: parsed.contentHtml ? 'ok' : 'parse_failed',
+  };
 }
 
 async function parseLocalEvents() {
