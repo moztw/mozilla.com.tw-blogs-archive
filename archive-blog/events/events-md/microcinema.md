@@ -1,0 +1,41 @@
+---
+slug: "microcinema"
+title: "八月狐狐工作坊 – 你不能不知道的微電影拍攝技巧"
+date: "2013-08-17"
+original_url: "https://blog.mozilla.com.tw/events/microcinema"
+archive_url: "https://web.archive.org/web/20170107104924id_/https://blog.mozilla.com.tw/events/microcinema"
+wayback_timestamp: "20170107104924"
+status: "ok"
+asset_status: "ok"
+---
+地圖不可用
+
+	活動時間
+
+
+	日期 2013/08/17
+
+14:00:00 - 15:30:00
+
+
+
+	地點
+
+
+	
+
+
+
+
+近年來微電影以各種形式被社會各界廣泛地使用，內容型態包含：公益推廣、形象宣傳、商業訂製、個人創意……等等。但是微電影到底怎麼拍? 是不是一定要有專業的器材、強大的影片後製軟體才能拍攝出屬於自己的微電影? 其實不然，只要在拍攝前對微電影有充分的了解及擁有簡單的器材設備，人人都可以一圓導演夢！本次工作坊將帶著你由基本認知到實拍技巧一窺微電影的各種拍攝奧秘！
+
+時間：8/17 (六) 14:00-15:30
+
+地點：Mozilla Space
+
+講者介紹
+
+![Yuna](../assets/uploads/yuna.jpg)
+ 創意設計師 鍾張齡 Yuna Jong
+
+自有記憶以來就喜歡動手做東西，讀的是產品設計與使用者經驗，經常透過影像來詮釋設計。熱愛旅行，喜歡透過影像、文字與攝影來記錄旅程。目前任職於 Mozilla Taiwan，負責行銷部門的相關設計。

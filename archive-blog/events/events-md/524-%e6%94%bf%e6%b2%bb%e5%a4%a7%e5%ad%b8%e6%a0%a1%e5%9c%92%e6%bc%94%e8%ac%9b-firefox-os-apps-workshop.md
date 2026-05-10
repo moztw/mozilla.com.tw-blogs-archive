@@ -1,0 +1,48 @@
+---
+slug: "524-%e6%94%bf%e6%b2%bb%e5%a4%a7%e5%ad%b8%e6%a0%a1%e5%9c%92%e6%bc%94%e8%ac%9b-firefox-os-apps-workshop"
+title: "5/24 政治大學校園演講 – Firefox OS Apps Workshop"
+date: "2013-05-24"
+original_url: "https://blog.mozilla.com.tw/events/524-%e6%94%bf%e6%b2%bb%e5%a4%a7%e5%ad%b8%e6%a0%a1%e5%9c%92%e6%bc%94%e8%ac%9b-firefox-os-apps-workshop"
+archive_url: "https://web.archive.org/web/20160901200404id_/https://blog.mozilla.com.tw/events/524-%e6%94%bf%e6%b2%bb%e5%a4%a7%e5%ad%b8%e6%a0%a1%e5%9c%92%e6%bc%94%e8%ac%9b-firefox-os-apps-workshop"
+wayback_timestamp: "20160901200404"
+status: "ok"
+asset_status: "partial_assets_failed"
+---
+地圖不可用
+
+	活動時間
+
+
+	日期 2013/05/24
+
+10:30:00 - 12:00:00
+
+
+
+	地點
+
+
+	
+
+
+
+
+本週五 5 月 24 日，我們將前往政治大學演講，現場有最精彩的演講內容，更貼心準備了 Firefox 獨家小贈品，和你相約政大見！演講資訊如下：
+
+### Firefox OS Apps Workshop
+
+- 介紹Mozilla、Open Web Apps、和Firefox OS。
+
+- 介紹Firefox OS App，並帶大家做出一個可以上傳至Firefox Marketplace的App。
+
+#### 地點資訊：
+
+時間：5/24 (五) 10:30-12:00
+
+地點：大仁樓401R  (對象為Web程式設計課程學生)
+
+講者介紹
+
+軟體工程師 陳人豪Arthur Chen
+
+從小接觸電腦，卻到大學才寫下第一行程式。讀的是資訊系，但不管做什麼都想和其他領域沾上邊。對人文科學有濃厚的興趣，喜歡研究介面設計、人機互動、使用者經驗等議題。目前任職於 Mozilla Taiwan，負責行動作業系統 Firefox OS 前端介面開發。

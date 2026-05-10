@@ -1,0 +1,44 @@
+---
+slug: "firefox-os-apps-workshop"
+title: "狐狐工作坊 – Firefox OS Apps Workshop"
+date: "2013-06-22"
+original_url: "https://blog.mozilla.com.tw/events/firefox-os-apps-workshop"
+archive_url: "https://web.archive.org/web/20170107085541id_/https://blog.mozilla.com.tw/events/firefox-os-apps-workshop"
+wayback_timestamp: "20170107085541"
+status: "ok"
+asset_status: "ok"
+---
+地圖不可用
+
+	活動時間
+
+
+	日期 2013/06/22
+
+14:00:00 - 15:30:00
+
+
+
+	地點
+
+
+	
+
+
+
+
+近期熱烈討論的 Web app 是什麼? 跟 Firefox OS 有什麼關聯? 這次的工作坊將介紹 Open Web Apps、Firefox OS 及 Firefox OS App，最後還會帶領大家做出一個可以上傳至 Firefox Marketplace 的 App 喔！這麼精彩的內容將專屬提供給 Firefox 校園大使。羨慕嗎? 那就趕快加入 Firefox 校園大使的行列吧！[http://mozilla.com.tw/community/student/](http://mozilla.com.tw/community/student/)
+
+#### 地點資訊：
+
+時間：6/22 (六) 14:00-15:30
+
+地點：Mozilla Space  (對象為 Firefox 校園大使)
+
+備註：請自備電腦
+
+講者介紹
+
+軟體工程師 陳人豪Arthur Chen
+
+從小接觸電腦，卻到大學才寫下第一行程式。讀的是資訊系，但不管做什麼都想和其他領域沾上邊。對人文科學有濃厚的興趣，喜歡研究介面設計、人機互動、使用者經驗等議題。目前任職於 Mozilla Taiwan，負責行動作業系統 Firefox OS 前端介面開發。
