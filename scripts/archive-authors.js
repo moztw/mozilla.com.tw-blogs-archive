@@ -282,49 +282,65 @@ function shouldArchiveAsset(url) {
 
 async function archiveAssets(slug, images, timestamp, existingAssetIndex) {
   const usedPaths = new Set();
-  const archivedImages = [];
+  const archivedImages = Array(images.length);
   const assetErrors = [];
 
-  for (const [index, image] of images.entries()) {
-    try {
-      const existing = existingAssetIndex.get(normalizeAssetKey(image.url));
-      const variant = existing || existingAssetIndex.get(normalizeAssetVariantKey(image.url));
-      if (variant) {
-        archivedImages.push({ ...image, ...variant, reused_existing_asset: true });
-        continue;
+  let pending = images.map((image, index) => ({ image, index }));
+
+  while (pending.length) {
+    const currentBatch = pending;
+    pending = [];
+
+    for (const { image, index } of currentBatch) {
+      try {
+        const existing = existingAssetIndex.get(normalizeAssetKey(image.url));
+        const variant = existing || existingAssetIndex.get(normalizeAssetVariantKey(image.url));
+        if (variant) {
+          archivedImages[index] = { ...image, ...variant, reused_existing_asset: true };
+          continue;
+        }
+
+        const { buffer, contentType, snapshot } = await fetchAssetBuffer(timestamp, image.url);
+        const assetPath = chooseAssetPath(slug, image.url, index, buffer, contentType, usedPaths);
+        usedPaths.add(assetPath);
+        await mkdir(path.dirname(assetPath), { recursive: true });
+        await writeFile(assetPath, buffer);
+
+        const archivedImage = {
+          ...image,
+          archive_path: path.relative(ARCHIVE_DIR, assetPath),
+          markdown_path: `../assets/${path.relative(path.join(ARCHIVE_DIR, 'assets'), assetPath).split(path.sep).join('/')}`,
+          wayback_timestamp: snapshot.timestamp,
+          asset_archive_url: waybackAssetUrl(snapshot.timestamp, snapshot.original),
+          content_type: contentType,
+        };
+        archivedImages[index] = archivedImage;
+        existingAssetIndex.set(normalizeAssetKey(image.url), {
+          archive_path: archivedImage.archive_path,
+          markdown_path: archivedImage.markdown_path,
+          wayback_timestamp: archivedImage.wayback_timestamp,
+          asset_archive_url: archivedImage.asset_archive_url,
+          content_type: archivedImage.content_type,
+        });
+      } catch (error) {
+        if (isDefinitive404ErrorMessage(error.message)) {
+          assetErrors.push({ url: image.url, reason: error.message });
+          archivedImages[index] = image;
+        } else {
+          pending.push({ image, index });
+          console.warn(`Author asset deferred ${slug}: ${image.url}: ${error.message}`);
+        }
       }
-
-      const { buffer, contentType, snapshot } = await fetchAssetBuffer(timestamp, image.url);
-      const assetPath = chooseAssetPath(slug, image.url, index, buffer, contentType, usedPaths);
-      usedPaths.add(assetPath);
-      await mkdir(path.dirname(assetPath), { recursive: true });
-      await writeFile(assetPath, buffer);
-
-      const archivedImage = {
-        ...image,
-        archive_path: path.relative(ARCHIVE_DIR, assetPath),
-        markdown_path: `../assets/${path.relative(path.join(ARCHIVE_DIR, 'assets'), assetPath).split(path.sep).join('/')}`,
-        wayback_timestamp: snapshot.timestamp,
-        asset_archive_url: waybackAssetUrl(snapshot.timestamp, snapshot.original),
-        content_type: contentType,
-      };
-      archivedImages.push(archivedImage);
-      existingAssetIndex.set(normalizeAssetKey(image.url), {
-        archive_path: archivedImage.archive_path,
-        markdown_path: archivedImage.markdown_path,
-        wayback_timestamp: archivedImage.wayback_timestamp,
-        asset_archive_url: archivedImage.asset_archive_url,
-        content_type: archivedImage.content_type,
-      });
-    } catch (error) {
-      assetErrors.push({ url: image.url, reason: error.message });
-      archivedImages.push(image);
+      await sleep(100);
     }
-    await sleep(100);
+
+    if (pending.length) {
+      await sleep(5_000);
+    }
   }
 
   return {
-    images: archivedImages,
+    images: archivedImages.filter(Boolean),
     asset_status: assetErrors.length ? 'partial_assets_failed' : 'ok',
     asset_errors: assetErrors,
   };
@@ -425,9 +441,11 @@ async function readExistingAuthor(slug) {
 }
 
 async function fetchAssetBuffer(pageTimestamp, originalUrl) {
+  const variants = assetUrlVariants(originalUrl);
   const attempts = [
-    { timestamp: pageTimestamp, original: originalUrl },
+    ...variants.flatMap((variant) => (pageTimestamp ? [{ timestamp: pageTimestamp, original: variant }] : [])),
     ...await scanAssetSnapshots(originalUrl, pageTimestamp),
+    ...variants.map((variant) => ({ timestamp: '', original: variant, timegate: true })),
   ];
   const errors = [];
 
@@ -490,7 +508,9 @@ function compareAssetSnapshots(a, b, pageTimestamp) {
 }
 
 function assetSnapshotUrl(snapshot) {
-  return waybackAssetUrl(snapshot.timestamp, snapshot.original);
+  return snapshot.timegate
+    ? `https://web.archive.org/web/${snapshot.original}`
+    : waybackAssetUrl(snapshot.timestamp, snapshot.original);
 }
 
 function waybackAssetUrl(timestamp, url) {
@@ -500,6 +520,34 @@ function waybackAssetUrl(timestamp, url) {
 function snapshotFromWaybackUrl(url) {
   const match = String(url || '').match(/^https:\/\/web\.archive\.org\/web\/(\d+)(?:[a-z_]+)?\/(https?:\/\/.+)$/);
   return match ? { timestamp: match[1], original: match[2] } : null;
+}
+
+function assetUrlVariants(url) {
+  const variants = new Set([url]);
+
+  try {
+    const parsed = new URL(url);
+    if (/\.mozilla\.com\.tw$/i.test(parsed.hostname) || parsed.hostname === 'tech.mozilla.com.tw') {
+      const alternate = new URL(parsed.href);
+      alternate.protocol = parsed.protocol === 'https:' ? 'http:' : 'https:';
+      variants.add(alternate.href);
+    }
+
+    const decodedPath = decodeURIComponent(parsed.pathname);
+    if (decodedPath !== parsed.pathname) {
+      const decoded = new URL(parsed.href);
+      decoded.pathname = decodedPath;
+      variants.add(decoded.href);
+
+      if (/\.mozilla\.com\.tw$/i.test(parsed.hostname) || parsed.hostname === 'tech.mozilla.com.tw') {
+        const decodedAlternate = new URL(decoded.href);
+        decodedAlternate.protocol = decoded.protocol === 'https:' ? 'http:' : 'https:';
+        variants.add(decodedAlternate.href);
+      }
+    }
+  } catch {}
+
+  return [...variants];
 }
 
 function chooseAssetPath(slug, imageUrl, index, buffer, contentType, usedPaths) {
@@ -703,9 +751,8 @@ async function fetchArchivedHtml(url) {
 
 async function fetchWithRetry(url, accept) {
   let lastError;
-  const isAsset = accept === '*/*';
-  const maxAttempts = isAsset ? 2 : 5;
-  const timeoutMs = isAsset ? 8_000 : 60_000;
+  const maxAttempts = 3;
+  const timeoutMs = 5_000;
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
       const controller = new AbortController();
@@ -719,10 +766,20 @@ async function fetchWithRetry(url, accept) {
       return response;
     } catch (error) {
       lastError = error;
-      if (attempt < maxAttempts) await sleep(500 * attempt);
+      if (isNotFoundResponseError(error)) break;
+      if (attempt < maxAttempts) await sleep(5_000);
     }
   }
   throw lastError;
+}
+
+function isNotFoundResponseError(error) {
+  return String(error?.message || '').includes('http_404');
+}
+
+function isDefinitive404ErrorMessage(message) {
+  const parts = String(message || '').split('|').map((part) => part.trim()).filter(Boolean);
+  return parts.length > 0 && parts.every((part) => part.includes('http_404'));
 }
 
 function sleep(ms) {
