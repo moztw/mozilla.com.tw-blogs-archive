@@ -577,7 +577,7 @@ async function writeEventPages(events) {
 
   const eventsListDir = path.join(BUILD_DIR, 'events-list');
   await mkdir(eventsListDir, { recursive: true });
-  await writeFile(path.join(eventsListDir, 'index.html'), renderEventIndex(events, '活動列表', '../', '../events/'));
+  await writeFile(path.join(eventsListDir, 'index.html'), renderRedirectPage('../events/', '活動列表'));
 }
 
 async function writeArchivePages(posts) {
@@ -765,6 +765,25 @@ function renderEventIndex(events, title, rootPrefix, currentHref) {
       ${sidebar(rootPrefix, SITE_SNAPSHOT_URL)}
     `,
   });
+}
+
+function renderRedirectPage(targetHref, title = 'Redirect') {
+  return `<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta http-equiv="refresh" content="0; url=${escapeAttr(targetHref)}">
+  <link rel="canonical" href="${escapeAttr(targetHref)}">
+  <title>${escapeHtml(title)} | Redirect</title>
+</head>
+<body>
+  <p>Redirecting to <a href="${escapeAttr(targetHref)}">${escapeHtml(targetHref)}</a>.</p>
+  <script>window.location.replace(${JSON.stringify(targetHref)});</script>
+</body>
+</html>
+`;
 }
 
 function renderEventList(events, rootPrefix) {
@@ -1380,7 +1399,7 @@ function sidebar(rootPrefix, snapshotUrl) {
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        ${siteCategoryNames().map((name) => `<li>${categoryLink(name, rootPrefix)}</li>`).join('')}
+        ${sidebarCategoryItems(rootPrefix).map((item) => `<li>${item.html}</li>`).join('')}
       </ul>
     </section>
     ${monthArchiveWidget(rootPrefix)}
@@ -1390,6 +1409,31 @@ function sidebar(rootPrefix, snapshotUrl) {
       <p>除另有註明外，本站內容皆採 <a href="${LICENSE_URL}">${LICENSE_NAME}</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>`;
+}
+
+function sidebarCategoryItems(rootPrefix) {
+  const items = siteCategoryNames().map((name) => ({
+    label: name,
+    sortKey: categorySlug(name),
+    html: categoryLink(name, rootPrefix),
+  }));
+  if (BUILD_DIR_NAME === 'blog') {
+    items.push({
+      label: '活動列表',
+      sortKey: categorySlug('活動列表'),
+      html: `<a href="${rootPrefix}events/">活動列表</a>`,
+    });
+  }
+  return items.sort(compareSidebarCategoryItems);
+}
+
+function compareSidebarCategoryItems(a, b) {
+  const aAscii = /^[a-z0-9]/i.test(a.sortKey);
+  const bAscii = /^[a-z0-9]/i.test(b.sortKey);
+  if (aAscii !== bAscii) {
+    return aAscii ? -1 : 1;
+  }
+  return a.sortKey.localeCompare(b.sortKey, 'en') || a.label.localeCompare(b.label, 'zh-Hant');
 }
 
 function renderBreadcrumbs(items, leadingSeparator = false) {
