@@ -31,7 +31,7 @@
       <img src="https://secure.gravatar.com/avatar/3593aab14bc9cf5202c6785329a108b4?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;amp;s=24" alt="" class="avatar user-140-avatar" width="24" height="24"><!--
    --><div class="author-info">Yi-Fan Liao</div><!--
    --><div class="author-title"></div>
-    </a>
+  </a>
   </div><div class="post-date"></div></div>
               <h1 class="entry-title">如何在 Firefox OS 上建立瀏覽器 APP</h1>
             </header>
@@ -40,12 +40,12 @@
 <p><a href="https://github.com/begeeben/firefox-os-browser-sample">https://github.com/begeeben/firefox-os-browser-sample</a></p>
 <h2>基本工具： WebIDE</h2>
 <p>Firefox 34 以及之後的版本都包含了 WebIDE。開發瀏覽器 APP 的並不一定需要一台 Firefox OS 手機，我們可以在 WebIDE 上用 Firefox OS simulator 來執行這個 APP。使用 WebIDE 可以很容易的從範本建立一個 APP，並做 HTML/CSS/JS 編輯。要開啟 WebIDE，從上面的標題列選 Tools &gt; Web Developer &gt; WebIDE :</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/Fullscreen_2015_2_3_%E4%B8%8B%E5%8D%884_13.png"><img src="../../assets/6046/wp-content/uploads/2015/02/Fullscreen_2015_2_3_下午4_13.png" alt="open webide" loading="lazy"></a></p>
+<p><a href="../../assets/6046/wp-content/uploads/2015/02/Fullscreen_2015_2_3_下午4_13.png"><img src="../../assets/6046/wp-content/uploads/2015/02/Fullscreen_2015_2_3_下午4_13.png" alt="open webide" loading="lazy"></a></p>
 <h2>使用範本建立 APP：</h2>
 <p>首先，從 WebIDE 的空白範本建立一個 APP。Privileged APP 才能有 browser 權限使用 Browser API，它提供了一些在 Firefox OS 上才能用的 method 和 event 來管理 <br>			iframe。</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/Firefox_WebIDE.png"><img src="../../assets/6046/wp-content/uploads/2015/02/Firefox_WebIDE.png" alt="new priviledged app" loading="lazy"></a></p>
+<p><a href="../../assets/6046/wp-content/uploads/2015/02/Firefox_WebIDE.png"><img src="../../assets/6046/wp-content/uploads/2015/02/Firefox_WebIDE.png" alt="new priviledged app" loading="lazy"></a></p>
 <p>建好的 APP 看起來像下面這張圖，接下來我們要開始寫 code 做瀏覽器 APP 需要的功能。</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/Firefox_WebIDE__mybrowser.png"><img src="../../assets/6046/wp-content/uploads/2015/02/Firefox_WebIDE__mybrowser.png" alt="mybrowser empty" loading="lazy"></a></p>
+<p><a href="../../assets/6046/wp-content/uploads/2015/02/Firefox_WebIDE__mybrowser.png"><img src="../../assets/6046/wp-content/uploads/2015/02/Firefox_WebIDE__mybrowser.png" alt="mybrowser empty" loading="lazy"></a></p>
 <h2>設定 manifest.webapp：</h2>
 <p>從範本建立好的 APP 已經在 manifest.webapp 裡設定 <br>			type  為 <br>			privileged：</p>
 <p>  &quot;type&quot;: &quot;privileged&quot;,</p>
@@ -61,7 +61,7 @@
 <p>					12345678910111213141516</p>
 <p>						&lt;!-- browser toolbar --&gt;&lt;div id=&quot;toolbar&quot;&gt;    &lt;button id=&quot;goback-button&quot; type=&quot;button&quot; disabled&gt;&lt;&lt;/button&gt;    &lt;button id=&quot;goforward-button&quot; type=&quot;button&quot; disabled&gt;&gt;&lt;/button&gt;    &lt;!-- url bar displays page url or page title --&gt;    &lt;form id=&quot;url-bar&quot;&gt;        &lt;input id=&quot;url-input&quot; type=&quot;text&quot;&gt;&lt;/input&gt;    &lt;/form&gt;    &lt;button id=&quot;url-button&quot; form=&quot;url-bar&quot;&gt;GO&lt;/button&gt;&lt;/div&gt;&lt;!-- the container for the browser frame --&gt;&lt;div id=&quot;frame-container&quot; class=&quot;empty&quot;&gt;    &lt;div id=&quot;empty-frame&quot;&gt;        &lt;h1&gt;Hello myBrowser!&lt;/h1&gt;    &lt;/div&gt;&lt;/div&gt;</p>
 <p>預設看起來長這樣：</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/Blank_Skitch_Document.png"><img src="../../assets/6046/wp-content/uploads/2015/02/Blank_Skitch_Document.png" alt="browser startup" loading="lazy"></a></p>
+<p><a href="../../assets/6046/wp-content/uploads/2015/02/Blank_Skitch_Document.png"><img src="../../assets/6046/wp-content/uploads/2015/02/Blank_Skitch_Document.png" alt="browser startup" loading="lazy"></a></p>
 <h2>管理瀏覽網頁的 iframe：</h2>
 <p>要提供 iframe 裡面網頁的資訊到使用者界面上，需要接收處理 <br>			mozbrowser event。在 <br>			iframe 上加 <br>			mozbrowser 參數，就可以在這 <br>			iframe 上使用 Browser API。在這裡為了要把 UI 和 mozbrowser 的處理邏輯分開，我們建立一個 tab.js，這樣也預留了未來可以做多分頁瀏覽的彈性。</p>
 <p>/**</p>
@@ -152,18 +152,18 @@
 <p>						/*<em> </em> Enable/disable goback and goforward buttons accordingly when the <em> currentTab is loaded. </em>/window.addEventListener(&#39;tab:loadend&#39;, function (e) {  if (currentTab === e.detail) {    currentTab.getCanGoBack().then(function(canGoBack) {      gobackButton.disabled = !canGoBack;    });     currentTab.getCanGoForward().then(function(canGoForward) {      goforwardButton.disabled = !canGoForward;    });  }});</p>
 <h2>執行 APP：</h2>
 <p>手邊可能沒有 Firefox OS 手機能用，不過你還是可以在 WebIDE 裡面用 Firefox OS simulator 來跑 APP：</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/01/Firefox_WebIDE.png"><img src="../../assets/6046/wp-content/uploads/2015/01/Firefox_WebIDE.png" alt="Firefox_WebIDE_installing_simulator" loading="lazy"></a></p>
+<p><a href="../../assets/6046/wp-content/uploads/2015/01/Firefox_WebIDE.png"><img src="../../assets/6046/wp-content/uploads/2015/01/Firefox_WebIDE.png" alt="Firefox_WebIDE_installing_simulator" loading="lazy"></a></p>
 <p>按右上方的 Select Runtime 選一個版本：</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/01/Fullscreen_2015_1_27_%E4%B8%8B%E5%8D%882_44.png"><img src="../../assets/6046/wp-content/uploads/2015/01/Fullscreen_2015_1_27_下午2_44.png" alt="Firefox_WebIDE_choose_simulator" loading="lazy"></a></p>
+<p><a href="../../assets/6046/wp-content/uploads/2015/01/Fullscreen_2015_1_27_下午2_44.png"><img src="../../assets/6046/wp-content/uploads/2015/01/Fullscreen_2015_1_27_下午2_44.png" alt="Firefox_WebIDE_choose_simulator" loading="lazy"></a></p>
 <p>當 Firefox OS 跑起來後，按上面中間的那些按鈕，你就可以執行和 debug 這個 APP。現在你有了一個新的 Firefox OS 瀏覽器 APP！</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2015/02/Blank_Skitch_Document1.png"><img src="../../assets/6046/wp-content/uploads/2015/02/Blank_Skitch_Document1.png" alt="mybrowser finished" loading="lazy"></a></p>
+<p><a href="../../assets/6046/wp-content/uploads/2015/02/Blank_Skitch_Document1.png"><img src="../../assets/6046/wp-content/uploads/2015/02/Blank_Skitch_Document1.png" alt="mybrowser finished" loading="lazy"></a></p>
 <h2>結語：</h2>
 <p>要讓這個簡單的瀏覽器 APP 好用還缺很多功能，比如說書籤，設定，搜尋建議，分享… 等。你將會需要 HTML storage 和 <br>			mozActivity 來實現這些功能。歡迎實現你的點子，然後分享到 Firefox OS 的 Marketplace 上！</p>
 <h2>參考閱讀：</h2>
 <p><a href="https://hacks.mozilla.org/2014/08/building-the-firefox-browser-for-firefox-os/">https://hacks.mozilla.org/2014/08/building-the-firefox-browser-for-firefox-os/</a></p>
 <p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Using_the_Browser_API">https://developer.mozilla.org/en-US/docs/Web/API/Using_the_Browser_API</a></p></div>
             <footer class="entry-footer">
-              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
             </footer>
           </article>
         </div>
@@ -172,19 +172,19 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+        <li><a href="../../categories/1/">1</a></li><li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
       </ul>
     </section>
     <section class="widget">
     <h3>月份彙整</h3>
     <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
       <option value="">選擇月份</option>
-      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (4)</option><option value="../../months/2013-09/">2013 年 9 月 (5)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (2)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (5)</option><option value="../../months/2013-03/">2013 年 3 月 (4)</option><option value="../../months/2013-02/">2013 年 2 月 (4)</option><option value="../../months/2013-01/">2013 年 1 月 (5)</option><option value="../../months/2012-12/">2012 年 12 月 (4)</option><option value="../../months/2012-11/">2012 年 11 月 (4)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (3)</option><option value="../../months/2012-05/">2012 年 5 月 (3)</option>
     </select>
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20201019212030id_/https://tech.mozilla.com.tw/?p=6046">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20201019212030/https://tech.mozilla.com.tw/?p=6046">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>

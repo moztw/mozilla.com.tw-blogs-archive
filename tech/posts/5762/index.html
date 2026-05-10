@@ -31,11 +31,11 @@
       <img src="https://secure.gravatar.com/avatar/de7791b3ce04b4ad09f519f24880ee50?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;amp;s=24" alt="" class="avatar user-101-avatar" width="24" height="24"><!--
    --><div class="author-info">Eric Chang</div><!--
    --><div class="author-title"></div>
-    </a>
+  </a>
   </div><div class="post-date"></div></div>
               <h1 class="entry-title">Where am I？－Part I－使用 Google Maps 地圖快速簡單查看你的位置</h1>
             </header>
-            <div class="entry-content"><p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.EMULATOR.png"><img src="../../assets/5762/wp-content/uploads/2014/12/05.EMULATOR-300x157.png" alt="05.EMULATOR" loading="lazy"></a></p>
+            <div class="entry-content"><p><a href="../../assets/5762/wp-content/uploads/2014/12/05.EMULATOR.png"><img src="../../assets/5762/wp-content/uploads/2014/12/05.EMULATOR-300x157.png" alt="05.EMULATOR" loading="lazy"></a></p>
 <p>地理位置（Geolocation）的應用相信大家每天會使用到，早上查看上班前的交通狀況，傍晚打開手機 app 查詢附近的餐廳，上菜後照相打卡，看看週末旅行的城市天氣如何，或是用運動 app 記錄自己慢跑的速度，路線。在這篇短文，筆者將介紹如何在 Firefox OS 上，使用 Google maps 來查看目前的位置當作個簡單的開始，接下來由其他的高手朋友來作更多進階的應用。</p>
 <p>本篇的大綱如下</p>
 <ul><li>使用 WedIDE 做一個簡單的 Firefox OS App</li></ul>
@@ -43,10 +43,10 @@
 <ul><li>附錄</li></ul>
 <h2>1. 使用 WedIDE 做一個簡單的 Firefox OS App</h2>
 <p>WebIDE 可透過 Firefox OS 模擬器或實體 Firefox OS 裝置，執行 Firefox OS App 並除錯，亦具備編輯環境，可建立並開發 Firefox OS App。這套強大的工具包含在 Firefox 瀏覽器 34 版以後的開發者版本或是 nightly 版本， 你可以用 Shift-F8，點選右上角的圖示或是從工具選單中開啓 WebIDE。附錄（1）</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/1.WEBIDEICON.png"><img src="../../assets/5762/wp-content/uploads/2014/12/1.WEBIDEICON-300x108.png" alt="1.WEBIDEICON" loading="lazy"></a></p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/01.WEBIDETOOLS.png"><img src="../../assets/5762/wp-content/uploads/2014/12/01.WEBIDETOOLS-300x179.png" alt="01.WEBIDETOOLS" loading="lazy"></a></p>
+<p><a href="../../assets/5762/wp-content/uploads/2014/12/1.WEBIDEICON.png"><img src="../../assets/5762/wp-content/uploads/2014/12/1.WEBIDEICON-300x108.png" alt="1.WEBIDEICON" loading="lazy"></a></p>
+<p><a href="../../assets/5762/wp-content/uploads/2014/12/01.WEBIDETOOLS.png"><img src="../../assets/5762/wp-content/uploads/2014/12/01.WEBIDETOOLS-300x179.png" alt="01.WEBIDETOOLS" loading="lazy"></a></p>
 <p>我們從新建一個 Privilege（Empty）app 或是從 Hello World 來更改都是好方法，端看個人喜好。</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/02.NEWAPP.png"><img src="../../assets/5762/wp-content/uploads/2014/12/02.NEWAPP-300x163.png" alt="02.NEWAPP" loading="lazy"></a></p>
+<p><a href="../../assets/5762/wp-content/uploads/2014/12/02.NEWAPP.png"><img src="../../assets/5762/wp-content/uploads/2014/12/02.NEWAPP-300x163.png" alt="02.NEWAPP" loading="lazy"></a></p>
 <h2>2. 加入 Google maps 地圖層及目前位置支援</h2>
 <p>接下來進入程式碼的部分，由於這個 demo 用 Google maps， 我們需要在 index.html &lt;HEAD&gt; 內指定要求 Google API 的支援。更多詳細 Google Maps API 的用法及資訊請參考附錄（2）</p>
 <p>&lt;script src=&quot;http://maps.googleapis.com/maps/api/js&quot;&gt;&lt;/script&gt;</p>
@@ -84,7 +84,7 @@
 <p>function init() {<br> if (navigator &amp;&amp; navigator.geolocation) {<br> navigator.geolocation.getCurrentPosition(function (position) {<br> here = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);<br> var map_options = {<br> zoom: 16,<br> center: here,<br> mapTypeId: google.maps.MapTypeId.SATELLITE<br> }<br> map_container = document.getElementById(&quot;map&quot;);<br> map = new google.maps.Map(map_container, map_options);<br> marker = new google.maps.Marker({<br> position: here,<br> map: map,<br> });<br> coordinates = &quot;Lat: &quot; DecimalToDegree(position.coords.latitude) &quot;, Long: &quot; DecimalToDegree(position.coords.longitude);<br> document.getElementById(&quot;coordinatesString&quot;).innerHTML = coordinates;<br> }<br> );<br> } else {<br> console.log(&quot;Geolocation is not supported&quot;);<br> }<br>}</p>
 <p>					1234567891011121314151617181920212223</p>
 <p>						function init() { if (navigator &amp;&amp; navigator.geolocation) { navigator.geolocation.getCurrentPosition(function (position) { here = new google.maps.LatLng(position.coords.latitude, position.coords.longitude); var map_options = { zoom: 16, center: here, mapTypeId: google.maps.MapTypeId.SATELLITE } map_container = document.getElementById(&quot;map&quot;); map = new google.maps.Map(map_container, map_options); marker = new google.maps.Marker({ position: here, map: map, }); coordinates = &quot;Lat: &quot; DecimalToDegree(position.coords.latitude) &quot;, Long: &quot; DecimalToDegree(position.coords.longitude); document.getElementById(&quot;coordinatesString&quot;).innerHTML = coordinates; } ); } else { console.log(&quot;Geolocation is not supported&quot;); }}</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/05.SIMULATOR.png"><img src="../../assets/5762/wp-content/uploads/2014/12/05.SIMULATOR-1024x536.png" alt="05.SIMULATOR" loading="lazy"></a></p>
+<p><a href="../../assets/5762/wp-content/uploads/2014/12/05.SIMULATOR.png"><img src="../../assets/5762/wp-content/uploads/2014/12/05.SIMULATOR-1024x536.png" alt="05.SIMULATOR" loading="lazy"></a></p>
 <p>Voila！接下來選擇 Firefox OS Simulator，按下 Play 按鍵看看成果！是不是心裏又想到了可以修改或是增加有趣功能的想法呢？希望這簡單的小程式可以讓你快速瞭解如何實作一個定位 app。接下來將會有其他的朋友來分享更多  Geolocation 應用。Stay tuned！</p>
 <h2>附錄</h2>
 <ul><li>WebIDE <a href="https://developer.mozilla.org/en-US/docs/Tools/WebIDE">https://developer.mozilla.org/en-US/docs/Tools/WebIDE</a></li></ul>
@@ -100,7 +100,7 @@
 <ul><li>目前運轉中的定位衛星有 GPS，GLONASS，BeiDou 都可以當作 geolocation 的資料提供者。</li></ul>
 <ul><li>Among difficult points <a href="https://best-horoscope.com/">horscope</a> Leo mentions extreme interest of control powers to all the activities and undertakings.</li></ul></div>
             <footer class="entry-footer">
-              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
             </footer>
           </article>
         </div>
@@ -109,19 +109,19 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+        <li><a href="../../categories/1/">1</a></li><li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
       </ul>
     </section>
     <section class="widget">
     <h3>月份彙整</h3>
     <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
       <option value="">選擇月份</option>
-      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (4)</option><option value="../../months/2013-09/">2013 年 9 月 (5)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (2)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (5)</option><option value="../../months/2013-03/">2013 年 3 月 (4)</option><option value="../../months/2013-02/">2013 年 2 月 (4)</option><option value="../../months/2013-01/">2013 年 1 月 (5)</option><option value="../../months/2012-12/">2012 年 12 月 (4)</option><option value="../../months/2012-11/">2012 年 11 月 (4)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (3)</option><option value="../../months/2012-05/">2012 年 5 月 (3)</option>
     </select>
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20201019205848id_/https://tech.mozilla.com.tw/?p=5762">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20201019205848/https://tech.mozilla.com.tw/?p=5762">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>

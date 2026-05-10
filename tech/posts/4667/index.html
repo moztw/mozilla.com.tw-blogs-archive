@@ -27,11 +27,11 @@
           <article class="post single-post">
             <header class="entry-header">
               <p class="entry-posted"><time datetime="2014-07-01" class="published"><span class="posted-month">7月</span><span class="posted-date">1</span><span class="posted-year">2014</span></time></p><div class="entry-meta"><div class="author-meta">
-    <a href="https://web.archive.org/web/20150319101930/http://tech.mozilla.com.tw/posts/author/dliangmozilla-com">
+    <a href="../../posts/author/dliangmozilla-com/">
       <img src="http://www.gravatar.com/avatar/9aef33c16fa5e94dd70aba9a7419ba74?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;amp;s=24" alt="" class="avatar user-108-avatar" width="24" height="24"><!--
    --><div class="author-info">丹尼梁</div><!--
    --><div class="author-title"></div>
-    </a>
+  </a>
   </div><div class="post-date"></div></div>
               <h1 class="entry-title">平價智慧手機大解密－Firefox OS 記憶體管理與優化</h1>
             </header>
@@ -42,9 +42,9 @@
 <ol><li>Memory pressure event</li></ol>
 <ol><li>Out of memory killer（OOM)</li></ol>
 <p>LMK 是 Android 原本就有的機制，我們把它整合進 Firefox OS。當快取或可用記憶體低於某個臨界值時，LMK 會嘗試去殺 oom_adj &gt;= 0 的行程來獲得更多的記憶體資源。各類行程的臨界值會在 b2g/app/b2g.js 做設定，以下表為例，快取及可用記憶體都小於 20MB 的時候，oom_adj為10（BACKGROUND）的行程會被LMK所殺掉；快取及可用記憶體都小於 8MB 的時候，oom_adj為8（BACKGROUND_HOMESCREEN）的行程會被殺掉；如果快取及可用記憶體都小於 4MB，oom_adj為0（MASTER）的行程，也就是 b2g，將會被 LMK 殺掉。順帶一提，LMK 殺行程是漸近式的，如果連 b2g 都被殺掉了，通常這種狀況一定是有 memory leak。</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/06/oom_adj.png"><img src="../../assets/4667/wp-content/uploads/2014/06/oom_adj.png" alt="oom_adj" loading="lazy"></a></p>
+<p><a href="../../assets/4667/wp-content/uploads/2014/06/oom_adj.png"><img src="../../assets/4667/wp-content/uploads/2014/06/oom_adj.png" alt="oom_adj" loading="lazy"></a></p>
 <p>當 memory pressure event 被觸發，註冊觀察 memory pressure event 的 service 就會執行相對應的動作，例如，清除或最小化快取（b2g 的暫存資料）。觸發 memory pressure event 的設定值在 b2g/app/b2g.js ，目前的預設值（notifyLowMemUnderKB）為 14MB。</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/06/notify_trigger.png"><img src="../../assets/4667/wp-content/uploads/2014/06/notify_trigger.png" alt="notify_trigger" loading="lazy"></a></p>
+<p><a href="../../assets/4667/wp-content/uploads/2014/06/notify_trigger.png"><img src="../../assets/4667/wp-content/uploads/2014/06/notify_trigger.png" alt="notify_trigger" loading="lazy"></a></p>
 <p>當可用記憶體低於一個臨界值，Linux kernel 提供的 OOM 就會根據行程的記憶體用量及 oom_score_adj 計算出來的分數，殺掉一個合適的行程，以獲取更多的記憶體來滿足系統的需求。觸發 OOM 的可用記憶體臨界值（min_free_kbytes）預設為 1352KB。</p>
 <h2>如何讓這三種事件可以在 Firefox OS 上完美運作，達到效能的優化？</h2>
 <p>先說問題好了，如果這三個事件沒有配合好，會發生什麼問題？</p>
@@ -56,12 +56,12 @@
 <ol><li>在可感知的行程被殺掉之前先觸發 memory pressure event 。也就是說 notifyLowMemUnderKB 最好是介於 BACKGROUND_HOMESCREEN.KillUnderKB 和 BACKGROUND_PERCEIVABLE.KillUnderKB 這兩個值之間。</li></ol>
 <ol><li>必須要讓 LMK 在 OOM 之前運作。所以 min_free_kbytes 必須比 MASTER.KillUnderKB 來的小。</li></ol>
 <p>以 Tarako（sc6821，128MB memory device）為例，根據 adb shell b2g-info dump 出來的記憶體相關設定如下：</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/06/lmk-parameters.png"><img src="../../assets/4667/wp-content/uploads/2014/06/lmk-parameters.png" alt="lmk-parameters" loading="lazy"></a></p>
+<p><a href="../../assets/4667/wp-content/uploads/2014/06/lmk-parameters.png"><img src="../../assets/4667/wp-content/uploads/2014/06/lmk-parameters.png" alt="lmk-parameters" loading="lazy"></a></p>
 <h2>如何快速的針對平台做校調？</h2>
 <p>除了直接修改 b2g/app/b2g.js 的參數以外，Firefox OS 提供一個更方便的方式讓大家可以快速的驗証自己的參數。開發者可以借由修改手機內部的 /system/b2g/defaults/pref/dev-pref.js 來增加想要調整的參數。這個檔案內的參數會覆蓋掉 b2g/app/b2g.js 的預設值。</p>
 <p>當然，我們對超低價手機的記憶體優化絕對不止這些，更多的技術探討都在 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=929945">bugzilla</a>上，趕快加入火狐的行列，一起改變世界吧。</p></div>
             <footer class="entry-footer">
-              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></span></div>
             </footer>
           </article>
         </div>
@@ -70,19 +70,19 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+        <li><a href="../../categories/1/">1</a></li><li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
       </ul>
     </section>
     <section class="widget">
     <h3>月份彙整</h3>
     <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
       <option value="">選擇月份</option>
-      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (4)</option><option value="../../months/2013-09/">2013 年 9 月 (5)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (2)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (5)</option><option value="../../months/2013-03/">2013 年 3 月 (4)</option><option value="../../months/2013-02/">2013 年 2 月 (4)</option><option value="../../months/2013-01/">2013 年 1 月 (5)</option><option value="../../months/2012-12/">2012 年 12 月 (4)</option><option value="../../months/2012-11/">2012 年 11 月 (4)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (3)</option><option value="../../months/2012-05/">2012 年 5 月 (3)</option>
     </select>
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20150319101930id_/https://tech.mozilla.com.tw/?p=4667">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20150319101930/https://tech.mozilla.com.tw/posts/4667/%e5%b9%b3%e5%83%b9%e6%99%ba%e6%85%a7%e6%89%8b%e6%a9%9f%e5%a4%a7%e8%a7%a3%e5%af%86%ef%bc%8dfirefox-os-%e8%a8%98%e6%86%b6%e9%ab%94%e7%ae%a1%e7%90%86%e8%88%87%e5%84%aa%e5%8c%96">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>

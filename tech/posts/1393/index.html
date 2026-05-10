@@ -27,11 +27,11 @@
           <article class="post single-post">
             <header class="entry-header">
               <p class="entry-posted"><time datetime="2013-03-18" class="published"><span class="posted-month">3月</span><span class="posted-date">18</span><span class="posted-year">2013</span></time></p><div class="entry-meta"><div class="author-meta">
-    <a href="https://web.archive.org/web/20140724021318/http://tech.mozilla.com.tw/posts/author/schungmozilla-com">
-      <img src="http://www.gravatar.com/avatar/0e719389c6f6e17e5693819fc9a5722a?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;amp;s=24" alt="" class="avatar user-26-avatar" width="24" height="24"><!--
+    <a href="../../posts/author/schungmozilla-com/">
+      <img src="https://web.archive.org/web/20181111103639im_/http://www.gravatar.com/avatar/0e719389c6f6e17e5693819fc9a5722a?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;amp;s=24" alt="" class="avatar user-26-avatar" width="24" height="24"><!--
    --><div class="author-info">steveck</div><!--
    --><div class="author-title"></div>
-    </a>
+  </a>
   </div><div class="post-date"></div></div>
               <h1 class="entry-title">和 Firefox OS 介面的第一次親密接觸 – 基本觸控手勢看招！</h1>
             </header>
@@ -40,7 +40,7 @@
 <p>相信 web 開發者一定對 mouse event 不陌生。不過隨著時代的演進，touch event 後來也列入 HTML5 的標準，大致上 touch event 的用法跟 mouse event 相去不遠。 Mouse event 當中的 mousedown、mousemove 及 mouseup 就同等於 touch event 中的 touchstart、touchmove 及 touchend。差別在於 touch 還有 touches（所有觸控點） / targetTouche（所有在 target 上的觸控點） / changedTouches（狀態有改變的觸控點） 以 array 型態來紀錄觸控點的資料。假設現在有一張圖片需套用到縮放的手勢：</p>
 <p>  var startDistance, startScale;<br>  image.addEventListener(&quot;touchstart&quot;, handleStart, false);<br>  image.addEventListener(&quot;touchmove&quot;, handleMove, false);<br>  image.addEventListener(&quot;touchend&quot;, handleEnd, false);</p>
 <p>  function distance(finger1, finger2) {<br>    // 利用觸控點的相對座標( finger.pageX , finger.pageY )計算兩點之間的距離<br>    ...<br>    return result;<br>  }</p>
-<p>  function queryScale(image) {<br>    // 從 style 中擷取縮放比例：<br>    ... <br>    return scale;<br>  }</p>
+<p>  function queryScale(image) {<br>    // 從 style 中擷取縮放比例：<br>    ...<br>    return scale;<br>  }</p>
 <p>  function handleStart(evt) {<br>    // 當有兩指在圖片上，我們要先計算兩點之間的初始距離<br>    if (event.targetTouches.length == 2) {<br>      startDistance = distance(event.targetTouches[0], event.targetTouches[1]);<br>      startScale = queryScale(image);<br>      ...<br>    }<br>  }</p>
 <p>  function handleMove (evt) {<br>    // 計算目前兩指間的距離，並設定圖片的縮放比例<br>    if (event.targetTouches.length == 2) {<br>      var currentDistance = distance(event.targetTouches[0], event.targetTouches[1]);<br>      var newScale = currentDistance / startDistance * startScale;<br>      image.style.transform = &#39;scale(&#39; + newScale + &#39;)&#39;;<br>    }<br>    ...<br>  }</p>
 <p>  function handleEnd (evt) {<br>    // 當結束touch event時，可以在這裡定義自己想要的動作<br>    ...<br>  }</p>
@@ -61,7 +61,7 @@
 <p>// 對特定的 gesture event 增加對應的 event handler function:<br>targetElement.addEventListener(&#39;pan&#39;, panHandler);<br>targetElement.addEventListener(&#39;swipe&#39;, swipeHandler);<br>...<br>// 實作 pan gesture 的 event handler function<br>function panHandler(event) {<br>  var dx = event.detail.relative.dx;<br>  var dy = event.detail.relative.dy;<br>  ...<br>}</p>
 <p>					12345678910</p>
 <p>						// 對特定的 gesture event 增加對應的 event handler function:targetElement.addEventListener(&#39;pan&#39;, panHandler);targetElement.addEventListener(&#39;swipe&#39;, swipeHandler);...// 實作 pan gesture 的 event handler functionfunction panHandler(event) {  var dx = event.detail.relative.dx;  var dy = event.detail.relative.dy;  ...}</p>
-<p>這部份就跟一般的 event handler 實作一樣了。比較令人困擾的是每個 gesture event 回傳的 event object 並不完全一樣，偏偏這個 libray 目前還沒有完整的文件，直接看原始碼是最直接的方法，不過這裡還是簡單介紹幾種常用的，有興趣的開發者可以在 gesture_detector 中搜尋 “emitEvent” ，觀察各種 gesture event 在發送之前是怎麼包裝的。先介紹有旋轉和縮放相關的 transform（待會我們也會使用到）：</p>
+<p>這部份就跟一般的 event handler 實作一樣了。比較令人困擾的是每個 gesture event 回傳的 event object 並不完全一樣，偏偏這個 libray 目前還沒有完整的文件，直接看原始碼是最直接的方法，不過這裡還是簡單介紹幾種常用的，有興趣的開發者可以在 gesture_detector 中搜尋 “emitEvent&quot; ，觀察各種 gesture event 在發送之前是怎麼包裝的。先介紹有旋轉和縮放相關的 transform（待會我們也會使用到）：</p>
 <p>  absolute: { // 相對於 gesture 起始點的縮放比例和角度<br>    scale: 縮放比例,<br>    rotate: 旋轉角度<br>  },<br>  relative: { // 相對於上一個 gesture change 的縮放比例和角度<br>    scale: distance / d.lastDistance,<br>    rotate: touchRotation(d.lastDirection, direction)<br>  },<br>  midpoint: midpoint // 兩指的中心點位置</p>
 <p>					123456789</p>
 <p>						  absolute: { // 相對於 gesture 起始點的縮放比例和角度    scale: 縮放比例,    rotate: 旋轉角度  },  relative: { // 相對於上一個 gesture change 的縮放比例和角度    scale: distance / d.lastDistance,    rotate: touchRotation(d.lastDirection, direction)  },  midpoint: midpoint // 兩指的中心點位置</p>
@@ -73,7 +73,7 @@
 <p>利用 Gesture Detector，開發起來就輕鬆多了，不需要計算縮放的比例、角度等等的邏輯，而且它並沒有使用 preventDefault 或是 stopPropagation 將元件的 touch event 吃掉，也就是套用了 Gesture Detector 的元件，依然可以收到基本的 touch event 來進行其他應用，例如定義兩指以上的手勢操作。這麼輕鬆且有彈性的特色，是否讓你迫不期待的想要設計一些方便的手勢操作，讓應用程式操作起來更靈活呢？</p>
 <p>以上就是在 FFOS 開發中對手勢應用的一些基本介紹了，如果在開發的過程中有任何問題也歡迎在這裡留言，苦命熱情的工程師會盡可能的回答你的問題喔～</p></div>
             <footer class="entry-footer">
-              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
             </footer>
           </article>
         </div>
@@ -82,19 +82,19 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+        <li><a href="../../categories/1/">1</a></li><li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
       </ul>
     </section>
     <section class="widget">
     <h3>月份彙整</h3>
     <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
       <option value="">選擇月份</option>
-      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (4)</option><option value="../../months/2013-09/">2013 年 9 月 (5)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (2)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (5)</option><option value="../../months/2013-03/">2013 年 3 月 (4)</option><option value="../../months/2013-02/">2013 年 2 月 (4)</option><option value="../../months/2013-01/">2013 年 1 月 (5)</option><option value="../../months/2012-12/">2012 年 12 月 (4)</option><option value="../../months/2012-11/">2012 年 11 月 (4)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (3)</option><option value="../../months/2012-05/">2012 年 5 月 (3)</option>
     </select>
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20140724021318id_/https://tech.mozilla.com.tw/?p=1393">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20181111103639/https://tech.mozilla.com.tw/posts/1393/%E5%92%8C-firefox-os-%E4%BB%8B%E9%9D%A2%E7%9A%84%E7%AC%AC%E4%B8%80%E6%AC%A1%E8%A6%AA%E5%AF%86%E6%8E%A5%E8%A7%B8-%E5%9F%BA%E6%9C%AC%E8%A7%B8%E6%8E%A7%E6%89%8B%E5%8B%A2%E7%9C%8B%E6%8B%9B%EF%BC%81">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>

@@ -26,7 +26,13 @@
         <div class="article-div">
           <article class="post single-post">
             <header class="entry-header">
-              <p class="entry-posted"><time datetime="2014-05-26" class="published"><span class="posted-month">5月</span><span class="posted-date">26</span><span class="posted-year">2014</span></time></p>
+              <p class="entry-posted"><time datetime="2014-05-26" class="published"><span class="posted-month">5月</span><span class="posted-date">26</span><span class="posted-year">2014</span></time></p><div class="entry-meta"><div class="author-meta" data-author-id="103">
+    <a href="../../posts/author/jaliumozilla-com/">
+      <img src="http://www.gravatar.com/avatar/cf9af5c1abd07a77c94e0aa10af21533?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;amp;s=24" alt="" class="avatar user-103-avatar" width="24" height="24"><!--
+   --><div class="author-info">Jamin Liu</div><!--
+   --><div class="author-title"></div>
+  </a>
+  </div><div class="post-date"></div></div>
               <h1 class="entry-title">淺談 Cycle Collection</h1>
             </header>
             <div class="entry-content"><h3>什麼是 Cycle Collection ？</h3>
@@ -40,7 +46,7 @@
 <p>Cycle collector 不會走訪所有擁有強指標的物件，只會針對所謂的 cycle collection participant 進行檢查。如果想參與這個 cycle collection 過程的類別，就要宣告剛剛提到的 helper class 。實作的方式等等會聊到，先讓我們看看這個 CC participant 負責做什麼事吧。</p>
 <p>它主要提供這三個函式：<br>Trace：告訴 cycle collector 該類別會直接持有哪些 JavaScript object 。<br>Traverse：告訴 cycle collector 所有要走訪的 C++ 強指標。<br>Unlink： 清除所有持有的 reference count 。 （包括 C++ 與 JavaScript objects ）</p>
 <p>這三個函式負責告訴 cycle collector 如何走訪與打斷環狀參照。Traverse 和 Unlink 是每個類別都要實作的。而 Trace 只有當類別直接持有 JavaScript object resource 才需要實作。 （例如：JS::Heap&lt;JSObject*&gt;, JS::Value, jsval ）</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/04/CC_refCycle.png"><img src="../../assets/4351/wp-content/uploads/2014/04/CC_refCycle.png" alt="Reference cycle would hold the reference count." loading="lazy"></a></p>
+<p><a href="../../assets/4351/wp-content/uploads/2014/04/CC_refCycle.png"><img src="../../assets/4351/wp-content/uploads/2014/04/CC_refCycle.png" alt="Reference cycle would hold the reference count." loading="lazy"></a></p>
 <p>若物件因環狀參照而保有 reference count，需 unlink 才能釋放。</p>
 <h3>如何寫出可參與 Cycle Collection 的類別 ？</h3>
 <p>該怎麼寫才能正確釋放記憶體呢？ Programmer 需要為可能形成 cycle 的類別宣告 cycle collection participant，並且實作所需要的函式，像是剛剛提到的 Traverse、Unlink 。<br>聽起來要寫很多東西，還好 Gecko 中有許多方便的巨集可以用。本文將介紹較常用的巨集，想再深入了解的朋友，請參考[nsCycleCollectionParticipant.h [2]](https://mxr.mozilla.org/mozilla-central/source/xpcom/glue/nsCycleCollectionParticipant.h) 的檔案內容 。</p>
@@ -92,7 +98,7 @@
 <p>[4] <a href="../../posts/1605/">你丟我撿！神奇的 Firefox 內部記憶體回收機制</a> (謀智台客)</p>
 <p>[5] <a href="https://blog.kylehuey.com/post/27564411715/cycle-collection">Cycle Collection</a>  (by Kyle Huey)</p></div>
             <footer class="entry-footer">
-              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox/">Firefox</a></span><span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox/">Firefox</a></span><span><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></span></div>
             </footer>
           </article>
         </div>
@@ -101,19 +107,19 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+        <li><a href="../../categories/1/">1</a></li><li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
       </ul>
     </section>
     <section class="widget">
     <h3>月份彙整</h3>
     <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
       <option value="">選擇月份</option>
-      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (4)</option><option value="../../months/2013-09/">2013 年 9 月 (5)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (2)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (5)</option><option value="../../months/2013-03/">2013 年 3 月 (4)</option><option value="../../months/2013-02/">2013 年 2 月 (4)</option><option value="../../months/2013-01/">2013 年 1 月 (5)</option><option value="../../months/2012-12/">2012 年 12 月 (4)</option><option value="../../months/2012-11/">2012 年 11 月 (4)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (3)</option><option value="../../months/2012-05/">2012 年 5 月 (3)</option>
     </select>
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20140703035427id_/https://tech.mozilla.com.tw/?p=4351">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20140625202548id_/http://tech.mozilla.com.tw/posts/4351/%e6%b7%ba%e8%ab%87-cycle-collection">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>

@@ -31,7 +31,7 @@
       <img src="https://secure.gravatar.com/avatar/261d6c947dda09e45b8bcbf0c0b781d5?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;amp;s=24" alt="" class="avatar user-137-avatar" width="24" height="24"><!--
    --><div class="author-info">Ouyang Owen</div><!--
    --><div class="author-title"></div>
-    </a>
+  </a>
   </div><div class="post-date"></div></div>
               <h1 class="entry-title">Where am I?－Part II－在 Google Maps 標記地圖資訊</h1>
             </header>
@@ -41,7 +41,7 @@
 <ol><li>微笑單車的即時資訊的取得及分析。</li></ol>
 <ol><li>在地圖上利用 Google Maps 提供的工具標示及顯示微笑單車使用情況。</li></ol>
 <p>目前台北市政府把微笑單車的即時資訊以 json 的格式對外公開，所以任何人都可以根據自已的需求來使用這些資訊。我們使用的方式就是從台北市政府抓到最新的資料，從中取出我們感興趣的內容。在微笑單車的資料中，我們需要知道單車站點的位置資訊及單車數量。在研究的過程中，我們知道資料中有提供站點資訊的英文訊息，所以也可以針對不是中文語係的裝置以英文來提供資訊。</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-182226-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png"><img src="../../assets/5765/wp-content/uploads/2014/12/2014-12-18-182226-的螢幕擷圖-300x246.png" alt="2014-12-18 18:22:26 的螢幕擷圖" loading="lazy"></a></p>
+<p><a href="../../assets/5765/wp-content/uploads/2014/12/2014-12-18-182226-的螢幕擷圖.png"><img src="../../assets/5765/wp-content/uploads/2014/12/2014-12-18-182226-的螢幕擷圖-300x246.png" alt="2014-12-18 18:22:26 的螢幕擷圖" loading="lazy"></a></p>
 <p>我們需要的資料包含了 : sna, tot, sbi, lat, lng, ar, snaen, aren</p>
 <p>首先需要從台北市的 opendata 中把 json 資料抓回來。</p>
 <p>function httpGet(url) {<br> xmlHttp = new XMLHttpRequest({mozSystem:true});<br> xmlHttp.open( &quot;GET&quot;, url, false );<br> xmlHttp.send( null );<br> return xmlHttp.responseText;<br>}</p>
@@ -54,11 +54,11 @@
 <ol><li>為了一目了然用顏色來標示空車及空位的據點，可以更快讓使用者掌握情況。</li></ol>
 <ol><li>為了呈現即時的資訊，我們知道台北市是每五分鐘更新一次資料，所以我們也根據這項特性來更新我們地圖上的資訊。</li></ol>
 <p>一般我們在找附近的微笑單車的資訊時，最關心的是單車據點，可以很快知道有沒有車可以借，可以避免到達站點後才知道沒有車或是需要點開詳細資訊才知道。我們可以設定三種顏色來分別最簡單的站點資訊 – 沒有車 ( 橘色 )，有車有位 ( 綠色 ) 及 沒有車位 ( 紅色 ) 。</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-184953-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png"><img src="../../assets/5765/wp-content/uploads/2014/12/2014-12-18-184953-的螢幕擷圖-300x195.png" alt="2014-12-18 18:49:53 的螢幕擷圖" loading="lazy"></a></p>
+<p><a href="../../assets/5765/wp-content/uploads/2014/12/2014-12-18-184953-的螢幕擷圖.png"><img src="../../assets/5765/wp-content/uploads/2014/12/2014-12-18-184953-的螢幕擷圖-300x195.png" alt="2014-12-18 18:49:53 的螢幕擷圖" loading="lazy"></a></p>
 <p>站點位置可以用 lat 及 lng 在 Google Maps 上以 marker 的方式標式出來。為了讓使用者可以了解更細節的資訊，在使用者在 marker 上點選之後，可以了解站點名稱 ( sna ) , 站點位置 ( ar  ), 單車數 ( sbi ),  空位數 ( tot – sbi )。</p>
 <p>[</p>
 <p>英文的資訊可以用 snaen 及 aren 來根據 <br>			navigator.language 調整去呈現中文以外的資訊。</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/12/2014-12-18-152843-%E7%9A%84%E8%9E%A2%E5%B9%95%E6%93%B7%E5%9C%96.png"><img src="../../assets/5765/wp-content/uploads/2014/12/2014-12-18-152843-的螢幕擷圖-300x207.png" alt="2014-12-18 15:28:43 的螢幕擷圖" loading="lazy"></a></p>
+<p><a href="../../assets/5765/wp-content/uploads/2014/12/2014-12-18-152843-的螢幕擷圖.png"><img src="../../assets/5765/wp-content/uploads/2014/12/2014-12-18-152843-的螢幕擷圖-300x207.png" alt="2014-12-18 15:28:43 的螢幕擷圖" loading="lazy"></a></p>
 <p> latlng = new google.maps.LatLng(retVal[i].lat, retVal[i].lng);<br> var image = okImage;<br> if ( retVal[i].sbi == 0 ) {<br> image = emptyImage;<br> } else if ( (retVal[i].tot-retVal[i].sbi) == 0 ) {<br> image = fullImage;<br> }</p>
 <p> var marker = new google.maps.Marker({<br> position: latlng,<br> map: map,<br> icon: image,<br> shadow: pinShadow,<br> //animation: google.maps.Animation.DROP,<br> title: infoTitle<br> });</p>
 <p>					12345678910111213141516</p>
@@ -72,7 +72,7 @@
 <ol><li><a href="../../posts/5762/">Where am I? – Part I – 使用 Google Maps 地圖快速簡單查看你的位置</a></li></ol>
 <ol><li><a href="https://ppt.cc/-BSH">台北市政府的開放資料</a></li></ol></div>
             <footer class="entry-footer">
-              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
             </footer>
           </article>
         </div>
@@ -81,19 +81,19 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+        <li><a href="../../categories/1/">1</a></li><li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
       </ul>
     </section>
     <section class="widget">
     <h3>月份彙整</h3>
     <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
       <option value="">選擇月份</option>
-      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (4)</option><option value="../../months/2013-09/">2013 年 9 月 (5)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (2)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (5)</option><option value="../../months/2013-03/">2013 年 3 月 (4)</option><option value="../../months/2013-02/">2013 年 2 月 (4)</option><option value="../../months/2013-01/">2013 年 1 月 (5)</option><option value="../../months/2012-12/">2012 年 12 月 (4)</option><option value="../../months/2012-11/">2012 年 11 月 (4)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (3)</option><option value="../../months/2012-05/">2012 年 5 月 (3)</option>
     </select>
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20201019211917id_/https://tech.mozilla.com.tw/?p=5765">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20201019211917/https://tech.mozilla.com.tw/?p=5765">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>

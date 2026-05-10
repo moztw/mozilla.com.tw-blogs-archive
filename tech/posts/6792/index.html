@@ -28,10 +28,10 @@
             <header class="entry-header">
               <p class="entry-posted"><time datetime="2016-05-11" class="published"><span class="posted-month">5月</span><span class="posted-date">11</span><span class="posted-year">2016</span></time></p><div class="entry-meta"><div class="author-meta">
     <a href="https://web.archive.org/web/20200919185554/https://tech.mozilla.com.tw/?author=80">
-      <img src="../../assets/6792/wp-content/uploads/avatars/80/b8130bf53c09245b93f4b92cc1e59c77-bpthumb.jpg" alt="" class="avatar user-80-avatar" width="24" height="24"><!--
+      <img src="../../assets/3366/wp-content/uploads/avatars/80/b8130bf53c09245b93f4b92cc1e59c77-bpthumb.jpg" alt="" class="avatar user-80-avatar" width="24" height="24"><!--
    --><div class="author-info">Luke</div><!--
    --><div class="author-title"></div>
-    </a>
+  </a>
   </div><div class="post-date"></div></div>
               <h1 class="entry-title">運用 Web 技術打造電視遙控器的操作環境</h1>
             </header>
@@ -40,7 +40,7 @@
 <p>我們一般將這個按鍵操作機制稱為「<a href="https://en.wikipedia.org/wiki/Spatial_navigation">空間巡航 (Spatial Navigation)</a>」。相信大多數人對這個機制並不陌生，因為傳統手機幾乎都是透過方向鍵操作的，遊戲機與電視機上盒等設備的介面也都是用方向鍵操作；此外，包含 Firefox 在內的許多 Android 版本瀏覽器，也都能讓人用實體方向鍵瀏覽網頁中可互動的元素。因此，為了實現這個機制，我們首先想到的就是去研究 Firefox for Android 裡是如何實作這個功能的。</p>
 <p>這<a href="https://dxr.mozilla.org/mozilla-central/source/toolkit/modules/SpatialNavigation.jsm">程式碼並不難找</a>，但可惜其功能單純且沒有客制化的空間，基本上就是按 Tab 鍵切換的加強版。這倒不是批評，我們理解 Firefox for Android 支援按鍵操作的目的，是為了讓所有的網頁都能「基本上正常使用」。換句話說，Firefox for Android 並沒有要最佳化按鍵操作的體驗。畢竟對沒有預期要應用在 TV 上的網頁來說，「最佳」的操作體驗必然來自於滑鼠或觸碰式螢幕。</p>
 <p>但如果想用 Web 技術來做 TV 原生應用程式，例如主畫面、App 列表、節目表、設定畫面等，單只是「基本上正常使用」還不夠。讓我們以現在 Firefox OS TV 上的主畫面為例：</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2016/05/1.jpg"><img src="../../assets/6792/wp-content/uploads/2016/05/1.jpg" alt="1" loading="lazy"></a></p>
+<p><a href="../../assets/6792/wp-content/uploads/2016/05/1.jpg"><img src="../../assets/6792/wp-content/uploads/2016/05/1.jpg" alt="1" loading="lazy"></a></p>
 <p>根據 UX 設計，當目前游標停在中間排的「Devices」圖示上時，我們希望按下「上」方向鍵應會讓游標直接跳到左上角的「搜尋 (即放大鏡的圖示)」上。但依照 Firefox for Android 的演算法，其實右邊的「設定 (即齒輪圖示)」才是下一個目標。換個角度，當游標停在「搜尋」圖示上時按了「下」方向鍵，較好的體驗應該是讓游標回到上一次選到的應用程式圖示，也就是「Devices」。然而，Gecko 理論上會將游標跳回距離最近的圖示，卻不是你心裡想要的圖示。因此我們發現，這件事不是只靠演算法就可以解決的問題。</p>
 <p>於是，我們把希望放到了一份 <a href="https://drafts.csswg.org/css-ui/#nav-dir">W3C 的「草稿 (Draft)」</a>上。其中的「Directional focus navigation」正符合我們所需。先來看看用法：</p>
 <p>button { position:absolute }</p>
@@ -64,15 +64,15 @@
 <p>(可以在 <a href="https://luke-chang.github.io/js-spatial-navigation/demo/">GitHub 上找到更多的範例頁面</a>)</p>
 <p>與舊版相較，此版函式庫引入了「section」的概念，目的是把畫面上所有可讓游標停駐的元素分成不同區塊以利管理，且讓不同的 section 可以有各自不同的客制化設定。例如上述的對話框就可以是獨立的一個 section，只要設定成對話框以內的元素都沒辦法巡航到對話框的範圍之外，也就解決了我們剛剛提到的問題了。</p>
 <p>前後這兩版函式庫不僅幫助我們開發出第一版 Firefox OS TV 所有的內建 App，也在後續的 TV 開發專案中扮演著很重要的角色。像是 <a href="https://marketplace.firefox.com/tv/">TV 專用的「市集」網站</a>也是基於新版函式庫來實現按鍵操作。而且因為已經是跨瀏覽器相容，所以也能在桌機上用不同的瀏覽器來操作。</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2016/05/2.png"><img src="../../assets/6792/wp-content/uploads/2016/05/2.png" alt="2" loading="lazy"></a></p>
+<p><a href="../../assets/6792/wp-content/uploads/2016/05/2.png"><img src="../../assets/6792/wp-content/uploads/2016/05/2.png" alt="2" loading="lazy"></a></p>
 <p>同時另外一個計畫是希望在 TV 專用的「設定 (Settings)」App 完成前，先讓 Firefox OS Phone 上的「設定」 App 也能正常運作在 TV 環境中，以便開發及測試之時能立即修改 TV 的設定值。這個計畫即借助了 js-spatial-navigation，在盡可能不改變「設定」App 的程式架構下，成功讓方向鍵可以操作「設定」App。下圖的影片是真實操作的情況。你也可以找到 Gaia 的 master branch，親自建置出 TV 的 profile 體驗。</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2016/05/3.gif"><img src="../../assets/6792/wp-content/uploads/2016/05/3.gif" alt="3" loading="lazy"></a></p>
+<p><a href="../../assets/6792/wp-content/uploads/2016/05/3.gif"><img src="../../assets/6792/wp-content/uploads/2016/05/3.gif" alt="3" loading="lazy"></a></p>
 <p>最後再提一個有趣的開發過程好了。</p>
 <p>在開發此函式庫期間，我會試著用此一函式庫模仿一些市面上現成的 TV 最佳化網站 UI，幫自己找出這個函式庫不足的地方，或是無法輕易實作的功能，以便在未來作為改進的方向。下圖就是尚未完成的仿 Youtube TV 介面的展示頁，<a href="https://github.com/luke-chang/js-spatial-navigation/blob/demo_3.2/demo/3.2_like_youtube_tv.html">原始碼可以參考這裡</a>。</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2016/05/4.gif"><img src="../../assets/6792/wp-content/uploads/2016/05/4.gif" alt="4" loading="lazy"></a></p>
+<p><a href="../../assets/6792/wp-content/uploads/2016/05/4.gif"><img src="../../assets/6792/wp-content/uploads/2016/05/4.gif" alt="4" loading="lazy"></a></p>
 <p>我相信基於 JavaScript 的空間巡航函式庫只是一個過渡產品。長遠來看，讓瀏覽器能原生支援 Spatial Navigation 相關的 API 才會是最佳的結果。不過在那之前，我希望 js-spatial-navigation 能或多或少幫助到一些有需要的人。此外，js-spatial-navigation 一定還有很多進步空間，也歡迎提出任何心得或問題。</p></div>
             <footer class="entry-footer">
-              <div class="entry-category-box">文章分類：<span><a href="../../categories/css/">CSS</a></span><span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span><span><a href="../../categories/ux-ue/">UX/UE</a></span></div>
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/css/">CSS</a></span><span><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span><span><a href="../../categories/ux-ue/">UX/UE</a></span></div>
             </footer>
           </article>
         </div>
@@ -81,19 +81,19 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+        <li><a href="../../categories/1/">1</a></li><li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
       </ul>
     </section>
     <section class="widget">
     <h3>月份彙整</h3>
     <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
       <option value="">選擇月份</option>
-      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (4)</option><option value="../../months/2013-09/">2013 年 9 月 (5)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (2)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (5)</option><option value="../../months/2013-03/">2013 年 3 月 (4)</option><option value="../../months/2013-02/">2013 年 2 月 (4)</option><option value="../../months/2013-01/">2013 年 1 月 (5)</option><option value="../../months/2012-12/">2012 年 12 月 (4)</option><option value="../../months/2012-11/">2012 年 11 月 (4)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (3)</option><option value="../../months/2012-05/">2012 年 5 月 (3)</option>
     </select>
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20200919185554id_/https://tech.mozilla.com.tw/?p=6792">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20200919185554/https://tech.mozilla.com.tw/?p=6792">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>

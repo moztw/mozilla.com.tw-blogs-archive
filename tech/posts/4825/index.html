@@ -27,11 +27,11 @@
           <article class="post single-post">
             <header class="entry-header">
               <p class="entry-posted"><time datetime="2014-08-11" class="published"><span class="posted-month">8月</span><span class="posted-date">11</span><span class="posted-year">2014</span></time></p><div class="entry-meta"><div class="author-meta">
-    <a href="https://web.archive.org/web/20150326094507/http://tech.mozilla.com.tw/posts/author/johumoilla-com">
+    <a href="../../posts/author/johumoilla-com/">
       <img src="http://www.gravatar.com/avatar/06d79ed4b67a4721e8e59295fb9f4ae6?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;amp;s=24" alt="" class="avatar user-77-avatar" width="24" height="24"><!--
    --><div class="author-info">John Hu</div><!--
    --><div class="author-title"></div>
-    </a>
+  </a>
   </div><div class="post-date"></div></div>
               <h1 class="entry-title">航向 128MB 的偉大航道－Gaia • 神奇的可視範圍監視器</h1>
             </header>
@@ -41,9 +41,9 @@
 <p>另一個題外話是，visibility monitor 是由 JavaScript 大師 David Flanagan 親手完成，他是 <a href="https://shop.oreilly.com/product/9780596805531.do">JavaScript: The Definitive Guide</a> 的作者，目前也是 mozilla 的員工之一。</p>
 <h2>運作原理</h2>
 <p>Visibility Monitor 的運作原理是將畫面外的圖片從 DOM tree 上拿掉，如此一來就能讓 gecko 有機會去釋放 image loader/decoder 所暫存的圖片記憶體。</p>
-<p>大家可能會認為這件事在 gecko 做就好了，為什麼要在 gaia 做？跟據<a href="https://tech.mozilla.com.tw/posts/author/schienmozilla-com">簡超強</a>的介紹， gecko 的 visibility monitor 僅會對 image decoder 所解壓後的圖片進行清除，然而，原始的圖片還是會被暫存在記憶體中。這些圖片是 image loader 透過網路或是本機檔案系統所得到的圖片。Gaia 的版本不一樣之處在於，它會將圖片完全從 DOM tree 上拿掉。所以，連 image loader 所暫存的原圖都還是會被清掉。這件事，在記憶體只有 128MB 的 tarako (註: Firefox OS 低規手機專案代號) 上就顯得非常重要。</p>
-<p> <a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/07/visibility-monitor2.png"><img src="../../assets/4825/wp-content/uploads/2014/07/visibility-monitor2-271x300.png" alt="visibility-monitor(2)" loading="lazy"></a></p>
-<p> 我們以<a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/07/visibility-monitor2.png">上圖</a>做例子，可以把全部的區域分成 display port、pre-rendered area、margin 及全部的區域。Visibility monitor 的功能就是當 display port 上下移動的時候，會動態載入 pre-rendered area 的圖片，那沒有落在 pre-rendered area 的圖片將不會被載入及解碼。圖中的 margin 就是 visibility monitor 可以動態調整的參數。當 margin 越大，gecko 預先畫上的圖片就越多，所耗費的記憶體就越大、捲動的流暢度就越好（即 FPS 就越高）；當 margin 越小，gecko 預先畫上的圖片就越少，所耗費的記憶體就越小、捲動的流暢度就越差（即 FPS 就越低）。正因為它的運作原理是這樣，所以加入它之後，我們就能照著需求調整所需要的參數及品質。</p>
+<p>大家可能會認為這件事在 gecko 做就好了，為什麼要在 gaia 做？跟據<a href="../../posts/author/schienmozilla-com/">簡超強</a>的介紹， gecko 的 visibility monitor 僅會對 image decoder 所解壓後的圖片進行清除，然而，原始的圖片還是會被暫存在記憶體中。這些圖片是 image loader 透過網路或是本機檔案系統所得到的圖片。Gaia 的版本不一樣之處在於，它會將圖片完全從 DOM tree 上拿掉。所以，連 image loader 所暫存的原圖都還是會被清掉。這件事，在記憶體只有 128MB 的 tarako (註: Firefox OS 低規手機專案代號) 上就顯得非常重要。</p>
+<p> <a href="../../assets/4825/wp-content/uploads/2014/07/visibility-monitor2.png"><img src="../../assets/4825/wp-content/uploads/2014/07/visibility-monitor2-271x300.png" alt="visibility-monitor(2)" loading="lazy"></a></p>
+<p> 我們以<a href="../../assets/4825/wp-content/uploads/2014/07/visibility-monitor2.png">上圖</a>做例子，可以把全部的區域分成 display port、pre-rendered area、margin 及全部的區域。Visibility monitor 的功能就是當 display port 上下移動的時候，會動態載入 pre-rendered area 的圖片，那沒有落在 pre-rendered area 的圖片將不會被載入及解碼。圖中的 margin 就是 visibility monitor 可以動態調整的參數。當 margin 越大，gecko 預先畫上的圖片就越多，所耗費的記憶體就越大、捲動的流暢度就越好（即 FPS 就越高）；當 margin 越小，gecko 預先畫上的圖片就越少，所耗費的記憶體就越小、捲動的流暢度就越差（即 FPS 就越低）。正因為它的運作原理是這樣，所以加入它之後，我們就能照著需求調整所需要的參數及品質。</p>
 <h2>使用前提</h2>
 <p>大家常說：『又要馬兒好、又要馬兒不吃草』這件事是不可能的。當然，『又要使用 visibility monitor、又不被受影響』這也是件不可能的事。使用 visibility monitor 的前題必須滿足下列條件<a href="https://github.com/mozilla-b2g/gaia/blob/0a0f549c6b341b8b14c4188390abbefe52847cb4/shared/js/tag_visibility_monitor.js#L46-L51">[3</a>]：</p>
 <ul><li>所有被 monitor 到的 HTML DOM Element 都是由上到下排列</li></ul>
@@ -60,9 +60,9 @@
 <p>visibility monitor 是透過 window.onresize 的事件來決定是否要重新計算 pre-rendered area，所以每個大小的改變，都要送出 resize 事件。</p>
 <h2>Tag Visibility Monitor API</h2>
 <p><a href="https://github.com/mozilla-b2g/gaia/blob/master/shared/js/tag_visibility_monitor.js">visibility monitor</a> 的 API 非常簡單，只有一個 function 而已：</p>
-<p>function monitorTagVisibility(<br> container,<br> tag,<br> scrollMargin,<br> scrollDelta,<br> onscreenCallback,<br> offscreenCallback<br>) </p>
+<p>function monitorTagVisibility(<br> container,<br> tag,<br> scrollMargin,<br> scrollDelta,<br> onscreenCallback,<br> offscreenCallback<br>)</p>
 <p>					12345678</p>
-<p>						function monitorTagVisibility( container, tag, scrollMargin, scrollDelta, onscreenCallback, offscreenCallback) </p>
+<p>						function monitorTagVisibility( container, tag, scrollMargin, scrollDelta, onscreenCallback, offscreenCallback)</p>
 <p>它所帶入的參數定義如下：</p>
 <ul><li>container：這個 container 是使用者真正捲動的 HTML DOM Element，它不一定要是被監控的 element 的上一層，但它一定要是它們的祖先。</li></ul>
 <ul><li>tag：它是一個字串，用來代表要監控的 element name。</li></ul>
@@ -74,7 +74,7 @@
 <h2>以 1.3T 版的 Music app 為例加入 Visibility Monitor</h2>
 <p>幫 1.3T 版的 Music app 加入 visibility monitor 是醬糊小弟負責的一個 bug。在加入的過程中，醬糊小弟並不了解 Music app 的結構，所以就借助多明尼哥的幫助，找到需要加入的位置。全部的位置有三處：TilesView、ListView、SearchView，這裡僅以 TilesView 做介紹，將加入的方法展示出來。</p>
 <p>首先，我們可以透過 App Manager 來找出 TilesView 中真正在捲動的 HTML DOM Element：</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/07/tile-view.png"><img src="../../assets/4825/wp-content/uploads/2014/07/tile-view-300x149.png" alt="tile-view" loading="lazy"></a></p>
+<p><a href="../../assets/4825/wp-content/uploads/2014/07/tile-view.png"><img src="../../assets/4825/wp-content/uploads/2014/07/tile-view-300x149.png" alt="tile-view" loading="lazy"></a></p>
 <p>透過 App Manager 我們可以發現 TilesView 中有 views-tile、views-tiles-search、views-tiles-anchor 及其下的 li.tile。經過測試，我們發現 scroll bar 出現的位置是在 views-tile，而 views-tiles-search 會被自動捲到看不見的位置，接著每個 tile 則是以 li.tile 的方式存在。所以，container 要設定在 views-tiles 的位置，tag 要設定成 li，我們可以使用下面的程式碼來建立 visibility monitor：</p>
 <p>monitorTagVisibility(document.getElementById(&quot;views-tile&quot;), &quot;li&quot;,<br> visibilityMargin, // extra space top and bottom<br> minimumScrollDelta, // min scroll before we do work<br> thumbnailOnscreen, // set background image<br> thumbnailOffscreen); // remove background image</p>
 <p>					12345</p>
@@ -102,7 +102,7 @@
 <ul><li>delta 越大 =&gt; 記憶體使用量會小幅增加、FPS 會提昇、出現尚未載入的圖片機率越高</li></ul>
 <ul><li>delta 越小 =&gt; 記憶體使用量會小幅減少、FPS 會下降、出現尚未載入的圖片機率越低</li></ul></div>
             <footer class="entry-footer">
-              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
             </footer>
           </article>
         </div>
@@ -111,19 +111,19 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+        <li><a href="../../categories/1/">1</a></li><li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
       </ul>
     </section>
     <section class="widget">
     <h3>月份彙整</h3>
     <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
       <option value="">選擇月份</option>
-      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (4)</option><option value="../../months/2013-09/">2013 年 9 月 (5)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (2)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (5)</option><option value="../../months/2013-03/">2013 年 3 月 (4)</option><option value="../../months/2013-02/">2013 年 2 月 (4)</option><option value="../../months/2013-01/">2013 年 1 月 (5)</option><option value="../../months/2012-12/">2012 年 12 月 (4)</option><option value="../../months/2012-11/">2012 年 11 月 (4)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (3)</option><option value="../../months/2012-05/">2012 年 5 月 (3)</option>
     </select>
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20150326094507id_/https://tech.mozilla.com.tw/?p=4825">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20150326094507/https://tech.mozilla.com.tw/posts/4825/%e8%88%aa%e5%90%91-128mb-%e7%9a%84%e5%81%89%e5%a4%a7%e8%88%aa%e9%81%93-gaia-%e2%80%a2-%e7%a5%9e%e5%a5%87%e7%9a%84%e5%8f%af%e8%a6%96%e7%af%84%e5%9c%8d%e7%9b%a3%e8%a6%96%e5%99%a8">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>

@@ -27,11 +27,11 @@
           <article class="post single-post">
             <header class="entry-header">
               <p class="entry-posted"><time datetime="2012-06-11" class="published"><span class="posted-month">6月</span><span class="posted-date">11</span><span class="posted-year">2012</span></time></p><div class="entry-meta"><div class="author-meta">
-    <a href="https://web.archive.org/web/20140827000653/http://tech.mozilla.com.tw/posts/author/vchangmozilla-com">
-      <img src="http://www.gravatar.com/avatar/0fa1e7a2807be2aaf0bd66d688506199?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;amp;s=24" alt="" class="avatar user-10-avatar" width="24" height="24"><!--
+    <a href="../../posts/author/vchangmozilla-com/">
+      <img src="https://web.archive.org/web/20170217193723im_/http://www.gravatar.com/avatar/0fa1e7a2807be2aaf0bd66d688506199?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;amp;s=24" alt="" class="avatar user-10-avatar" width="24" height="24"><!--
    --><div class="author-info">Vincet Chang</div><!--
    --><div class="author-title"></div>
-    </a>
+  </a>
   </div><div class="post-date"></div></div>
               <h1 class="entry-title">99% CPU Usage！Why ?</h1>
             </header>
@@ -67,11 +67,11 @@
 <p>						vchang@vchang:~/project/b2g$ make run-gdb(gdb)</p>
 <p>我這裏先介紹幾個常用的 GDB 指令：</p>
 <h1>設定中斷點，</h1>
-<p>break location =&gt; location 可以是函式名稱，某個檔案的某一行或是指令的記憶體位置 </p>
+<p>break location =&gt; location 可以是函式名稱，某個檔案的某一行或是指令的記憶體位置</p>
 <h1>看 process 或是 Thread 的 backtrace，</h1>
 <p>backtrace<br>bt</p>
 <h1>列出 B2G process 所有的 Thread 資訊</h1>
-<p>info threads </p>
+<p>info threads</p>
 <h1>列出目前設定的中斷點</h1>
 <p>info b</p>
 <h1>切換到不同的 Thread</h1>
@@ -81,7 +81,7 @@
 <h1>在同一函式單步執行</h1>
 <p>next</p>
 <h1>連續執行</h1>
-<p>continue </p>
+<p>continue</p>
 <h1>中斷目前指令</h1>
 <p>ctrl + c</p>
 <h1>遇到中斷點時執行的指令</h1>
@@ -98,7 +98,7 @@
 <p>接著利用 thread id 指令來切換目前的 Thread ，最後再利用 bt 指令來看這個 Thread 目前 stack 的 backtrace。利用 stack 的 backtrace 資訊，我們就可以知道目前這個 Thread 正在執行的函式了，有了這些資訊，再配合原始碼，就可以幫助我們判斷問題發生的原因了。</p>
 <p>在這個例子裡，我們利用 GDB 及 top 指令來幫忙解決將 B2G 移植到新手機時 input event 判斷錯誤的問題，以這些工具所收集到的資訊並加以分析之後，我們發現是 Timer Thread 進入了無窮迴圈。每隔幾個微秒 Timer Thread 就會傳送 timeout event 給其它的 Threads ，因而造成整個系統非常的忙碌，而無法正確處理 input event。雖然說 GDB 及 top 這兩個工具可以加速我們找到問題點，但是，問題真正發生的原因，還是需要透過追蹤原始碼才有辦法得知。原來，Timer Thread 為了更準確的處理 timeout event ，所以，當下一次 timeout event 的發生時間小於某個特定值時，Timer thread 會直接把 timeout event 取出並傳送給對應的 Thread，這樣可以避免因為排程所造成的時間誤差。但是，當我們將 B2G 移植到不同的手機上時，因為系統不同，所以誤判發生 timeout event 的時間，而造成整個系統都在處理 timeout event ，使得CPU 非常忙碌。</p></div>
             <footer class="entry-footer">
-              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></span></div>
             </footer>
           </article>
         </div>
@@ -107,19 +107,19 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+        <li><a href="../../categories/1/">1</a></li><li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
       </ul>
     </section>
     <section class="widget">
     <h3>月份彙整</h3>
     <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
       <option value="">選擇月份</option>
-      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (4)</option><option value="../../months/2013-09/">2013 年 9 月 (5)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (2)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (5)</option><option value="../../months/2013-03/">2013 年 3 月 (4)</option><option value="../../months/2013-02/">2013 年 2 月 (4)</option><option value="../../months/2013-01/">2013 年 1 月 (5)</option><option value="../../months/2012-12/">2012 年 12 月 (4)</option><option value="../../months/2012-11/">2012 年 11 月 (4)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (3)</option><option value="../../months/2012-05/">2012 年 5 月 (3)</option>
     </select>
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20140827000653id_/https://tech.mozilla.com.tw/?p=139">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20170217193723/https://tech.mozilla.com.tw/posts/139/99-cpu-usage%EF%BC%81why">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>

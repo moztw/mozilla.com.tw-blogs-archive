@@ -27,11 +27,11 @@
           <article class="post single-post">
             <header class="entry-header">
               <p class="entry-posted"><time datetime="2015-01-12" class="published"><span class="posted-month">1月</span><span class="posted-date">12</span><span class="posted-year">2015</span></time></p><div class="entry-meta"><div class="author-meta">
-    <a href="https://web.archive.org/web/20150323223941/http://tech.mozilla.com.tw/posts/author/selinmozilla-com">
-      <img src="http://www.gravatar.com/avatar/6f403ab28e9d72e6e6d2b928b98d8374?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;amp;s=24" alt="" class="avatar user-127-avatar" width="24" height="24"><!--
+    <a href="../../posts/author/selinmozilla-com/">
+      <img src="https://web.archive.org/web/20170820235230im_/http://www.gravatar.com/avatar/6f403ab28e9d72e6e6d2b928b98d8374?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;amp;s=24" alt="" class="avatar user-127-avatar" width="24" height="24"><!--
    --><div class="author-info">Sean Lin</div><!--
    --><div class="author-title"></div>
-    </a>
+  </a>
   </div><div class="post-date"></div></div>
               <h1 class="entry-title">淺談 System Message</h1>
             </header>
@@ -42,12 +42,12 @@
 <ul><li>SystemMessageInternal : 在 B2G process 上執行，主要負責管理所有 message，以及記錄是否有已經開啟可接收特定 message 的 App 。</li></ul>
 <ul><li>SystemMessageManager : 在各個 content process 執行，可以想像成每個 App 都有一個專職的原件，幫忙接收從 B2G process 上 SystemMessageInternal 送過來的 message。</li></ul>
 <p>而 SystemMessageInternal 和 SystemMessageManager 之間 （B2G process 和 content process 間）主要是透過 IPC （Inter Process Communication） 溝通。</p>
-<p>值得一提的是， Gecko 也會保有一份事先制訂好的 SystemMessagePermissionsTable ，每個 message 都可以綁定特定的權限，再由綁定的權限決定該 message 可不可以被特定的 app 使用。例如 “alarm” message 就會綁定 “alarms” 權限，”sms-received” message 就會需要 “sms” 權限。</p>
-<p>另外，每個想要接收 system message 的 app，都需要先在自己的 manifest.webapp 中宣告一個 “messages” 的欄位，來指定想接收的 message type 和對應處理的 URL。例如，在 Clock App 裡我們會看到關於處理 “alarm” message 的一些內容</p>
+<p>值得一提的是， Gecko 也會保有一份事先制訂好的 SystemMessagePermissionsTable ，每個 message 都可以綁定特定的權限，再由綁定的權限決定該 message 可不可以被特定的 app 使用。例如 “alarm&quot; message 就會綁定 “alarms&quot; 權限，&quot;sms-received&quot; message 就會需要 “sms&quot; 權限。</p>
+<p>另外，每個想要接收 system message 的 app，都需要先在自己的 manifest.webapp 中宣告一個 “messages&quot; 的欄位，來指定想接收的 message type 和對應處理的 URL。例如，在 Clock App 裡我們會看到關於處理 “alarm&quot; message 的一些內容</p>
 <p>&quot;messages&quot;: [<br>   { &quot;alarm&quot;: &quot;/index.html&quot; }<br>]</p>
 <p>					123</p>
 <p>						&quot;messages&quot;: [   { &quot;alarm&quot;: &quot;/index.html&quot; }]</p>
-<p>同時因為 “alarm” message 需要 “alarms” 權限，所以我們也會看到關於權限宣告的內容</p>
+<p>同時因為 “alarm&quot; message 需要 “alarms&quot; 權限，所以我們也會看到關於權限宣告的內容</p>
 <p>&quot;permissions&quot;: {<br>  &quot;alarms&quot;:{},<br>},</p>
 <p>					123</p>
 <p>						&quot;permissions&quot;: {  &quot;alarms&quot;:{},},</p>
@@ -60,21 +60,21 @@
 <p>以上大致是幾個跟 system message 相關的元件，接下來要來討論一些比較細部的流程。</p>
 <h2>Process Launch</h2>
 <p>這邊主要是分別對 SystemMessageInternal （B2G process）和 SystemMessageManager（content process）在 launch 時的不同行為進行描述。</p>
-<ul><li>當 B2G process launch 之後，Gecko 會檢查 app manifest 並透過 SystemMessageInternal 記錄 “哪些 app 該處理哪幾種 system message”。</li></ul>
-<ul><li>當每個 content process launch 後，SystemMessageManager 也會隨之跟著啟動，並透過 IPC 跟 SystemMessageInternal 註冊這個 content process 所代表的頁面（如下圖）。而 SystemMessageInternal 則可藉此判斷 “相關的 app 是否已經開啟”。<a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_RegisterPage.png"><img src="../../assets/5750/wp-content/uploads/2014/11/SystemMessage_RegisterPage-300x161.png" alt="SystemMessage_RegisterPage" loading="lazy"></a>相對的，當 SystemMessageManager 結束時，也會通知 SystemMessageInternal 以確保資料正確。</li></ul>
+<ul><li>當 B2G process launch 之後，Gecko 會檢查 app manifest 並透過 SystemMessageInternal 記錄 “哪些 app 該處理哪幾種 system message&quot;。</li></ul>
+<ul><li>當每個 content process launch 後，SystemMessageManager 也會隨之跟著啟動，並透過 IPC 跟 SystemMessageInternal 註冊這個 content process 所代表的頁面（如下圖）。而 SystemMessageInternal 則可藉此判斷 “相關的 app 是否已經開啟&quot;。<a href="../../assets/5750/wp-content/uploads/2014/11/SystemMessage_RegisterPage.png"><img src="../../assets/5750/wp-content/uploads/2014/11/SystemMessage_RegisterPage-300x161.png" alt="SystemMessage_RegisterPage" loading="lazy"></a>相對的，當 SystemMessageManager 結束時，也會通知 SystemMessageInternal 以確保資料正確。</li></ul>
 <p>緊接著，就要開始來介紹當需要發出 system message 時，各個元件彼此之間的運作模式。</p>
 <h2>App 已開 — 單純傳遞 System Message</h2>
 <p>首先是個比較單純的案例（以 alarm 為例），因為 app 已經開啟，故已透過 IPC 跟 SystemMessageInternal 註冊（並也已透過 mozSetMessageHandler 註冊 callback handler），所以 SystemMessageInternal 只需單純地把 system message 傳給對應的 SystemMessageManager 即可，SystemMessageManager 再透過 callback handler 傳遞給 Clock App（如下圖）。</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_SendMessage.png"><img src="../../assets/5750/wp-content/uploads/2014/11/SystemMessage_SendMessage-1024x477.png" alt="SystemMessage_SendMessage" loading="lazy"></a></p>
+<p><a href="../../assets/5750/wp-content/uploads/2014/11/SystemMessage_SendMessage.png"><img src="../../assets/5750/wp-content/uploads/2014/11/SystemMessage_SendMessage-1024x477.png" alt="SystemMessage_SendMessage" loading="lazy"></a></p>
 <h2>App 未開 — 先開 App 再傳 System Message</h2>
 <p>萬一不幸地沒有先開好 app ， SystemMessageInternal 必須先 queue 住相關的 message ，並且透過 open-app event 通知 System App 來開啟相關的 app ，而該 app 同個 content process 上的 SystemMessageManager 也會跟著啟動，當 Clock App 註冊 callback handler 後 SystemMessageManager 會跟 SystemMessageInternal 索取先前 queue 住的 message （如果有的話），緊接著再透過 callback handler 傳遞給 Clock App（如下圖）。</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/11/SystemMessage_OpenApp.png"><img src="../../assets/5750/wp-content/uploads/2014/11/SystemMessage_OpenApp-1024x633.png" alt="SystemMessage_OpenApp" loading="lazy"></a></p>
+<p><a href="../../assets/5750/wp-content/uploads/2014/11/SystemMessage_OpenApp.png"><img src="../../assets/5750/wp-content/uploads/2014/11/SystemMessage_OpenApp-1024x633.png" alt="SystemMessage_OpenApp" loading="lazy"></a></p>
 <p>以上大致是關於 system message 運作模式的介紹，省略了部分實作細節並且盡量以簡單的例子闡述其工作流程。順帶一提，system message 除了可透過例子中可指定 manifest URL 跟 page URL 的 sendMessage 方式外，也可以利用 broadcastMessage 的方式發送 system message 給所有會接收該 message 的 app。另外，當有 app 新增或移除時， SystemMessageInternal 也會自動更新相關資料。至於其他更多有趣的內容，就留給各位有興趣去探索了。</p>
 <p>[1] <a href="https://dxr.mozilla.org/mozilla-central/source/dom/messages">http://dxr.mozilla.org/mozilla-central/source/dom/messages</a></p>
 <p>[2] <a href="https://github.com/mozilla-b2g/gaia/tree/master/apps/clock">https://github.com/mozilla-b2g/gaia/tree/master/apps/clock</a></p>
 <p>[3] <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator.mozSetMessageHandler">https://developer.mozilla.org/en-US/docs/Web/API/Navigator.mozSetMessageHandler</a></p></div>
             <footer class="entry-footer">
-              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></span></div>
             </footer>
           </article>
         </div>
@@ -83,19 +83,19 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+        <li><a href="../../categories/1/">1</a></li><li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
       </ul>
     </section>
     <section class="widget">
     <h3>月份彙整</h3>
     <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
       <option value="">選擇月份</option>
-      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (4)</option><option value="../../months/2013-09/">2013 年 9 月 (5)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (2)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (5)</option><option value="../../months/2013-03/">2013 年 3 月 (4)</option><option value="../../months/2013-02/">2013 年 2 月 (4)</option><option value="../../months/2013-01/">2013 年 1 月 (5)</option><option value="../../months/2012-12/">2012 年 12 月 (4)</option><option value="../../months/2012-11/">2012 年 11 月 (4)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (3)</option><option value="../../months/2012-05/">2012 年 5 月 (3)</option>
     </select>
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20150323223941id_/https://tech.mozilla.com.tw/?p=5750">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20170820235230/https://tech.mozilla.com.tw/posts/5750/%E6%B7%BA%E8%AB%87-system-message">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>

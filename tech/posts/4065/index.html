@@ -26,29 +26,34 @@
         <div class="article-div">
           <article class="post single-post">
             <header class="entry-header">
-              <p class="entry-posted"><time datetime="2014-04-07" class="published"><span class="posted-month">4月</span><span class="posted-date">7</span><span class="posted-year">2014</span></time></p>
+              <p class="entry-posted"><time datetime="2014-04-07" class="published"><span class="posted-month">4月</span><span class="posted-date">7</span><span class="posted-year">2014</span></time></p><div class="entry-meta"><div class="author-meta">
+    
+      <div class="author-info">snowmantw</div><!--
+   --><div class="author-title"></div>
+  
+  </div><div class="post-date"></div></div>
               <h1 class="entry-title">從 JavaScript 的 Map/Reduce 談起 Functional Programming</h1>
             </header>
             <div class="entry-content"><p>自 ECMAScript 5.1 開始 JavaScript 加入了兩個關於陣列的函式：<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map">Array.prototype.map</a>/<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce">reduce</a>。這兩個函式可以針對陣列，讓開發者更清楚的描述接下來程式碼所要表達的運算性質。除此之外，也簡化了每次手寫迴圈進行尋訪陣列的繁瑣過程，特別是當尋訪實際上是要將原本的陣列映射(map)成另一個陣列，或是進行加總、檢驗等具有化簡(reduce)性質的操作。</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/mapreduce_vs_for1.png"><img src="../../assets/4065/wp-content/uploads/2014/01/mapreduce_vs_for1.png" alt="mapreduce_vs_for" loading="lazy"></a></p>
+<p><a href="../../assets/4065/001-0ff2a8a316be.png"><img src="../../assets/4065/001-0ff2a8a316be.png" alt="mapreduce_vs_for" loading="lazy"></a></p>
 <p>左：使用普通 for 迴圈進行運算。右：使用 map &amp; reduce</p>
 <h2>Map/Reduce</h2>
 <p>所謂的映射(map)，實際上是指將被操作的陣列在不改變結構的情況下，變形成另一個陣列。以上例而言，當陣列「arr」被 doMap 這個函式處理後，長度跟型別（依然是陣列）都沒有變化。變化的是這個結構中的元素，從原本的數字型別變為布林型別。所以我們可以說 doMap 這個函式，他代表的型別變化是</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005286945.png"><img src="../../assets/4065/wp-content/uploads/2014/01/daum_equation_1391005286945.png" alt="daum_equation_1391005286945" loading="lazy"></a></p>
+<p><a href="../../assets/4065/002-3fecb94b2c7f.png"><img src="../../assets/4065/002-3fecb94b2c7f.png" alt="daum_equation_1391005286945" loading="lazy"></a></p>
 <p>在前述的表達式中，[Number] 代表的是這是一個 Array of Number ，由數字構成的陣列。因此我們可以解讀這個式子，也就是這個函式的「型別簽名」(<a href="https://en.wikipedia.org/wiki/Type_signature">Type Signature</a>)，表達的是「doMap 函式將會把一個數字陣列轉換成一個布林陣列」的意思。</p>
 <p>相對的，由 doReduce 所進行的化簡(reduce)操作，則是會將陣列的結構改變，並轉換成另一個值。這裡說的值，也許是一個數字，或是一個布林值，或是任何其他不再被陣列結構所包括的結果。其型別簽名則是</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005248288.png"><img src="../../assets/4065/wp-content/uploads/2014/01/daum_equation_1391005248288.png" alt="daum_equation_1391005248288" loading="lazy"></a></p>
+<p><a href="../../assets/4065/003-ec82b6196e20.png"><img src="../../assets/4065/003-ec82b6196e20.png" alt="daum_equation_1391005248288" loading="lazy"></a></p>
 <p>因為我們最終所進行的是將陣列所有元素加總的動作，所以這個函式所代表的是「接收一個數字陣列，回傳一個數字結果」的型別。</p>
 <h2>Functional Programming</h2>
-<p>事實上類似這樣 map/reduce 的運算，在 JavaScript 以前，就已經在所謂的函數式程式設計(<a href="https://en.wikipedia.org/wiki/Functional_programming">Functional Programming</a>)中被廣泛使用。而後 Google 根據這樣類似的思想，開發出了所謂 <a href="https://zh.wikipedia.org/wiki/MapReduce">MapReduce 的架構</a>用以處理大量資料。足見這是一個可以被延伸與拓展的良好設計模式(pattern)。有趣的是，在 Douglas Crockford 著名的 “<a href="https://javascript.crockford.com/javascript.html">JavaScript: The World’s Most Misunderstood Programming Language</a>” 一文中，有以下描述</p>
+<p>事實上類似這樣 map/reduce 的運算，在 JavaScript 以前，就已經在所謂的函數式程式設計(<a href="https://en.wikipedia.org/wiki/Functional_programming">Functional Programming</a>)中被廣泛使用。而後 Google 根據這樣類似的思想，開發出了所謂 <a href="https://zh.wikipedia.org/wiki/MapReduce">MapReduce 的架構</a>用以處理大量資料。足見這是一個可以被延伸與拓展的良好設計模式(pattern)。有趣的是，在 Douglas Crockford 著名的 “<a href="https://javascript.crockford.com/javascript.html">JavaScript: The World’s Most Misunderstood Programming Language</a>&quot; 一文中，有以下描述</p>
 <p>JavaScript’s C-like syntax, including curly braces and the clunky for statement, makes it appear to be an ordinary procedural language. This is misleading because JavaScript has more in common with functional languages like Lisp or Scheme than with C or Java.</p>
 <p>大意是說雖然 JavaScript 的文法類似 C 語言，但實際上比起 C 或 Java，它與函數式程式設計的程式語言如 Lisp 或 Scheme 比較接近。因此我們或許不例外其實 JavaScript 可以做到許多函數式語言可以做到，但純粹 Java 其他較「正統」的物件導向語言必須使用較複雜方式完成的工作。例如在 Java 8 以前，因為沒有匿名函式(<a href="https://en.wikipedia.org/wiki/Anonymous_function">anonymous function</a>)的功能，如果要幫一個使用者點選事件(click event)設定某些簡單的程式行為，開發者必須使用匿名類別(<a href="https://docs.oracle.com/javase/tutorial/java/javaOO/anonymousclasses.html">anonymous class</a>)的方式才能做到：</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/jvj.png"><img src="../../assets/4065/wp-content/uploads/2014/01/jvj.png" alt="jvj" loading="lazy"></a></p>
+<p><a href="../../assets/4065/004-7e0eb25624ec.png"><img src="../../assets/4065/004-7e0eb25624ec.png" alt="jvj" loading="lazy"></a></p>
 <p>左：Java 使用匿名類別 右：JavaScript 使用匿名函式</p>
 <p>當然是否要使用匿名函式或類別去完成此類工作，一直都是爭論的焦點，畢竟就算在 JavaScript 中，匿名函式這種用法也常常因為不慎的使用而帶來問題。然而事實是在 <a href="https://www.slideshare.net/JustinSDK/java-se-8-lambda">Java 8</a> 甚至 <a href="https://zh.wikipedia.org/wiki/C%2B%2B11#Lambda.E5.87.BD.E5.BC.8F.E8.88.87.E8.A1.A8.E7.A4.BA.E5.BC.8F">C++ 11</a> 的標準中，也都加上了匿名函式的功能，足見將函式當成語言中的第一級(first-class)成員，也就是置於與類別相同的地位，是有其需求的。而這樣的特色，在諸如 Haskell 等函數式程式語言中，本就是一項自然且重要的特色之一。</p>
 <p>那麼對開發者而言，函數式程式設計這種方式有什麼好處？在純函數式語言，例如 Haskell 中，複雜的運算是由簡單的運算環環相扣組織起來的。因此只要保證簡單的函式沒有安全的問題，就可以確保整個複雜的程式不會有安全問題。特別是像 Haskell 這種語言具有足夠強大的型別系統時，甚至可以做到經過編譯過的程式，除了像硬體有錯誤這種比較極端的例子外，並不會出現執行期錯誤的程度。此外，簡單的運算其程式碼比較不會有人為的錯誤，就算有也比較容易揪出。再加上因為注意程式安全，而在設計之初就將具有副作用(side-effect)的運算以合理的方式隔離，因此一般而言此類語言也具有適合平行運算的優點。</p>
 <p>而在前述中函數式語言這個核心的化簡為繁組織方式，其實就是所謂的高階函式(<a href="https://en.wikipedia.org/wiki/Higher-order_function">high-order function</a>)。這裡所謂的高階，並沒有比較級的意味在裡面。所謂的高階函式，單純只是一些函式，他們的參數是別的函式，或是回傳是另一個函式而已。以前述的 map/reduce 為例，讀者可以發現真正的 map 型別簽名實際上接近於</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391048096767.png"><img src="../../assets/4065/wp-content/uploads/2014/01/daum_equation_1391048096767.png" alt="daum_equation_1391048096767" loading="lazy"></a></p>
+<p><a href="../../assets/4065/wp-content/uploads/2014/01/daum_equation_1391048096767.png"><img src="../../assets/4065/wp-content/uploads/2014/01/daum_equation_1391048096767.png" alt="daum_equation_1391048096767" loading="lazy"></a></p>
 <p>這意思是 map 會</p>
 <ul><li>接收一個數字陣列，例如 [1,2,3,4]。這裡我們把 Array.prototype.map 函式從抽出來單獨說明，所以把它當成第一個參數看待。</li></ul>
 <ul><li>接收一個函式，或以 JavaScript 的慣用語而言，callback。這個函式將接收 一個 數字，回傳 一個 布林。就如同前述的 isOdd 般</li></ul>
@@ -56,7 +61,7 @@
 <p>前述第二點，也就是接收一個 callback 當作參數的這個行為，實際上代表的 map 就是一個高階函式。因為這類的函式，並不只是接收或回傳簡單的值，而是把函式也當成他們的參數或回傳值，也就是被處理的對象。在函數式程式設計中，此類的函式就能夠把大量簡單的函式一步步串連成巨大的程式，並且不需要諸如類別或是物件等方式來處理狀態。以 Haskell 而言，除了 map/reduce 以外，這類函式還包括 id, reduceRight, curry, uncurry, function composition, arrow, bind 等等。</p>
 <h2>Map/Reduce 實際應用</h2>
 <p>然而在 JavaScript 中，也許會有人質疑 map/reduce 雖然方便，但看起來只適合數字，或是類似的資料處理。看起來並不是一個通用的功能。而其他的高階函式，也許在 JavaScript 本身有物件導向的能力之下，也許並不是那麼需要了。然而事實上「真正」的 map/reduce 並不受限於此，並由其型別簽名即可一窺端倪</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391005490714.png"><img src="../../assets/4065/wp-content/uploads/2014/01/daum_equation_1391005490714.png" alt="daum_equation_1391005490714" loading="lazy"></a></p>
+<p><a href="../../assets/4065/wp-content/uploads/2014/01/daum_equation_1391005490714.png"><img src="../../assets/4065/wp-content/uploads/2014/01/daum_equation_1391005490714.png" alt="daum_equation_1391005490714" loading="lazy"></a></p>
 <p>(reduce 又名 foldl, reduceRight 則是  foldr。參考：<a href="https://www.haskell.org/haskellwiki/Foldr_Foldl_Foldl%27">Foldr Foldl Foldl’</a>)</p>
 <p>這是從 Haskell 函式搜尋引擎 <a href="https://www.haskell.org/hoogle/">Hoogle</a> 所找到的例子。同樣以 map 為例，可以解釋其型別意味著</p>
 <ul><li>第一個參數是一個從某型別 a（例如 Number）到第二種型別 b（例如 Boolean）的 函式 ，就像之前的 isOdd</li></ul>
@@ -67,9 +72,9 @@
 <p>為了舉例，經過簡化且不完全正確的 Haskell 程式碼</p>
 <p>(點選圖片連結至程式碼)</p>
 <p>上面的例子中，我們先在 makeQueries 這個函式中使用 map，把一個個 SQL 字串，經由  prepare 函式映射成型別為 IO Statement 的「命令」。也就是這個函式型別大致上為</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391046822235.png"><img src="../../assets/4065/wp-content/uploads/2014/01/daum_equation_1391046822235.png" alt="daum_equation_1391046822235" loading="lazy"></a></p>
+<p><a href="../../assets/4065/wp-content/uploads/2014/01/daum_equation_1391046822235.png"><img src="../../assets/4065/wp-content/uploads/2014/01/daum_equation_1391046822235.png" alt="daum_equation_1391046822235" loading="lazy"></a></p>
 <p>接著這些製作出來的命令，會在 doQuery 中，經由 foldl ，也就是  reduce 去串接。這邊的模式是因為 reduce 中的函式，可以接收「先前結果」與「現在元素」兩個參數，因此程式會按照範例中所述，將現在元素的 IO 命令透過<a href="https://book.realworldhaskell.org/read/monads.html">bind 函式 (&gt;&gt;)</a>與先前的命令結合串接，最後產出一個查詢所有 SQL 語句的單一命令。其型別類似於</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/01/daum_equation_1391070524080.png"><img src="../../assets/4065/wp-content/uploads/2014/01/daum_equation_1391070524080.png" alt="daum_equation_1391070524080" loading="lazy"></a></p>
+<p><a href="../../assets/4065/wp-content/uploads/2014/01/daum_equation_1391070524080.png"><img src="../../assets/4065/wp-content/uploads/2014/01/daum_equation_1391070524080.png" alt="daum_equation_1391070524080" loading="lazy"></a></p>
 <p>類似的技巧並不是只有在 Haskell 中使用而已。在 JavaScript 中，特別是在使用 <a href="https://developer.mozilla.org/en-US/docs/Mozilla/JavaScript_code_modules/Promise.jsm/Promise">Promise</a> 建構運算並處理非同步程式的情況下，我們也可以發現因為 Promise 的特性，使得運算變成一個可持有、串接與變形的單位。因此我們也可以使用類似的技巧架構我們的查詢程式</p>
 <p><a href="https://gist.github.com/snowmantw/8708553"><img src="../../assets/4065/wp-content/uploads/2014/01/jsmapreduce.png" alt="Promise and map/reduce" loading="lazy"></a></p>
 <p>以 Node.js 建構出類似前述例子並結合 map/reduce 與 Promise 的範例(點選圖片連結至程式碼)</p>
@@ -87,19 +92,19 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+        <li><a href="../../categories/1/">1</a></li><li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
       </ul>
     </section>
     <section class="widget">
     <h3>月份彙整</h3>
     <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
       <option value="">選擇月份</option>
-      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (4)</option><option value="../../months/2013-09/">2013 年 9 月 (5)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (2)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (5)</option><option value="../../months/2013-03/">2013 年 3 月 (4)</option><option value="../../months/2013-02/">2013 年 2 月 (4)</option><option value="../../months/2013-01/">2013 年 1 月 (5)</option><option value="../../months/2012-12/">2012 年 12 月 (4)</option><option value="../../months/2012-11/">2012 年 11 月 (4)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (3)</option><option value="../../months/2012-05/">2012 年 5 月 (3)</option>
     </select>
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20140717224021id_/https://tech.mozilla.com.tw/?p=4065">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20170518142150id_/http://tech.mozilla.com.tw/posts/4065/%e5%be%9e-javascript-%e7%9a%84-mapreduce-%e8%ab%87%e8%b5%b7-functional-programming">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>

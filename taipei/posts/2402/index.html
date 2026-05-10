@@ -32,8 +32,14 @@
             <div class="entry-content"><h3>要用手指碰還是用滑鼠點？</h3>
 <p>那這種同時具備觸控與其他輸入方式的裝置，又有什麼解決方案呢？透過某些使用者的意見，已經有開發人員著手建構「觸碰」的偵測功能。如同其他許多網頁開發的案例，我們當然不可能完全了解使用者對網頁與 App 的互動方式，也不會知道使用者的輸入偏好。與其假設一大堆東西，到不如讓程式碼儘量滿足所有可能性。進一步來說，與其決定要以 click 或 touchend/touchstart 互動，乾脆就全部納入建構考量。</p>
 <p>當然，程式碼可能會長一點多一點，卻能讓 App 吸引更多使用者。若開發人員已經讓特定滑鼠的介面也能搭配鍵盤，那他們應該會覺得這個方法很熟悉：只要「交疊 (Double up)」事件接收器 (Listener) 即可。但同時應停止模擬的滑鼠事件，以避免在觸碰事件之後啟動，而造成雙重發動的狀態：</p>
-<p>blah.addEventListener(&#39;touchend&#39;, function(e) {<br>  /<em> prevent delay and simulated mouse events </em>/<br>  e.preventDefault();<br>  someFunction()<br>});<br>blah.addEventListener(&#39;click&#39;, someFunction());<br>如果你覺得這樣還不夠 DRY 的話，這裡還可以讓程式更漂亮。但僅能針對滑鼠點擊的動作而定義函式，接著再確實發動處理器 (Handler)，進而繞過延遲不管：</p>
-<p>blah.addEventListener(&#39;touchend&#39;, function(e) {<br>  /<em> prevent delay and simulated mouse events </em>/<br>  e.preventDefault();<br>  /<em> trigger the actual behavior we bound to the &#39;click&#39; event </em>/<br>  e.target.click();<br>})<br>blah.addEventListener(&#39;click&#39;, function() {<br>  /<em> actual functionality </em>/<br>});<br>最後的片段並不足以囊括所有可能的情況。若需要更完整的範例，可參閱 <a href="https://labs.ft.com/">FT labs</a> 所提供的 <a href="https://github.com/ftlabs/fastclick">FastClick</a> 指令碼。</p>
+<p>blah.addEventListener(&#39;touchend&#39;, function(e) {<br>  /<em> prevent delay and simulated mouse events </em>/<br>  e.preventDefault();<br>  someFunction()<br>});<br>blah.addEventListener(&#39;click&#39;, someFunction());</p>
+<p>					123456</p>
+<p>						blah.addEventListener(&#39;touchend&#39;, function(e) {  /<em> prevent delay and simulated mouse events </em>/  e.preventDefault();  someFunction()});blah.addEventListener(&#39;click&#39;, someFunction());</p>
+<p>如果你覺得這樣還不夠 DRY 的話，這裡還可以讓程式更漂亮。但僅能針對滑鼠點擊的動作而定義函式，接著再確實發動處理器 (Handler)，進而繞過延遲不管：</p>
+<p>blah.addEventListener(&#39;touchend&#39;, function(e) {<br>  /<em> prevent delay and simulated mouse events </em>/<br>  e.preventDefault();<br>  /<em> trigger the actual behavior we bound to the &#39;click&#39; event </em>/<br>  e.target.click();<br>})<br>blah.addEventListener(&#39;click&#39;, function() {<br>  /<em> actual functionality </em>/<br>});</p>
+<p>					123456789</p>
+<p>						blah.addEventListener(&#39;touchend&#39;, function(e) {  /<em> prevent delay and simulated mouse events </em>/  e.preventDefault();  /<em> trigger the actual behavior we bound to the &#39;click&#39; event </em>/  e.target.click();})blah.addEventListener(&#39;click&#39;, function() {  /<em> actual functionality </em>/});</p>
+<p>最後的片段並不足以囊括所有可能的情況。若需要更完整的範例，可參閱 <a href="https://labs.ft.com/">FT labs</a> 所提供的 <a href="https://github.com/ftlabs/fastclick">FastClick</a> 指令碼。</p>
 <h3>兼顧所有輸入方式</h3>
 <p>觸控式裝置上的延遲功能，並不是開發人員與觸控功能奮戰的唯一理由。目前的相關討論 (如 Modernizr 中的 <a href="https://github.com/Modernizr/Modernizr/issues/869">detecting a mouse user</a> 一文) 已經談到是否該針對觸控功能，而提供與滑鼠/鍵盤截然不同的介面；其中也提到如懸浮觸控的特定裝置或瀏覽器。且除了 JavaScript 之外，類似的概念 (指示器與懸浮媒體功能) 也擴及到 <a href="https://dev.w3.org/csswg/mediaqueries4/">Media Queries Level 4</a>。但相關原理幾乎都一樣：現在多重輸入的裝置已經普及，使用者手上的裝置也幾乎不可能只支援觸控功能。</p>
 <p>只要 Microsoft 讓 Pointer Events 採用更多通用規格 ─ 其實已經著手建構如 Chrome 的瀏覽器 ─ 就代表他們朝著正確的方向前進 (但仍須另外滿足鍵盤愛好者的需求)。在此同時，開發人員應小心翼翼，避免錯估了觸控偵測功能的形勢，也避免忽略了愛好多重輸入的潛在人數。</p>
@@ -48,7 +54,7 @@
 <p>原文出處：https://hacks.mozilla.org/2013/04/detecting-touch-its-the-why-not-the-how/</p>
 <p>本文上篇：<a href="../../posts/2376/">http://blog.mozilla.com.tw/posts/2376</a>/</p></div>
             <footer class="entry-footer">
-              
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os/">Firefox OS</a></span></div>
             </footer>
           </article>
         </div>
@@ -57,7 +63,7 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/未分類/">未分類</a></li><li><a href="../../categories/系列訪談/">系列訪談</a></li><li><a href="../../categories/活動/">活動</a></li><li><a href="../../categories/校園大使/">校園大使</a></li><li><a href="../../categories/新聞訊息/">新聞訊息</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-for-android/">Firefox for Android</a></li><li><a href="../../categories/firefox-for-ios/">Firefox for iOS</a></li><li><a href="../../categories/firefox-os/">Firefox OS</a></li><li><a href="../../categories/identity/">Identity</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/privacy/">Privacy</a></li><li><a href="../../categories/security/">Security</a></li><li><a href="../../categories/web-app/">Web App</a></li>
+        <li><a href="../../categories/未分類/">未分類</a></li><li><a href="../../categories/活動/">活動</a></li><li><a href="../../categories/校園大使/">校園大使</a></li><li><a href="../../categories/新聞訊息/">新聞訊息</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-addons/">Firefox Addons</a></li><li><a href="../../categories/firefox-for-android/">Firefox for Android</a></li><li><a href="../../categories/firefox-for-ios/">Firefox for iOS</a></li><li><a href="../../categories/firefox-os/">Firefox OS</a></li><li><a href="../../categories/firefox-tips/">Firefox Tips</a></li><li><a href="../../categories/identity/">Identity</a></li><li><a href="../../categories/mobile/">Mobile</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/news-feed/">News Feed</a></li><li><a href="../../categories/privacy/">Privacy</a></li><li><a href="../../categories/security/">Security</a></li><li><a href="../../categories/web-app/">Web App</a></li>
       </ul>
     </section>
     <section class="widget">
@@ -69,7 +75,7 @@
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 Mozilla Taiwan 部落格 封存，由 <a href="https://web.archive.org/web/20190824001316id_/https://blog.mozilla.com.tw/?p=2402">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 Mozilla Taiwan 部落格 封存，由 <a href="https://web.archive.org/web/20150920031543/https://blog.mozilla.com.tw/posts/2402/%e5%81%b5%e6%b8%ac%e8%a7%b8%e7%a2%b0%e4%ba%8b%e4%bb%b6%ef%bc%9a%e9%87%8d%e9%bb%9e%e5%9c%a8%e3%80%8c%e5%8e%9f%e5%9b%a0%e3%80%8d%e8%80%8c%e9%9d%9e%e3%80%8c%e6%96%b9%e6%b3%95%e3%80%8d%e2%94%80-%e4%b8%8b">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>

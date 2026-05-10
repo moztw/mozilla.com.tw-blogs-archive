@@ -27,11 +27,11 @@
           <article class="post single-post">
             <header class="entry-header">
               <p class="entry-posted"><time datetime="2014-05-05" class="published"><span class="posted-month">5月</span><span class="posted-date">5</span><span class="posted-year">2014</span></time></p><div class="entry-meta"><div class="author-meta">
-    <a href="https://web.archive.org/web/20160610222639/http://tech.mozilla.com.tw/posts/author/tzhuangmozilla-com">
+    <a href="../../posts/author/tzhuangmozilla-com/">
       <img src="http://www.gravatar.com/avatar/6bb0666f6aa29770a710fa7302da2dcf?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;amp;s=24" alt="" class="avatar user-95-avatar" width="24" height="24"><!--
    --><div class="author-info">Tzu-Lin Huang</div><!--
    --><div class="author-title"></div>
-    </a>
+  </a>
   </div><div class="post-date"></div></div>
               <h1 class="entry-title">再探 Inter-App Communication (IAC)</h1>
             </header>
@@ -47,7 +47,7 @@
 <p>						var port;try {  port = IACHandler.getPort(&#39;some-iac-keyword&#39;);  port.postMessage(message);} catch (e) {  // report error}</p>
 <p>這樣做的假設前提是：另一端的 app 一定會先建立連線，因此這時透過 keyword 一定可以取得 port 。</p>
 <p>什麼情況適用呢？訊息傳遞如果是 request 和 response 成對一來一回進行的（如下圖），就非常適用這種寫法，這個情境是由 system app 先主動對其他 app 建立連線（藍色箭頭），則其他 app 在回應訊息時，就可以利用上述方式回傳訊息，而不必自行建立連線。</p>
-<p><a href="https://tech.mozilla.com.tw/wp-content/uploads/2014/04/IAC.png"><img src="../../assets/4540/wp-content/uploads/2014/04/IAC-300x252.png" alt="IAC" loading="lazy"></a></p>
+<p><a href="../../assets/4540/wp-content/uploads/2014/04/IAC.png"><img src="../../assets/4540/wp-content/uploads/2014/04/IAC-300x252.png" alt="IAC" loading="lazy"></a></p>
 <h2>限制訊息傳送來源或訊息接收對象</h2>
 <p>在 manifest.webapp 定義 IAC 連線的 connection 時，可以使用 rules 這個參數定義我們只接受哪些條件的訊息傳入。如果我們撰寫的 app ，只接受 system app 送來的訊息，不希望聽到來路不明的 app 所送來的訊息，可以在宣告 manifest.webapp 時加上 rules 的設置如下：</p>
 <p>&quot;some-iac-keyword&quot;: {<br>  &quot;description&quot;: &quot;Some Inter-app Communication description&quot;,<br>  &quot;rules&quot;: {<br>    &quot;manifestURLs&quot;: [&quot;app://system.gaiamobile.org&quot;],<br>  }<br>}</p>
@@ -55,19 +55,19 @@
 <p>						&quot;some-iac-keyword&quot;: {  &quot;description&quot;: &quot;Some Inter-app Communication description&quot;,  &quot;rules&quot;: {    &quot;manifestURLs&quot;: [&quot;app://system.gaiamobile.org&quot;],  }}</p>
 <p>同理，如果我們透過 IAC 傳送訊息給特定 app 時，如果不希望來路不明的 app 偷聽我們所傳送的內容，在建立連線時也可以加以限制如下：</p>
 <p>var port = (location.port) ? &#39;:&#39; + location.port : &#39;&#39;;<br>var systemManifestURLs = [];<br>// we don&#39;t want any app receive our message except system app<br>systemManifestURLs.push(location.protocol +<br>  &#39;//system.gaiamobile.org&#39; + port + &#39;/manifest.webapp&#39;);</p>
-<p>navigator.mozApps.getSelf().onsuccess = function(evt) {<br>  var app = evt.target.result;<br>  app.connect(&#39;some-iac-keyword&#39;, { <br>    manifestURLs: systemManifestURLs<br>  }).then(function onConnAccepted(ports) {<br>    // send messages<br>  }, function onConnRejected(reason) {<br>    // error handling<br>  });<br>}</p>
+<p>navigator.mozApps.getSelf().onsuccess = function(evt) {<br>  var app = evt.target.result;<br>  app.connect(&#39;some-iac-keyword&#39;, {<br>    manifestURLs: systemManifestURLs<br>  }).then(function onConnAccepted(ports) {<br>    // send messages<br>  }, function onConnRejected(reason) {<br>    // error handling<br>  });<br>}</p>
 <p>					12345678910111213141516</p>
 <p>						var port = (location.port) ? &#39;:&#39; + location.port : &#39;&#39;;var systemManifestURLs = [];// we don&#39;t want any app receive our message except system appsystemManifestURLs.push(location.protocol +  &#39;//system.gaiamobile.org&#39; + port + &#39;/manifest.webapp&#39;); navigator.mozApps.getSelf().onsuccess = function(evt) {  var app = evt.target.result;  app.connect(&#39;some-iac-keyword&#39;, {     manifestURLs: systemManifestURLs  }).then(function onConnAccepted(ports) {    // send messages  }, function onConnRejected(reason) {    // error handling  });}</p>
 <p>詳細使用方式可以參考 IAC wiki 的 <a href="https://wiki.mozilla.org/WebAPI/Inter_App_Communication_Alt_proposal#Publisher">Publisher</a> 和 <a href="https://wiki.mozilla.org/WebAPI/Inter_App_Communication_Alt_proposal#Subscriber">Subscriber</a> 章節。</p>
 <h2>App 物件快取</h2>
 <p>常見的 IAC 建立連線以及傳送訊息的方式如下：</p>
-<p>navigator.mozApps.getSelf().onsuccess = function(evt) {<br>  var app = evt.target.result;<br>  app.connect(&#39;some-iac-keyword&#39;).then(function onConnAccepted(ports) {<br>    ports.forEach(function(port) {<br>      port.postMessage(message);<br>    });      <br>    // send messages<br>  }, function onConnRejected(reason) {<br>    // error handling<br>  });<br>}</p>
+<p>navigator.mozApps.getSelf().onsuccess = function(evt) {<br>  var app = evt.target.result;<br>  app.connect(&#39;some-iac-keyword&#39;).then(function onConnAccepted(ports) {<br>    ports.forEach(function(port) {<br>      port.postMessage(message);<br>    });<br>    // send messages<br>  }, function onConnRejected(reason) {<br>    // error handling<br>  });<br>}</p>
 <p>					1234567891011</p>
 <p>						navigator.mozApps.getSelf().onsuccess = function(evt) {  var app = evt.target.result;  app.connect(&#39;some-iac-keyword&#39;).then(function onConnAccepted(ports) {    ports.forEach(function(port) {      port.postMessage(message);    });          // send messages  }, function onConnRejected(reason) {    // error handling  });}</p>
 <p>但這樣寫有一個效能上的缺點，就是每次傳送訊息都必須要透過 mozApps API 的 geSelf() 取得自身的 app 物件，然而 getSelf() 是非同步的 DOMRequest ，事實上在同一個 app 內部每次呼叫 getSelf() 取得的 app 物件都是同一個，我們何不直接把它 cache 起來以避免不必要的 DOMRequest 呢？</p>
 <p>var SomeClass = {<br>  ...</p>
 <p>  _realConnect: function realConnect() {<br>    var port = (location.port) ? &#39;:&#39; + location.port : &#39;&#39;;</p>
-<p>    this.app.connect(&#39;some-iac-keyword&#39;).then(function onConnAccepted(ports) {<br>      // do something when connected<br>    }, function onConnRejected(reason) {<br>      // report error<br>    });<br>  },<br>  connect: function connect() {<br>    var that = this;<br>    if (this.app) {<br>      // if we have app object already, then we do things directly <br>      // without firing getSelf() DOMRequest again<br>      this._realConnect.apply(this);<br>      return;<br>    }<br>    navigator.mozApps.getSelf().onsuccess = function(evt) {<br>      // cache app object<br>      that.app = evt.target.result;<br>      that._realConnect.apply(that);<br>    };</p>
+<p>    this.app.connect(&#39;some-iac-keyword&#39;).then(function onConnAccepted(ports) {<br>      // do something when connected<br>    }, function onConnRejected(reason) {<br>      // report error<br>    });<br>  },<br>  connect: function connect() {<br>    var that = this;<br>    if (this.app) {<br>      // if we have app object already, then we do things directly<br>      // without firing getSelf() DOMRequest again<br>      this._realConnect.apply(this);<br>      return;<br>    }<br>    navigator.mozApps.getSelf().onsuccess = function(evt) {<br>      // cache app object<br>      that.app = evt.target.result;<br>      that._realConnect.apply(that);<br>    };</p>
 <p>    ...<br>  },</p>
 <p>  ...<br>};</p>
 <p>					12345678910111213141516171819202122232425262728293031</p>
@@ -75,7 +75,7 @@
 <p>如上，我們在 SomeClass 內部有一個 _realConnect() 負責真正建立 IAC 連線， connect() 則是提供外部元件呼叫的函式。當外部元件第一次呼叫 connect() 時， this.app 不存在，因此我們透過 mozApps.getSelf() 取得 app 物件，並把它存在 that.app ，之後當外部元件再次呼叫 connect() 時，就不必再多花一次 DOMRequest 的成本，可以直接呼叫 _realConnect() 建立 IAC 連線。</p>
 <p>希望以上三項資訊可以幫助開發者朋友們更加深入了解 IAC ，並更加妥善地利用 IAC 寫出更好用的 web app 。</p></div>
             <footer class="entry-footer">
-              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></span><span><a href="../../categories/javascript/">Javascript</a></span></div>
             </footer>
           </article>
         </div>
@@ -84,19 +84,19 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+        <li><a href="../../categories/1/">1</a></li><li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
       </ul>
     </section>
     <section class="widget">
     <h3>月份彙整</h3>
     <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
       <option value="">選擇月份</option>
-      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (4)</option><option value="../../months/2013-09/">2013 年 9 月 (5)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (2)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (5)</option><option value="../../months/2013-03/">2013 年 3 月 (4)</option><option value="../../months/2013-02/">2013 年 2 月 (4)</option><option value="../../months/2013-01/">2013 年 1 月 (5)</option><option value="../../months/2012-12/">2012 年 12 月 (4)</option><option value="../../months/2012-11/">2012 年 11 月 (4)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (3)</option><option value="../../months/2012-05/">2012 年 5 月 (3)</option>
     </select>
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20160610222639id_/https://tech.mozilla.com.tw/?p=4540">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20160610222639/https://tech.mozilla.com.tw/posts/4540/%e5%86%8d%e6%8e%a2-inter-app-communication-iac">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>

@@ -33,7 +33,7 @@
 <p>在<a href="https://hacks.mozilla.org/2013/06/firefox-os-for-developers-the-platform-html5-deserves/">此系列影片的前一篇文章</a>中，我們介紹了 Firefox OS 及其對 Open Web 與 <a href="https://developer.mozilla.org/en/html/html5">HTML5</a> 所代表的意義，同時解釋 Firefox OS App 就是 HTML5 App 的原因。最簡單的 Firefox OS App，就是針對行動裝置優化的網站，再加上專屬的 <a href="https://developer.mozilla.org/en-US/docs/Web/Apps/Manifest">manifest</a> 檔案。</p>
 <p>接著針對 App 搜尋功能，我們要說明 Firefox OS 不同於其他平台的原因。這次短片是由 Mozilla 的首席技術傳教士 Chris Heilmann <a href="https://twitter.com/codepo8">@codepo8</a>，與 Firefox OS 業務開發團隊的 Desigan Chinniah <a href="https://twitter.com/cyberdees">@cyberdees</a> 所錄製，讓你能在 Firefox OS 上推廣自己撰寫的 App。可先觀看 <a href="https://hacks.mozilla.org/?p=21793&amp;preview=true">YouTube 上的影片</a>。</p>
 <p>Firefox OS 的 App 搜尋功能最大不同點在於，你不會受限於封閉式 App 商店所提供的結果。因為 Firefox OS 是純粹的 Web平台，你除了可將 App 提交到 Marketplace 以外，也可在現有網站上新增簡單的「從 Web 安裝」按鈕，都能輕鬆發佈自己的 App。這個程式碼很簡單，就是將事件處理器 (Event handler) 新增到按鈕上，使其導向 App 的 manifest 檔案即可：</p>
-<p>var button = document.querySelector(&#39;#install&#39;);<br>button.addEventListener(&#39;click&#39;, function(ev) {<br>  var installapp = navigator.mozApps.install(manifestURL);  <br>  installapp.onsuccess = function(data) {<br>    // App is installed<br>  };<br>  installapp.onerror = function() {<br>    // App wasn&#39;t installed, info is in <br>    // installapp.error.name  <br>  };<br>}, false);</p>
+<p>var button = document.querySelector(&#39;#install&#39;);<br>button.addEventListener(&#39;click&#39;, function(ev) {<br>  var installapp = navigator.mozApps.install(manifestURL);<br>  installapp.onsuccess = function(data) {<br>    // App is installed<br>  };<br>  installapp.onerror = function() {<br>    // App wasn&#39;t installed, info is in<br>    // installapp.error.name<br>  };<br>}, false);</p>
 <p>					1234567891011</p>
 <p>						var button = document.querySelector(&#39;#install&#39;);button.addEventListener(&#39;click&#39;, function(ev) {  var installapp = navigator.mozApps.install(manifestURL);    installapp.onsuccess = function(data) {    // App is installed  };  installapp.onerror = function() {    // App wasn&#39;t installed, info is in     // installapp.error.name    };}, false);</p>
 <p>如此一來，你以搜尋引擎最佳化 (SEO) 所累積的多年成果，亦可繼續用以推廣自己的 App。</p>
@@ -60,7 +60,7 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/未分類/">未分類</a></li><li><a href="../../categories/系列訪談/">系列訪談</a></li><li><a href="../../categories/活動/">活動</a></li><li><a href="../../categories/校園大使/">校園大使</a></li><li><a href="../../categories/新聞訊息/">新聞訊息</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-for-android/">Firefox for Android</a></li><li><a href="../../categories/firefox-for-ios/">Firefox for iOS</a></li><li><a href="../../categories/firefox-os/">Firefox OS</a></li><li><a href="../../categories/identity/">Identity</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/privacy/">Privacy</a></li><li><a href="../../categories/security/">Security</a></li><li><a href="../../categories/web-app/">Web App</a></li>
+        <li><a href="../../categories/未分類/">未分類</a></li><li><a href="../../categories/活動/">活動</a></li><li><a href="../../categories/校園大使/">校園大使</a></li><li><a href="../../categories/新聞訊息/">新聞訊息</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-addons/">Firefox Addons</a></li><li><a href="../../categories/firefox-for-android/">Firefox for Android</a></li><li><a href="../../categories/firefox-for-ios/">Firefox for iOS</a></li><li><a href="../../categories/firefox-os/">Firefox OS</a></li><li><a href="../../categories/firefox-tips/">Firefox Tips</a></li><li><a href="../../categories/identity/">Identity</a></li><li><a href="../../categories/mobile/">Mobile</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/news-feed/">News Feed</a></li><li><a href="../../categories/privacy/">Privacy</a></li><li><a href="../../categories/security/">Security</a></li><li><a href="../../categories/web-app/">Web App</a></li>
       </ul>
     </section>
     <section class="widget">
@@ -72,7 +72,7 @@
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 Mozilla Taiwan 部落格 封存，由 <a href="https://web.archive.org/web/20190824003748id_/https://blog.mozilla.com.tw/?p=3179">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 Mozilla Taiwan 部落格 封存，由 <a href="https://web.archive.org/web/20190824003748/https://blog.mozilla.com.tw/posts/3179/%e6%90%9c%e5%b0%8b-app-%e6%89%8b%e6%a9%9f%e6%87%89%e7%94%a8%e7%a8%8b%e5%bc%8f-%e2%94%80-%e9%96%8b%e7%99%bc%e8%80%85%e7%9a%84-firefox-os-%e8%ae%93-html-5-%e5%be%97%e4%bb%a5%e5%ae%8c%e5%85%a8">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>

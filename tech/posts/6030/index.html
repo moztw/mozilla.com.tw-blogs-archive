@@ -27,29 +27,29 @@
           <article class="post single-post">
             <header class="entry-header">
               <p class="entry-posted"><time datetime="2015-02-02" class="published"><span class="posted-month">2月</span><span class="posted-date">2</span><span class="posted-year">2015</span></time></p><div class="entry-meta"><div class="author-meta">
-    <a href="https://web.archive.org/web/20150614130001/https://tech.mozilla.com.tw/posts/author/jhaomozilla-com">
-      <img src="https://secure.gravatar.com/avatar/4bc7542d3061676e9f3ab7e87a084f98?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;amp;s=24" alt="" class="avatar user-143-avatar" width="24" height="24"><!--
+    <a href="../../posts/author/jhaomozilla-com/">
+      <img src="https://web.archive.org/web/20180123151708im_/http://www.gravatar.com/avatar/4bc7542d3061676e9f3ab7e87a084f98?d=http://tech.mozilla.com.tw/wp-content/plugins/avatar/mystery-man.jpg&amp;amp;s=24" alt="" class="avatar user-143-avatar" width="24" height="24"><!--
    --><div class="author-info">Jonathan Hao</div><!--
    --><div class="author-title"></div>
-    </a>
+  </a>
   </div><div class="post-date"></div></div>
               <h1 class="entry-title">利用 adb 和 gdb 來 debug Firefox OS (B2G)</h1>
             </header>
             <div class="entry-content"><p>Debugging 絕對是每個 programmer 不得不面對的痛。有句俗話說</p>
 <p>To err is human; to debug, divine.</p>
-<p>當我們遇到一個 B2G 上的 bug，卻不清楚原因的時候，該怎麼辦呢？本文將介紹一些筆者日常工作中，對 B2G 的 Gecko C++ 部份常用的除錯方法。</p>
+<p>當我們遇到一個 B2G 上的 bug，卻不清楚原因的時候，該怎麼辦呢？本文將介紹一些筆者日常工作中，對 B2G 的 Gecko C 部份常用的除錯方法。</p>
 <h2>adb logcat</h2>
-<p>如果你是個 C++ 開發者，不管是不是習慣使用先進的 debugger ，剛開始寫小程式時一定都有用過一招，俗稱「printf 大法」或「cout 大法」，說穿了就是把變數的值印到 stdout 上面，藉此找出程式運作不正常之處。但是當我們在開發機（例如 Flame）上面測試時，要如何看到印出來的 log 呢？</p>
-<p>因為 B2G 底層的 Gonk 其實是基於 Android Open Source Project (AOSP)，所以也適用 Android Debug Bridge (adb) 這個工具。在 B2G 的 C++ 程式碼中，只要在你想要印出 log 的地方呼叫這個函數即可：</p>
+<p>如果你是個 C 開發者，不管是不是習慣使用先進的 debugger ，剛開始寫小程式時一定都有用過一招，俗稱「printf 大法」或「cout 大法」，說穿了就是把變數的值印到 stdout 上面，藉此找出程式運作不正常之處。但是當我們在開發機（例如 Flame）上面測試時，要如何看到印出來的 log 呢？</p>
+<p>因為 B2G 底層的 Gonk 其實是基於 Android Open Source Project (AOSP)，所以也適用 Android Debug Bridge (adb) 這個工具。在 B2G 的 C 程式碼中，只要在你想要印出 log 的地方呼叫這個函數即可：</p>
 <p>__android_log_print(ANDROID_LOG_INFO, &quot;MyTag&quot;, &quot;Variable: %d, String %s&quot;, var, str);</p>
 <p>					1</p>
 <p>						__android_log_print(ANDROID_LOG_INFO, &quot;MyTag&quot;, &quot;Variable: %d, String %s&quot;, var, str);</p>
 <p>其中第一個參數是 priority，可視情況從以下的值取一使用 [1]：</p>
 <p>/*</p>
 <ul><li>Android log priority values, in ascending priority order.</li></ul>
-<p> <em>/<br>typedef enum android_LogPriority {<br>    ANDROID_LOG_UNKNOWN = 0,<br>    ANDROID_LOG_DEFAULT,    /</em> only for SetMinPriority() <em>/<br>    ANDROID_LOG_VERBOSE,<br>    ANDROID_LOG_DEBUG,<br>    ANDROID_LOG_INFO,<br>    ANDROID_LOG_WARN,<br>    ANDROID_LOG_ERROR,<br>    ANDROID_LOG_FATAL,<br>    ANDROID_LOG_SILENT,     /</em> only for SetMinPriority(); must be last */<br>} android_LogPriority;</p>
+<p> <em>/<br>typedef enum android_LogPriority {<br> ANDROID_LOG_UNKNOWN = 0,<br> ANDROID_LOG_DEFAULT, /</em> only for SetMinPriority() <em>/<br> ANDROID_LOG_VERBOSE,<br> ANDROID_LOG_DEBUG,<br> ANDROID_LOG_INFO,<br> ANDROID_LOG_WARN,<br> ANDROID_LOG_ERROR,<br> ANDROID_LOG_FATAL,<br> ANDROID_LOG_SILENT, /</em> only for SetMinPriority(); must be last */<br>} android_LogPriority;</p>
 <p>					1234567891011121314</p>
-<p>						/<em> </em> Android log priority values, in ascending priority order. <em>/typedef enum android_LogPriority {    ANDROID_LOG_UNKNOWN = 0,    ANDROID_LOG_DEFAULT,    /</em> only for SetMinPriority() <em>/    ANDROID_LOG_VERBOSE,    ANDROID_LOG_DEBUG,    ANDROID_LOG_INFO,    ANDROID_LOG_WARN,    ANDROID_LOG_ERROR,    ANDROID_LOG_FATAL,    ANDROID_LOG_SILENT,     /</em> only for SetMinPriority(); must be last */} android_LogPriority;</p>
+<p>						/<em> </em> Android log priority values, in ascending priority order. <em>/typedef enum android_LogPriority { ANDROID_LOG_UNKNOWN = 0, ANDROID_LOG_DEFAULT, /</em> only for SetMinPriority() <em>/ ANDROID_LOG_VERBOSE, ANDROID_LOG_DEBUG, ANDROID_LOG_INFO, ANDROID_LOG_WARN, ANDROID_LOG_ERROR, ANDROID_LOG_FATAL, ANDROID_LOG_SILENT, /</em> only for SetMinPriority(); must be last */} android_LogPriority;</p>
 <p>第二個參數是 tag，可以自己設任何字串，之後用來篩選，第三個參數以後就跟 printf 的用法一樣。</p>
 <p>通常會定義成 macro 如</p>
 <p>#define MY_LOG(args...) __android_log_print(ANDROID_LOG_INFO, &quot;MyTag&quot;, ##args)</p>
@@ -61,19 +61,19 @@
 <p>					12345678910</p>
 <p>						$ adb logcat--------- beginning of /dev/log/mainI/QCOM PowerHAL( 209): Got set_interactive hintD/qdhwcomposer( 209): hwc_blank: Unblanking display: 0I/qdhwcomposer( 209): handle_blank_event: dpy:0 panel power state: 1D/qdhwcomposer( 209): hwc_blank: Done unblanking display: 0E/Sensors ( 209): change G sensor state &quot;0 -&gt; 1&quot;I/Gecko (10252): ###################################### forms.js loadedI/Gecko (10252): ############################### browserElementPanning.js loadedI/Gecko (10252): ######################## BrowserElementChildPreload.js loaded</p>
 <p>每行開頭的 I, D, E 指的就是 priority 如 Info, Debug, Error。斜線後的字如 Gecko, Sensors 等是 tag，括號裡面則是 process ID。如果想要更多一點的資訊，可以加上 -v threadtime，讓它顯示出每行的 thread ID 和時間。如果要做篩選，則可以加上 -s &lt;tag&gt;[:&lt;priority&gt;]。例如若要顯示所有 tag 是 Gecko，且 prority 在 Info 以上的 log，就下這樣的指令。</p>
-<p>＄ adb logcat -v threadtime -s Gecko:i<br>--------- beginning of /dev/log/main<br>01-27 15:23:25.858 10252 10252 I Gecko   : ###################################### forms.js loaded<br>01-27 15:23:25.888 10252 10252 I Gecko   : ############################### browserElementPanning.js loaded<br>01-27 15:23:25.908 10252 10252 I Gecko   : ######################## BrowserElementChildPreload.js loaded</p>
+<p>＄ adb logcat -v threadtime -s Gecko:i<br>--------- beginning of /dev/log/main<br>01-27 15:23:25.858 10252 10252 I Gecko : ###################################### forms.js loaded<br>01-27 15:23:25.888 10252 10252 I Gecko : ############################### browserElementPanning.js loaded<br>01-27 15:23:25.908 10252 10252 I Gecko : ######################## BrowserElementChildPreload.js loaded</p>
 <p>					12345</p>
-<p>						＄ adb logcat -v threadtime -s Gecko:i--------- beginning of /dev/log/main01-27 15:23:25.858 10252 10252 I Gecko   : ###################################### forms.js loaded01-27 15:23:25.888 10252 10252 I Gecko   : ############################### browserElementPanning.js loaded01-27 15:23:25.908 10252 10252 I Gecko   : ######################## BrowserElementChildPreload.js loaded</p>
+<p>						＄ adb logcat -v threadtime -s Gecko:i--------- beginning of /dev/log/main01-27 15:23:25.858 10252 10252 I Gecko : ###################################### forms.js loaded01-27 15:23:25.888 10252 10252 I Gecko : ############################### browserElementPanning.js loaded01-27 15:23:25.908 10252 10252 I Gecko : ######################## BrowserElementChildPreload.js loaded</p>
 <p>另外還有一些參數像 -d 是把累積的 log 一次 dump 出來之後就結束，-c 是把目前累積的 log 都清掉，詳細請見 adb logcat --help。</p>
-<h3>In Gecko’s JavaScript code</h3>
-<p>在 Gecko 的 JavaScript code 中，可以使用 dump(“…”)。印出來的 log 也會在 adb logcat 中，它的 tag 是 GeckoDump。</p>
+<h3>In Gecko&quot;s JavaScript code</h3>
+<p>在 Gecko 的 JavaScript code 中，可以使用 dump(“…&quot;)。印出來的 log 也會在 adb logcat 中，它的 tag 是 GeckoDump。</p>
 <h2>打開 NSPR 的 log</h2>
 <p>Gecko 本身也會有一些用 NSPR (Netscape Portable Runtime) 的 API 產生的 log，通常會透過 macro 定義如</p>
-<p>PRLogModuleInfo* gMediaDecoderLog;<br>#define DECODER_LOG(x, ...) \<br>  PR_LOG(gMediaDecoderLog, PR_LOG_DEBUG, (&quot;Decoder=%p &quot; x, this, ##__VA_ARGS__))</p>
+<p>PRLogModuleInfo* gMediaDecoderLog;<br>#define DECODER_LOG(x, ...) \<br> PR_LOG(gMediaDecoderLog, PR_LOG_DEBUG, (&quot;Decoder=%p &quot; x, this, ##__VA_ARGS__))</p>
 <p>					123</p>
-<p>						PRLogModuleInfo* gMediaDecoderLog;#define DECODER_LOG(x, ...) \  PR_LOG(gMediaDecoderLog, PR_LOG_DEBUG, (&quot;Decoder=%p &quot; x, this, ##__VA_ARGS__))</p>
+<p>						PRLogModuleInfo* gMediaDecoderLog;#define DECODER_LOG(x, ...) \ PR_LOG(gMediaDecoderLog, PR_LOG_DEBUG, (&quot;Decoder=%p &quot; x, this, ##__VA_ARGS__))</p>
 <p>然後在需要時呼叫 DECODER_LOG(...)。</p>
-<p>要怎麼看到這些 log 呢？首先你的 B2G 必須是 debug build。編譯前在你的 B2G 根目錄下的 .userconfig 要加入一行：</p>
+<p>要怎麼看到這些 log 呢？首先你的 B2G <a href="https://www.theinnocents.org/">オンライン スロット</a>  必須是 debug build。編譯前在你的 B2G 根目錄下的 .userconfig 要加入一行：</p>
 <p>export B2G_DEBUG=1</p>
 <p>					1</p>
 <p>						export B2G_DEBUG=1</p>
@@ -115,7 +115,7 @@
 <p>[1] <a href="https://androidxref.com/5.0.0_r2/xref/system/core/include/android/log.h">http://androidxref.com/5.0.0_r2/xref/system/core/include/android/log.h</a></p>
 <p>[2] <a href="https://dxr.mozilla.org/mozilla-central/source/xpcom/glue/nsCRTGlue.cpp#398">https://dxr.mozilla.org/mozilla-central/source/xpcom/glue/nsCRTGlue.cpp#398</a></p></div>
             <footer class="entry-footer">
-              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></span></div>
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></span></div>
             </footer>
           </article>
         </div>
@@ -124,19 +124,19 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os(b2g)/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+        <li><a href="../../categories/1/">1</a></li><li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
       </ul>
     </section>
     <section class="widget">
     <h3>月份彙整</h3>
     <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
       <option value="">選擇月份</option>
-      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (3)</option><option value="../../months/2013-09/">2013 年 9 月 (4)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (1)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (4)</option><option value="../../months/2013-03/">2013 年 3 月 (3)</option><option value="../../months/2013-02/">2013 年 2 月 (3)</option><option value="../../months/2013-01/">2013 年 1 月 (3)</option><option value="../../months/2012-12/">2012 年 12 月 (3)</option><option value="../../months/2012-11/">2012 年 11 月 (3)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (1)</option><option value="../../months/2012-05/">2012 年 5 月 (2)</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (2)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (4)</option><option value="../../months/2013-09/">2013 年 9 月 (5)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (2)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (5)</option><option value="../../months/2013-03/">2013 年 3 月 (4)</option><option value="../../months/2013-02/">2013 年 2 月 (4)</option><option value="../../months/2013-01/">2013 年 1 月 (5)</option><option value="../../months/2012-12/">2012 年 12 月 (4)</option><option value="../../months/2012-11/">2012 年 11 月 (4)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (3)</option><option value="../../months/2012-05/">2012 年 5 月 (3)</option>
     </select>
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20150614130001id_/https://tech.mozilla.com.tw/?p=6030">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20180123151708/https://tech.mozilla.com.tw/posts/6030/%E5%88%A9%E7%94%A8-adb-%E5%92%8C-gdb-%E4%BE%86-debug-firefox-os-b2g">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>
