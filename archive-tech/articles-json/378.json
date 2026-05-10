@@ -8,17 +8,39 @@
   "categories": [
     "Firefox OS(B2G)"
   ],
-  "tags": [
-    "Firefox OS(B2G)"
-  ],
+  "tags": [],
   "author": "李YY",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=378",
-  "archive_url": "https://web.archive.org/web/20140723181538id_/https://tech.mozilla.com.tw/?p=378",
-  "wayback_timestamp": "20140723181538",
-  "content_html": "<div class=\"entry-content close\">\n\t\t<p>俗話說得好： 每個偉大系統背後都有個好用的 Thread 機制，Gecko 也不例外，本篇台客文就是介紹在 Gecko 裡 thread 的一些基本使用方式及相關的 class 。</p>\n<p>首先， Gecko 內部的 thread 基本上是使用 nsIThread 這個介面，透過 NS_NewThread 來產生， thread 會有一個 job queue， thread 會一直執行 queue 裡面的 job，如果沒有 job 時，則是停留在 queue 內部，此時不會耗費額外的 cpu；而由 NS_NewThread 所產生的 thread 會由另外一個 class，nsThreadManager 來管理，當系統要停止時， nsThreadManager 便會把他所管理的所有 thread 分別呼叫 nsIThread::Shutdown ，來將旗下的 thread 停止。</p>\n<p>下面我們來看一段簡單的程式碼</p>\n<p></p><!-- Crayon Syntax Highlighter v2.6.1 -->\r\n\r\n\t\t<div id=\"crayon-53b85415c2a20708863244\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; float: none; clear: both; font-size: 12px !important; line-height: 15px !important;\">\r\n\t\t\r\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nnsCOMPtr&lt;nsIThread&gt; sThread;\r\n\r\nclass HelloThread : public RefCounted {\r\npublic:\r\n void HelloWorld() {\r\n printf(\"我是台客\");\r\n }\r\n};\r\n\r\nvoid InititalizeThread() {\r\n NS_NewThread(getter_AddRefs(sThread));\r\n}\r\n\r\nvoid ReleaseThread() {\r\n sThread-&gt;Shutdown();\r\n}\r\n\r\nvoid AddJob() {\r\n nsCOMPtr&lt;nsIRunnable&gt; event = NS_NewRunnableMethod(new HelloThread(), &amp;HelloThread::HelloWorld);\r\n sThread-&gt;Dispatch(event, NS_DISPATCH_NORMAL);\r\n}</textarea></div>\r\n\t\t\t<div class=\"crayon-main\" style=\"\">\r\n\t\t\t\t<table class=\"crayon-table\">\r\n\t\t\t\t\t<tr class=\"crayon-row\">\r\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\r\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-53b85415c2a20708863244-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53b85415c2a20708863244-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-53b85415c2a20708863244-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53b85415c2a20708863244-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-53b85415c2a20708863244-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53b85415c2a20708863244-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-53b85415c2a20708863244-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53b85415c2a20708863244-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-53b85415c2a20708863244-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53b85415c2a20708863244-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-53b85415c2a20708863244-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53b85415c2a20708863244-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-53b85415c2a20708863244-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53b85415c2a20708863244-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-53b85415c2a20708863244-15\">15</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53b85415c2a20708863244-16\">16</div><div class=\"crayon-num\" data-line=\"crayon-53b85415c2a20708863244-17\">17</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53b85415c2a20708863244-18\">18</div><div class=\"crayon-num\" data-line=\"crayon-53b85415c2a20708863244-19\">19</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-53b85415c2a20708863244-20\">20</div><div class=\"crayon-num\" data-line=\"crayon-53b85415c2a20708863244-21\">21</div></div>\r\n\t\t\t\t</td>\r\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-line\" id=\"crayon-53b85415c2a20708863244-1\"><span class=\"crayon-v\">nsCOMPtr</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-v\">nsIThread</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">sThread</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53b85415c2a20708863244-2\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-53b85415c2a20708863244-3\"><span class=\"crayon-t\">class</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">HelloThread</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-m\">public</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">RefCounted</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53b85415c2a20708863244-4\"><span class=\"crayon-m\">public</span><span class=\"crayon-o\">:</span></div><div class=\"crayon-line\" id=\"crayon-53b85415c2a20708863244-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">HelloWorld</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53b85415c2a20708863244-6\"><span class=\"crayon-h\"> </span><span class=\"crayon-e\">printf</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"我是台客\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-53b85415c2a20708863244-7\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53b85415c2a20708863244-8\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-53b85415c2a20708863244-9\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53b85415c2a20708863244-10\"><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">InititalizeThread</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-53b85415c2a20708863244-11\"><span class=\"crayon-h\"> </span><span class=\"crayon-e\">NS_NewThread</span><span class=\"crayon-sy\">(</span><span class=\"crayon-e\">getter_AddRefs</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">sThread</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53b85415c2a20708863244-12\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-53b85415c2a20708863244-13\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53b85415c2a20708863244-14\"><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">ReleaseThread</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-53b85415c2a20708863244-15\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">sThread</span><span class=\"crayon-o\">-&gt;</span><span class=\"crayon-e\">Shutdown</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53b85415c2a20708863244-16\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-53b85415c2a20708863244-17\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53b85415c2a20708863244-18\"><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">AddJob</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-53b85415c2a20708863244-19\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">nsCOMPtr</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-v\">nsIRunnable</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">event</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">NS_NewRunnableMethod</span><span class=\"crayon-sy\">(</span><span class=\"crayon-r\">new</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">HelloThread</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&amp;</span><span class=\"crayon-v\">HelloThread</span><span class=\"crayon-o\">::</span><span class=\"crayon-v\">HelloWorld</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-53b85415c2a20708863244-20\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">sThread</span><span class=\"crayon-o\">-&gt;</span><span class=\"crayon-e\">Dispatch</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">NS_DISPATCH_NORMAL</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-53b85415c2a20708863244-21\"><span class=\"crayon-sy\">}</span></div></div></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table>\r\n\t\t\t</div>\r\n\t\t</div>\r\n<!-- [Format Time: 0.0045 seconds] -->\r\n<p></p>\n<p>以上的程式碼就是實作一個簡單的 HelloThread ，當使用者呼叫了  AddJob 時，便會新增一個 job 到 sThread 的 queue 裡面，然後 sThread 便會去執行 HelloWorld 這個 function 印出 &#8220;我是台客&#8221;。</p>\n<p>下面是幾個常見的問題，</p>\n<ol>\n<li>HelloThread 是否一定要繼承 RefCounted ? 不用，只要有實作 AddRef 和 Release 即可</li>\n<li>我是否可以將 job 指定給 main thread? 可以的，你只要呼叫 NS_DispatchToMainThread。</li>\n<li>sThread-&gt;Shutdown 時，若還有 job 在 thread 內部會怎樣? Shutdown 是一個 blocking function ，會將thread 內部所有的 job 都執行完，才會離開。</li>\n<li>千萬不要 sThread本身呼叫 Shutdown ，這樣會導致 dead lock。</li>\n</ol>\n\t\t\t</div>",
-  "content_text": "俗話說得好： 每個偉大系統背後都有個好用的 Thread 機制，Gecko 也不例外，本篇台客文就是介紹在 Gecko 裡 thread 的一些基本使用方式及相關的 class 。 首先， Gecko 內部的 thread 基本上是使用 nsIThread 這個介面，透過 NS_NewThread 來產生， thread 會有一個 job queue， thread 會一直執行 queue 裡面的 job，如果沒有 job 時，則是停留在 queue 內部，此時不會耗費額外的 cpu；而由 NS_NewThread 所產生的 thread 會由另外一個 class，nsThreadManager 來管理，當系統要停止時， nsThreadManager 便會把他所管理的所有 thread 分別呼叫 nsIThread::Shutdown ，來將旗下的 thread 停止。 下面我們來看一段簡單的程式碼 nsCOMPtr<nsIThread> sThread; class HelloThread : public RefCounted { public: void HelloWorld() { printf(\"我是台客\"); } }; void InititalizeThread() { NS_NewThread(getter_AddRefs(sThread)); } void ReleaseThread() { sThread->Shutdown(); } void AddJob() { nsCOMPtr<nsIRunnable> event = NS_NewRunnableMethod(new HelloThread(), &HelloThread::HelloWorld); sThread->Dispatch(event, NS_DISPATCH_NORMAL); } 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 nsCOMPtr < nsIThread > sThread ; class HelloThread : public RefCounted { public : void HelloWorld ( ) { printf ( \"我是台客\" ) ; } } ; void InititalizeThread ( ) { NS_NewThread ( getter_AddRefs ( sThread ) ) ; } void ReleaseThread ( ) { sThread -> Shutdown ( ) ; } void AddJob ( ) { nsCOMPtr < nsIRunnable > event = NS_NewRunnableMethod ( new HelloThread ( ) , & HelloThread :: HelloWorld ) ; sThread -> Dispatch ( event , NS_DISPATCH_NORMAL ) ; } 以上的程式碼就是實作一個簡單的 HelloThread ，當使用者呼叫了 AddJob 時，便會新增一個 job 到 sThread 的 queue 裡面，然後 sThread 便會去執行 HelloWorld 這個 function 印出 “我是台客”。 下面是幾個常見的問題， HelloThread 是否一定要繼承 RefCounted ? 不用，只要有實作 AddRef 和 Release 即可 我是否可以將 job 指定給 main thread? 可以的，你只要呼叫 NS_DispatchToMainThread。 sThread->Shutdown 時，若還有 job 在 thread 內部會怎樣? Shutdown 是一個 blocking function ，會將thread 內部所有的 job 都執行完，才會離開。 千萬不要 sThread本身呼叫 Shutdown ，這樣會導致 dead lock。",
+  "archive_url": "https://web.archive.org/web/20160731012238/https://tech.mozilla.com.tw/posts/378/gecko%e5%85%a7%e9%83%a8%e6%8e%a2%e7%b4%a2-%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8-thread",
+  "wayback_timestamp": "20160731012238",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p>俗話說得好： 每個偉大系統背後都有個好用的 Thread 機制，Gecko 也不例外，本篇台客文就是介紹在 Gecko 裡 thread 的一些基本使用方式及相關的 class 。</p>\n<p>首先， Gecko 內部的 thread 基本上是使用 nsIThread 這個介面，透過 NS_NewThread 來產生， thread 會有一個 job queue， thread 會一直執行 queue 裡面的 job，如果沒有 job 時，則是停留在 queue 內部，此時不會耗費額外的 cpu；而由 NS_NewThread 所產生的 thread 會由另外一個 class，nsThreadManager 來管理，當系統要停止時， nsThreadManager 便會把他所管理的所有 thread 分別呼叫 nsIThread::Shutdown ，來將旗下的 thread 停止。</p>\n<p>下面我們來看一段簡單的程式碼</p>\n<p></p><!-- Crayon Syntax Highlighter v_2.7.2_beta -->\n\n\t\t<div id=\"crayon-579d52deec406525200748\" class=\"crayon-syntax crayon-theme-arduino-ide crayon-font-monaco crayon-os-pc print-yes notranslate\" data-settings=\" minimize scroll-mouseover\" style=\" margin-top: 12px; margin-bottom: 12px; font-size: 12px !important; line-height: 15px !important;\">\n\t\t\n\t\t\t<div class=\"crayon-plain-wrap\"><textarea wrap=\"soft\" class=\"crayon-plain print-no\" data-settings=\"dblclick\" readonly style=\"-moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4; font-size: 12px !important; line-height: 15px !important;\">\nnsCOMPtr&lt;nsIThread&gt; sThread;\n\nclass HelloThread : public RefCounted {\npublic:\n void HelloWorld() {\n printf(\"我是台客\");\n }\n};\n\nvoid InititalizeThread() {\n NS_NewThread(getter_AddRefs(sThread));\n}\n\nvoid ReleaseThread() {\n sThread-&gt;Shutdown();\n}\n\nvoid AddJob() {\n nsCOMPtr&lt;nsIRunnable&gt; event = NS_NewRunnableMethod(new HelloThread(), &amp;HelloThread::HelloWorld);\n sThread-&gt;Dispatch(event, NS_DISPATCH_NORMAL);\n}</textarea></div>\n\t\t\t<div class=\"crayon-main\" style=\"\">\n\t\t\t\t<table class=\"crayon-table\">\n\t\t\t\t\t<tr class=\"crayon-row\">\n\t\t\t\t<td class=\"crayon-nums \" data-settings=\"show\">\n\t\t\t\t\t<div class=\"crayon-nums-content\" style=\"font-size: 12px !important; line-height: 15px !important;\"><div class=\"crayon-num\" data-line=\"crayon-579d52deec406525200748-1\">1</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579d52deec406525200748-2\">2</div><div class=\"crayon-num\" data-line=\"crayon-579d52deec406525200748-3\">3</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579d52deec406525200748-4\">4</div><div class=\"crayon-num\" data-line=\"crayon-579d52deec406525200748-5\">5</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579d52deec406525200748-6\">6</div><div class=\"crayon-num\" data-line=\"crayon-579d52deec406525200748-7\">7</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579d52deec406525200748-8\">8</div><div class=\"crayon-num\" data-line=\"crayon-579d52deec406525200748-9\">9</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579d52deec406525200748-10\">10</div><div class=\"crayon-num\" data-line=\"crayon-579d52deec406525200748-11\">11</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579d52deec406525200748-12\">12</div><div class=\"crayon-num\" data-line=\"crayon-579d52deec406525200748-13\">13</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579d52deec406525200748-14\">14</div><div class=\"crayon-num\" data-line=\"crayon-579d52deec406525200748-15\">15</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579d52deec406525200748-16\">16</div><div class=\"crayon-num\" data-line=\"crayon-579d52deec406525200748-17\">17</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579d52deec406525200748-18\">18</div><div class=\"crayon-num\" data-line=\"crayon-579d52deec406525200748-19\">19</div><div class=\"crayon-num crayon-striped-num\" data-line=\"crayon-579d52deec406525200748-20\">20</div><div class=\"crayon-num\" data-line=\"crayon-579d52deec406525200748-21\">21</div></div>\n\t\t\t\t</td>\n\t\t\t\t\t\t<td class=\"crayon-code\"><div class=\"crayon-pre\" style=\"font-size: 12px !important; line-height: 15px !important; -moz-tab-size:4; -o-tab-size:4; -webkit-tab-size:4; tab-size:4;\"><div class=\"crayon-line\" id=\"crayon-579d52deec406525200748-1\"><span class=\"crayon-v\">nsCOMPtr</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-v\">nsIThread</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">sThread</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579d52deec406525200748-2\">&nbsp;</div><div class=\"crayon-line\" id=\"crayon-579d52deec406525200748-3\"><span class=\"crayon-t\">class</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">HelloThread</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">:</span><span class=\"crayon-h\"> </span><span class=\"crayon-m\">public</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">RefCounted</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579d52deec406525200748-4\"><span class=\"crayon-m\">public</span><span class=\"crayon-o\">:</span></div><div class=\"crayon-line\" id=\"crayon-579d52deec406525200748-5\"><span class=\"crayon-h\"> </span><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">HelloWorld</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579d52deec406525200748-6\"><span class=\"crayon-h\"> </span><span class=\"crayon-e\">printf</span><span class=\"crayon-sy\">(</span><span class=\"crayon-s\">\"我是台客\"</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-579d52deec406525200748-7\"><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579d52deec406525200748-8\"><span class=\"crayon-sy\">}</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-579d52deec406525200748-9\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579d52deec406525200748-10\"><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">InititalizeThread</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-579d52deec406525200748-11\"><span class=\"crayon-h\"> </span><span class=\"crayon-e\">NS_NewThread</span><span class=\"crayon-sy\">(</span><span class=\"crayon-e\">getter_AddRefs</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">sThread</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579d52deec406525200748-12\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-579d52deec406525200748-13\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579d52deec406525200748-14\"><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">ReleaseThread</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-579d52deec406525200748-15\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">sThread</span><span class=\"crayon-o\">-&gt;</span><span class=\"crayon-e\">Shutdown</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579d52deec406525200748-16\"><span class=\"crayon-sy\">}</span></div><div class=\"crayon-line\" id=\"crayon-579d52deec406525200748-17\">&nbsp;</div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579d52deec406525200748-18\"><span class=\"crayon-t\">void</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">AddJob</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-h\"> </span><span class=\"crayon-sy\">{</span></div><div class=\"crayon-line\" id=\"crayon-579d52deec406525200748-19\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">nsCOMPtr</span><span class=\"crayon-o\">&lt;</span><span class=\"crayon-v\">nsIRunnable</span><span class=\"crayon-o\">&gt;</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">event</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">=</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">NS_NewRunnableMethod</span><span class=\"crayon-sy\">(</span><span class=\"crayon-r\">new</span><span class=\"crayon-h\"> </span><span class=\"crayon-e\">HelloThread</span><span class=\"crayon-sy\">(</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-o\">&amp;</span><span class=\"crayon-v\">HelloThread</span><span class=\"crayon-o\">::</span><span class=\"crayon-v\">HelloWorld</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line crayon-striped-line\" id=\"crayon-579d52deec406525200748-20\"><span class=\"crayon-h\"> </span><span class=\"crayon-v\">sThread</span><span class=\"crayon-o\">-&gt;</span><span class=\"crayon-e\">Dispatch</span><span class=\"crayon-sy\">(</span><span class=\"crayon-v\">event</span><span class=\"crayon-sy\">,</span><span class=\"crayon-h\"> </span><span class=\"crayon-v\">NS_DISPATCH_NORMAL</span><span class=\"crayon-sy\">)</span><span class=\"crayon-sy\">;</span></div><div class=\"crayon-line\" id=\"crayon-579d52deec406525200748-21\"><span class=\"crayon-sy\">}</span></div></div></td>\n\t\t\t\t\t</tr>\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t</div>\n<!-- [Format Time: 0.0079 seconds] -->\n<p></p>\n<p>以上的程式碼就是實作一個簡單的 HelloThread ，當使用者呼叫了  AddJob 時，便會新增一個 job 到 sThread 的 queue 裡面，然後 sThread 便會去執行 HelloWorld 這個 function 印出 &#8220;我是台客\"。</p>\n<p>下面是幾個常見的問題，</p>\n<ol>\n<li>HelloThread 是否一定要繼承 RefCounted ? 不用，只要有實作 AddRef 和 Release 即可</li>\n<li>我是否可以將 job 指定給 main thread? 可以的，你只要呼叫 NS_DispatchToMainThread。</li>\n<li>sThread-&gt;Shutdown 時，若還有 job 在 thread 內部會怎樣? Shutdown 是一個 blocking function ，會將thread 內部所有的 job 都執行完，才會離開。</li>\n<li>千萬不要 sThread本身呼叫 Shutdown ，這樣會導致 dead lock。</li>\n</ol>\n\t\t\t</div>",
+  "content_text": "俗話說得好： 每個偉大系統背後都有個好用的 Thread 機制，Gecko 也不例外，本篇台客文就是介紹在 Gecko 裡 thread 的一些基本使用方式及相關的 class 。 首先， Gecko 內部的 thread 基本上是使用 nsIThread 這個介面，透過 NS_NewThread 來產生， thread 會有一個 job queue， thread 會一直執行 queue 裡面的 job，如果沒有 job 時，則是停留在 queue 內部，此時不會耗費額外的 cpu；而由 NS_NewThread 所產生的 thread 會由另外一個 class，nsThreadManager 來管理，當系統要停止時， nsThreadManager 便會把他所管理的所有 thread 分別呼叫 nsIThread::Shutdown ，來將旗下的 thread 停止。 下面我們來看一段簡單的程式碼 nsCOMPtr<nsIThread> sThread; class HelloThread : public RefCounted { public: void HelloWorld() { printf(\"我是台客\"); } }; void InititalizeThread() { NS_NewThread(getter_AddRefs(sThread)); } void ReleaseThread() { sThread->Shutdown(); } void AddJob() { nsCOMPtr<nsIRunnable> event = NS_NewRunnableMethod(new HelloThread(), &HelloThread::HelloWorld); sThread->Dispatch(event, NS_DISPATCH_NORMAL); } 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 nsCOMPtr < nsIThread > sThread ; class HelloThread : public RefCounted { public : void HelloWorld ( ) { printf ( \"我是台客\" ) ; } } ; void InititalizeThread ( ) { NS_NewThread ( getter_AddRefs ( sThread ) ) ; } void ReleaseThread ( ) { sThread -> Shutdown ( ) ; } void AddJob ( ) { nsCOMPtr < nsIRunnable > event = NS_NewRunnableMethod ( new HelloThread ( ) , & HelloThread :: HelloWorld ) ; sThread -> Dispatch ( event , NS_DISPATCH_NORMAL ) ; } 以上的程式碼就是實作一個簡單的 HelloThread ，當使用者呼叫了 AddJob 時，便會新增一個 job 到 sThread 的 queue 裡面，然後 sThread 便會去執行 HelloWorld 這個 function 印出 “我是台客\"。 下面是幾個常見的問題， HelloThread 是否一定要繼承 RefCounted ? 不用，只要有實作 AddRef 和 Release 即可 我是否可以將 job 指定給 main thread? 可以的，你只要呼叫 NS_DispatchToMainThread。 sThread->Shutdown 時，若還有 job 在 thread 內部會怎樣? Shutdown 是一個 blocking function ，會將thread 內部所有的 job 都執行完，才會離開。 千萬不要 sThread本身呼叫 Shutdown ，這樣會導致 dead lock。",
   "images": [
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
     {
       "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
       "alt": "mozilla",
@@ -26,13 +48,13 @@
       "source": "img"
     },
     {
-      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "url": "https://web.archive.org/web/20160731012238im_/http://assets.pinterest.com/images/PinExt.png",
       "alt": "",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
       "alt": "plurk share",
       "kind": "image",
       "source": "img"
@@ -44,20 +66,38 @@
       "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/3e3bbf2f080470d961fbb160ffe70c73-bpthumb.jpg",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
       "alt": "",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/23235021ZS-150x150.jpg",
-      "alt": "23235021ZS",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/04/partners-theswoop-150x150.png",
-      "alt": "partners-theswoop",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
       "source": "img"
     },
@@ -76,19 +116,43 @@
   ],
   "media": [
     {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
       "alt": "mozilla",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "url": "https://web.archive.org/web/20160731012238im_/http://assets.pinterest.com/images/PinExt.png",
       "alt": "",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
       "alt": "plurk share",
       "kind": "image",
       "source": "img"
@@ -100,20 +164,38 @@
       "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/3e3bbf2f080470d961fbb160ffe70c73-bpthumb.jpg",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
       "alt": "",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/23235021ZS-150x150.jpg",
-      "alt": "23235021ZS",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/04/partners-theswoop-150x150.png",
-      "alt": "partners-theswoop",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/41/703970129d2ddcf93e3701c72f86be60-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
       "source": "img"
     },

@@ -8,17 +8,39 @@
   "categories": [
     "Firefox OS(B2G)"
   ],
-  "tags": [
-    "Firefox OS(B2G)"
-  ],
+  "tags": [],
   "author": "Gina Yeh",
   "page_type": "post",
   "original_url": "https://tech.mozilla.com.tw/?p=1970",
-  "archive_url": "https://web.archive.org/web/20140710071926id_/http://tech.mozilla.com.tw/posts/1970/%e5%b0%8f%e5%b0%8f%e8%97%8d%e7%89%99%e7%9c%8b%e4%b8%96%e7%95%8c",
-  "wayback_timestamp": "20140710071926",
-  "content_html": "<div class=\"entry-content close\">\n\t\t<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">在<a href=\"http://tech.mozilla.com.tw/posts/942/let-a-wireframe-be-an-app-in-the-iframehttp://\">前篇</a>文章中，我們曾經提到藍牙相關的「配對」以及「連線」的概念。讓我們先來快速複習一下！</span></span></p>\n<p>配對 (Pair) <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">：與社群網站的「加入好友」機制一樣，由一方發起，另一方認可。完成此步驟後，雙方便是經過認證的好友囉！此後就可以開始進一步的互動，例如：連線。</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">連線 </span></span>(Connect) <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">：雙方在完成加入好友的程序後，可互相看到對方的基本資料，並且依據彼此的專長來決定我們的「互動方式」。</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">以手機與藍牙耳機為例，可建立 </span></span>HFP (Hands-Free Profile) <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">的連線來完成撥打及接聽電話等動作，亦可建立 </span></span>A2DP (Advanced Audio Distribution Profile) <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">的連線來傳遞高音質立體聲音訊。再舉個例子，手機與手機之間常有的「互動方式」則有 </span></span>Opp (Object Push Profile) <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">，可用來傳輸及接收檔案。</span></span></p>\n<p>藍牙有了「加入好友」及「決定互動方式」等機制，那有相對應的反向機制嗎？當然是有囉！當你決定把某人從好友名單刪除時，可透過「解除配對」 (Unpair) <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">來完成；若只想暫時停止某種互動，則可執行「斷線」 </span></span>(Disconnect) <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">的動作。</span></span></p>\n<p>在了解以上與藍牙相關的基本概念後，這篇文章主要是想要跟大家分享我最近在開發的過程中發現的一個有趣現象！</p>\n<p>故事是這樣開始的，當 A B <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">雙方在互加好友之後，若 </span></span>B <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">方把 </span></span>A <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">方偷偷從好友名單中刪除，此時， </span></span>A <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">方嘗試與 </span></span>B <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">方進行互動，例如：傳文字訊息，那會發生什麼事呢？</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">根據我實際測試的結果表示，不同的人有著截然不同的作法呢！</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">我將結果略分為以下三大類：</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">一、</span></span>B <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">會裝沒事，一如往常地回覆 </span></span>A <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">的訊息</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">二、</span></span>B <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">會認定這是陌生人傳來的消息，也許只是廣告或垃圾郵件，不予理會</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">三、</span></span>B <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">已經完全想不起來 </span></span>A <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">是誰了，於是反問 ：「你是我的朋友嗎？我們要不要互加好友一下？」</span></span><br />\n<span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">看到我對以上三種不同的結果的描述，你是否也感覺到，在藍牙的小世界裡，其實有很多的小地方都與我們的生活經驗很相似呢！</span></span></p>\n<p><a href=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/04/partners-theswoop.png\"><img class=\"aligncenter size-full wp-image-1998\" title=\"partners-theswoop\" src=\"http://tech.mozilla.com.tw/wp-content/uploads/2013/04/partners-theswoop.png\" alt=\"\" width=\"303\" height=\"344\" /></a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
+  "archive_url": "https://web.archive.org/web/20160914194428/https://tech.mozilla.com.tw/posts/1970/%e5%b0%8f%e5%b0%8f%e8%97%8d%e7%89%99%e7%9c%8b%e4%b8%96%e7%95%8c",
+  "wayback_timestamp": "20160914194428",
+  "content_html": "<div class=\"entry-content close\">\n\t\t<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">在<a href=\"https://web.archive.org/web/20160914194428/http://tech.mozilla.com.tw/posts/942/let-a-wireframe-be-an-app-in-the-iframehttp://\">前篇</a>文章中，我們曾經提到藍牙相關的「配對」以及「連線」的概念。讓我們先來快速複習一下！</span></span></p>\n<p>配對 (Pair) <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">：與社群網站的「加入好友」機制一樣，由一方發起，另一方認可。完成此步驟後，雙方便是經過認證的好友囉！此後就可以開始進一步的互動，例如：連線。</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">連線 </span></span>(Connect) <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">：雙方在完成加入好友的程序後，可互相看到對方的基本資料，並且依據彼此的專長來決定我們的「互動方式」。</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">以手機與藍牙耳機為例，可建立 </span></span>HFP (Hands-Free Profile) <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">的連線來完成撥打及接聽電話等動作，亦可建立 </span></span>A2DP (Advanced Audio Distribution Profile) <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">的連線來傳遞高音質立體聲音訊。再舉個例子，手機與手機之間常有的「互動方式」則有 </span></span>Opp (Object Push Profile) <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">，可用來傳輸及接收檔案。</span></span></p>\n<p>藍牙有了「加入好友」及「決定互動方式」等機制，那有相對應的反向機制嗎？當然是有囉！當你決定把某人從好友名單刪除時，可透過「解除配對」 (Unpair) <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">來完成；若只想暫時停止某種互動，則可執行「斷線」 </span></span>(Disconnect) <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">的動作。</span></span></p>\n<p>在了解以上與藍牙相關的基本概念後，這篇文章主要是想要跟大家分享我最近在開發的過程中發現的一個有趣現象！</p>\n<p>故事是這樣開始的，當 A B <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">雙方在互加好友之後，若 </span></span>B <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">方把 </span></span>A <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">方偷偷從好友名單中刪除，此時， </span></span>A <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">方嘗試與 </span></span>B <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">方進行互動，例如：傳文字訊息，那會發生什麼事呢？</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">根據我實際測試的結果表示，不同的人有著截然不同的作法呢！</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">我將結果略分為以下三大類：</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">一、</span></span>B <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">會裝沒事，一如往常地回覆 </span></span>A <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">的訊息</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">二、</span></span>B <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">會認定這是陌生人傳來的消息，也許只是廣告或垃圾郵件，不予理會</span></span></p>\n<p><span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">三、</span></span>B <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">已經完全想不起來 </span></span>A <span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">是誰了，於是反問 ：「你是我的朋友嗎？我們要不要互加好友一下？」</span></span><br/>\n<span style=\"font-family: WenQuanYi Zen Hei;\"><span style=\"font-size: small;\">看到我對以上三種不同的結果的描述，你是否也感覺到，在藍牙的小世界裡，其實有很多的小地方都與我們的生活經驗很相似呢！</span></span></p>\n<p><a href=\"https://web.archive.org/web/20160914194428/http://tech.mozilla.com.tw/wp-content/uploads/2013/04/partners-theswoop.png\"><img class=\"aligncenter size-full wp-image-1998\" title=\"partners-theswoop\" src=\"https://web.archive.org/web/20160914194428im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/04/partners-theswoop.png\" alt=\"\" width=\"303\" height=\"344\" srcset=\"https://web.archive.org/web/20160914194428im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/04/partners-theswoop.png 303w, https://web.archive.org/web/20160914194428im_/http://tech.mozilla.com.tw/wp-content/uploads/2013/04/partners-theswoop-264x300.png 264w\" sizes=\"(max-width: 303px) 100vw, 303px\"/></a></p>\n<p>&nbsp;</p>\n<p>&nbsp;</p>\n\t\t\t</div>",
   "content_text": "在 前篇 文章中，我們曾經提到藍牙相關的「配對」以及「連線」的概念。讓我們先來快速複習一下！ 配對 (Pair) ：與社群網站的「加入好友」機制一樣，由一方發起，另一方認可。完成此步驟後，雙方便是經過認證的好友囉！此後就可以開始進一步的互動，例如：連線。 連線 (Connect) ：雙方在完成加入好友的程序後，可互相看到對方的基本資料，並且依據彼此的專長來決定我們的「互動方式」。 以手機與藍牙耳機為例，可建立 HFP (Hands-Free Profile) 的連線來完成撥打及接聽電話等動作，亦可建立 A2DP (Advanced Audio Distribution Profile) 的連線來傳遞高音質立體聲音訊。再舉個例子，手機與手機之間常有的「互動方式」則有 Opp (Object Push Profile) ，可用來傳輸及接收檔案。 藍牙有了「加入好友」及「決定互動方式」等機制，那有相對應的反向機制嗎？當然是有囉！當你決定把某人從好友名單刪除時，可透過「解除配對」 (Unpair) 來完成；若只想暫時停止某種互動，則可執行「斷線」 (Disconnect) 的動作。 在了解以上與藍牙相關的基本概念後，這篇文章主要是想要跟大家分享我最近在開發的過程中發現的一個有趣現象！ 故事是這樣開始的，當 A B 雙方在互加好友之後，若 B 方把 A 方偷偷從好友名單中刪除，此時， A 方嘗試與 B 方進行互動，例如：傳文字訊息，那會發生什麼事呢？ 根據我實際測試的結果表示，不同的人有著截然不同的作法呢！ 我將結果略分為以下三大類： 一、 B 會裝沒事，一如往常地回覆 A 的訊息 二、 B 會認定這是陌生人傳來的消息，也許只是廣告或垃圾郵件，不予理會 三、 B 已經完全想不起來 A 是誰了，於是反問 ：「你是我的朋友嗎？我們要不要互加好友一下？」 看到我對以上三種不同的結果的描述，你是否也感覺到，在藍牙的小世界裡，其實有很多的小地方都與我們的生活經驗很相似呢！",
   "images": [
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
     {
       "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
       "alt": "mozilla",
@@ -26,13 +48,13 @@
       "source": "img"
     },
     {
-      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "url": "https://web.archive.org/web/20160914194428im_/http://assets.pinterest.com/images/PinExt.png",
       "alt": "",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
       "alt": "plurk share",
       "kind": "image",
       "source": "img"
@@ -42,6 +64,18 @@
       "alt": "FFOS-update-flow1",
       "kind": "image",
       "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/FFOS-update-flow11-295x300.png",
+      "alt": "FFOS-update-flow1",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/FFOS-update-flow11.png",
+      "alt": "FFOS-update-flow1",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/500px-Mozilla_Foundation_logo.svg_-150x143.jpg",
@@ -67,20 +101,44 @@
       "content_type": "image/png"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/snowman-150x150.jpg",
-      "alt": "snowman",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/04/partners-theswoop-264x300.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/09/fxos-150x150.jpg",
-      "alt": "fxos",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/04/2010-01-27-19-10-54-150x150.png",
-      "alt": "based_on_mozilla_tech",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
       "source": "img"
     },
@@ -93,19 +151,43 @@
   ],
   "media": [
     {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-200.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-100.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/toolbar/wayback-toolbar-logo-150.png",
+      "alt": "Wayback Machine",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://web-static.archive.org/_static/images/loading.gif",
+      "alt": "loading",
+      "kind": "image",
+      "source": "img"
+    },
+    {
       "url": "https://tech.mozilla.com.tw/media/img/firefox/template/header-logo.png",
       "alt": "mozilla",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://assets.pinterest.com/images/PinExt.png",
+      "url": "https://web.archive.org/web/20160914194428im_/http://assets.pinterest.com/images/PinExt.png",
       "alt": "",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://statics.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
+      "url": "https://s.plurk.com/2980c7bcb4eb012159e7701a61cb2e75.png",
       "alt": "plurk share",
       "kind": "image",
       "source": "img"
@@ -115,6 +197,18 @@
       "alt": "FFOS-update-flow1",
       "kind": "image",
       "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/FFOS-update-flow11-295x300.png",
+      "alt": "FFOS-update-flow1",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/02/FFOS-update-flow11.png",
+      "alt": "FFOS-update-flow1",
+      "kind": "image",
+      "source": "img-srcset"
     },
     {
       "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/03/500px-Mozilla_Foundation_logo.svg_-150x143.jpg",
@@ -140,20 +234,44 @@
       "content_type": "image/png"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/08/snowman-150x150.jpg",
-      "alt": "snowman",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/04/partners-theswoop-264x300.png",
+      "alt": "",
+      "kind": "image",
+      "source": "img-srcset"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2013/09/fxos-150x150.jpg",
-      "alt": "fxos",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/133/432bb0b63e564de1095abda72d01cd95-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
       "source": "img"
     },
     {
-      "url": "https://tech.mozilla.com.tw/wp-content/uploads/2014/04/2010-01-27-19-10-54-150x150.png",
-      "alt": "based_on_mozilla_tech",
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/103/d96ea068531579cee55cae03f8941426-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/52/53a7e39c6f825eb03e1771277fce92c0-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/61/359e29cb29e5bd7a9e718a5b62aaf05a-bpthumb.jpg",
+      "alt": "",
+      "kind": "image",
+      "source": "img"
+    },
+    {
+      "url": "https://tech.mozilla.com.tw/wp-content/uploads/avatars/14/cee7f8c7b387343a3a9634ef0e93682e-bpthumb.jpg",
+      "alt": "",
       "kind": "image",
       "source": "img"
     },
