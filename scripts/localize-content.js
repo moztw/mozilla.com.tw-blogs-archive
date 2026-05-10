@@ -78,15 +78,25 @@ async function readArticleJson(postId) {
 
 function localizeMarkdown(markdown, postId, lookup) {
   let localizedRefs = 0;
-  const rewritten = String(markdown || '').replace(/(!?\[[^\]]*\]\()([^)]+)(\))/g, (match, prefix, rawUrl, suffix) => {
-    const clean = rawUrl.trim();
-    const replacement = resolveLocalMarkdownPath(clean, postId, lookup);
-    if (!replacement || replacement === clean) {
-      return match;
-    }
-    localizedRefs += 1;
-    return `${prefix}${replacement}${suffix}`;
-  });
+  const rewritten = String(markdown || '')
+    .replace(/(\[!\[[^\]]*\]\([^)]+\)\]\()([^)]+)(\))/g, (match, prefix, rawUrl, suffix) => {
+      const clean = rawUrl.trim();
+      const replacement = resolveLocalMarkdownPath(clean, postId, lookup);
+      if (!replacement || replacement === clean) {
+        return match;
+      }
+      localizedRefs += 1;
+      return `${prefix}${replacement}${suffix}`;
+    })
+    .replace(/(!?\[[^\]]*\]\()([^)]+)(\))/g, (match, prefix, rawUrl, suffix) => {
+      const clean = rawUrl.trim();
+      const replacement = resolveLocalMarkdownPath(clean, postId, lookup);
+      if (!replacement || replacement === clean) {
+        return match;
+      }
+      localizedRefs += 1;
+      return `${prefix}${replacement}${suffix}`;
+    });
 
   return { markdown: rewritten, localizedRefs };
 }
@@ -211,4 +221,3 @@ function parseArgs(values) {
 function relative(target) {
   return path.relative(ROOT, target) || '.';
 }
-
