@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -72,7 +73,10 @@ async function main() {
   await writeFile(path.join(BUILD_DIR, '.nojekyll'), '');
 
   for (const post of posts) {
-    const html = markdownToHtml(post.body, `../../`, ALL_POST_IDS);
+    const html = markdownToHtml(post.body, `../../`, ALL_POST_IDS, {
+      postId: post.frontmatter.post_id,
+      assetLookup: post.assetLookup,
+    });
     const outputDir = path.join(POSTS_DIR, String(post.frontmatter.post_id));
     await mkdir(outputDir, { recursive: true });
     await writeFile(path.join(outputDir, 'index.html'), renderPost(post, html));
@@ -97,12 +101,14 @@ async function readPosts() {
     const raw = await readFile(path.join(MD_DIR, file), 'utf8');
     const { frontmatter, body } = parseMarkdownFile(raw);
     const id = Number(frontmatter.post_id);
+    const articleJson = await readArticleJson(id);
     const authorMeta = await readAuthorMeta(id, frontmatter.wayback_timestamp || '');
     posts.push({
       file,
       body,
       frontmatter,
       id,
+      assetLookup: buildAssetLookup([...(articleJson?.images || []), ...(articleJson?.media || [])]),
       title: frontmatter.title || path.basename(file, '.md'),
       date: frontmatter.date || '',
       categories: arrayValue(frontmatter.categories),
@@ -115,6 +121,14 @@ async function readPosts() {
     const byDate = String(b.date).localeCompare(String(a.date));
     return byDate || b.id - a.id;
   });
+}
+
+async function readArticleJson(postId) {
+  try {
+    return JSON.parse(await readFile(path.join(JSON_DIR, `${postId}.json`), 'utf8'));
+  } catch {
+    return null;
+  }
 }
 
 async function readAuthors() {
@@ -288,7 +302,7 @@ function arrayValue(value) {
   return Array.isArray(value) ? value.filter(Boolean) : [];
 }
 
-function markdownToHtml(markdown, rootPrefix, postIds) {
+function markdownToHtml(markdown, rootPrefix, postIds, options = {}) {
   const lines = markdown.replace(/\r\n/g, '\n').split('\n');
   const html = [];
   let paragraph = [];
@@ -298,17 +312,17 @@ function markdownToHtml(markdown, rootPrefix, postIds) {
 
   const flushParagraph = () => {
     if (!paragraph.length) return;
-    html.push(`<p>${inlineMarkdown(paragraph.join('\n'), rootPrefix, postIds)}</p>`);
+    html.push(`<p>${inlineMarkdown(paragraph.join('\n'), rootPrefix, postIds, options)}</p>`);
     paragraph = [];
   };
   const flushList = () => {
     if (!list) return;
-    html.push(`<${list.type}>${list.items.map((item) => `<li>${inlineMarkdown(item, rootPrefix, postIds)}</li>`).join('')}</${list.type}>`);
+    html.push(`<${list.type}>${list.items.map((item) => `<li>${inlineMarkdown(item, rootPrefix, postIds, options)}</li>`).join('')}</${list.type}>`);
     list = null;
   };
   const flushBlockquote = () => {
     if (!blockquote.length) return;
-    html.push(`<blockquote>${markdownToHtml(blockquote.join('\n'), rootPrefix, postIds)}</blockquote>`);
+    html.push(`<blockquote>${markdownToHtml(blockquote.join('\n'), rootPrefix, postIds, options)}</blockquote>`);
     blockquote = [];
   };
   const closeBlocks = () => {
@@ -344,7 +358,7 @@ function markdownToHtml(markdown, rootPrefix, postIds) {
     if (heading) {
       closeBlocks();
       const level = heading[1].length;
-      html.push(`<h${level}>${inlineMarkdown(heading[2], rootPrefix, postIds)}</h${level}>`);
+      html.push(`<h${level}>${inlineMarkdown(heading[2], rootPrefix, postIds, options)}</h${level}>`);
       continue;
     }
 
@@ -382,19 +396,19 @@ function markdownToHtml(markdown, rootPrefix, postIds) {
   return html.join('\n');
 }
 
-function inlineMarkdown(text, rootPrefix, postIds) {
+function inlineMarkdown(text, rootPrefix, postIds, options = {}) {
   let escaped = escapeHtml(text);
   escaped = escaped.replace(/\[!\[([^\]]*)\]\(([^)]+)\)\]\(([^)]+)\)/g, (_match, alt, imageUrl, linkUrl) => {
-    const src = rewriteUrl(unescapeHtml(imageUrl.trim()), rootPrefix, postIds);
-    const href = rewriteUrl(unescapeHtml(linkUrl.trim()), rootPrefix, postIds);
+    const src = rewriteUrl(unescapeHtml(imageUrl.trim()), rootPrefix, postIds, options);
+    const href = rewriteUrl(unescapeHtml(linkUrl.trim()), rootPrefix, postIds, options);
     return `<a href="${escapeAttr(href)}"><img src="${escapeAttr(src)}" alt="${escapeAttr(unescapeHtml(alt))}" loading="lazy"></a>`;
   });
   escaped = escaped.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_match, alt, url) => {
-    const src = rewriteUrl(unescapeHtml(url.trim()), rootPrefix, postIds);
+    const src = rewriteUrl(unescapeHtml(url.trim()), rootPrefix, postIds, options);
     return `<img src="${escapeAttr(src)}" alt="${escapeAttr(unescapeHtml(alt))}" loading="lazy">`;
   });
   escaped = escaped.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, label, url) => {
-    const href = rewriteUrl(unescapeHtml(url.trim()), rootPrefix, postIds);
+    const href = rewriteUrl(unescapeHtml(url.trim()), rootPrefix, postIds, options);
     return `<a href="${escapeAttr(href)}">${label}</a>`;
   });
   escaped = autoLinkLocalPostUrls(escaped, rootPrefix, postIds);
@@ -420,10 +434,20 @@ function autoLinkLocalPostUrls(html, rootPrefix, postIds) {
     .join('');
 }
 
-function rewriteUrl(url, rootPrefix, postIds) {
+function rewriteUrl(url, rootPrefix, postIds, options = {}) {
   const clean = url.replace(/^<|>$/g, '');
   if (clean.startsWith('../assets/')) {
     return `${rootPrefix}${clean.slice(3)}`;
+  }
+
+  const mappedAsset = options.assetLookup?.get(normalizeAssetUrl(clean));
+  if (mappedAsset) {
+    return rewriteUrl(mappedAsset, rootPrefix, postIds);
+  }
+
+  const localUpload = inferExistingPostUploadPath(clean, options.postId);
+  if (localUpload) {
+    return rewriteUrl(localUpload, rootPrefix, postIds);
   }
 
   if (BUILD_DIR_NAME === 'tech') {
@@ -610,7 +634,7 @@ async function writeArchivePages(posts) {
 function renderPostList(posts, rootPrefix) {
   return posts.map((post) => {
     const excerpt = markdownExcerpt(post.body, 150);
-    const thumbnail = postThumbnail(post.body, rootPrefix);
+    const thumbnail = postThumbnail(post.body, rootPrefix, post.frontmatter.post_id, post.assetLookup);
     return `
       <div class="article-div divider">
         <article class="post-list-item">
@@ -628,14 +652,14 @@ function renderPostList(posts, rootPrefix) {
   }).join('\n');
 }
 
-function postThumbnail(markdown, rootPrefix) {
+function postThumbnail(markdown, rootPrefix, postId = '', assetLookup = null) {
   const match = markdown.match(/!\[([^\]]*)\]\(([^)]+)\)/);
   if (!match) {
     return null;
   }
   return {
     alt: match[1],
-    src: rewriteUrl(match[2].trim(), rootPrefix, new Set()),
+    src: rewriteUrl(match[2].trim(), rootPrefix, new Set(), { postId, assetLookup }),
   };
 }
 
@@ -1105,6 +1129,15 @@ function inferUploadsMarkdownPath(url, postId) {
   return `../assets/${postId}/${match[1]}`;
 }
 
+function inferExistingPostUploadPath(url, postId) {
+  const inferred = inferUploadsMarkdownPath(url, postId);
+  if (!inferred) {
+    return '';
+  }
+  const localPath = path.join(ARCHIVE_DIR, inferred.replace(/^\.\.\/assets\//, 'assets/'));
+  return existsSync(localPath) ? inferred : '';
+}
+
 function inferAuthorUploadsMarkdownPath(url, authorSlug) {
   if (!authorSlug) {
     return '';
@@ -1151,9 +1184,10 @@ function slugify(value) {
 }
 
 function normalizeAssetUrl(value) {
-  return String(value || '')
+  return safeDecode(String(value || '')
     .replace(/^https?:\/\//i, '')
-    .replace(/^web\.archive\.org\/web\/\d+(?:[a-z_]+)?\//i, '');
+    .replace(/^web\.archive\.org\/web\/\d+(?:[a-z_]+)?\//i, '')
+    .replace(/^https?:\/\//i, ''));
 }
 
 function normalizeAssetVariantUrl(value) {
@@ -1165,6 +1199,14 @@ function normalizeAssetVariantUrl(value) {
     return normalized.replace(/-bpthumb(\.[a-z0-9]+)$/i, '-bpfull$1');
   }
   return '';
+}
+
+function safeDecode(value) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
 }
 
 function normalizeAuthorName(value) {

@@ -2,12 +2,13 @@
 
 ## Summary
 
-Refactor the archive pipeline into four explicit stages:
+Refactor the archive pipeline into five explicit stages:
 
 1. `archive`: fetch source material and assets.
 2. `parse`: convert raw material into canonical JSON, Markdown, and metadata.
-3. `build`: compile parsed content into static site output.
-4. `deploy`: publish build output only.
+3. `localize`: rewrite parsed content to local assets when local files exist.
+4. `build`: compile localized content into static site output.
+5. `deploy`: publish build output only.
 
 The refactor also merges duplicated blog and tech behavior behind shared site
 profiles and shared workflow tools. Every stage must target one explicit site.
@@ -22,6 +23,8 @@ node scripts/workflow.js archive --site blog
 node scripts/workflow.js archive --site tech
 node scripts/workflow.js parse --site blog
 node scripts/workflow.js parse --site tech
+node scripts/workflow.js localize --site blog
+node scripts/workflow.js localize --site tech
 node scripts/workflow.js build --site blog
 node scripts/workflow.js build --site tech
 node scripts/workflow.js deploy --site blog
@@ -35,6 +38,7 @@ node scripts/workflow.js report --site tech
 Explicit two-site orchestration commands:
 
 ```sh
+node scripts/workflow.js localize-both
 node scripts/workflow.js build-both
 node scripts/workflow.js deploy-both
 node scripts/workflow.js report-both
@@ -101,21 +105,38 @@ Responsibilities:
 - Convert raw HTML into `articles-json`, `articles-md`, and metadata.
 - Convert blog event raw HTML into `events-json` and `events-md`.
 - Convert tech author raw HTML into `authors-json` and `authors-md`.
-- Resolve content image URLs to local asset paths when local assets exist.
-- Write canonical content references that build can consume without guessing.
+- Preserve parsed content and extracted metadata without doing asset repair.
 
 Non-responsibilities:
 
 - Do not fetch new network resources.
+- Do not localize asset URLs.
 - Do not write build output.
 
-### build
+### localize
 
-Purpose: compile parsed content into static site trees.
+Purpose: make parsed content point at local files when those files exist.
 
 Responsibilities:
 
-- Read canonical parse output only.
+- Read parsed content and asset mappings.
+- Rewrite remote file URLs to `../assets/...` paths when a local asset exists.
+- Handle all mapped remote file URLs, not just `wp-content/uploads`.
+- Write a report describing how many references were localized.
+
+Non-responsibilities:
+
+- Do not fetch network resources.
+- Do not re-parse raw HTML.
+- Do not generate final site pages.
+
+### build
+
+Purpose: compile localized content into static site trees.
+
+Responsibilities:
+
+- Read canonical localized output only.
 - Copy already-localized assets.
 - Build posts, category pages, month pages, event pages, author pages, and
   compatibility aliases according to the site profile.
@@ -161,14 +182,17 @@ Non-responsibilities:
    - `build-site.js`
    - `deploy-gh-pages.js`
 5. Fix localized asset source of truth:
-   - parse output must reference local assets when present
-   - build output must not regress localized assets back to remote URLs
+   - `localize` output must reference local assets when present
+   - `build` output must not regress localized assets back to remote URLs
 
 ## Acceptance Checks
 
 - `node --check` passes for all new and changed scripts.
 - `node scripts/workflow.js build --site blog` builds the blog site only.
 - `node scripts/workflow.js build --site tech` builds the tech site only.
+- `node scripts/workflow.js localize --site blog` localizes blog content only.
+- `node scripts/workflow.js localize --site tech` localizes tech content only.
+- `node scripts/workflow.js localize-both` localizes both sites explicitly.
 - `node scripts/workflow.js build-both` builds both sites explicitly.
 - `node scripts/workflow.js build --all` fails because `--all` is unsupported.
 - `node scripts/workflow.js build` fails because `--site` is required.
@@ -190,7 +214,6 @@ Non-responsibilities:
 1. Add shared site profiles and workflow CLI.
 2. Route build and deploy through the workflow CLI first.
 3. Refactor build/deploy scripts to consume site profiles.
-4. Move parse-time localized asset rewriting into the canonical parse output.
+4. Add the `localize` stage for canonical local asset rewriting.
 5. Route archive and recover commands through workflow workers.
 6. Update npm scripts and README after the CLI is stable.
-

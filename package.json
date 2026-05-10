@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "workflow": "node scripts/workflow.js",
     "archive": "node scripts/archive-wayback.js",
     "archive:scan": "node scripts/archive-wayback.js scan",
     "archive:scan-urls": "node scripts/archive-wayback.js scan-urls",
@@ -15,14 +16,19 @@
     "archive:assets": "node scripts/archive-wayback.js assets",
     "archive:event-assets": "node scripts/archive-event-assets.js",
     "archive:event-wp-content": "node scripts/recover-event-wp-content.js",
+    "localize": "node scripts/workflow.js localize --site blog",
+    "localize:tech": "node scripts/workflow.js localize --site tech",
+    "localize:both": "node scripts/workflow.js localize-both",
     "archive:media-report": "node scripts/archive-wayback.js media-report",
     "archive:media-recover": "node scripts/archive-wayback.js media-recover",
     "archive:fetch": "node scripts/archive-wayback.js fetch",
     "redirect:build": "node scripts/build-redirect-pages.js",
     "site:sitemap": "node scripts/build-sitemaps.js",
-    "site:build": "node scripts/build-site.js",
-    "site:deploy": "node scripts/deploy-gh-pages.js",
-    "deploy:gh-pages": "node scripts/deploy-gh-pages.js"
+    "site:build": "node scripts/workflow.js build --site blog",
+    "site:build:tech": "node scripts/workflow.js build --site tech",
+    "site:build:both": "node scripts/workflow.js build-both",
+    "site:deploy": "node scripts/workflow.js deploy-both",
+    "deploy:gh-pages": "node scripts/workflow.js deploy-both"
   },
   "engines": {
     "node": ">=18"

@@ -2,37 +2,24 @@ import { cp, mkdir, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { buildSiteArgs, getSiteProfile, getSiteProfiles } from './lib/site-profiles.js';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const DEFAULT_WORKTREE = path.join('/private/tmp', `${path.basename(ROOT)}-gh-pages-deploy`);
-const TARGETS = [
-  {
-    name: 'taipei',
-    buildDir: path.join(ROOT, 'blog'),
-    buildArgs: [
-      '--build-dir', 'blog',
-      '--site-title', 'Mozilla Taiwan 部落格',
-      '--site-subtitle', '最新部落格文章，提供各式 Mozilla 產品與專案相關訊息',
-      '--site-description', '提供 Mozilla 與 Firefox、Firefox OS 的五花八門最新訊息，包括 Firefox 開發、Firefox 最新功能、Firefox 使用教學、Firefox 錯誤迷思導正、Firefox 好用附加元件訊息，以及由 Mozilla Taiwan 官方舉辦的各式 Firefox 活動訊息、新聞、部落文分享',
-    ],
-  },
-  {
-    name: 'tech',
-    buildDir: path.join(ROOT, 'tech'),
-    buildArgs: [
-      '--build-dir', 'tech',
-      '--site-title', '謀智台客',
-      '--site-subtitle', 'Firefox OS 研發工程師團隊共筆資料庫，提供各式 Firefox OS 開發心得與甘苦談',
-      '--site-description', 'Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。',
-    ],
-  },
-];
 
 const args = parseArgs(process.argv.slice(2));
 const explicitWorktree = args.worktree || process.env.GH_PAGES_WORKTREE || '';
+const branchName = args.branch || 'gh-pages';
+const remoteName = args.remote || process.env.GH_PAGES_REMOTE || preferredRemote();
 let worktreePath = path.resolve(explicitWorktree || existingGhPagesWorktree() || DEFAULT_WORKTREE);
 const shouldPush = !args.noPush;
 const commitMessage = args.message || 'Publish static site';
+const TARGETS = (args.site ? [getSiteProfile(args.site)] : getSiteProfiles()).map((profile) => ({
+  ...profile,
+  name: profile.deployName,
+  buildDir: path.join(ROOT, profile.buildDir),
+  buildArgs: buildSiteArgs(profile),
+}));
 
 async function main() {
   buildTargets();
@@ -49,7 +36,7 @@ async function main() {
   }
 
   if (shouldPush) {
-    run('git', ['push', 'origin', 'gh-pages'], worktreePath);
+    run('git', ['push', remoteName, `${branchName}:${branchName}`], worktreePath);
   } else {
     console.log('Skipped push because --no-push was provided.');
   }
@@ -73,30 +60,33 @@ async function ensureWorktree() {
     throw new Error(`${worktreePath} exists but is not a git worktree. Remove it or pass --worktree <path>.`);
   }
 
-  const hasLocalBranch = commandOk('git', ['show-ref', '--verify', '--quiet', 'refs/heads/gh-pages'], ROOT);
-  if (!hasLocalBranch && commandOk('git', ['ls-remote', '--exit-code', '--heads', 'origin', 'gh-pages'], ROOT)) {
-    run('git', ['fetch', 'origin', 'gh-pages:gh-pages'], ROOT);
+  const hasLocalBranch = commandOk('git', ['show-ref', '--verify', '--quiet', `refs/heads/${branchName}`], ROOT);
+  if (!hasLocalBranch && commandOk('git', ['ls-remote', '--exit-code', '--heads', remoteName, branchName], ROOT)) {
+    run('git', ['fetch', remoteName, `${branchName}:${branchName}`], ROOT);
   }
 
-  if (commandOk('git', ['show-ref', '--verify', '--quiet', 'refs/heads/gh-pages'], ROOT)) {
-    run('git', ['worktree', 'add', worktreePath, 'gh-pages'], ROOT);
+  if (commandOk('git', ['show-ref', '--verify', '--quiet', `refs/heads/${branchName}`], ROOT)) {
+    run('git', ['worktree', 'add', worktreePath, branchName], ROOT);
   } else {
-    run('git', ['worktree', 'add', '--orphan', '-b', 'gh-pages', worktreePath], ROOT);
+    run('git', ['worktree', 'add', '--orphan', '-b', branchName, worktreePath], ROOT);
   }
 }
 
 async function syncBuild() {
   await mkdir(worktreePath, { recursive: true });
-  for (const entry of await readdir(worktreePath)) {
-    if (entry === '.git') {
-      continue;
+  if (!args.site) {
+    for (const entry of await readdir(worktreePath)) {
+      if (entry === '.git') {
+        continue;
+      }
+      await rm(path.join(worktreePath, entry), { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
     }
-    await rm(path.join(worktreePath, entry), { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
   }
 
   await writeRootIndex();
   for (const target of TARGETS) {
     const outputDir = path.join(worktreePath, target.name);
+    await rm(outputDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
     await mkdir(outputDir, { recursive: true });
     for (const entry of await readdir(target.buildDir)) {
       if (entry === '.DS_Store') {
@@ -109,9 +99,9 @@ async function syncBuild() {
 }
 
 async function writeRootIndex() {
-  const labels = TARGETS.map((target) => ({
-    name: target.name,
-    label: targetLabel(target),
+  const labels = getSiteProfiles().map((profile) => ({
+    name: profile.deployName,
+    label: targetLabel(profile),
   }));
   await writeFile(path.join(worktreePath, 'index.html'), `<!DOCTYPE html>
 <html lang="zh-TW">
@@ -181,7 +171,7 @@ function existingGhPagesWorktree() {
     const lines = record.split('\n');
     const worktree = lines.find((line) => line.startsWith('worktree '))?.slice('worktree '.length);
     const branch = lines.find((line) => line.startsWith('branch '))?.slice('branch '.length);
-    if (worktree && branch === 'refs/heads/gh-pages') {
+    if (worktree && branch === `refs/heads/${branchName}`) {
       return worktree;
     }
   }
@@ -198,17 +188,29 @@ function parseArgs(values) {
       parsed.worktree = values[++i];
     } else if (value === '--message') {
       parsed.message = values[++i];
+    } else if (value === '--site') {
+      parsed.site = values[++i];
+    } else if (value === '--remote') {
+      parsed.remote = values[++i];
+    } else if (value === '--branch') {
+      parsed.branch = values[++i];
     }
   }
   return parsed;
 }
 
 function targetLabel(target) {
-  const siteTitleIndex = target.buildArgs.indexOf('--site-title');
-  if (siteTitleIndex >= 0 && target.buildArgs[siteTitleIndex + 1]) {
-    return `${target.buildArgs[siteTitleIndex + 1]} 封存`;
-  }
-  return target.name;
+  return `${target.siteTitle || target.name} 封存`;
+}
+
+function preferredRemote() {
+  const remotes = run('git', ['remote'], ROOT, { capture: true })
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (remotes.includes('moztw')) return 'moztw';
+  if (remotes.includes('origin')) return 'origin';
+  return remotes[0] || 'origin';
 }
 
 main().catch((error) => {

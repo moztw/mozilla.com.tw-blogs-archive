@@ -4,6 +4,26 @@
 
 ## 常用指令
 
+新的 workflow 入口以明確階段與明確站台為主，不提供 `--all`：
+
+```bash
+node scripts/workflow.js archive --site blog
+node scripts/workflow.js parse --site blog
+node scripts/workflow.js localize --site blog
+node scripts/workflow.js build --site blog
+node scripts/workflow.js deploy --site blog
+```
+
+若要處理兩個站，使用明確命名的雙站命令：
+
+```bash
+node scripts/workflow.js localize-both
+node scripts/workflow.js build-both
+node scripts/workflow.js deploy-both
+```
+
+其中 `localize` 會讀取 `articles-json` 裡的 asset mapping，將 Markdown 內容中可對應到本地檔案的遠端資源 URL 改寫成 `../assets/...`。`build` 只負責把 localized content 編譯成靜態頁面。
+
 ```bash
 npm run site:build
 ```
@@ -16,11 +36,12 @@ npm run site:deploy
 
 執行完整發布流程：
 
-1. 重新執行 `npm run site:build`
+1. 重新 build 兩個站
 2. 建立或重用 `gh-pages` worktree
-3. 將 `blog/` 內容同步到 `gh-pages` branch 根目錄
-4. commit `gh-pages`
-5. push `origin gh-pages`
+3. 將 `blog/` 與 `tech/` 同步到 deploy worktree
+4. 產生 branch root 的 merged `sitemap.xml`
+5. commit `gh-pages`
+6. push 到指定 remote / branch
 
 可用參數：
 
@@ -28,6 +49,7 @@ npm run site:deploy
 npm run site:deploy -- --no-push
 npm run site:deploy -- --worktree /private/tmp/blog.mozilla.com.tw-gh-pages
 npm run site:deploy -- --message "Publish static site"
+npm run site:deploy -- --remote moztw --branch gh-pages
 ```
 
 ## 封存與補資源
