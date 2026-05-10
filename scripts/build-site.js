@@ -54,6 +54,7 @@ const TECH_CATEGORY_NAME_SLUG_MAP = {
 let ALL_POSTS = [];
 let ALL_POST_IDS = new Set();
 let ALL_AUTHOR_SLUGS = new Set();
+let LOCAL_UPLOAD_LOOKUP = new Map();
 
 async function main() {
   const posts = await readPosts();
@@ -69,6 +70,7 @@ async function main() {
   await cp(path.join(ARCHIVE_DIR, 'assets'), ASSETS_DIR, { recursive: true });
   await cp(EVENTS_ASSETS_DIR, path.join(ASSETS_DIR, 'events'), { recursive: true }).catch(() => {});
   await cp(THEME_ASSETS_DIR, path.join(ASSETS_DIR, 'theme'), { recursive: true });
+  LOCAL_UPLOAD_LOOKUP = await buildLocalUploadLookup();
   await writeFile(path.join(BUILD_DIR, 'styles.css'), stylesheet());
   await writeFile(path.join(BUILD_DIR, '.nojekyll'), '');
 
@@ -398,12 +400,12 @@ function markdownToHtml(markdown, rootPrefix, postIds, options = {}) {
 
 function inlineMarkdown(text, rootPrefix, postIds, options = {}) {
   let escaped = escapeHtml(text);
-  escaped = escaped.replace(/\[!\[([^\]]*)\]\(([^)]+)\)\]\(([^)]+)\)/g, (_match, alt, imageUrl, linkUrl) => {
+  escaped = escaped.replace(/\[!\[((?:[^\]\n]|\](?!\())*)\]\(([^)]+)\)\]\(([^)]+)\)/g, (_match, alt, imageUrl, linkUrl) => {
     const src = rewriteUrl(unescapeHtml(imageUrl.trim()), rootPrefix, postIds, options);
     const href = rewriteUrl(unescapeHtml(linkUrl.trim()), rootPrefix, postIds, options);
     return `<a href="${escapeAttr(href)}"><img src="${escapeAttr(src)}" alt="${escapeAttr(unescapeHtml(alt))}" loading="lazy"></a>`;
   });
-  escaped = escaped.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_match, alt, url) => {
+  escaped = escaped.replace(/!\[((?:[^\]\n]|\](?!\())*)\]\(([^)]+)\)/g, (_match, alt, url) => {
     const src = rewriteUrl(unescapeHtml(url.trim()), rootPrefix, postIds, options);
     return `<img src="${escapeAttr(src)}" alt="${escapeAttr(unescapeHtml(alt))}" loading="lazy">`;
   });
@@ -443,6 +445,11 @@ function rewriteUrl(url, rootPrefix, postIds, options = {}) {
   const mappedAsset = options.assetLookup?.get(normalizeAssetUrl(clean));
   if (mappedAsset) {
     return rewriteUrl(mappedAsset, rootPrefix, postIds);
+  }
+
+  const localUploadBySuffix = lookupLocalUploadPath(clean);
+  if (localUploadBySuffix) {
+    return rewriteUrl(localUploadBySuffix, rootPrefix, postIds);
   }
 
   const localUpload = inferExistingPostUploadPath(clean, options.postId);
@@ -859,7 +866,7 @@ function renderAuthorMeta(post, rootPrefix) {
       : '';
   const avatarSrc = post.authorMeta.localAvatarPath
     ? rewriteUrl(post.authorMeta.localAvatarPath, rootPrefix, ALL_POST_IDS)
-    : post.authorMeta.avatarUrl;
+    : rewriteUrl(post.authorMeta.avatarUrl, rootPrefix, ALL_POST_IDS);
   const innerHtml = `
       ${avatarSrc ? `<img src="${escapeAttr(avatarSrc)}" alt="" class="${escapeAttr(post.authorMeta.avatarClass)}" width="${post.authorMeta.width}" height="${post.authorMeta.height}"><!--
    -->` : ''}<div class="author-info">${escapeHtml(post.authorMeta.name)}</div><!--
@@ -1115,6 +1122,65 @@ function buildAssetLookup(images) {
     }
   }
   return lookup;
+}
+
+async function buildLocalUploadLookup() {
+  const lookup = new Map();
+  await indexLocalUploads(ASSETS_DIR, lookup);
+  return lookup;
+}
+
+async function indexLocalUploads(dir, lookup) {
+  const entries = await readdir(dir, { withFileTypes: true }).catch(() => []);
+  for (const entry of entries) {
+    const filePath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      await indexLocalUploads(filePath, lookup);
+      continue;
+    }
+
+    const relativePath = path.relative(ASSETS_DIR, filePath).split(path.sep).join('/');
+    const uploadIndex = relativePath.indexOf('/wp-content/uploads/');
+    if (uploadIndex < 0) {
+      continue;
+    }
+
+    const uploadPath = relativePath.slice(uploadIndex + 1);
+    const localPath = `../assets/${relativePath}`;
+    for (const key of uploadLookupKeys(uploadPath)) {
+      if (!lookup.has(key)) {
+        lookup.set(key, localPath);
+      }
+    }
+  }
+}
+
+function lookupLocalUploadPath(url) {
+  for (const key of uploadLookupKeys(url)) {
+    const localPath = LOCAL_UPLOAD_LOOKUP.get(key);
+    if (localPath) {
+      return localPath;
+    }
+  }
+  return '';
+}
+
+function uploadLookupKeys(value) {
+  const uploadPath = normalizedUploadPath(value);
+  if (!uploadPath) {
+    return [];
+  }
+  const decoded = safeDecode(uploadPath);
+  return [...new Set([uploadPath, decoded])];
+}
+
+function normalizedUploadPath(value) {
+  const normalized = normalizeAssetUrl(value);
+  const uploadIndex = normalized.indexOf('/wp-content/uploads/');
+  if (uploadIndex >= 0) {
+    return normalized.slice(uploadIndex + 1);
+  }
+  return normalized.startsWith('wp-content/uploads/') ? normalized : '';
 }
 
 function inferUploadsMarkdownPath(url, postId) {
