@@ -1693,11 +1693,11 @@ function parseArticle(html, originalUrl) {
     ])) ||
     parseDate(firstCapture(html, [/<meta\b[^>]*property=["']article:published_time["'][^>]*content=["']([^"']+)["'][^>]*>/i]));
 
-  const categories = collectRelText(articleHtml, 'category');
+  const categories = collectRelText(articleHtml, 'category', originalUrl);
   const fallbackCategories = categories.length ? [] : extractCategoriesFromClassNames(`${articleClass} ${bodyClass}`);
   const normalizedCategories = mergeCategoriesAndTags(
     categories.length ? categories : fallbackCategories,
-    collectRelText(articleHtml, 'tag')
+    collectRelText(articleHtml, 'tag', originalUrl)
   );
   const author =
     cleanText(firstCapture(articleHtml, [
@@ -2703,6 +2703,7 @@ function storedOriginalUrl(article) {
 
 function chooseBestLocalCandidate(article, candidates) {
   const currentParsed = parsedFromArticleRecord(article);
+  const force = hasFlag('force');
   let best = null;
 
   for (const candidate of candidates) {
@@ -2710,7 +2711,7 @@ function chooseBestLocalCandidate(article, candidates) {
     if (!validation.ok) {
       continue;
     }
-    if (compareParsedCandidateQuality(candidate.parsed, currentParsed) < 0) {
+    if (!force && compareParsedCandidateQuality(candidate.parsed, currentParsed) < 0) {
       continue;
     }
     if (!best || compareParsedCandidateQuality(candidate.parsed, best.parsed) > 0) {
@@ -3403,16 +3404,47 @@ function collectLinks(html, baseUrl) {
     .filter((link) => link.url);
 }
 
-function collectRelText(html, rel) {
+function collectRelText(html, rel, baseUrl = SITE_ORIGIN) {
   const values = [];
-  const pattern = new RegExp(`<a\\b[^>]*(?:rel=["'][^"']*\\b${rel}\\b[^"']*["']|href=["'][^"']*/${rel}/[^"']*["'])[^>]*>([\\s\\S]*?)<\\/a>`, 'gi');
-  for (const match of html.matchAll(pattern)) {
-    const value = cleanText(match[1]);
+  for (const match of html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)) {
+    if (!isRelLink(match[1], rel, baseUrl)) {
+      continue;
+    }
+    const value = cleanText(match[2]);
     if (value && !values.includes(value)) {
       values.push(value);
     }
   }
   return values;
+}
+
+function isRelLink(attrs, rel, baseUrl) {
+  const relValue = attr(attrs, 'rel');
+  if (new RegExp(`\\b${rel}\\b`, 'i').test(relValue)) {
+    return true;
+  }
+
+  const href = attr(attrs, 'href');
+  if (!href) {
+    return false;
+  }
+
+  try {
+    const parsed = new URL(normalizeUrl(href, baseUrl));
+    if (parsed.hostname !== SITE_HOST) {
+      return false;
+    }
+    if (rel === 'category') {
+      return parsed.pathname.includes('/posts/category/') || parsed.searchParams.has('cat');
+    }
+    if (rel === 'tag') {
+      return parsed.pathname.includes('/posts/tag/') || parsed.searchParams.has('tag');
+    }
+  } catch {
+    return false;
+  }
+
+  return false;
 }
 
 function compareSnapshots(a, b) {
@@ -3649,6 +3681,9 @@ function extractCategoriesFromClassNames(classNames) {
 
 function categoryNameFromSlug(slug) {
   const clean = String(slug || '').toLowerCase();
+  if (SITE_HOST === 'blog.mozilla.com.tw' && CATEGORY_MAP[clean]) {
+    return CATEGORY_MAP[clean];
+  }
   const techMap = {
     b2g: 'Firefox OS(B2G)',
     browser_id: 'Persona',
