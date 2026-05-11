@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs';
 import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -55,6 +56,7 @@ let ALL_POSTS = [];
 let ALL_POST_IDS = new Set();
 let ALL_AUTHOR_SLUGS = new Set();
 let LOCAL_UPLOAD_LOOKUP = new Map();
+let LOCAL_ASSET_CANONICAL = new Map();
 
 async function main() {
   const posts = await readPosts();
@@ -70,6 +72,7 @@ async function main() {
   await cp(path.join(ARCHIVE_DIR, 'assets'), ASSETS_DIR, { recursive: true });
   await cp(EVENTS_ASSETS_DIR, path.join(ASSETS_DIR, 'events'), { recursive: true }).catch(() => {});
   await cp(THEME_ASSETS_DIR, path.join(ASSETS_DIR, 'theme'), { recursive: true });
+  LOCAL_ASSET_CANONICAL = await canonicalizeDuplicateAssets(ASSETS_DIR);
   LOCAL_UPLOAD_LOOKUP = await buildLocalUploadLookup();
   await writeFile(path.join(BUILD_DIR, 'styles.css'), stylesheet());
   await writeFile(path.join(BUILD_DIR, '.nojekyll'), '');
@@ -439,7 +442,7 @@ function autoLinkLocalPostUrls(html, rootPrefix, postIds) {
 function rewriteUrl(url, rootPrefix, postIds, options = {}) {
   const clean = url.replace(/^<|>$/g, '');
   if (clean.startsWith('../assets/')) {
-    return `${rootPrefix}${clean.slice(3)}`;
+    return `${rootPrefix}${canonicalLocalAssetPath(clean.slice(3))}`;
   }
 
   const mappedAsset = options.assetLookup?.get(normalizeAssetUrl(clean));
@@ -500,6 +503,11 @@ function rewriteUrl(url, rootPrefix, postIds, options = {}) {
   }
 
   return clean;
+}
+
+function canonicalLocalAssetPath(localPath) {
+  const normalized = String(localPath || '').split(path.sep).join('/');
+  return LOCAL_ASSET_CANONICAL.get(normalized) || normalized;
 }
 
 function waybackUrl(url, timestamp) {
@@ -1129,7 +1137,7 @@ function sliceBalancedElement(html, startIndex, tagName) {
 function buildAssetLookup(images) {
   const lookup = new Map();
   for (const image of images) {
-    const localPath = image.markdown_path || '';
+    const localPath = canonicalMarkdownAssetPath(image.markdown_path || '');
     if (!localPath) {
       continue;
     }
@@ -1141,6 +1149,67 @@ function buildAssetLookup(images) {
     }
   }
   return lookup;
+}
+
+function canonicalMarkdownAssetPath(localPath) {
+  const value = String(localPath || '');
+  if (!value.startsWith('../assets/')) {
+    return value;
+  }
+  return `../${canonicalLocalAssetPath(value.slice(3))}`;
+}
+
+async function canonicalizeDuplicateAssets(assetsDir) {
+  const replacements = new Map();
+  let removed = 0;
+
+  for (const filePath of await listFiles(assetsDir)) {
+    const parsed = path.parse(filePath);
+    const duplicateMatch = parsed.name.match(/^(.*)-\d+$/);
+    if (!duplicateMatch) {
+      continue;
+    }
+
+    const canonicalPath = path.join(parsed.dir, `${duplicateMatch[1]}${parsed.ext}`);
+    if (!existsSync(canonicalPath)) {
+      continue;
+    }
+
+    const [candidateHash, canonicalHash] = await Promise.all([fileHash(filePath), fileHash(canonicalPath)]);
+    if (candidateHash !== canonicalHash) {
+      continue;
+    }
+
+    await rm(filePath);
+    removed += 1;
+    replacements.set(
+      path.relative(BUILD_DIR, filePath).split(path.sep).join('/'),
+      path.relative(BUILD_DIR, canonicalPath).split(path.sep).join('/')
+    );
+  }
+
+  if (removed) {
+    console.log(`Removed ${removed} duplicate asset copies from ${relative(ASSETS_DIR)}`);
+  }
+  return replacements;
+}
+
+async function listFiles(dir) {
+  const entries = await readdir(dir, { withFileTypes: true }).catch(() => []);
+  const files = [];
+  for (const entry of entries) {
+    const filePath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...await listFiles(filePath));
+    } else if (entry.isFile()) {
+      files.push(filePath);
+    }
+  }
+  return files;
+}
+
+async function fileHash(filePath) {
+  return createHash('sha256').update(await readFile(filePath)).digest('hex');
 }
 
 async function buildLocalUploadLookup() {
