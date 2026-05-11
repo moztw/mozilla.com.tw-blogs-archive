@@ -44,16 +44,16 @@
 <p>想知道這是怎麼做的嗎？不囉嗦，以下馬上開始介紹……</p>
 <h2>如何不用 Javascript 自訂上傳元件外觀</h2>
 <p>會用 Javascript 的人大多會先想到，只要把原本的上傳元件藏起來，</p>
-<p>再從自訂上傳鈕的 <br>			onclick 內呼叫上傳元件的 <br>			click 即可。</p>
+<p>再從自訂上傳鈕的<br>			onclick 內呼叫上傳元件的 <br>			click 即可。</p>
 <p>但這招在 IE10 實測時發現，選完圖後居然點下表單的送出鈕沒反應！</p>
 <p>（送出鈕同樣也是在自訂按鈕的 <br>			onclick  去呼叫 <br>			submit  ）</p>
 <p>仔細追蹤後發現此行為被當作不安全的動作而被擋下來了！</p>
-<p>因為 IE10 可能認為透過程式（而非人為的 <br>			click ）而編輯過的表單資料不安全。</p>
+<p>因為 IE10 可能認為透過程式（而非人為的<br>			click ）而編輯過的表單資料不安全。</p>
 <p>這部分的行為在網路上沒有找到正式說明文件，但根據 <a href="https://stackoverflow.com/questions/16676945/dynamically-submitting-a-file-upload-form-in-ie10-using-jquery/#answers-header">stackoverflow 上神人的實測結果</a>，</p>
-<p>上傳元件的 <br>			click 以及表單的 <br>			submit 兩者都是透過程式去驅動時就會被 IE 擋下來，</p>
+<p>上傳元件的<br>			click 以及表單的<br>			submit 兩者都是透過程式去驅動時就會被 IE 擋下來，</p>
 <p>只有透過程式驅動其中一種，或是使用原生表單元件功能的話就不會有此問題。</p>
 <p>哇～！那這下不剉賽了？難道真的要換回原生醜醜的表單元件嗎（掩面）。</p>
-<p>還好 <a href="https://www.w3.org/standards/">W3C 標準</a>中有一個很貼心的小設計……那就是<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"> 標籤</a>。</p>
+<p>還好 <a href="https://www.w3.org/standards/">W3C 標準</a>中有一個很貼心的小設計……那就是&quot; href=&quot;https://web.archive.org/web/20181017103730/https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label&quot; target=&quot;_blank&quot;&gt;  標籤。</p>
 <p>它的作用除了說明表單元件的用途以外，更可增加元件的點擊範圍！</p>
 <p>最常見的地方是搭配小不拉幾的 <br>			checkbox  或 <br>			radio  來使用，</p>
 <p>讓使用者在選取選項時不必艱難地對準小小的按鈕，可以直接點對應的 <br>			label  文字來選取。</p>
@@ -65,11 +65,11 @@
 <p>&lt;label class=&quot;choose-file&quot; id=&quot;upload&quot; for=&quot;id_image_large&quot;&gt;&lt;/label&gt;<br>&lt;input type=&quot;file&quot; id=&quot;id_image_large&quot; name=&quot;image_large&quot;&gt;</p>
 <p>					12</p>
 <p>						&lt;label class=&quot;choose-file&quot; id=&quot;upload&quot; for=&quot;id_image_large&quot;&gt;&lt;/label&gt;&lt;input type=&quot;file&quot; id=&quot;id_image_large&quot; name=&quot;image_large&quot;&gt;</p>
-<p>			label  的 <br>			for  屬性用來指定對應的表單元件 <br>			id ，如果不用 <br>			for  的話就必須把表單元件包在 <br>			label  標籤之內。</p>
+<p>			label  的 <br>			for  屬性用來指定對應的表單元件<br>			id ，如果不用 <br>			for  的話就必須把表單元件包在 <br>			label  標籤之內。</p>
 <p>以下是對應的 CSS：</p>
-<p>/<em> Hide file input </em>/<br>#id_image_large {<br>    display: none;<br>}<br>/<em> Custom upload button appearance</em>/<br>#upload {<br>  position: absolute;<br>  cursor: pointer;<br>  z-index: 1;<br>  left: 84px;<br>  top: 201px;<br>  display: block;<br>  width: 138px;<br>  height: 138px;<br>  background: url(https://firefox.club.tw/static/img/event/every-moment/upload/upload-pic.png);<br>}</p>
+<p>/<em> Hide file input </em>/<br>#id_image_large {<br> display: none;<br>}<br>/<em> Custom upload button appearance</em>/<br>#upload {<br> position: absolute;<br> cursor: pointer;<br> z-index: 1;<br> left: 84px;<br> top: 201px;<br> display: block;<br> width: 138px;<br> height: 138px;<br> background: url(https://firefox.club.tw/static/img/event/every-moment/upload/upload-pic.png);<br>}</p>
 <p>					12345678910111213141516</p>
-<p>						/<em> Hide file input </em>/#id_image_large {    display: none;}/<em> Custom upload button appearance</em>/#upload {  position: absolute;  cursor: pointer;  z-index: 1;  left: 84px;  top: 201px;  display: block;  width: 138px;  height: 138px;  background: url(https://firefox.club.tw/static/img/event/every-moment/upload/upload-pic.png);}</p>
+<p>						/<em> Hide file input </em>/#id_image_large { display: none;}/<em> Custom upload button appearance</em>/#upload { position: absolute; cursor: pointer; z-index: 1; left: 84px; top: 201px; display: block; width: 138px; height: 138px; background: url(https://firefox.club.tw/static/img/event/every-moment/upload/upload-pic.png);}</p>
 <p>很簡單對吧？</p>
 <h2>上傳前的照片預覽</h2>
 <p>照片上傳之前有一個重要的功能－預覽 ，</p>
@@ -78,10 +78,10 @@
 <p>這個功能如果可以在瀏覽器本機端就完成是最好不過了，</p>
 <p>省去上傳等待半天又來回修改換圖的麻煩。</p>
 <p>透過 HTML5 的 <br>			FileReader  API （註 1）要做照片預覽現在非常容易，</p>
-<p>只要使用 <br>			readDataAsURL  將檔案載入即可：</p>
-<p>function loadImage(e) {<br>    var image = new Image();<br>    image.src = e.target.result;<br>}<br>function previewImage() {<br>    var reader = new FileReader();<br>    var file = document.getElementById(&quot;id_image_large&quot;).files[0];<br>    reader.readAsDataURL(file);<br>    reader.onload = loadImage;<br>}<br>$(&#39;#id_image_large&#39;).change(previewImage);</p>
+<p>只要使用 &lt;span class=&quot;lang:default decode:true crayon-inline <a href="https://www.svenskkasinon.com/">casino online</a>  “&gt;readDataAsURL  將檔案載入即可：</p>
+<p>function loadImage(e) {<br>    var image = new Image();<br> image.src = e.target.result;<br>}<br>function previewImage() {<br> var reader = new FileReader();<br> var file = document.getElementById(&quot;id_image_large&quot;).files[0];<br> reader.readAsDataURL(file);<br> reader.onload = loadImage;<br>}<br>$(&quot;#id_image_large&quot;).change(previewImage);</p>
 <p>					1234567891011</p>
-<p>						function loadImage(e) {    var image = new Image();    image.src = e.target.result;}function previewImage() {    var reader = new FileReader();    var file = document.getElementById(&quot;id_image_large&quot;).files[0];    reader.readAsDataURL(file);    reader.onload = loadImage;}$(&#39;#id_image_large&#39;).change(previewImage);</p>
+<p>						function loadImage(e) {    var image = new Image(); image.src = e.target.result;}function previewImage() { var reader = new FileReader(); var file = document.getElementById(&quot;id_image_large&quot;).files[0]; reader.readAsDataURL(file); reader.onload = loadImage;}$(&quot;#id_image_large&quot;).change(previewImage);</p>
 <p>			readDataAsURL  的作用是將本機的圖片檔案讀進瀏覽器中，</p>
 <p>並將圖片資料轉換為 Base64 編碼的 Data URL（註 2）。</p>
 <p>只要在 <br>			file input  的 <br>			change  事件中讀進檔案轉換為 URL，</p>
@@ -104,11 +104,11 @@
 <p>簡單來說，假設圖片的寬高比例比外框寬，就會限制成橫向拖曳，</p>
 <p>因此我們就需要一個高度和圖片一樣，寬度比圖片長一些的 containment 元素。</p>
 <p>要如何算出它的寬度呢？如果上傳的照片寬度為 w，而外框寬度為 m，</p>
-<p>整張圖片的可拖曳寬度就是 <br>			2w - m ，以此作為 containment 元素的寬度，</p>
+<p>整張圖片的可拖曳寬度就是<br>			2w - m ，以此作為 containment 元素的寬度，</p>
 <p>就可以將拖曳範圍恰恰限縮在不會超界的範圍。</p>
-<p>$(&#39;#dragger&#39;).draggable({<br>    containment: &quot;#container&quot;,<br>    scroll: false,<br>    axis: horizontal ? &#39;x&#39; : &#39;y&#39;,<br>    stop: function() {<br>        // convert and save current position<br>    }<br>});</p>
+<p>$(&quot;#dragger&quot;).draggable({<br> containment: &quot;#container&quot;,<br> scroll: false,<br> axis: horizontal ? &quot;x&quot; : &quot;y&quot;,<br> stop: function() {<br> // convert and save current position<br> }<br>});</p>
 <p>					12345678</p>
-<p>						$(&#39;#dragger&#39;).draggable({    containment: &quot;#container&quot;,    scroll: false,    axis: horizontal ? &#39;x&#39; : &#39;y&#39;,    stop: function() {        // convert and save current position    }});</p>
+<p>						$(&quot;#dragger&quot;).draggable({ containment: &quot;#container&quot;, scroll: false, axis: horizontal ? &quot;x&quot; : &quot;y&quot;, stop: function() { // convert and save current position }});</p>
 <p>上面這段是用來啟動 Draggable 的程式，</p>
 <p>想知道如何把圖片縮放至適當比例請參考 <br>			resizeImage  函式，</p>
 <p>詳細計算元素寬高、比例、初始位置的邏輯詳見 <br>			initImagePosition  函式，</p>
@@ -123,16 +123,16 @@
 <p>再判斷八種不同的轉置角度來決定轉正的方式。</p>
 <p>在這個範例中引用的是 <a href="https://github.com/jseidelin/exif-js">exif.js</a>，<a href="https://www.nihilogic.dk/labs/exif/">作者 Nihilogic 的網站</a>有簡單的介紹和展示，</p>
 <p>運用這個函式庫就可以讀進圖片並解析其 EXIF 中的 Orientation 資訊：</p>
-<p>image.onload = function (e) {<br>    var bin = atob(e.target.src.split(&#39;,&#39;)[1]);<br>    var exif = EXIF.readFromBinaryFile(new BinaryFile(bin));<br>    var rotated = false;<br>    switch (exif.Orientation) {<br>        case 8:<br>            $(this).removeClass().addClass(&#39;rotate-90&#39;);<br>            rotated = true;<br>            break;<br>        case 3:<br>            $(this).removeClass().addClass(&#39;rotate180&#39;);<br>            break;<br>        case 6:<br>            $(this).removeClass().addClass(&#39;rotate90&#39;);<br>            rotated = true;<br>            break;<br>        default:<br>            break;<br>    }<br>}</p>
+<p>image.onload = function (e) {<br>    var bin = atob(e.target.src.split(&quot;,&quot;)[1]);<br>    var exif = EXIF.readFromBinaryFile(new BinaryFile(bin));<br>    var rotated = false;<br>    switch (exif.Orientation) {<br>        case 8:<br>            $(this).removeClass().addClass(&quot;rotate-90&quot;);<br>            rotated = true;<br>            break;<br>        case 3:<br>            $(this).removeClass().addClass(&quot;rotate180&quot;);<br>            break;<br>        case 6:<br>            $(this).removeClass().addClass(&quot;rotate90&quot;);<br>            rotated = true;<br>            break;<br>        default:<br>            break;<br>    }<br>}</p>
 <p>					1234567891011121314151617181920</p>
-<p>						image.onload = function (e) {    var bin = atob(e.target.src.split(&#39;,&#39;)[1]);    var exif = EXIF.readFromBinaryFile(new BinaryFile(bin));    var rotated = false;    switch (exif.Orientation) {        case 8:            $(this).removeClass().addClass(&#39;rotate-90&#39;);            rotated = true;            break;        case 3:            $(this).removeClass().addClass(&#39;rotate180&#39;);            break;        case 6:            $(this).removeClass().addClass(&#39;rotate90&#39;);            rotated = true;            break;        default:            break;    }}</p>
+<p>						image.onload = function (e) {    var bin = atob(e.target.src.split(&quot;,&quot;)[1]);    var exif = EXIF.readFromBinaryFile(new BinaryFile(bin));    var rotated = false;    switch (exif.Orientation) {        case 8:            $(this).removeClass().addClass(&quot;rotate-90&quot;);            rotated = true;            break;        case 3:            $(this).removeClass().addClass(&quot;rotate180&quot;);            break;        case 6:            $(this).removeClass().addClass(&quot;rotate90&quot;);            rotated = true;            break;        default:            break;    }}</p>
 <p>再依照不同的 Orientation 值做對應的圖片旋轉，</p>
 <p>Orientation 的值共有八種，這在 <a href="https://jpegclub.org/exif_orientation.html">JPEGclub</a> 上有詳細的解說，</p>
 <p>八種值其中四種包含了鏡像翻轉，在大部分的情況下不需考慮鏡像翻轉，</p>
 <p>沒有旋轉的情況也不需要處理，所以只要判斷 8、3、6三個值即可。</p>
 <h4>期待簡易的新標準</h4>
 <p>目前針對 HTML5 標準的草案中，</p>
-<p>有一個針對圖片旋轉作處理的 CSS 特性 <br>			image-orientation 。</p>
+<p>有一個針對圖片旋轉作處理的 CSS 特性<br>			image-orientation 。</p>
 <p>我在寫這篇文章的時候只有 Firefox 支援這個實驗性的特性，</p>
 <p>它的作用除了自行指定圖片的旋轉角度、翻轉方式以外，</p>
 <p>image-orientation: from-image;</p>
@@ -143,16 +143,16 @@
 <h2>One more thing…再加個假掰光暈動畫</h2>
 <p>最後教大家用 CSS 的影格動畫（keyframe animation）做一個超搶眼的光暈閃爍動畫，</p>
 <p>把它放在要強調的按鈕後面，讓網站的使用者想不看到你的按鈕都沒辦法：</p>
-<p>@keyframes spot {<br>  0% {<br>    opacity: 1;<br>  }<br>  50% {<br>    opacity: 0;<br>  }<br>  100% {<br>    opacity: 1;<br>  }<br>}</p>
-<p>.spotlight {<br>  background: radial-gradient(ellipse at center, #ffffff 0%, rgba(255, 255, 255, 0) 70%);<br>  animation: spot 1.5s linear infinite;<br>}</p>
+<p>@keyframes spot {<br> 0% {<br> opacity: 1;<br> }<br> 50% {<br> opacity: 0;<br> }<br> 100% {<br> opacity: 1;<br> }<br>}</p>
+<p>.spotlight {<br> background: radial-gradient(ellipse at center, #ffffff 0%, rgba(255, 255, 255, 0) 70%);<br> animation: spot 1.5s linear infinite;<br>}</p>
 <p>					12345678910111213141516</p>
-<p>						@keyframes spot {  0% {    opacity: 1;  }  50% {    opacity: 0;  }  100% {    opacity: 1;  }} .spotlight {  background: radial-gradient(ellipse at center, #ffffff 0%, rgba(255, 255, 255, 0) 70%);  animation: spot 1.5s linear infinite;}</p>
+<p>						@keyframes spot { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; }} .spotlight { background: radial-gradient(ellipse at center, #ffffff 0%, rgba(255, 255, 255, 0) 70%); animation: spot 1.5s linear infinite;}</p>
 <p>如果你對這段 CSS 的長相和它的作用感到疑惑，底下就稍微解釋一下運作原理：</p>
 <p>首先在 <br>			@keyframe  區塊中定義動畫進度百分之幾時需要漸變的屬性目標值，</p>
 <p>瀏覽器會根據時間動畫長度、時間函式（timing function）、</p>
 <p>以及目前動畫播放的進度，算出一個介於中間的值。</p>
 <p>以閃爍的動畫來說，只需要讓 <br>			opacity  屬性從 1 漸變成 0，再從 0 漸變成 1 即可，</p>
-<p>在範例中 <br>			.spotlight  選擇器中的 <br>			animation  屬性指定 <br>			spot  作為動畫的影格設定，</p>
+<p>在範例中<br>			.spotlight  選擇器中的 <br>			animation  屬性指定<br>			spot  作為動畫的影格設定，</p>
 <p>假設 20 秒作為動畫長度，時間函式設為線性（Linear），</p>
 <p>那麼在剛開始播放第 0 秒的時候，等於是 <br>			keyframe  的 0%，</p>
 <p>光暈的 <br>			opacity  會是 1，也就是完全不透明，</p>
@@ -178,7 +178,7 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/1/">1</a></li><li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+        <li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
       </ul>
     </section>
     <section class="widget">
@@ -190,7 +190,7 @@
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20141202130311id_/http://tech.mozilla.com.tw/posts/3738/%E7%80%8F%E8%A6%BD%E5%99%A8%E7%9A%84%E9%A0%90%E8%A8%AD-file-input-%E4%B8%8D%E5%A5%BD%E7%94%A8%EF%BC%81%E6%88%91%E6%83%B3%E8%87%AA%E8%A8%82%E7%BE%8E%E8%A7%80%E5%AF%A6%E7%94%A8%E7%9A%84%E7%85%A7">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20181017103730/https://tech.mozilla.com.tw/posts/3738/%E7%80%8F%E8%A6%BD%E5%99%A8%E7%9A%84%E9%A0%90%E8%A8%AD-file-input-%E4%B8%8D%E5%A5%BD%E7%94%A8%EF%BC%81%E6%88%91%E6%83%B3%E8%87%AA%E8%A8%82%E7%BE%8E%E8%A7%80%E5%AF%A6%E7%94%A8%E7%9A%84%E7%85%A7">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>

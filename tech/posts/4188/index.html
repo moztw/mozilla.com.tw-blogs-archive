@@ -26,7 +26,7 @@
         <div class="article-div">
           <article class="post single-post">
             <header class="entry-header">
-              <p class="entry-posted"><time datetime="2014-05-28" class="published"><span class="posted-month">5月</span><span class="posted-date">28</span><span class="posted-year">2014</span></time></p><div class="entry-meta"><div class="author-meta" data-author-id="87">
+              <p class="entry-posted"><time datetime="2014-05-28" class="published"><span class="posted-month">5月</span><span class="posted-date">28</span><span class="posted-year">2014</span></time></p><div class="entry-meta"><div class="author-meta">
     <a href="../../posts/author/klimozilla-com/">
       <img src="../../assets/4188/wp-content/uploads/avatars/87/21c1da25edac0cff763ac67cdba39d87-bpthumb.jpg" alt="" class="avatar user-87-avatar" width="24" height="24"><!--
    --><div class="author-info">seinlin</div><!--
@@ -42,11 +42,11 @@
 <p>						$ adb shell ls -l /system/b2g/-rw-r--r-- root     root       116116 2014-03-13 03:09 b2g-rw-r--r-- root     root         5296 2014-03-12 02:22 plugin-container-rw-r--r-- root     root        82380 2014-03-12 02:22 updater</p>
 <p>暫時先不管為什麼會變成 0644，把 /system 重新 mount 成 rw，把執行檔全部改成 0755，再手動執行一次，真的有畫面跑出來了。</p>
 <p><a href="../../assets/4188/wp-content/uploads/2014/04/2010-01-27-19-10-54.png"><img src="../../assets/4188/wp-content/uploads/2014/04/2010-01-27-19-10-54.png" alt="based_on_mozilla_tech" loading="lazy"></a></p>
-<p>雖然重新開機後也可以跑起來了，但每次 flash system.img 後，檔案屬性就會跑掉，那還真不方便。這時我突然想到曾經看到過一個 <a href="https://github.com/mozilla-b2g/gonk-misc/blob/master/init.rc.patch">patch</a>, 但在每次開機時 init.rc 都需要去修改檔案屬性好像也不是一個好方法。那就來弄清楚問題出在那裡吧！</p>
+<p>雖然重新開機後也可以跑起來了，但每次 flash system.img 後，檔案屬性就會跑掉，那還真不方便。這時我突然想到曾經看到過一個 <a href="https://github.com/mozilla-b2g/gonk-misc/blob/master/init.rc.patch">patch</a>, 但在每次開機時 init.rc 都需要去修改檔案屬性好像也不是一個好方法。</p>
 <p>--- a/rootdir/init.rc<br>+++ b/rootdir/init.rc<br>@@ -98,6 +98,9 @@ on fs<br>     # Mount /system rw first to give the filesystem a chance to save a checkpoint<br>     mount yaffs2 mtd@system /system<br>+    chmod 0755 /system/b2g/b2g<br>+    chmod 0755 /system/b2g/plugin-container<br>+    chmod 0755 /system/b2g/updater<br>     mount yaffs2 mtd@system /system ro remount</p>
 <p>					123456789</p>
 <p>						--- a/rootdir/init.rc+++ b/rootdir/init.rc@@ -98,6 +98,9 @@ on fs     # Mount /system rw first to give the filesystem a chance to save a checkpoint     mount yaffs2 mtd@system /system+    chmod 0755 /system/b2g/b2g+    chmod 0755 /system/b2g/plugin-container+    chmod 0755 /system/b2g/updater     mount yaffs2 mtd@system /system ro remount</p>
-<p>首先來檢查看看編出來的檔案，發現編出來的執行檔屬性都是正確的。</p>
+<p>那就來弄清楚問題出在那裡吧！首先來檢查看看編出來的檔案，發現編出來的執行檔屬性都是正確的。</p>
 <p>$ ls -l system/b2g/<br>-rwxr-xr-x root     root       116116 2014-03-13 03:09 b2g<br>-rwxr-xr-x root     root         5296 2014-03-12 02:22 plugin-container<br>-rwxr-xr-x root     root        82380 2014-03-12 02:22 updater</p>
 <p>					1234</p>
 <p>						$ ls -l system/b2g/-rwxr-xr-x root     root       116116 2014-03-13 03:09 b2g-rwxr-xr-x root     root         5296 2014-03-12 02:22 plugin-container-rwxr-xr-x root     root        82380 2014-03-12 02:22 updater</p>
@@ -72,7 +72,7 @@
 <p>static void fix_stat(const char <em>path, struct stat </em>s)<br>{<br>    uint64_t capabilities;<br>    path += source_path_len;<br>    fs_config(path, S_ISDIR(s-&gt;st_mode), &amp;s-&gt;st_uid, &amp;s-&gt;st_gid, &amp;s-&gt;st_mode, &amp;capabilities);<br>}</p>
 <p>					12345678</p>
 <p>						/<em> yaffs2/utils/mkyaffs2image.c </em>/ static void fix_stat(const char <em>path, struct stat </em>s){    uint64_t capabilities;    path += source_path_len;    fs_config(path, S_ISDIR(s-&gt;st_mode), &amp;s-&gt;st_uid, &amp;s-&gt;st_gid, &amp;s-&gt;st_mode, &amp;capabilities);}</p>
-<p>這也太巧合了吧，我 porting 的這隻手機使用的是 ubifs，都沒有使用前面提到的這兩個 tools。相較於 yaffs2，ubifs 支持壓縮及還有一些其他優點，通常在 nand flash 容量較少的手機上就有可能使會用 ubifs。當然 ubifs 也不是完全沒有缺點，如果想要了解 nand flash 上不同檔案系統的特性可以參考這份 <a href="../../assets/4188/003-c8243a968167.pdf">測試報告</a>。</p>
+<p>這也太巧合了吧，我 porting 的這隻手機使用的是 ubifs，都沒有使用前面提到的這兩個 tools。相較於 yaffs2，ubifs 支持壓縮, wear-leveling across whole MTD device及還有一些其他優點，通常在使用 nand flash 的手機上就有可能使會用 ubifs。當然 ubifs 也不是完全沒有缺點，如果想要了解 nand flash 上不同檔案系統的特性可以參考這份<a href="https://www.linux-mtd.infradead.org/doc/ubi.ppt">介紹</a> 及 <a href="../../assets/4188/003-c8243a968167.pdf">測試報告</a>。</p>
 <p>回到正題，這隻手機上的 ubifs 真的出了什麼問題嗎？檢查後發現 ubifs 使用的 mkfs.ubifs 沒有 include android_filesystem_config.h 當然也不會呼叫到 fs_config！</p>
 <p>看來問題就出在這裡，就來試試看吧。先到 ubifs_utils/mkfs.ubifs/mkfs.ubifs.c 裡新增 fix_stat，然後在 add_directory 及 write_data 這兩個 function 裡來使用 fix_stat。重編 mkfs.ubifs 後，再把 system.img 編出來，flash 到手機一試，結果一切正常，看來這才是正解。</p>
 <p>/<em> system/extras/ubifs_utils/mkfs.jffs2.c </em>/</p>
@@ -90,7 +90,7 @@
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
-        <li><a href="../../categories/1/">1</a></li><li><a href="../../categories/chrome-web-store/">Chrome Web Store</a></li><li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+        <li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS(B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
       </ul>
     </section>
     <section class="widget">
@@ -102,7 +102,7 @@
   </section>
     <section class="widget">
       <h3>封存說明</h3>
-      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20140608072002id_/http://tech.mozilla.com.tw/posts/4188/%e4%bd%bf%e7%94%a8%e4%b8%8d%e5%90%8c%e7%9a%84%e6%aa%94%e6%a1%88%e7%b3%bb%e7%b5%b1%ef%bc%8cb2g%e4%b8%bb%e7%a8%8b%e5%bc%8f%e6%b2%92%e8%b7%91%e8%b5%b7%e4%be%86%ef%bc%81">Wayback snapshot</a> 重建。</p>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20161102175608/https://tech.mozilla.com.tw/posts/4188/%e4%bd%bf%e7%94%a8%e4%b8%8d%e5%90%8c%e7%9a%84%e6%aa%94%e6%a1%88%e7%b3%bb%e7%b5%b1%ef%bc%8cb2g%e4%b8%bb%e7%a8%8b%e5%bc%8f%e6%b2%92%e8%b7%91%e8%b5%b7%e4%be%86%ef%bc%81">Wayback snapshot</a> 重建。</p>
       <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>
