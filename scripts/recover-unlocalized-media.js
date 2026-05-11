@@ -380,7 +380,9 @@ async function fetchMedia(entry, usedPaths) {
     try {
       const response = await fetchWithRetry(attempt.fetch_url, { accept: '*/*', userAgent: USER_AGENT });
       const contentType = response.headers.get('content-type') || '';
-      if (contentType.toLowerCase().startsWith('text/html')) throw new Error(`content_type_html:${contentType || 'missing'}`);
+      if (contentType.toLowerCase().startsWith('text/html') && !allowHtmlAsset(entry, attempt.url)) {
+        throw new Error(`content_type_html:${contentType || 'missing'}`);
+      }
       const buffer = Buffer.from(await response.arrayBuffer());
       if (!buffer.length) throw new Error('empty_asset');
       const assetPath = chooseAssetPath(entry, attempt.url, buffer, contentType, usedPaths);
@@ -403,6 +405,17 @@ async function fetchMedia(entry, usedPaths) {
     }
   }
   throw new Error(errors.join(' | '));
+}
+
+function allowHtmlAsset(entry, url) {
+  try {
+    const parsed = new URL(url);
+    return entry.siteHost === parsed.hostname &&
+      parsed.pathname.includes('/wp-content/uploads/') &&
+      /\.html?(?:$|[?#])/i.test(parsed.pathname);
+  } catch {
+    return false;
+  }
 }
 
 async function fetchAttempts(entry) {
