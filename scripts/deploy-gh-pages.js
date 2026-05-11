@@ -106,6 +106,7 @@ async function syncBuild() {
     }
   }
 
+  await writeGitAttributes();
   await writeRootIndex();
   if (!(await exists(SITEMAP_PATH))) {
     throw new Error(`Missing ${path.relative(ROOT, SITEMAP_PATH)}. Run node scripts/workflow.js build before deploy.`);
@@ -123,6 +124,13 @@ async function syncBuild() {
     }
   }
   await writeFile(path.join(worktreePath, '.nojekyll'), '');
+}
+
+async function writeGitAttributes() {
+  await writeFile(
+    path.join(worktreePath, '.gitattributes'),
+    '*.zip filter=lfs diff=lfs merge=lfs -text\n',
+  );
 }
 
 async function writeRootIndex() {
