@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fetchWithRetry } from './lib/fetch-utils.js';
 import { getSiteProfile, getSiteProfiles } from './lib/site-profiles.js';
-import { assetUrlVariants, snapshotFromWaybackUrl, waybackAssetUrl, waybackTimegateUrl } from './lib/url-utils.js';
+import { assetUrlVariants, snapshotFromWaybackUrl, waybackAssetUrl, waybackTimegateUrl, waybackUrl } from './lib/url-utils.js';
 import { isDefinitive404ErrorMessage, parseArgs, randomDelay, sleep, writeJson } from './lib/workflow-utils.js';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -20,6 +20,7 @@ const maxSnapshots = Number(args.maxSnapshots || args['max-snapshots'] || 3);
 const maxVariants = Number(args.maxVariants || args['max-variants'] || 2);
 const concurrency = Number(args.concurrency || 8);
 const directOriginal = !(args.noDirectOriginal || args['no-direct-original']);
+const wpContentSnapshots = loadWpContentSnapshots();
 
 main().catch((error) => {
   console.error(error.stack || error.message);
@@ -48,7 +49,7 @@ async function main() {
     return;
   }
 
-  const recoverable = dedupeRecoverable(entries).slice(0, limit);
+  const recoverable = filterRecoverable(dedupeRecoverable(entries)).slice(0, limit);
   const recoverReport = await recoverEntries(recoverable);
   for (const profile of profiles) {
     await writeJson(path.join(ROOT, profile.archiveDir, 'discovery', 'unlocalized-media-recover-report.json'), recoverReport);
@@ -270,6 +271,12 @@ function dedupeRecoverable(entries) {
   return [...byKey.values()];
 }
 
+function filterRecoverable(entries) {
+  if (!args.urlRegex && !args['url-regex']) return entries;
+  const pattern = new RegExp(String(args.urlRegex || args['url-regex']));
+  return entries.filter((entry) => pattern.test(entry.url));
+}
+
 async function recoverEntries(candidates) {
   const result = {
     generated_at: new Date().toISOString(),
@@ -410,21 +417,17 @@ async function fetchAttempts(entry) {
   }
   for (const url of variants) {
     if (entry.wayback_timestamp) {
-      attempts.push({
-        url,
-        timestamp: entry.wayback_timestamp,
-        fetch_url: waybackAssetUrl(entry.wayback_timestamp, url),
-        source: 'wayback-page-timestamp',
-      });
+      attempts.push(...waybackReplayAttempts(url, entry.wayback_timestamp, 'wayback-page-timestamp'));
     }
   }
+  for (const snapshot of await scanEarliestAssetSnapshots(entry.url)) {
+    attempts.push(...waybackReplayAttempts(snapshot.original, snapshot.timestamp, 'wayback-earliest-cdx'));
+  }
   for (const snapshot of await scanAssetSnapshots(entry.url, entry.wayback_timestamp)) {
-    attempts.push({
-      url: snapshot.original,
-      timestamp: snapshot.timestamp,
-      fetch_url: waybackAssetUrl(snapshot.timestamp, snapshot.original),
-      source: 'wayback-cdx',
-    });
+    attempts.push(...waybackReplayAttempts(snapshot.original, snapshot.timestamp, 'wayback-cdx'));
+  }
+  for (const snapshot of wpContentSnapshotCandidates(entry.url)) {
+    attempts.push(...waybackReplayAttempts(snapshot.original, snapshot.timestamp, 'wayback-wp-content'));
   }
   for (const url of variants) {
     attempts.push({ url, timestamp: '', fetch_url: waybackTimegateUrl(url), source: 'wayback-timegate' });
@@ -432,37 +435,140 @@ async function fetchAttempts(entry) {
   return dedupeBy(attempts, (item) => item.fetch_url);
 }
 
+function waybackReplayAttempts(url, timestamp, source) {
+  const modes = isLikelyImageUrl(url) ? ['im_', 'if_', 'id_'] : ['if_', 'id_'];
+  return modes.map((mode) => ({
+    url,
+    timestamp,
+    fetch_url: waybackUrl(timestamp, url, mode),
+    source: `${source}-${mode.replace(/_$/, '')}`,
+  }));
+}
+
+function loadWpContentSnapshots() {
+  const snapshots = new Map();
+  for (const filename of ['blog-wp-content.json', 'tech-wp-content.json']) {
+    const filePath = path.join(ROOT, filename);
+    if (!existsSync(filePath)) continue;
+    const rows = JSON.parse(readFileSync(filePath, 'utf8'));
+    const header = rows[0] || [];
+    const originalIndex = header.indexOf('original');
+    const timestampIndex = header.indexOf('timestamp');
+    const mimetypeIndex = header.indexOf('mimetype');
+    const lengthIndex = header.indexOf('length');
+    if (originalIndex < 0 || timestampIndex < 0) continue;
+    for (const row of rows.slice(1)) {
+      const original = row[originalIndex];
+      const timestamp = row[timestampIndex];
+      if (!original || !timestamp) continue;
+      for (const key of normalizedUrlKeys(original)) {
+        if (!snapshots.has(key)) snapshots.set(key, []);
+        snapshots.get(key).push({
+          original: normalizeOriginalProtocol(original),
+          timestamp,
+          mimetype: mimetypeIndex >= 0 ? row[mimetypeIndex] || '' : '',
+          length: lengthIndex >= 0 ? Number(row[lengthIndex] || 0) : 0,
+        });
+      }
+    }
+  }
+  for (const list of snapshots.values()) {
+    list.sort((a, b) => b.timestamp.localeCompare(a.timestamp) || b.length - a.length);
+  }
+  return snapshots;
+}
+
+function wpContentSnapshotCandidates(url) {
+  const candidates = [];
+  const seen = new Set();
+  for (const key of normalizedUrlKeys(url)) {
+    for (const snapshot of wpContentSnapshots.get(key) || []) {
+      const dedupeKey = `${snapshot.timestamp}\t${snapshot.original}`;
+      if (seen.has(dedupeKey)) continue;
+      seen.add(dedupeKey);
+      candidates.push(snapshot);
+    }
+  }
+  return candidates;
+}
+
+async function scanEarliestAssetSnapshots(url) {
+  return scanWaybackAssetSnapshots(url, {
+    sort: 'earliest',
+    limit: 1,
+    filterMedia: false,
+  });
+}
+
 async function scanAssetSnapshots(url, pageTimestamp) {
+  const rows = await scanWaybackAssetSnapshots(url, {
+    sort: 'near-page',
+    pageTimestamp,
+    limit: maxSnapshots,
+    filterMedia: true,
+  });
+  return rows;
+}
+
+async function scanWaybackAssetSnapshots(url, { sort, pageTimestamp = '', limit = 1, filterMedia = true } = {}) {
   let parsed;
   try {
     parsed = new URL(url);
   } catch {
     return [];
   }
-  const query = new URLSearchParams({
-    url: `${parsed.hostname}${parsed.pathname}${parsed.search}`,
-    output: 'json',
-    fl: 'timestamp,original,statuscode,mimetype,digest,length',
-  });
-  query.append('filter', 'statuscode:200');
-  query.append('collapse', 'digest');
-  try {
-    const response = await fetchWithRetry(`https://web.archive.org/cdx/search/cdx?${query}`, { accept: 'application/json', userAgent: USER_AGENT });
-    const rows = await response.json();
-    const header = rows[0] || [];
-    return rows.slice(1)
-      .map((row) => Object.fromEntries(header.map((key, index) => [key, row[index]])))
-      .filter((row) => /^image\//i.test(row.mimetype || '') || isLikelyMediaUrl(row.original || ''))
-      .map((row) => ({
+  const snapshots = [];
+  const seen = new Set();
+  for (const searchUrl of cdxSearchUrls(parsed)) {
+    try {
+      const query = new URLSearchParams({
+        url: searchUrl,
+        output: 'json',
+        fl: 'timestamp,original,statuscode,mimetype,digest,length',
+      });
+      query.append('filter', 'statuscode:200');
+      if (sort === 'earliest') query.append('limit', String(limit));
+      else query.append('collapse', 'digest');
+      const response = await fetchWithRetry(`https://web.archive.org/cdx/search/cdx?${query}`, {
+        accept: 'application/json',
+        userAgent: USER_AGENT,
+        timeoutMs: 30_000,
+        retryDelayMs: 1_000,
+      });
+      const rows = await response.json();
+      const header = rows[0] || [];
+      for (const row of rows.slice(1).map((item) => Object.fromEntries(header.map((key, index) => [key, item[index]])))) {
+        if (filterMedia && !/^image\//i.test(row.mimetype || '') && !isLikelyMediaUrl(row.original || '')) continue;
+        const key = `${row.timestamp}\t${row.original}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        snapshots.push({
         timestamp: row.timestamp,
         original: String(row.original || '').startsWith('http') ? row.original : `https://${row.original}`,
+        mimetype: row.mimetype || '',
         length: Number(row.length || 0),
-      }))
-      .sort((a, b) => snapshotDistance(a.timestamp, pageTimestamp) - snapshotDistance(b.timestamp, pageTimestamp) || b.length - a.length)
-      .slice(0, maxSnapshots);
-  } catch {
-    return [];
+        });
+      }
+      if (sort === 'earliest' && snapshots.length >= limit) break;
+    } catch {
+      continue;
+    }
   }
+  const sorted = sort === 'near-page'
+    ? snapshots.sort((a, b) => snapshotDistance(a.timestamp, pageTimestamp) - snapshotDistance(b.timestamp, pageTimestamp) || b.length - a.length)
+    : snapshots.sort((a, b) => a.timestamp.localeCompare(b.timestamp) || b.length - a.length);
+  return sorted.slice(0, limit);
+}
+
+function cdxSearchUrls(parsed) {
+  const pathAndSearch = `${parsed.pathname}${parsed.search}`;
+  const urls = [
+    parsed.href,
+    `http://${parsed.hostname}${pathAndSearch}`,
+    `http://${parsed.hostname}:80${pathAndSearch}`,
+    `https://${parsed.hostname}${pathAndSearch}`,
+  ];
+  return dedupeBy(urls, (item) => item);
 }
 
 function mediaUrlRecoveryCandidates(url) {
@@ -526,6 +632,15 @@ function isLikelyMediaUrl(url) {
   try {
     const parsed = new URL(url);
     return /\.(?:jpe?g|png|gif|webp|svg|bmp|ico)(?:$|[?#])/i.test(parsed.pathname) || parsed.pathname.includes('/wp-content/uploads/');
+  } catch {
+    return false;
+  }
+}
+
+function isLikelyImageUrl(url) {
+  try {
+    const parsed = new URL(url);
+    return /\.(?:jpe?g|png|gif|webp|svg|bmp|ico)(?:$|[?#])/i.test(parsed.pathname);
   } catch {
     return false;
   }
@@ -595,6 +710,31 @@ function urlHost(url) {
 
 function urlPath(url) {
   try { return new URL(url).pathname; } catch { return ''; }
+}
+
+function normalizedUrlKeys(url) {
+  const keys = new Set();
+  try {
+    const parsed = new URL(normalizeOriginalProtocol(url));
+    parsed.hash = '';
+    if (parsed.pathname.length > 1) parsed.pathname = parsed.pathname.replace(/\/+$/, '');
+    for (const protocol of ['https:', 'http:']) {
+      const clone = new URL(parsed.href);
+      clone.protocol = protocol;
+      keys.add(clone.href);
+      const noSearch = new URL(clone.href);
+      noSearch.search = '';
+      keys.add(noSearch.href);
+    }
+  } catch {
+    keys.add(String(url || '').replace(/^http:\/\//i, 'https://'));
+  }
+  return [...keys];
+}
+
+function normalizeOriginalProtocol(url) {
+  if (/^https?:\/\//i.test(String(url || ''))) return String(url).replace(/^http:\/\//i, 'https://');
+  return `https://${String(url || '').replace(/^\/+/, '')}`;
 }
 
 function safeDecode(value) {
