@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { setDefaultResultOrder } from 'node:dns';
+import { writeAssetFile } from './lib/asset-file-utils.js';
 import { fetchWithRetry as sharedFetchWithRetry } from './lib/fetch-utils.js';
 import { waybackAssetUrl as sharedWaybackAssetUrl } from './lib/url-utils.js';
 import { isDefinitive404ErrorMessage, parseArgs as sharedParseArgs, sleep } from './lib/workflow-utils.js';
@@ -220,7 +221,7 @@ async function archiveAsset(slug, asset, index, pageTimestamp, usedPaths) {
       const assetPath = chooseAssetPath(asset.url, index, result.buffer, result.contentType, usedPaths);
       usedPaths.add(assetPath);
       await mkdir(path.dirname(assetPath), { recursive: true });
-      await writeFile(assetPath, result.buffer);
+      await writeAssetFile(assetPath, result.buffer);
       return {
         ...asset,
         archive_path: path.relative(EVENTS_DIR, assetPath),
@@ -577,9 +578,7 @@ function chooseAssetPath(url, index, buffer, contentType, usedPaths) {
   const preferred = preferredRelativeAssetPath(url);
   if (preferred) {
     const preferredPath = path.join(ASSETS_DIR, preferred);
-    if (!usedPaths.has(preferredPath)) {
-      return preferredPath;
-    }
+    return preferredPath;
   }
 
   const parsed = new URL(url);

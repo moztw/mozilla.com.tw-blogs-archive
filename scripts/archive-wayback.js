@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { setDefaultResultOrder } from 'node:dns';
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { writeAssetFile } from './lib/asset-file-utils.js';
 import { fetchWithRetry as sharedFetchWithRetry } from './lib/fetch-utils.js';
 import { normalizeOriginalUrl as sharedNormalizeOriginalUrl, normalizeUrl as sharedNormalizeUrl, waybackAssetUrl as sharedWaybackAssetUrl, waybackUrl as sharedWaybackUrl } from './lib/url-utils.js';
 import { hasFlag as sharedHasFlag, isDefinitive404ErrorMessage, parseArgs as sharedParseArgs, randomDelay as sharedRandomDelay, relativePath, sleep, writeJson as sharedWriteJson } from './lib/workflow-utils.js';
@@ -1924,7 +1925,7 @@ async function archiveAssets(postId, images, timestamp) {
         const assetPath = chooseAssetPath(postId, image.url, index, buffer, contentType, usedPaths);
         usedPaths.add(assetPath);
         await mkdir(path.dirname(assetPath), { recursive: true });
-        await writeFile(assetPath, buffer);
+        await writeAssetFile(assetPath, buffer);
 
         archivedImages[index] = {
           ...image,
@@ -2503,7 +2504,7 @@ async function fetchDirectExternalMedia(article, item, usedPaths) {
   const assetPath = chooseAssetPath(article.post_id, item.url, item.index ?? usedPaths.size, buffer, contentType, usedPaths);
   usedPaths.add(assetPath);
   await mkdir(path.dirname(assetPath), { recursive: true });
-  await writeFile(assetPath, buffer);
+  await writeAssetFile(assetPath, buffer);
   return {
     ...item,
     url: item.url,
@@ -2598,7 +2599,7 @@ async function fetchFallbackVariant(article, candidate, usedPaths) {
       const assetPath = chooseAssetPath(article.post_id, candidate.fallback_url, usedPaths.size, buffer, contentType, usedPaths);
       usedPaths.add(assetPath);
       await mkdir(path.dirname(assetPath), { recursive: true });
-      await writeFile(assetPath, buffer);
+      await writeAssetFile(assetPath, buffer);
       return {
         url: candidate.url,
         fallback_url: candidate.fallback_url,
@@ -2941,7 +2942,7 @@ async function recoverOneMedia(article, item, usedPaths) {
       const assetPath = chooseAssetPath(article.post_id, attempt.url, item.index, buffer, contentType, usedPaths);
       usedPaths.add(assetPath);
       await mkdir(path.dirname(assetPath), { recursive: true });
-      await writeFile(assetPath, buffer);
+      await writeAssetFile(assetPath, buffer);
       return {
         ...item,
         url: item.url,
@@ -3314,14 +3315,12 @@ function chooseAssetPath(postId, imageUrl, index, buffer, contentType, usedPaths
   if (uploadsIndex >= 0) {
     const relativePath = decodeURIComponent(parsed.pathname.slice(uploadsIndex + 1));
     const assetPath = path.join(ASSETS_DIR, String(postId), relativePath);
-    if (!usedPaths.has(assetPath)) {
-      return assetPath;
-    }
+    return assetPath;
   }
 
   const hash = createHash('sha256').update(buffer).digest('hex').slice(0, 12);
   const ext = extensionFromUrlOrType(parsed.pathname, contentType);
-  return path.join(ASSETS_DIR, String(postId), `${String(index + 1).padStart(3, '0')}-${hash}${ext}`);
+  return path.join(ASSETS_DIR, String(postId), `${hash}${ext}`);
 }
 
 async function writeArticle(article) {

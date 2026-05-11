@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { setDefaultResultOrder } from 'node:dns';
+import { writeAssetFile } from './lib/asset-file-utils.js';
 import { fetchArchivedHtml as sharedFetchArchivedHtml, fetchJson as sharedFetchJson, fetchWithRetry as sharedFetchWithRetry } from './lib/fetch-utils.js';
 import { assetUrlVariants as sharedAssetUrlVariants, timestampFromWaybackUrl as sharedTimestampFromWaybackUrl, waybackAssetUrl as sharedWaybackAssetUrl, waybackUrl as sharedWaybackUrl } from './lib/url-utils.js';
 import { isDefinitive404ErrorMessage, parseArgs as sharedParseArgs, relativePath, sleep, writeJson as sharedWriteJson } from './lib/workflow-utils.js';
@@ -406,7 +407,7 @@ async function archiveAssets(slug, images, timestamp, existingAssetIndex) {
         const assetPath = chooseAssetPath(slug, image.url, index, buffer, contentType, usedPaths);
         usedPaths.add(assetPath);
         await mkdir(path.dirname(assetPath), { recursive: true });
-        await writeFile(assetPath, buffer);
+        await writeAssetFile(assetPath, buffer);
 
         const archivedImage = {
           ...image,
@@ -635,18 +636,18 @@ function chooseAssetPath(slug, imageUrl, index, buffer, contentType, usedPaths) 
   if (uploadsIndex >= 0) {
     const relativePath = decodeURIComponent(parsed.pathname.slice(uploadsIndex + 1));
     const assetPath = path.join(ASSETS_DIR, slug, relativePath);
-    if (!usedPaths.has(assetPath)) return assetPath;
+    return assetPath;
   }
 
   if (parsed.hostname.includes('gravatar.com') && parsed.pathname.startsWith('/avatar/')) {
     const ext = extensionFromUrlOrType(parsed.pathname, contentType) || '.jpg';
     const assetPath = path.join(ASSETS_DIR, slug, 'gravatar', `${parsed.pathname.split('/').pop() || 'avatar'}${ext}`);
-    if (!usedPaths.has(assetPath)) return assetPath;
+    return assetPath;
   }
 
   const hash = createHash('sha256').update(buffer).digest('hex').slice(0, 12);
   const ext = extensionFromUrlOrType(parsed.pathname, contentType);
-  return path.join(ASSETS_DIR, slug, `${String(index + 1).padStart(3, '0')}-${hash}${ext}`);
+  return path.join(ASSETS_DIR, slug, `${hash}${ext}`);
 }
 
 function extensionFromUrlOrType(pathname, contentType) {

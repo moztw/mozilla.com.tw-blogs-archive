@@ -4,6 +4,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { writeAssetFile } from './lib/asset-file-utils.js';
 import { fetchWithRetry } from './lib/fetch-utils.js';
 import { getSiteProfile, getSiteProfiles } from './lib/site-profiles.js';
 import { assetUrlVariants, snapshotFromWaybackUrl, waybackAssetUrl, waybackTimegateUrl, waybackUrl } from './lib/url-utils.js';
@@ -388,7 +389,7 @@ async function fetchMedia(entry, usedPaths) {
       const assetPath = chooseAssetPath(entry, attempt.url, buffer, contentType, usedPaths);
       usedPaths.add(assetPath);
       await mkdir(path.dirname(assetPath), { recursive: true });
-      await writeFile(assetPath, buffer);
+      await writeAssetFile(assetPath, buffer);
       return {
         url: entry.url,
         recovered_url: attempt.url,
@@ -608,13 +609,7 @@ function chooseAssetPath(entry, url, buffer, contentType, usedPaths) {
   const localBase = entry.localBase ? path.join(entry.assetsDir, entry.localBase) : entry.assetsDir;
   const basePath = path.join(localBase, pathname || `media${extensionFromUrlOrType(parsed.pathname, contentType)}`);
   const ext = path.extname(basePath) || extensionFromUrlOrType(parsed.pathname, contentType);
-  let candidate = ext && path.extname(basePath) !== ext ? `${basePath}${ext}` : basePath;
-  let index = 1;
-  while (usedPaths.has(candidate) || existsSync(candidate)) {
-    candidate = `${basePath.replace(new RegExp(`${escapeRegExp(path.extname(basePath))}$`), '')}-${index}${path.extname(basePath) || ext}`;
-    index += 1;
-  }
-  return candidate;
+  return ext && path.extname(basePath) !== ext ? `${basePath}${ext}` : basePath;
 }
 
 function markdownPath(entry, assetPath) {
@@ -784,8 +779,4 @@ function formatScanSummary(report) {
   }
   lines.push(`recoverable candidates=${report.totals.recoverable_candidates}`);
   return lines.join('\n');
-}
-
-function escapeRegExp(value) {
-  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

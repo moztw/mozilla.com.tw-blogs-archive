@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { setDefaultResultOrder } from 'node:dns';
+import { writeAssetFile } from './lib/asset-file-utils.js';
 import { fetchWithRetry as sharedFetchWithRetry } from './lib/fetch-utils.js';
 import { waybackAssetUrl as sharedWaybackAssetUrl } from './lib/url-utils.js';
 import { isDefinitive404ErrorMessage, sleep } from './lib/workflow-utils.js';
@@ -179,7 +180,7 @@ async function recoverWpContentAsset(event, error, inventory, byUrl) {
       const usedPaths = new Set((event.assets || []).filter((asset) => asset.archive_path).map((asset) => path.join(EVENTS_DIR, asset.archive_path)));
       const assetPath = chooseAssetPath(error.url, existing?.archive_path, buffer, contentType, usedPaths);
       await mkdir(path.dirname(assetPath), { recursive: true });
-      await writeFile(assetPath, buffer);
+      await writeAssetFile(assetPath, buffer);
 
       return {
         archive_path: path.relative(EVENTS_DIR, assetPath),
@@ -205,9 +206,7 @@ function chooseAssetPath(url, existingArchivePath, buffer, contentType, usedPath
   const preferred = preferredRelativeAssetPath(url);
   if (preferred) {
     const preferredPath = path.join(ASSETS_DIR, preferred);
-    if (!usedPaths.has(preferredPath)) {
-      return preferredPath;
-    }
+    return preferredPath;
   }
 
   const parsed = new URL(url);
