@@ -180,6 +180,8 @@ Responsibilities:
   output trees for both sites.
 - Allow direct sitemap refresh via `build-sitemaps.js` without rebuilding.
 - Keep defensive URL rewriting only as a fallback.
+- Sync the completed build output and existing `site-build/sitemap.xml` to the
+  `gh-pages` worktree.
 
 Non-responsibilities:
 
@@ -189,20 +191,19 @@ Non-responsibilities:
 
 ### deploy
 
-Purpose: publish build output.
+Purpose: publish the prepared `gh-pages` worktree.
 
 Responsibilities:
 
-- Sync build output to a `gh-pages` worktree.
-- Copy existing `site-build/sitemap.xml` to the branch root.
-- Generate the root index.
 - Commit and push to the configured remote and branch.
+- Remove the default temporary deploy worktree after a successful push, unless
+  an explicit worktree was provided or `--keep-worktree` is used.
 - Support explicit single-site deploy and explicit `deploy-both`.
 
 Non-responsibilities:
 
 - Do not archive, parse, or repair content.
-- Do not build static pages or generate sitemap.
+- Do not build static pages, generate sitemap, or sync build output.
 
 ## Refactor Targets
 

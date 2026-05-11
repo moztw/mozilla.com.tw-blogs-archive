@@ -55,6 +55,7 @@ function runBoth(bothCommand) {
   if (bothCommand === 'build-both') {
     for (const profile of profiles) runBuildSite(profile);
     runSitemap();
+    runSyncBuild({ site: '', extraArgs: syncArgs() });
     return;
   }
 
@@ -113,6 +114,7 @@ function runLocalize(profile) {
 function runBuild(profile) {
   runBuildSite(profile);
   runSitemap();
+  runSyncBuild({ site: profile.siteKey, extraArgs: syncArgs() });
 }
 
 function runBuildSite(profile) {
@@ -124,7 +126,15 @@ function runSitemap() {
 }
 
 function runDeploy({ site, extraArgs }) {
-  const commandArgs = ['scripts/deploy-gh-pages.js', ...extraArgs, ...passThroughArgs()];
+  const commandArgs = ['scripts/deploy-gh-pages.js', '--publish-only', ...extraArgs, ...passThroughArgs()];
+  if (site) {
+    commandArgs.push('--site', site);
+  }
+  runNode(commandArgs);
+}
+
+function runSyncBuild({ site, extraArgs }) {
+  const commandArgs = ['scripts/deploy-gh-pages.js', '--sync-only', ...extraArgs];
   if (site) {
     commandArgs.push('--site', site);
   }
@@ -151,6 +161,17 @@ function deployArgs() {
     }
   }
   if (args.noPush) values.push('--no-push');
+  if (args.keepWorktree) values.push('--keep-worktree');
+  return values;
+}
+
+function syncArgs() {
+  const values = [];
+  for (const key of ['worktree', 'remote', 'branch']) {
+    if (args[key]) {
+      values.push(`--${key}`, args[key]);
+    }
+  }
   return values;
 }
 
@@ -185,6 +206,8 @@ function parseArgs(values) {
       parsed.branch = values[++i];
     } else if (value === '--no-push') {
       parsed.noPush = true;
+    } else if (value === '--keep-worktree') {
+      parsed.keepWorktree = true;
     } else if (value === '--all') {
       parsed.all = true;
     } else if (value === '--help' || value === '-h') {
@@ -219,5 +242,7 @@ Two-site commands:
 Rules:
   --site is required for single-site stages.
   --all is not supported. Use an explicit *-both command.
+  Build writes build output to the gh-pages worktree.
+  Deploy commits, pushes, and cleans the default temporary worktree. Add --keep-worktree to inspect it.
 `);
 }

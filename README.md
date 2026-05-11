@@ -38,8 +38,8 @@ node scripts/workflow.js deploy-both
 - `archive`：抓 Wayback 原始 HTML 與來源清單；不產生 canonical JSON / Markdown。
 - `parse`：只從本地 raw HTML 產生 canonical JSON / Markdown / metadata；blog events 與 tech authors 也在這個階段重建。
 - `localize`：讀取 parsed content 與 asset mapping，將可對應到本地檔案的遠端資源 URL 改寫成 `../assets/...`。
-- `build`：只把 localized content 編譯成靜態頁面，遠端資源檢查只作為防禦性 fallback；每次 build 最後產生合併的 `site-build/sitemap.xml`。
-- `deploy`：只同步 build output 與既有 `site-build/sitemap.xml` 到 `gh-pages` worktree、產生 root index、commit/push。
+- `build`：把 localized content 編譯成靜態頁面，遠端資源檢查只作為防禦性 fallback；每次 build 最後產生合併的 `site-build/sitemap.xml`，並同步 build output 到 `gh-pages` worktree。
+- `deploy`：不重新 build、不重新同步內容；只負責 commit/push `gh-pages` worktree，並清理預設臨時 worktree。
 
 站台設定集中於 `scripts/lib/site-profiles.js`。deploy 目標為 `moztw.org/taipei/` 與 `moztw.org/tech/`。
 
@@ -55,25 +55,30 @@ npm run site:build
 npm run site:deploy
 ```
 
-同步已完成的 build output 到 `gh-pages` worktree。發布前應先執行：
+發布已由 build 寫入的 `gh-pages` worktree。發布前應先執行：
 
 ```bash
 node scripts/workflow.js build-both
 ```
 
-deploy 階段只做：
+`build` 階段會：
 
 1. 建立或重用 `gh-pages` worktree
 2. 將 `blog/` 與 `tech/` 同步到 deploy worktree 的 `taipei/` 與 `tech/`
 3. 將 `site-build/sitemap.xml` 複製到 branch root
 4. 產生 branch root 的 index
-5. commit `gh-pages`
-6. push 到指定 remote / branch
+
+`deploy` 階段只做：
+
+1. commit `gh-pages`
+2. push 到指定 remote / branch
+3. 若 worktree 是預設臨時目錄，成功 push 後移除並 prune
 
 可用參數：
 
 ```bash
 npm run site:deploy -- --no-push
+npm run site:deploy -- --keep-worktree
 npm run site:deploy -- --worktree /private/tmp/blog.mozilla.com.tw-gh-pages
 npm run site:deploy -- --message "Publish static site"
 npm run site:deploy -- --remote moztw --branch gh-pages
@@ -176,7 +181,7 @@ node scripts/archive-wayback.js media-report --site-host tech.mozilla.com.tw --a
 /private/tmp/blog.mozilla.com.tw-gh-pages-deploy
 ```
 
-也可用 `--worktree` 或 `GH_PAGES_WORKTREE` 指定其他位置。
+也可用 `--worktree` 或 `GH_PAGES_WORKTREE` 指定其他位置。build 會把輸出寫入該 worktree；deploy 只會自動清理預設臨時 worktree，指定位置會保留。需要檢查預設臨時 worktree 時可加 `--keep-worktree`。
 
 ## 授權
 

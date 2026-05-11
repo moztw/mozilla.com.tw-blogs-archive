@@ -14,6 +14,8 @@ const branchName = args.branch || 'gh-pages';
 const remoteName = args.remote || process.env.GH_PAGES_REMOTE || preferredRemote();
 let worktreePath = path.resolve(explicitWorktree || existingGhPagesWorktree() || DEFAULT_WORKTREE);
 const shouldPush = !args.noPush;
+const shouldSync = !args.publishOnly;
+const shouldPublish = !args.syncOnly;
 const commitMessage = args.message || 'Publish static site';
 const TARGETS = (args.site ? [getSiteProfile(args.site)] : getSiteProfiles()).map((profile) => ({
   ...profile,
@@ -23,10 +25,23 @@ const TARGETS = (args.site ? [getSiteProfile(args.site)] : getSiteProfiles()).ma
 }));
 
 async function main() {
-  await ensureWorktree();
-  await syncBuild();
-  run('git', ['add', '.'], worktreePath);
+  if (args.syncOnly && args.publishOnly) {
+    throw new Error('Use only one of --sync-only or --publish-only.');
+  }
 
+  if (shouldSync) {
+    await ensureWorktree();
+    await syncBuild();
+  } else {
+    await requireWorktree();
+  }
+
+  if (!shouldPublish) {
+    console.log(`Synced build output to gh-pages worktree: ${worktreePath}`);
+    return;
+  }
+
+  run('git', ['add', '.'], worktreePath);
   const status = run('git', ['status', '--porcelain'], worktreePath, { capture: true });
   if (!status.trim()) {
     console.log('gh-pages worktree has no changes to commit.');
@@ -39,6 +54,8 @@ async function main() {
   } else {
     console.log('Skipped push because --no-push was provided.');
   }
+
+  cleanTemporaryWorktree();
 }
 
 async function ensureWorktree() {
@@ -59,6 +76,23 @@ async function ensureWorktree() {
   } else {
     run('git', ['worktree', 'add', '--orphan', '-b', branchName, worktreePath], ROOT);
   }
+}
+
+async function requireWorktree() {
+  if (await isGitWorktree(worktreePath)) {
+    return;
+  }
+  throw new Error(`Missing gh-pages worktree at ${worktreePath}. Run node scripts/workflow.js build-both first.`);
+}
+
+function cleanTemporaryWorktree() {
+  const isDefaultTemporaryWorktree = path.resolve(worktreePath) === path.resolve(DEFAULT_WORKTREE);
+  if (args.keepWorktree || explicitWorktree || !shouldPush || !isDefaultTemporaryWorktree) {
+    return;
+  }
+  run('git', ['worktree', 'remove', worktreePath], ROOT);
+  run('git', ['worktree', 'prune'], ROOT);
+  console.log(`Removed temporary gh-pages worktree: ${worktreePath}`);
 }
 
 async function syncBuild() {
@@ -177,6 +211,12 @@ function parseArgs(values) {
     const value = values[i];
     if (value === '--no-push') {
       parsed.noPush = true;
+    } else if (value === '--sync-only') {
+      parsed.syncOnly = true;
+    } else if (value === '--publish-only') {
+      parsed.publishOnly = true;
+    } else if (value === '--keep-worktree') {
+      parsed.keepWorktree = true;
     } else if (value === '--worktree') {
       parsed.worktree = values[++i];
     } else if (value === '--message') {
