@@ -56,6 +56,11 @@ const TECH_CATEGORY_NAME_SLUG_MAP = {
 let ALL_POSTS = [];
 let ALL_POST_IDS = new Set();
 let ALL_AUTHOR_SLUGS = new Set();
+let ALL_AUTHORS = [];
+let AUTHOR_SLUG_BY_KEY = new Map();
+let GRAVATAR_URL_BY_AUTHOR_ID = new Map();
+let GRAVATAR_URL_BY_AUTHOR_SLUG = new Map();
+let GRAVATAR_URL_BY_AUTHOR_KEY = new Map();
 let LOCAL_UPLOAD_LOOKUP = new Map();
 let LOCAL_ASSET_CANONICAL = new Map();
 
@@ -65,8 +70,15 @@ async function main() {
   const authors = await readAuthors();
   const authorsLandingPage = await readTechAuthorsLandingPage();
   ALL_POSTS = posts;
+  ALL_AUTHORS = authors;
   ALL_POST_IDS = new Set(posts.map((post) => String(post.id)));
   ALL_AUTHOR_SLUGS = new Set(authors.map((author) => author.slug));
+  AUTHOR_SLUG_BY_KEY = buildAuthorSlugLookup(authors, authorsLandingPage);
+  resolvePostAuthorSlugs(posts);
+  const gravatarLookup = await buildGravatarArchiveLookup(authors, authorsLandingPage, posts);
+  GRAVATAR_URL_BY_AUTHOR_ID = gravatarLookup.byAuthorId;
+  GRAVATAR_URL_BY_AUTHOR_SLUG = gravatarLookup.byAuthorSlug;
+  GRAVATAR_URL_BY_AUTHOR_KEY = gravatarLookup.byAuthorKey;
   const postsByAuthor = groupPostsByAuthor(posts);
 
   await rm(BUILD_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
@@ -89,7 +101,7 @@ async function main() {
     await writeFile(path.join(outputDir, 'index.html'), renderPost(post, html));
   }
 
-  await writeAuthorPages(authors, postsByAuthor);
+  await writeAuthorPages(authors, postsByAuthor, authorsLandingPage);
   await writeTechAuthorsLandingPage(authors, authorsLandingPage, postsByAuthor);
   await writeTechAuthorCardAliases(authors, authorsLandingPage, postsByAuthor);
   await writeAuthorPageBuildReport(authors, posts, postsByAuthor, authorsLandingPage);
@@ -229,6 +241,7 @@ async function readAuthorMeta(postId, waybackTimestamp) {
 
   if (modernMatch) {
     [, authorId = '', href, avatarUrl, avatarClass = 'avatar', width = '24', height = '24', name = '', title = ''] = modernMatch;
+    authorId ||= authorIdFromAuthorHtml(modernMatch[0]);
   } else if (legacyLinkedMatch) {
     [, href, avatarUrl, avatarClass = 'avatar', width = '24', height = '24', name = ''] = legacyLinkedMatch;
     authorId = authorIdFromAuthorHtml(legacyLinkedMatch[0]);
@@ -566,7 +579,7 @@ function renderIndex(posts) {
       <main id="primary" class="content" role="main">
         ${renderPostList(posts, '')}
       </main>
-      ${sidebar('', SITE_SNAPSHOT_URL)}
+      ${sidebar('', SITE_SNAPSHOT_URL, { showTechAuthorsWidget: BUILD_DIR_NAME === 'tech' })}
     `,
   });
 }
@@ -891,12 +904,10 @@ function renderAuthorMeta(post, rootPrefix) {
   }
   const href = post.authorMeta.slug && ALL_AUTHOR_SLUGS.has(post.authorMeta.slug)
     ? `${rootPrefix}posts/author/${post.authorMeta.slug}/`
-    : post.authorMeta.href
-      ? waybackUrl(post.authorMeta.href, post.authorMeta.waybackTimestamp || post.frontmatter.wayback_timestamp)
-      : '';
+    : '';
   const avatarSrc = post.authorMeta.localAvatarPath
     ? rewriteUrl(post.authorMeta.localAvatarPath, rootPrefix, ALL_POST_IDS)
-    : rewriteUrl(post.authorMeta.avatarUrl, rootPrefix, ALL_POST_IDS);
+    : stripGravatarQuery(post.authorMeta.avatarUrl) || rewriteUrl(post.authorMeta.avatarUrl, rootPrefix, ALL_POST_IDS);
   const innerHtml = `
       ${avatarSrc ? `<img src="${escapeAttr(avatarSrc)}" alt="" class="${escapeAttr(post.authorMeta.avatarClass)}" width="${post.authorMeta.width}" height="${post.authorMeta.height}"><!--
    -->` : ''}<div class="author-info">${escapeHtml(post.authorMeta.name)}</div><!--
@@ -911,15 +922,16 @@ function displayCategories(post) {
   return post.categories;
 }
 
-async function writeAuthorPages(authors, postsByAuthor) {
+async function writeAuthorPages(authors, postsByAuthor, authorsLandingPage) {
   if (!authors.length) {
     return;
   }
 
+  const cardsBySlug = authorCardsBySlug(authorsLandingPage);
   for (const author of authors) {
     const outputDir = path.join(BUILD_DIR, 'posts', 'author', author.slug);
     await mkdir(outputDir, { recursive: true });
-    await writeFile(path.join(outputDir, 'index.html'), renderAuthorPage(author, postsByAuthor.get(author.slug) || []));
+    await writeFile(path.join(outputDir, 'index.html'), renderAuthorPage(author, postsByAuthor.get(author.slug) || [], cardsBySlug.get(author.slug)));
   }
 }
 
@@ -939,6 +951,7 @@ async function writeTechAuthorCardAliases(authors, authorsLandingPage, postsByAu
   }
 
   const bySlug = new Map(authors.map((author) => [author.slug, author]));
+  const cardsBySlug = authorCardsBySlug(authorsLandingPage);
   const aliasMap = new Map(authors.filter((author) => author.authorId).map((author) => [String(author.authorId), author.slug]));
   for (const entry of extractAuthorCardMappings(authorsLandingPage?.content_html || '')) {
     if (!aliasMap.has(entry.authorId) && bySlug.has(entry.slug)) {
@@ -959,8 +972,12 @@ async function writeTechAuthorCardAliases(authors, authorsLandingPage, postsByAu
     }
     const outputDir = path.join(BUILD_DIR, 'author-card', String(authorId));
     await mkdir(outputDir, { recursive: true });
-    await writeFile(path.join(outputDir, 'index.html'), renderAuthorPage(author, postsByAuthor.get(author.slug) || []));
+    await writeFile(path.join(outputDir, 'index.html'), renderAuthorPage(author, postsByAuthor.get(author.slug) || [], cardsBySlug.get(author.slug)));
   }
+}
+
+function authorCardsBySlug(authorsLandingPage) {
+  return new Map(extractAuthorIndexCards(authorsLandingPage?.content_html || '').map((card) => [card.slug, card]));
 }
 
 function renderTechAuthorsLandingPage(authors, page, postsByAuthor) {
@@ -986,7 +1003,7 @@ function renderTechAuthorsLandingPage(authors, page, postsByAuthor) {
   });
 }
 
-function renderAuthorPage(author, posts = []) {
+function renderAuthorPage(author, posts = [], referenceCard = null) {
   return pageShell({
     title: `${author.title} | ${ARCHIVE_LABEL}`,
     rootPrefix: '../../../',
@@ -1000,9 +1017,8 @@ function renderAuthorPage(author, posts = []) {
     body: `
       <main id="primary" class="content" role="main">
         <div class="article-div">
-          ${renderAuthorProfile(author, posts, '../../../')}
+          ${renderAuthorProfile(author, '../../../', referenceCard)}
           <hr>
-          <h2>${escapeHtml(authorDisplayName(author))} 發表的文章</h2>
           ${posts.length
             ? renderPostList(posts, '../../../')
             : '<div id="content" role="main"><p class="author-empty">目前封存資料中沒有可對應到此作者的文章。</p></div>'}
@@ -1028,6 +1044,69 @@ function groupPostsByAuthor(posts) {
   return groups;
 }
 
+function buildAuthorSlugLookup(authors, authorsLandingPage) {
+  const lookup = new Map();
+  const add = (value, slug) => {
+    const key = authorLookupKey(value);
+    if (key && slug && !lookup.has(key)) {
+      lookup.set(key, slug);
+    }
+  };
+  for (const author of authors) {
+    add(author.slug, author.slug);
+    add(author.title, author.slug);
+    add(authorDisplayName(author), author.slug);
+  }
+  for (const card of extractAuthorIndexCards(authorsLandingPage?.content_html || '')) {
+    add(card.slug, card.slug);
+    add(card.name, card.slug);
+  }
+  return lookup;
+}
+
+function resolvePostAuthorSlugs(posts) {
+  for (const post of posts) {
+    if (!post.authorMeta?.name && post.frontmatter.author) {
+      post.authorMeta = {
+        name: normalizeAuthorName(post.frontmatter.author),
+        slug: '',
+        href: '',
+        avatarUrl: '',
+        avatarClass: 'avatar',
+        width: 24,
+        height: 24,
+        title: '',
+        localAvatarPath: '',
+        waybackTimestamp: post.frontmatter.wayback_timestamp || '',
+      };
+    }
+    if (!post.authorMeta?.name) {
+      continue;
+    }
+    const resolvedSlug = resolveAuthorSlug(post.authorMeta);
+    if (resolvedSlug) {
+      post.authorMeta.slug = resolvedSlug;
+    }
+  }
+}
+
+function resolveAuthorSlug(authorMeta) {
+  if (authorMeta.slug && ALL_AUTHOR_SLUGS.has(authorMeta.slug)) {
+    return authorMeta.slug;
+  }
+  const hrefSlug = authorSlugFromUrl(authorMeta.href);
+  if (hrefSlug && ALL_AUTHOR_SLUGS.has(hrefSlug)) {
+    return hrefSlug;
+  }
+  return AUTHOR_SLUG_BY_KEY.get(authorLookupKey(authorMeta.name)) || '';
+}
+
+function authorLookupKey(value) {
+  return normalizeAuthorTitle(value)
+    .toLowerCase()
+    .replace(/[^\p{Letter}\p{Number}]+/gu, '');
+}
+
 function renderAuthorsIndex(authors, rootPrefix, page, postsByAuthor) {
   const referenceCards = extractAuthorIndexCards(page?.content_html || '');
   const cardsBySlug = new Map(referenceCards.map((card) => [card.slug, card]));
@@ -1038,44 +1117,26 @@ ${authors.map((author) => renderAuthorIndexCard(author, rootPrefix, cardsBySlug.
 
 function renderAuthorIndexCard(author, rootPrefix, referenceCard, posts) {
   const avatar = authorAvatar(author, rootPrefix, referenceCard);
-  const cover = referenceCard?.coverUrl
-    ? rewriteUrl(referenceCard.coverUrl, rootPrefix, ALL_POST_IDS, {
-      assetLookup: referenceCard.assetLookup,
-      postId: String(TECH_AUTHORS_PAGE_ID),
-    })
-    : '';
-  const style = cover ? ` style="background: url(${escapeAttr(cover)}) 50% 20%/auto 100% no-repeat;"` : '';
   const displayName = referenceCard?.name || authorDisplayName(author);
-  const title = referenceCard?.title || authorRole(author);
-  const description = referenceCard?.description || authorBio(author);
-  const postCount = posts.length ? `<div class="description author-post-count">${posts.length} 篇文章</div>` : '';
   return `<a href="${escapeAttr(`${rootPrefix}posts/author/${author.slug}/`)}" class="author ${escapeAttr(referenceCard?.className || '')}">
   <div class="author-wrapper">
-    <div class="cover"${style}>
+    <div class="cover">
       <div class="author-info">
         ${avatar.html}
-        <h2 class="name-title">${escapeHtml(displayName)}${title ? `<span class="title">${escapeHtml(title)}</span>` : ''}</h2>
-        ${description ? `<div class="description">${escapeHtml(description)}</div>` : postCount}
+        <h2 class="name-title">${escapeHtml(displayName)}</h2>
       </div>
     </div>
   </div>
 </a>`;
 }
 
-function renderAuthorProfile(author, posts, rootPrefix) {
-  const avatar = authorAvatar(author, rootPrefix);
+function renderAuthorProfile(author, rootPrefix, referenceCard = null) {
+  const avatar = authorAvatar(author, rootPrefix, referenceCard);
   const name = authorDisplayName(author);
   const role = authorRole(author);
   const bio = authorBio(author);
-  const scores = extractAuthorScores(author.content_html || '');
   return `<section id="primary">
   <div id="profile">
-    <div class="cover">
-      <div class="scores">
-        ${scores.map((score) => `<span class="score-label">${escapeHtml(score.label)}<span class="score">${escapeHtml(score.value)}</span></span>`).join('')}
-        <span class="score-label">封存文章<span class="score">${posts.length}</span></span>
-      </div>
-    </div>
     <div class="author-info">
       ${avatar.html}
       <h2 class="name-title">${escapeHtml(name)}</h2>
@@ -1088,6 +1149,7 @@ function renderAuthorProfile(author, posts, rootPrefix) {
 
 function authorAvatar(author, rootPrefix, referenceCard = null) {
   const candidates = [
+    authorGravatarUrl(author, referenceCard),
     author.local_avatar_path,
     findLocalAvatarPath(author.images || [], author.avatar_url),
     referenceCard?.avatarLocalPath,
@@ -1139,18 +1201,6 @@ function authorProfileHtml(author) {
   return profileMatch ? sliceBalancedElement(html, profileMatch.index, 'div') : html;
 }
 
-function extractAuthorScores(html) {
-  const scores = [];
-  for (const match of String(html || '').matchAll(/<span\b[^>]*class=["'][^"']*\bscore-label\b[^"']*["'][^>]*>([\s\S]*?)<span\b[^>]*class=["'][^"']*\bscore\b[^"']*["'][^>]*>([\s\S]*?)<\/span>[\s\S]*?<\/span>/gi)) {
-    const label = cleanText(match[1]);
-    const value = cleanText(match[2]);
-    if (label && value) {
-      scores.push({ label, value });
-    }
-  }
-  return scores;
-}
-
 function extractAuthorIndexCards(html) {
   const cards = [];
   const images = readTechAuthorsLandingPageImagesFromHtml(html);
@@ -1181,6 +1231,228 @@ function extractAuthorIndexCards(html) {
   return cards;
 }
 
+async function buildGravatarArchiveLookup(authors, authorsLandingPage, posts) {
+  const lookup = {
+    byAuthorId: new Map(),
+    byAuthorSlug: new Map(),
+    byAuthorKey: new Map(),
+  };
+  const slugByAuthorId = new Map();
+  const add = (scope, key, url) => {
+    const cleanKey = String(key || '').trim();
+    const normalized = canonicalGravatarUrl(url);
+    if (!cleanKey || !normalized) {
+      return;
+    }
+    setLargestGravatar(lookup[scope], cleanKey, normalized);
+  };
+  const addAuthorKey = (value, url) => {
+    const key = authorLookupKey(value);
+    if (key) {
+      add('byAuthorKey', key, url);
+    }
+  };
+  const addAuthorSources = (author, urls) => {
+    if (author.authorId && author.slug) {
+      slugByAuthorId.set(String(author.authorId), author.slug);
+    }
+    for (const url of urls) {
+      add('byAuthorSlug', author.slug, url);
+      add('byAuthorId', author.authorId, url);
+      addAuthorKey(author.slug, url);
+      addAuthorKey(author.title, url);
+      addAuthorKey(authorDisplayName(author), url);
+    }
+  };
+
+  for (const author of authors) {
+    addAuthorSources(author, [author.avatar_url, ...collectGravatarUrls(author.content_html || '')]);
+  }
+
+  for (const card of extractAuthorIndexCards(authorsLandingPage?.content_html || '')) {
+    const urls = [card.avatarUrl].filter(Boolean);
+    for (const url of urls) {
+      add('byAuthorSlug', card.slug, url);
+      addAuthorKey(card.slug, url);
+      addAuthorKey(card.name, url);
+      addAuthorKey(card.title, url);
+    }
+  }
+
+  for (const post of posts) {
+    const meta = post.authorMeta || {};
+    if (meta.authorId && meta.slug) {
+      slugByAuthorId.set(String(meta.authorId), meta.slug);
+    }
+    const urls = [meta.avatarUrl].filter(Boolean);
+    for (const url of urls) {
+      add('byAuthorSlug', meta.slug, url);
+      add('byAuthorId', meta.authorId, url);
+      addAuthorKey(meta.name, url);
+    }
+  }
+
+  for (const filePath of await gravatarArchiveTextFiles()) {
+    const html = await readFile(filePath, 'utf8').catch(() => '');
+    if (!html || !/gravatar\.com\/avatar\//i.test(html)) {
+      continue;
+    }
+    indexGravatarHtml(html, lookup, slugByAuthorId);
+  }
+
+  return lookup;
+}
+
+async function gravatarArchiveTextFiles() {
+  const roots = [
+    RAW_DIR,
+    JSON_DIR,
+    MD_DIR,
+    AUTHORS_JSON_DIR,
+    path.join(ARCHIVE_DIR, 'authors', 'raw-html'),
+  ];
+  const files = [];
+  for (const root of roots) {
+    files.push(...await listFiles(root));
+  }
+  return files.filter((filePath) => /\.(?:html|json|md|txt)$/i.test(filePath));
+}
+
+function indexGravatarHtml(html, lookup, slugByAuthorId) {
+  const value = String(html || '');
+  for (const match of value.matchAll(/<img\b([^>]*)>/gi)) {
+    const attrs = match[1] || '';
+    const urls = collectGravatarUrls(attrs);
+    if (!urls.length) {
+      continue;
+    }
+
+    const context = value.slice(Math.max(0, match.index - 1200), Math.min(value.length, match.index + match[0].length + 1200));
+    if (!isAuthorAvatarContext(context, attrs)) {
+      continue;
+    }
+
+    for (const url of urls) {
+      const authorId = attr(attrs, 'class').match(/\buser-(\d+)-avatar\b/)?.[1] ||
+        context.match(/\bdata-author-id=["']?(\d+)["']?/i)?.[1];
+      const slug = authorSlugFromUrl(context) || slugByAuthorId.get(String(authorId || '')) || '';
+      const names = [
+        cleanText(firstCapture(context, [/<span\b[^>]*class=["'][^"']*\bname(?:\s[^"']*)?["'][^>]*>([\s\S]*?)<\/span>/i])),
+        cleanText(firstCapture(context, [/<h2\b[^>]*class=["'][^"']*\bname-title\b[^"']*["'][^>]*>([\s\S]*?)<\/h2>/i])),
+        cleanText(firstCapture(context, [/<div\b[^>]*id=["']author-info["'][^>]*>([\s\S]*?)<\/div>/i])),
+        cleanText(firstCapture(context, [/<div\b[^>]*class=["'][^"']*\bauthor-info\b[^"']*["'][^>]*>([\s\S]*?)<\/div>/i])),
+      ];
+
+      setLargestGravatar(lookup.byAuthorId, authorId, url);
+      setLargestGravatar(lookup.byAuthorSlug, slug, url);
+      for (const name of names) {
+        const key = authorLookupKey(name);
+        if (key) {
+          setLargestGravatar(lookup.byAuthorKey, key, url);
+        }
+      }
+    }
+  }
+}
+
+function isAuthorAvatarContext(context, attrs) {
+  const className = attr(attrs, 'class');
+  return /\buser-\d+-avatar\b/.test(className) &&
+    /author-meta|author_contact_info|profile-link|id=["']profile["']|class=["'][^"']*\bauthor-info\b/i.test(context);
+}
+
+function authorGravatarUrl(author, referenceCard = null) {
+  const candidates = [
+    GRAVATAR_URL_BY_AUTHOR_ID.get(String(author.authorId || '')),
+    GRAVATAR_URL_BY_AUTHOR_SLUG.get(author.slug),
+    GRAVATAR_URL_BY_AUTHOR_KEY.get(authorLookupKey(author.slug)),
+    GRAVATAR_URL_BY_AUTHOR_KEY.get(authorLookupKey(author.title)),
+    GRAVATAR_URL_BY_AUTHOR_KEY.get(authorLookupKey(authorDisplayName(author))),
+    referenceCard ? GRAVATAR_URL_BY_AUTHOR_SLUG.get(referenceCard.slug) : '',
+    referenceCard ? GRAVATAR_URL_BY_AUTHOR_KEY.get(authorLookupKey(referenceCard.name)) : '',
+    referenceCard ? GRAVATAR_URL_BY_AUTHOR_KEY.get(authorLookupKey(referenceCard.title)) : '',
+    referenceCard?.avatarUrl,
+    author.avatar_url,
+    ...collectGravatarUrls(author.content_html || ''),
+  ];
+  return stripGravatarQuery(chooseLargestGravatar(candidates));
+}
+
+function collectGravatarUrls(text) {
+  const urls = [];
+  const value = decodeHtmlEntities(String(text || ''));
+  for (const match of value.matchAll(/https?:\/\/(?:web\.archive\.org\/web\/\d+(?:[a-z_]+)?\/)?https?:\/\/(?:[0-9]\.|www\.|secure\.)?gravatar\.com\/avatar\/[a-f0-9]{32}(?:\?[^"'<>\s,)]+)?/gi)) {
+    urls.push(match[0]);
+  }
+  for (const match of value.matchAll(/https?:\/\/(?:[0-9]\.|www\.|secure\.)?gravatar\.com\/avatar\/[a-f0-9]{32}(?:\?[^"'<>\s,)]+)?/gi)) {
+    urls.push(match[0]);
+  }
+  return [...new Set(urls.map(canonicalGravatarUrl).filter(Boolean))];
+}
+
+function setLargestGravatar(map, key, url) {
+  const cleanKey = String(key || '').trim();
+  const normalized = canonicalGravatarUrl(url);
+  if (!cleanKey || !normalized) {
+    return;
+  }
+  map.set(cleanKey, chooseLargestGravatar([map.get(cleanKey), normalized]));
+}
+
+function chooseLargestGravatar(urls) {
+  return urls
+    .map(canonicalGravatarUrl)
+    .filter(Boolean)
+    .sort((a, b) => gravatarSize(b) - gravatarSize(a))[0] || '';
+}
+
+function canonicalGravatarUrl(value) {
+  const unwrapped = decodeHtmlEntities(String(value || '').trim())
+    .replace(/^https?:\/\/web\.archive\.org\/web\/\d+(?:[a-z_]+)?\//i, '');
+  if (!/gravatar\.com\/avatar\//i.test(unwrapped)) {
+    return '';
+  }
+  try {
+    const url = new URL(unwrapped);
+    const hash = url.pathname.match(/\/avatar\/([a-f0-9]{32})/i)?.[1]?.toLowerCase();
+    if (!hash) {
+      return '';
+    }
+    const size = gravatarSize(url.toString()) || Number(url.searchParams.get('s')) || 96;
+    const output = new URL(`https://secure.gravatar.com/avatar/${hash}`);
+    output.searchParams.set('s', String(size));
+    for (const param of ['d', 'r']) {
+      const paramValue = url.searchParams.get(param);
+      if (paramValue) {
+        output.searchParams.set(param, paramValue);
+      }
+    }
+    return output.toString();
+  } catch {
+    return '';
+  }
+}
+
+function stripGravatarQuery(value) {
+  const normalized = canonicalGravatarUrl(value);
+  if (!normalized) {
+    return '';
+  }
+  const url = new URL(normalized);
+  url.search = '';
+  return url.toString();
+}
+
+function gravatarSize(value) {
+  const text = decodeHtmlEntities(String(value || ''));
+  const explicit = text.match(/[?&]s=(\d+)/i)?.[1];
+  if (explicit) {
+    return Number(explicit) || 0;
+  }
+  const dimension = text.match(/\b(?:width|height)=["']?(\d+)["']?/i)?.[1];
+  return Number(dimension) || 0;
+}
+
 function readTechAuthorsLandingPageImagesFromHtml(html) {
   const images = [];
   for (const match of String(html || '').matchAll(/<img\b([^>]*)>/gi)) {
@@ -1208,6 +1480,7 @@ function authorInitials(author) {
 function normalizeAuthorTitle(value) {
   return decodeHtmlEntities(stripHtml(value))
     .replace(/\s*的小檔案\s*$/u, '')
+    .replace(/\s*發表的文章\s*$/u, '')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -1226,12 +1499,14 @@ async function writeAuthorPageBuildReport(authors, posts, postsByAuthor, authors
     authorAvatar(author, '', referenceCards.get(author.slug)).status,
   ]));
   const authorsWithAvatar = authors.filter((author) => authorAvatarStatuses.get(author.slug) !== 'fallback');
+  const authorsWithGravatar = authors.filter((author) => authorGravatarUrl(author, referenceCards.get(author.slug)));
   const postsWithAuthorSlug = posts.filter((post) => post.authorMeta?.slug && ALL_AUTHOR_SLUGS.has(post.authorMeta.slug));
   const report = {
     generated_at: new Date().toISOString(),
     author_count: authors.length,
     authors_index_cards: authors.length,
     authors_with_avatar: authorsWithAvatar.length,
+    authors_with_gravatar_avatar: authorsWithGravatar.length,
     authors_without_avatar: authors.filter((author) => authorAvatarStatuses.get(author.slug) === 'fallback').map((author) => author.slug),
     authors_with_posts: [...postsByAuthor.keys()].length,
     authors_without_posts: authors.filter((author) => !(postsByAuthor.get(author.slug) || []).length).map((author) => author.slug),
@@ -1718,8 +1993,9 @@ function pageShell({ title, rootPrefix, bodyClass, body, breadcrumbs = [], bread
 `;
 }
 
-function sidebar(rootPrefix, snapshotUrl) {
+function sidebar(rootPrefix, snapshotUrl, options = {}) {
   return `<aside id="secondary" class="widget-area" role="complementary">
+    ${options.showTechAuthorsWidget ? techAuthorsSidebarWidget(rootPrefix) : ''}
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
@@ -1733,6 +2009,22 @@ function sidebar(rootPrefix, snapshotUrl) {
       <p>除另有註明外，本站內容皆採 <a href="${LICENSE_URL}">${LICENSE_NAME}</a> 或更新版本授權大眾使用。</p>
     </section>
   </aside>`;
+}
+
+function techAuthorsSidebarWidget(rootPrefix) {
+  if (BUILD_DIR_NAME !== 'tech' || !ALL_AUTHORS.length) {
+    return '';
+  }
+  return `<aside id="moztech_authors-2" class="widget Moztech_Authors_Widget">
+      <h1 class="widget-title">台客編輯群</h1>
+      <div class="moztech-authors-widget">
+        ${ALL_AUTHORS.map((author) => {
+          const avatar = authorAvatar(author, rootPrefix);
+          return `<a href="${escapeAttr(`${rootPrefix}posts/author/${author.slug}/`)}" title="${escapeAttr(authorDisplayName(author))}">${avatar.html}</a>`;
+        }).join('')}
+      </div>
+      <a class="more" href="${escapeAttr(`${rootPrefix}authors/`)}">認識台客編輯群</a>
+    </aside>`;
 }
 
 function sidebarCategoryItems(rootPrefix) {
@@ -1889,9 +2181,15 @@ hgroup .site-logo, hgroup .site-title, hgroup .site-heading { margin-top: 1em; m
 #secondary { font-size: 14px; color: #555; }
 .widget { display: block; margin: 0 0 22px; padding: 0 0 16px; border-bottom: 1px dotted #d6d6d6; }
 .widget h3 { margin: 0 0 10px; color: #333; font-size: 18px; font-weight: 400; }
+.widget h1.widget-title { margin: 0 0 10px; color: #333; font-size: 18px; font-weight: 400; }
 .widget ul { margin: 0; padding-left: 1.2em; }
 .widget li { margin: 0 0 5px; }
 .archive-dropdown { max-width: 100%; }
+.moztech-authors-widget { display: grid; grid-template-columns: repeat(2, 96px); gap: 8px; margin-bottom: 10px; }
+.moztech-authors-widget a { display: block; width: 96px; height: 96px; overflow: hidden; background: #e2e2dc; text-decoration: none; }
+.moztech-authors-widget img.avatar { display: block; width: 96px; height: 96px; object-fit: cover; }
+.moztech-authors-widget .author-avatar-fallback { display: block; width: 96px; height: 96px; background: #d94f2b; color: #fff; font-size: 30px; line-height: 96px; text-align: center; }
+.Moztech_Authors_Widget .more { display: inline-block; margin-top: 4px; }
 @media (max-width: 1000px) {
   #doc { width: 760px; }
   #main { grid-template-columns: 1fr; }
