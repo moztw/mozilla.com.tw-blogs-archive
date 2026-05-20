@@ -2190,7 +2190,8 @@ function pageShell({ title, rootPrefix, bodyClass, body, breadcrumbs = [], bread
 
 function sidebar(rootPrefix, snapshotUrl, options = {}) {
   const techAuthorsWidget = options.showTechAuthorsWidget ? `\n    ${techAuthorsSidebarWidget(rootPrefix)}` : '';
-  return `<aside id="secondary" class="widget-area" role="complementary">${techAuthorsWidget}
+  const legacyTechSpacing = !options.showTechAuthorsWidget && BUILD_DIR_NAME === 'tech' ? '\n    ' : '';
+  return `<aside id="secondary" class="widget-area" role="complementary">${techAuthorsWidget}${legacyTechSpacing}
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
