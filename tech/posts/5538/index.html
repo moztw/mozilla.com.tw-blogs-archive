@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mozilla Tech | 謀智台客，含 Firefox、Firefox OS (B2G) 、HTML、Javascript、CSS等軟體專案之最新消息、技巧，及公告資訊。">
+  <title>更快更安全的 Web － SPDY | 謀智台客 封存</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body class="single sky">
+  <div id="outer-wrapper">
+    <div id="wrapper">
+      <div id="doc">
+        <header id="masthead">
+          <a id="tabzilla" href="https://moztw.org/">moztw.org</a>
+          <hgroup>
+            <div class="site-logo"><a href="../../index.html"><img src="../../assets/theme/header-logo.png" width="130" height="49" alt="Firefox"></a></div>
+            
+            
+          </hgroup>
+        </header>
+        <nav class="breadcrumbs"><b>&raquo;</b><a href="../../months/2014-10/">2014 年 10 月</a><b>&raquo;</b><a href="../../posts/5538/">更快更安全的 Web － SPDY</a></nav>
+        <div id="main">
+          
+      <main id="primary" class="content" role="main">
+        <div class="article-div">
+          <article class="post single-post">
+            <header class="entry-header">
+              <p class="entry-posted"><time datetime="2014-10-13" class="published"><span class="posted-month">10月</span><span class="posted-date">13</span><span class="posted-year">2014</span></time></p><div class="entry-meta"><div class="author-meta" data-author-id="90">
+    <a href="../../posts/author/hchangmozilla-com/">
+      <img src="../../assets/4829/wp-content/uploads/avatars/90/7a0fe20752e3ad34352426baa0a6bcea-bpthumb.jpg" alt="" class="avatar user-90-avatar" width="24" height="24"><!--
+   --><div class="author-info">鶴鶴鶴鶴鶴鶴鶴鶴</div><!--
+   --><div class="author-title"></div>
+  </a>
+  </div><div class="post-date"></div></div>
+              <h1 class="entry-title">更快更安全的 Web － SPDY</h1>
+            </header>
+            <div class="entry-content"><p>SPDY (唸作 SPeeDY) <a href="../../assets/5538/wp-content/uploads/2014/09/Sonicriders_tails02-150x150.png"><img src="https://tech.mozilla.com.tw/wp-content/uploads/2014/09/Sonicriders_tails02-300x283.png" alt="Sonicriders_tails02" loading="lazy"></a> [1] 是 google 在 2009 年<a href="https://dev.chromium.org/spdy/spdy-whitepaper">提出</a>的一種網頁傳輸協議。目的是建構一個更快更安全的 Web。你或許會想，都已經 2014 年了，網路速度動輒 100 個妹，如果 facebook 頁面顯示不夠快，那一定是瀏覽器沒寫好或是 CPU 不夠力。</p>
+<p>前 google 工程師 Mike Belshe，也就是 SPDY 的作者，在其撰寫的報告 [[More Bandwidth Doesn’t Matter (much)]](https://docs.google.com/a/chromium.org/viewer?a=v&amp;pid=sites&amp;srcid=Y2hyb21pdW0ub3JnfGRldnxneDoxMzcyOWI1N2I4YzI3NzE2) 中指出，單單增加頻寬無法持續有效地增加”現代網頁”的載入速度。甚麼是現代網頁呢？以造訪 http://tw.yahoo.com 為例，前後總共發出了 122 個 HTTP Request。更進一步統計，我們花了約平均 3 秒下載 http://tw.yahoo.com 將近 1200 KB 的資料，下載速度竟然只有不到實際頻寬的一半。這不是個案，根據 <a href="https://httparchive.org/">http://httparchive.org/</a> 的統計，前 1000 大的網頁平均發出 116 個 HTTP request，較 2010 年底增加了將近 60%。顯然網頁設計的趨勢由單一的大資源 (html) 走向由多個獨立且分散的小資源 (css/html/js/image/font)。加大頻寬對於下載單一大檔的助益顯而易見，但對於分散於各處的小檔傳輸，似乎無法等效地獲得加速。究竟哪裡發生問題了呢？</p>
+<p>為了幫助理解 HTTP 在現代 Web 環境所面臨的困難，我們可用以下類比：某城市發生氣爆急需各種物資，外界統計共需用火車運送 100 種物資至災區救急，最快的方式當然就是把所有物資塞進同一台火車一次送過去。火車的車廂越大，將全部物資送進災區的時間越短。可惜的這些物資因為某些原因，不能同時被同一台火車所運送，我們只好一車次送一樣物資，也就是說必須獨立發車 100 趟。若進入災區的車程為 1 小時，至少得花 100 小時才能送完所有物資。</p>
+<p>在以上的類比中，100 種物資就是載入顯示一個網頁所需的 100 種資源，其中可能包含 25 張照片，50 個 icon，10 個 css 以及 15 個 js。每樣資源都得藉由一次 HTTP request (也就是一台火車) 取得。火車的可承載量就是頻寬，也可稱作 throughput。每輛火車所需到達災區的 1 小時車程我們稱作 latency，也可想做是半個 round trip time。當火車可承載量 (頻寬) 已經遠遠大於單一種物資的總量 (某個資源，譬如 r.js) 時，繼續加大車廂 (加大頻寬) 已經沒有甚麼幫助了.</p>
+<p>針對上述 HTTP 所面臨到的問題，可著手改善的層級相當的廣，上至網頁內容，下至網頁傳輸協議，甚至網路傳輸層 (Transport layer) 都有人在研究，其中多重連線 (Multiple connections) 與 管線化 (Pipelining) 是兩個著名已被各家瀏覽器實作的解法。</p>
+<p>建立多個連線 (Multiple connections) 簡單、直覺卻十分有效：既然每班次火車只需運送少量的物資，我們就犧牲大火車的承載量，改用同時發 2 輛、6 輛或是 100 輛小火車吧！現代的瀏覽器幾乎都已從同時建立 2 個連線改為建立 6 個連線了。至於為何不一次發 100 台小火車呢？因為即使是一輛小火車，也需要鐵軌、電力、司機等資源。建立一個 TCP 連線除了 socket 本身結構與配置的 read/write buffer 外，也「可能」 (若以 select 或 epoll 寫成的 async I/O 就不是必要) 需要開多個執行緒 (Thread) 個別處理每個連線，我們不能毫無限制地建立大量的連線。大家可至Bug 423377 見證 Firefox 將連線數 (max-persistent-connections-per-server) 從 2 改成 6 的歷史瞬間。多重連線在實作上還有一個小技巧: TCP 為了 congestion control 設計了 congestion window，所以有著 Slow-start [2] 的特性， 瀏覽器會盡可能地保留並復用已經 “熱身完畢” 的連線。</p>
+<p>管線化設計 (Pipelining) 是另一種看似有效但在真實世界裡卻常常失效的作法。HTTP/1.1 允許我們在一個連線塞很多個 HTTP request，也就是不同物資可同時放在一輛火車上，前提是「照指定的順序」擺放，因為裝貨的箱子沒有編號，只能靠到達順序來判斷內容。(伺服器回覆的順序必須依照 request 的順序)。但不同物資所需的準備時間也不同，如果被安排需要『先』抵達 (但其實不是太重要) 的物資必須花很長時間準備， 被安排在後「抵達」 (很快可以準備好也非常重要) 的物資就會被延誤。一般我們稱這種現象為 Head-of-line blocking。瀏覽器再怎麼聰明也無法百分百正確地猜到各種資源的重要程度，所以在實際使用上不一定有速度上的優勢。</p>
+<p>除了以上兩種外，還有沒有其他好的做法呢？當然就是今天的主角 SPDY 囉。不過 SPDY 的細節先來擱一旁， 讓我們動腦想想，如果今天是你要設計 HTTP 2.0 你會怎麼做？事實上 pipelining 是個很好的出發點，既然問題癥結點在 latency 及有限的資源，那我們應該盡量減少火車班次，最好就只發一班；如果貨物沒有編號那我們就編號吧！若希望重要的物資 (如飲水、食物) 不要被不重要的物資 (夏天的棉被) 耽擱，就把物資拆一小包一小包，並依據重要性擺放運送。沒錯，以上三點就是 SPDY 的主要精神！</p>
+<p>技術一點地說，SPDY 在 HTTP 之上定義了一些新名詞對應上述的設計：唯一用來運送貨物的那台火車稱為 Stream，也就是 SPDY 建立的那唯一一個連線，與 Pipeline 的單一連線不同的是資源可以不按照順序抵達；被拆成一小包一小包的物資叫做 Frame，所有的 HTTP response 會被拆解分裝在數個 frame，每個 frame 不僅帶有足夠的資訊重組回完整的模樣， 裝有重要資源的 frame 也可以隨時插隊運送。End-to-end 來看，Web 執行結果與傳統 HTTP 的行為並無二異，GET / POST 等應用層面的語意也維持不變，所以整個 Web 需要被改寫的只有瀏覽器以及伺服器。為了減少引進 SPDY 需要改寫的幅度，SPDY 被設計成 HTTP 與 TCP 間的 tunneling layer。所有來自上層的 HTTP request 會被 SPDY layer 包裝轉換再透過 TCP 傳送至彼端；所有來自 TCP 的 SPDY frame 會被重組為 HTTP response 交付應用程式處理。</p>
+<p>至今我們探討的速度最佳化只針對「資源」，但現代網頁的每次 HTTP request 封包本身也越來越不容忽視了。首先，對一個需要送出 120 個 HTTP request 的網頁來說，每個 request 的內容常常絕大部分是重複的，如 User-Agent、Host； 再者，</p>
+<p>每個 HTTP request 常帶有大量的 cookie， 所以 SPDY 也提出了對 HTTP request 做壓縮以及只傳送「差值」等方式減少 HTTP request 封包大小的設計。</p>
+<p>除了速度以外，SPDY 要求傳輸層 (Transport layer) 使用較為安全的</p>
+<p>TLS (Transport Layer Security)。TLS 無可避免地為小型簡單的網頁瀏覽帶來較為可觀的額外負擔，但對於需要安全性，以及複雜度日益增加的現代網頁來說，仍是值得的投資。採用 TLS 除了安全外，還有附加的好處喔！想像你今天是一個瀏覽器，在使用者敲下 https://www.mozilla.org 時，你要如何辨別 www.mozilla.org 是否有支援 SPDY 呢？google 為此需求特別設計了 NPN (Next Protocol Negotiation) 用來探知伺服器對 SPDY 的支援度。NPN 是一種 TLS extension (rfc4366)， 可在 handshake 階段協調出將要使用的 protocol。實作細節可參考 <a href="https://hg.mozilla.org/mozilla-central/file/9e3d649b80a2/security/nss/lib/ssl/ssl3prot.h#l139">ssl3prot.h</a> 以及 <a href="https://hg.mozilla.org/mozilla-central/file/9e3d649b80a2/security/nss/lib/ssl/sslt.h#l193">sslt.h</a>。</p>
+<p>最新的 Firefox 已預設啟用 SPDY 功能，時下熱門的網站也已經支援 SPDY， 除了用 about:networking 得知各個連線是否使用 SPDY 外，也可安裝來自英國的熱心開發者寫的<a href="https://addons.mozilla.org/zh-tw/firefox/addon/spdy-indicator/">外掛</a>，來偵測目前瀏覽的網頁有無使用 SPDY 下載。它是利用查看 HTTP response 包不包含 gecko 附加的 ‘X-Firefox-Spdy’ (實作請見<a href="https://hg.mozilla.org/mozilla-central/file/9e3d649b80a2/netwerk/protocol/http/SpdyStream3.cpp#l1283">這裡</a>以及<a href="https://hg.mozilla.org/mozilla-central/file/9e3d649b80a2/netwerk/protocol/http/SpdyStream31.cpp#l1299">這裡</a>)欄位來作判斷，大家可以下載安裝玩玩看~</p>
+<p>更多 SPDY 的資料， 可以直接參考 <a href="https://www.chromium.org/spdy/spdy-protocol">http://www.chromium.org/spdy/spdy-protocol</a></p>
+<p>[1] 取自 <a href="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQo7CvYZ2ZsWYH5G7Xq3Y8ugBxSGc427gEsRKN_A2wd3y3RqbGg7A">https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQo7CvYZ2ZsWYH5G7Xq3Y8ugBxSGc427gEsRKN_A2wd3y3RqbGg7A</a></p>
+<p>[2] TCP 對於 Congestion control 的設計是維護一個所謂的 Congestion window (CWND)。在這個 window 尚未填滿時，可以不必等另一方的 ACK 而繼續傳輸。假設 window size 只有 1，代表每個封包都得等對方 ACK 才能繼續傳下個封包；如果 window size 無限大，就可以一股腦兒不斷往對方送。換句話說，我們可以藉由調整 congestion window size 來控制 TCP 傳輸的速度。在一般 TCP 的實作，會保守地以 2 或 4 出發，在確認網路無壅塞的情況下才漸漸倍增 window size 以提昇傳輸速度。</p></div>
+            <footer class="entry-footer">
+              <div class="entry-category-box">文章分類：<span><a href="../../categories/firefox/">Firefox</a></span></div>
+            </footer>
+          </article>
+        </div>
+      </main>
+      <aside id="secondary" class="widget-area" role="complementary">
+    
+    <section class="widget">
+      <h3>文章分類</h3>
+      <ul>
+        <li><a href="../../categories/css/">CSS</a></li><li><a href="../../categories/firefox/">Firefox</a></li><li><a href="../../categories/firefox-os-b2g/">Firefox OS (B2G)</a></li><li><a href="../../categories/interaction-design/">Interaction design</a></li><li><a href="../../categories/javascript/">Javascript</a></li><li><a href="../../categories/life-at-mozilla/">Life at Mozilla</a></li><li><a href="../../categories/mozilla/">Mozilla</a></li><li><a href="../../categories/open-source/">Open Source</a></li><li><a href="../../categories/ux-ue/">UX/UE</a></li>
+      </ul>
+    </section>
+    <section class="widget">
+    <h3>月份彙整</h3>
+    <select class="archive-dropdown" onchange="if (this.value) window.location.href=this.value">
+      <option value="">選擇月份</option>
+      <option value="../../months/2016-05/">2016 年 5 月 (1)</option><option value="../../months/2016-02/">2016 年 2 月 (1)</option><option value="../../months/2015-07/">2015 年 7 月 (1)</option><option value="../../months/2015-06/">2015 年 6 月 (1)</option><option value="../../months/2015-05/">2015 年 5 月 (2)</option><option value="../../months/2015-04/">2015 年 4 月 (3)</option><option value="../../months/2015-03/">2015 年 3 月 (5)</option><option value="../../months/2015-02/">2015 年 2 月 (3)</option><option value="../../months/2015-01/">2015 年 1 月 (4)</option><option value="../../months/2014-12/">2014 年 12 月 (2)</option><option value="../../months/2014-11/">2014 年 11 月 (3)</option><option value="../../months/2014-10/">2014 年 10 月 (3)</option><option value="../../months/2014-09/">2014 年 9 月 (3)</option><option value="../../months/2014-08/">2014 年 8 月 (5)</option><option value="../../months/2014-07/">2014 年 7 月 (4)</option><option value="../../months/2014-05/">2014 年 5 月 (5)</option><option value="../../months/2014-04/">2014 年 4 月 (4)</option><option value="../../months/2014-03/">2014 年 3 月 (4)</option><option value="../../months/2014-02/">2014 年 2 月 (1)</option><option value="../../months/2014-01/">2014 年 1 月 (4)</option><option value="../../months/2013-12/">2013 年 12 月 (6)</option><option value="../../months/2013-11/">2013 年 11 月 (4)</option><option value="../../months/2013-10/">2013 年 10 月 (4)</option><option value="../../months/2013-09/">2013 年 9 月 (5)</option><option value="../../months/2013-08/">2013 年 8 月 (4)</option><option value="../../months/2013-07/">2013 年 7 月 (5)</option><option value="../../months/2013-06/">2013 年 6 月 (2)</option><option value="../../months/2013-05/">2013 年 5 月 (4)</option><option value="../../months/2013-04/">2013 年 4 月 (5)</option><option value="../../months/2013-03/">2013 年 3 月 (4)</option><option value="../../months/2013-02/">2013 年 2 月 (4)</option><option value="../../months/2013-01/">2013 年 1 月 (5)</option><option value="../../months/2012-12/">2012 年 12 月 (4)</option><option value="../../months/2012-11/">2012 年 11 月 (4)</option><option value="../../months/2012-10/">2012 年 10 月 (5)</option><option value="../../months/2012-09/">2012 年 9 月 (4)</option><option value="../../months/2012-08/">2012 年 8 月 (4)</option><option value="../../months/2012-07/">2012 年 7 月 (5)</option><option value="../../months/2012-06/">2012 年 6 月 (3)</option><option value="../../months/2012-05/">2012 年 5 月 (3)</option>
+    </select>
+  </section>
+    <section class="widget">
+      <h3>封存說明</h3>
+      <p>此頁為 謀智台客 封存，由 <a href="https://web.archive.org/web/20150405011413/http://tech.mozilla.com.tw/posts/5538/%e6%9b%b4%e5%bf%ab%e6%9b%b4%e5%ae%89%e5%85%a8%e7%9a%84-web-spdy">Wayback snapshot</a> 重建。</p>
+      <p>除另有註明外，本站內容皆採 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant">創用 CC 姓名標示─相同方式分享 4.0 國際</a> 或更新版本授權大眾使用。</p>
+    </section>
+  </aside>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

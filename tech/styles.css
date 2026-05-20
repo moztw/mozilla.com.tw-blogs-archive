@@ -73,12 +73,39 @@ hgroup .site-logo, hgroup .site-title, hgroup .site-heading { margin-top: 1em; m
 .archive-list { margin: 0; padding: 0; list-style: none; }
 .archive-list li { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid #e5e5df; }
 .archive-list span { color: #777; }
+#authors-wall { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: stretch; }
+#authors-wall .author { min-height: 104px; color: #303030; background: rgba(255,255,255,.72); border: 1px solid rgba(0,0,0,.08); box-shadow: 0 1px 4px rgba(0,0,0,.08); overflow: hidden; text-decoration: none; }
+#authors-wall .author:hover { background: #fff; text-decoration: none; }
+#authors-wall .author-wrapper, #authors-wall .cover { min-height: 104px; height: 100%; }
+#authors-wall .cover { display: flex; align-items: stretch; background: transparent; }
+#authors-wall .author-info { display: flex; align-items: center; gap: 14px; width: 100%; min-width: 0; margin: 0; padding: 16px; background: transparent; color: #303030; }
+#authors-wall .avatar { flex: 0 0 auto; width: 64px; height: 64px; margin: 0; border: 3px solid #fff; border-radius: 50%; object-fit: cover; background: #d94f2b; color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.18); font-size: 22px; line-height: 64px; text-align: center; }
+#authors-wall .author-text { min-width: 0; flex: 1 1 auto; }
+#authors-wall .name-title { display: -webkit-box; overflow: hidden; margin: 0; color: #303030; font-size: 18px; line-height: 1.2; font-weight: 500; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+#authors-wall .post-count { margin-top: 6px; color: #777; font-size: 13px; line-height: 1.25; }
+#profile { margin-bottom: 24px; background: rgba(255,255,255,.35); border: 1px solid rgba(255,255,255,.75); }
+#profile .cover { min-height: 86px; background: rgba(0,0,0,.04); }
+#profile .scores { display: flex; flex-wrap: wrap; gap: 10px; padding: 16px; color: #555; }
+#profile .score-label { display: inline-block; min-width: 76px; color: #777; font-size: 13px; }
+#profile .score { display: block; color: #333; font-size: 22px; line-height: 1.1; }
+#profile .author-info { display: block; min-height: 150px; margin: 0; padding: 18px; }
+#profile .avatar { float: left; width: 150px; height: 150px; margin: 0 20px 16px 0; border-radius: 50%; object-fit: cover; background: #d94f2b; color: #fff; font-size: 42px; line-height: 150px; text-align: center; }
+#profile .name-title { margin: 0 0 8px; color: #303030; font-size: 30px; line-height: 1.2; font-weight: 300; }
+#profile .description { margin: 0 0 12px; color: #777; font-size: 17px; font-weight: 400; }
+#profile .bio { color: #555; font-size: 15px; }
+.author-empty { color: #666; }
 #secondary { font-size: 14px; color: #555; }
 .widget { display: block; margin: 0 0 22px; padding: 0 0 16px; border-bottom: 1px dotted #d6d6d6; }
 .widget h3 { margin: 0 0 10px; color: #333; font-size: 18px; font-weight: 400; }
+.widget h1.widget-title { margin: 0 0 10px; color: #333; font-size: 18px; font-weight: 400; }
 .widget ul { margin: 0; padding-left: 1.2em; }
 .widget li { margin: 0 0 5px; }
 .archive-dropdown { max-width: 100%; }
+.moztech-authors-widget { display: grid; grid-template-columns: repeat(2, 96px); gap: 8px; margin-bottom: 10px; }
+.moztech-authors-widget a { display: block; width: 96px; height: 96px; overflow: hidden; background: #e2e2dc; text-decoration: none; }
+.moztech-authors-widget img.avatar { display: block; width: 96px; height: 96px; object-fit: cover; }
+.moztech-authors-widget .author-avatar-fallback { display: block; width: 96px; height: 96px; background: #d94f2b; color: #fff; font-size: 30px; line-height: 96px; text-align: center; }
+.Moztech_Authors_Widget .more { display: inline-block; margin-top: 4px; }
 @media (max-width: 1000px) {
   #doc { width: 760px; }
   #main { grid-template-columns: 1fr; }
@@ -93,6 +120,7 @@ hgroup .site-logo, hgroup .site-title, hgroup .site-heading { margin-top: 1em; m
   .single .entry-meta,
   .archive .entry-meta,
   .home .entry-meta { position: static; width: auto; margin: 0 0 12px; }
+  #authors-wall { grid-template-columns: 1fr; }
   .thumb-img { float: none; margin-left: 0; }
   #secondary .widget { display: block; width: auto; margin: 0 0 22px; }
   .entry-posted { text-align: left; }
