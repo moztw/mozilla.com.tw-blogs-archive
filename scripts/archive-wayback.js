@@ -2128,8 +2128,12 @@ async function recoverArticleMedia() {
   const only = String(args.only || '').trim();
   const kind = String(args.kind || '').trim();
   const source = String(args.source || '').trim();
+  const selectedIds = await readIdsFile();
+  const start = args.start ? Number(args.start) : -Infinity;
+  const end = args.end ? Number(args.end) : Infinity;
   const limit = args.limit ? Number(args.limit) : Infinity;
   const candidates = report.missing
+    .filter((item) => selectedIds ? selectedIds.includes(Number(item.post_id)) : Number(item.post_id) >= start && Number(item.post_id) <= end)
     .filter((item) => !only || (only === 'uploads' && isUploadsUrl(item.url)))
     .filter((item) => !kind || item.kind === kind)
     .filter((item) => !source || item.source === source)
@@ -2999,6 +3003,10 @@ function mediaUrlRecoveryCandidates(url) {
   if (original && original !== url) {
     candidates.push(original);
   }
+  const thumbnail = wordpressThumbnailMediaUrl(url);
+  if (thumbnail && thumbnail !== url) {
+    candidates.push(thumbnail);
+  }
   try {
     const parsed = new URL(url);
     const decodedPath = decodeURIComponent(parsed.pathname);
@@ -3113,6 +3121,19 @@ function originalSizeMediaUrl(url) {
   }
 }
 
+function wordpressThumbnailMediaUrl(url) {
+  try {
+    const parsed = new URL(url);
+    if (/-\d+x\d+\.[a-z0-9]+$/i.test(parsed.pathname)) {
+      return '';
+    }
+    parsed.pathname = parsed.pathname.replace(/(\.[a-z0-9]+)$/i, '-150x150$1');
+    return parsed.href;
+  } catch {
+    return '';
+  }
+}
+
 async function articleMediaReport() {
   const articles = await readArchivedArticles();
   const summary = {
@@ -3136,7 +3157,10 @@ async function articleMediaReport() {
 
     const rawHtml = await readFile(rawPath, 'utf8');
     const articleHtml = extractArticleElement(rawHtml) || extractMainElement(rawHtml);
-    const media = collectArticleMedia(articleHtml, article.original_url, { includeSrcset: hasFlag('include-srcset') });
+    const media = dedupeMedia([
+      ...collectDocumentThumbnailMedia(rawHtml, article.original_url),
+      ...collectArticleMedia(articleHtml, article.original_url, { includeSrcset: hasFlag('include-srcset') }),
+    ]);
     const localizedUrls = new Set((article.media || article.images || [])
       .filter((item) => item.archive_path)
       .map((item) => item.url));
@@ -3247,6 +3271,30 @@ function collectArticleMedia(html, baseUrl, options = {}) {
     }
   }
 
+  return dedupeMedia(media);
+}
+
+function collectDocumentThumbnailMedia(html, baseUrl) {
+  const media = [];
+
+  for (const match of html.matchAll(/<meta\b([^>]*)>/gi)) {
+    const attrs = match[1];
+    const property = attr(attrs, 'property') || attr(attrs, 'name');
+    if (!/^(?:og:image|twitter:image)$/i.test(property)) {
+      continue;
+    }
+    media.push({
+      url: normalizeUrl(attr(attrs, 'content'), baseUrl),
+      alt: '',
+      kind: 'image',
+      source: property.toLowerCase(),
+    });
+  }
+
+  return dedupeMedia(media);
+}
+
+function dedupeMedia(media) {
   const seen = new Set();
   return media
     .filter((item) => item.url && !item.url.startsWith('data:') && isWantedMediaUrl(item.url))
