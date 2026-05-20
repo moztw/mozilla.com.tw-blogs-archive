@@ -350,3 +350,22 @@ Recommended runtime order:
    - `https://blog.mozilla.com.tw/?cat=10&paged=2`
    - `https://blog.mozilla.com.tw/?m=201502`
    - `https://tech.mozilla.com.tw/?p=1013`
+
+## Events Archive Plan
+
+The legacy Events Manager pages are not part of the original `?p=<post_id>` article archive. They are handled as a separate archive under `archive-blog/events/`.
+
+Event recovery source:
+
+- `https://web.archive.org/web/20161229022035/https://blog.mozilla.com.tw/events-list`
+- `https://web.archive.org/web/20170106132456/http://blog.mozilla.com.tw/events-list/page/7`
+
+Execution plan:
+
+1. Fetch `/events-list` and `/events-list/page/2` through `/events-list/page/7` from the late-2016 / early-2017 Wayback snapshots supplied for this recovery task.
+2. Save listing page raw HTML under `archive-blog/events/listing-pages/`.
+3. Extract unique `/events/<slug>` links from the seven listings.
+4. Fetch each event URL from the `20170106132456` Wayback snapshot, falling back to CDX lookup if the direct replay is unavailable.
+5. Save event raw HTML, JSON metadata, Markdown text, and `events-index.json` under `archive-blog/events/`.
+
+Current result: 33 event pages discovered from 7 listing pages. TODO: These files are archived under `archive-blog/events/`, but `/events` redirect and static-page generation are deferred.
