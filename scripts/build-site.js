@@ -2189,8 +2189,8 @@ function pageShell({ title, rootPrefix, bodyClass, body, breadcrumbs = [], bread
 }
 
 function sidebar(rootPrefix, snapshotUrl, options = {}) {
-  return `<aside id="secondary" class="widget-area" role="complementary">
-    ${options.showTechAuthorsWidget ? techAuthorsSidebarWidget(rootPrefix) : ''}
+  const techAuthorsWidget = options.showTechAuthorsWidget ? `\n    ${techAuthorsSidebarWidget(rootPrefix)}` : '';
+  return `<aside id="secondary" class="widget-area" role="complementary">${techAuthorsWidget}
     <section class="widget">
       <h3>文章分類</h3>
       <ul>
