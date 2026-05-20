@@ -20,6 +20,7 @@ const EVENTS_INDEX_PATH = path.join(EVENTS_DIR, 'events-index.json');
 const EVENTS_ASSETS_DIR = path.join(EVENTS_DIR, 'assets');
 const AUTHORS_JSON_DIR = path.join(ARCHIVE_DIR, 'authors', 'authors-json');
 const AUTHOR_PAGE_BUILD_REPORT_PATH = path.join(ARCHIVE_DIR, 'discovery', 'author-page-build-report.json');
+const GRAVATAR_EXISTENCE_PATH = path.join(ARCHIVE_DIR, 'discovery', 'gravatar-existence.json');
 const THEME_ASSETS_DIR = path.resolve(ROOT, args.themeAssets || args['theme-assets'] || DEFAULT_THEME_ASSETS_DIR);
 const SITE_HOST = String(args.siteHost || args['site-host'] || `${BUILD_DIR_NAME}.mozilla.com.tw`).replace(/^https?:\/\//, '').replace(/\/.*$/, '');
 const SITE_ORIGIN = `https://${SITE_HOST}`;
@@ -67,6 +68,7 @@ let AUTHOR_SLUG_BY_KEY = new Map();
 let GRAVATAR_URL_BY_AUTHOR_ID = new Map();
 let GRAVATAR_URL_BY_AUTHOR_SLUG = new Map();
 let GRAVATAR_URL_BY_AUTHOR_KEY = new Map();
+let GRAVATAR_EXISTS_BY_HASH = new Map();
 let LOCAL_UPLOAD_LOOKUP = new Map();
 let LOCAL_ASSET_CANONICAL = new Map();
 
@@ -87,6 +89,7 @@ async function main() {
   GRAVATAR_URL_BY_AUTHOR_ID = gravatarLookup.byAuthorId;
   GRAVATAR_URL_BY_AUTHOR_SLUG = gravatarLookup.byAuthorSlug;
   GRAVATAR_URL_BY_AUTHOR_KEY = gravatarLookup.byAuthorKey;
+  GRAVATAR_EXISTS_BY_HASH = await buildGravatarExistenceCache(authors, authorsLandingPage, posts);
   const postsByAuthor = groupPostsByAuthor(posts);
 
   await rm(BUILD_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
@@ -1223,10 +1226,14 @@ function authorAvatarData(author, rootPrefix, referenceCard = null) {
     referenceCard?.avatarUrl,
     author.avatar_url,
   ].filter(Boolean);
-  const src = candidates.map((candidate) => rewriteUrl(candidate, rootPrefix, ALL_POST_IDS, {
-    assetLookup: referenceCard?.assetLookup,
-    postId: String(TECH_AUTHORS_PAGE_ID),
-  })).find(Boolean);
+  const src = candidates
+    .map(usableAvatarCandidate)
+    .filter(Boolean)
+    .map((candidate) => rewriteUrl(candidate, rootPrefix, ALL_POST_IDS, {
+      assetLookup: referenceCard?.assetLookup,
+      postId: String(TECH_AUTHORS_PAGE_ID),
+    }))
+    .find(Boolean);
   const className = referenceCard?.avatarClass || avatarClassFromAuthor(author) || 'avatar';
   if (!src) {
     return {
@@ -1240,6 +1247,13 @@ function authorAvatarData(author, rootPrefix, referenceCard = null) {
     src,
     className,
   };
+}
+
+function usableAvatarCandidate(candidate) {
+  if (!/gravatar\.com\/avatar\//i.test(String(candidate || ''))) {
+    return candidate;
+  }
+  return gravatarExists(candidate) ? stripGravatarQuery(candidate) : '';
 }
 
 function authorDisplayName(author) {
@@ -1444,7 +1458,7 @@ function authorGravatarUrl(author, referenceCard = null) {
     author.avatar_url,
     ...collectGravatarUrls(author.content_html || ''),
   ];
-  return stripGravatarQuery(chooseLargestGravatar(candidates));
+  return stripGravatarQuery(chooseExistingGravatar(candidates));
 }
 
 function collectGravatarUrls(text) {
@@ -1457,6 +1471,85 @@ function collectGravatarUrls(text) {
     urls.push(match[0]);
   }
   return [...new Set(urls.map(canonicalGravatarUrl).filter(Boolean))];
+}
+
+async function buildGravatarExistenceCache(authors, authorsLandingPage, posts) {
+  const cached = await readGravatarExistenceCache();
+  const hashes = collectKnownGravatarHashes(authors, authorsLandingPage, posts);
+  let changed = false;
+
+  for (const hash of hashes) {
+    if (cached.has(hash)) {
+      continue;
+    }
+    const exists = await probeGravatarExists(hash);
+    if (exists === null) {
+      continue;
+    }
+    cached.set(hash, exists);
+    changed = true;
+  }
+
+  if (changed) {
+    await writeGravatarExistenceCache(cached);
+  }
+  return cached;
+}
+
+async function readGravatarExistenceCache() {
+  try {
+    const cache = JSON.parse(await readFile(GRAVATAR_EXISTENCE_PATH, 'utf8'));
+    return new Map(Object.entries(cache.hashes || {}).map(([hash, exists]) => [hash, Boolean(exists)]));
+  } catch {
+    return new Map();
+  }
+}
+
+async function writeGravatarExistenceCache(cache) {
+  await mkdir(path.dirname(GRAVATAR_EXISTENCE_PATH), { recursive: true });
+  const hashes = Object.fromEntries([...cache.entries()].sort(([a], [b]) => a.localeCompare(b)));
+  await writeFile(GRAVATAR_EXISTENCE_PATH, `${JSON.stringify({
+    generated_at: new Date().toISOString(),
+    hashes,
+  }, null, 2)}\n`);
+}
+
+function collectKnownGravatarHashes(authors, authorsLandingPage, posts) {
+  const urls = [
+    ...GRAVATAR_URL_BY_AUTHOR_ID.values(),
+    ...GRAVATAR_URL_BY_AUTHOR_SLUG.values(),
+    ...GRAVATAR_URL_BY_AUTHOR_KEY.values(),
+  ];
+  for (const author of authors) {
+    urls.push(author.avatar_url, ...collectGravatarUrls(author.content_html || ''));
+  }
+  for (const card of extractAuthorIndexCards(authorsLandingPage?.content_html || '')) {
+    urls.push(card.avatarUrl);
+  }
+  for (const post of posts) {
+    urls.push(post.authorMeta?.avatarUrl);
+  }
+  return [...new Set(urls.map(gravatarHash).filter(Boolean))].sort();
+}
+
+async function probeGravatarExists(hash) {
+  const url = `https://secure.gravatar.com/avatar/${hash}?d=404&s=96`;
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    const response = await fetch(url, {
+      method: 'HEAD',
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    if (response.status === 404) {
+      return false;
+    }
+    if (response.ok) {
+      return true;
+    }
+  } catch {}
+  return null;
 }
 
 function setLargestGravatar(map, key, url) {
@@ -1473,6 +1566,32 @@ function chooseLargestGravatar(urls) {
     .map(canonicalGravatarUrl)
     .filter(Boolean)
     .sort((a, b) => gravatarSize(b) - gravatarSize(a))[0] || '';
+}
+
+function chooseExistingGravatar(urls) {
+  return urls
+    .map(canonicalGravatarUrl)
+    .filter(Boolean)
+    .filter((url) => gravatarExists(url))
+    .sort((a, b) => gravatarSize(b) - gravatarSize(a))[0] || '';
+}
+
+function gravatarExists(value) {
+  const hash = gravatarHash(value);
+  if (!hash) {
+    return false;
+  }
+  const cached = GRAVATAR_EXISTS_BY_HASH.get(hash);
+  return cached !== false;
+}
+
+function gravatarHash(value) {
+  const normalized = canonicalGravatarUrl(value);
+  try {
+    return new URL(normalized).pathname.match(/\/avatar\/([a-f0-9]{32})/i)?.[1]?.toLowerCase() || '';
+  } catch {
+    return '';
+  }
 }
 
 function canonicalGravatarUrl(value) {
