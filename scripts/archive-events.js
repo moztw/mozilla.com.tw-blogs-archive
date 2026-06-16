@@ -4,7 +4,7 @@ import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { setDefaultResultOrder } from 'node:dns';
 import { fetchArchivedHtml as fetchArchivedHtmlWithRetry, fetchJson as fetchJsonWithRetry } from './lib/fetch-utils.js';
-import { timestampFromWaybackUrl, waybackUrl as makeWaybackUrl } from './lib/url-utils.js';
+import { decodePublicSlug, timestampFromWaybackUrl, waybackUrl as makeWaybackUrl } from './lib/url-utils.js';
 import { parseArgs, relativePath, writeJson } from './lib/workflow-utils.js';
 
 setDefaultResultOrder('ipv4first');
@@ -305,8 +305,8 @@ function discoverEventLinks(html) {
     if (parsed.hostname !== SITE_HOST) continue;
     const eventMatch = parsed.pathname.match(/^\/events\/([^/?#]+)\/?$/);
     if (!eventMatch) continue;
-    const slug = eventMatch[1];
-    events.set(slug, { slug, url: `${SITE_ORIGIN}/events/${slug}` });
+    const slug = decodePublicSlug(eventMatch[1]);
+    events.set(slug, { slug, url: `${SITE_ORIGIN}/events/${encodeURI(slug)}` });
   }
   return [...events.values()].sort((a, b) => a.slug.localeCompare(b.slug));
 }

@@ -3,6 +3,7 @@ import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { buildPublicUrl, decodePublicSlug, normalizePublicBaseUrl } from './lib/url-utils.js';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const args = parseArgs(process.argv.slice(2));
@@ -38,6 +39,7 @@ const BODY_BACKGROUND_ATTACHMENT = BUILD_DIR_NAME === 'tech' ? 'fixed' : 'scroll
 const LICENSE_NAME = '創用 CC 姓名標示─相同方式分享 4.0 國際';
 const LICENSE_URL = 'https://creativecommons.org/licenses/by-sa/4.0/deed.zh-hant';
 const SITE_SNAPSHOT_URL = args.snapshotUrl || args['snapshot-url'] || `https://web.archive.org/web/*/${SITE_ORIGIN}/`;
+const CANONICAL_BASE = normalizePublicBaseUrl(args.canonicalBase || args['canonical-base'] || '');
 const TECH_AUTHORS_PAGE_ID = 4829;
 const TECH_CATEGORY_SLUG_MAP = {
   css: 'css',
@@ -71,12 +73,14 @@ let GRAVATAR_URL_BY_AUTHOR_KEY = new Map();
 let GRAVATAR_EXISTS_BY_HASH = new Map();
 let LOCAL_UPLOAD_LOOKUP = new Map();
 let LOCAL_ASSET_CANONICAL = new Map();
+let EVENT_SLUG_LOOKUP = new Map();
 
 async function main() {
   const posts = await readPosts();
   const events = await readEvents();
   const authors = await readAuthors();
   const authorsLandingPage = await readTechAuthorsLandingPage();
+  EVENT_SLUG_LOOKUP = buildEventSlugLookup(events);
   ALL_POSTS = posts;
   ALL_AUTHORS = authors;
   AUTHOR_BY_SLUG = new Map(authors.map((author) => [author.slug, author]));
@@ -209,16 +213,32 @@ async function readEvents() {
   const events = [];
   for (const file of files.filter((entry) => entry.endsWith('.json'))) {
     const event = JSON.parse(await readFile(path.join(EVENTS_JSON_DIR, file), 'utf8'));
+    const publicSlug = decodePublicSlug(event.slug);
     events.push({
       ...event,
+      publicSlug,
       order: eventOrder.get(event.slug) ?? Number.MAX_SAFE_INTEGER,
     });
   }
 
   return events.sort((a, b) => {
     const byDate = String(b.date || '').localeCompare(String(a.date || ''));
-    return byDate || a.order - b.order || String(a.slug).localeCompare(String(b.slug));
+    return byDate || a.order - b.order || String(a.publicSlug).localeCompare(String(b.publicSlug));
   });
+}
+
+function buildEventSlugLookup(events) {
+  const lookup = new Map();
+  for (const event of events) {
+    lookup.set(event.slug, event.publicSlug);
+    lookup.set(event.publicSlug, event.publicSlug);
+    try {
+      lookup.set(decodeURIComponent(event.slug), event.publicSlug);
+    } catch {
+      // Keep archive slug mapping only when decodeURIComponent fails.
+    }
+  }
+  return lookup;
 }
 
 async function readTechAuthorsLandingPage() {
@@ -539,7 +559,19 @@ function rewriteUrl(url, rootPrefix, postIds, options = {}) {
     }
   }
 
+  const eventUrl = clean.match(new RegExp(`^https?://${escapeRegExp(SITE_HOST)}/events/([^/?#]+)`));
+  if (eventUrl) {
+    const publicSlug = resolveEventPublicSlug(eventUrl[1]);
+    if (publicSlug) {
+      return `${rootPrefix}events/${publicSlug}/`;
+    }
+  }
+
   return clean;
+}
+
+function resolveEventPublicSlug(rawSlug) {
+  return EVENT_SLUG_LOOKUP.get(rawSlug) || EVENT_SLUG_LOOKUP.get(decodePublicSlug(rawSlug)) || '';
 }
 
 function canonicalLocalAssetPath(localPath) {
@@ -564,6 +596,7 @@ function renderPost(post, contentHtml) {
   return pageShell({
     title: `${post.title} | ${ARCHIVE_LABEL}`,
     rootPrefix: '../../',
+    canonicalPath: `posts/${post.id}/`,
     bodyClass: 'single',
     breadcrumbs: postBreadcrumbs(post, '../../'),
     breadcrumbLeadingSeparator: true,
@@ -592,6 +625,7 @@ function renderIndex(posts) {
   return pageShell({
     title: `${SITE_TITLE} 封存`,
     rootPrefix: '',
+    canonicalPath: '',
     bodyClass: 'home blog',
     mastheadTitle: SITE_TITLE,
     mastheadSubtitle: SITE_SUBTITLE,
@@ -611,9 +645,17 @@ async function writeEventPages(events) {
   }
 
   for (const event of events) {
-    const outputDir = path.join(BUILD_DIR, 'events', event.slug);
+    const outputDir = path.join(BUILD_DIR, 'events', event.publicSlug);
     await mkdir(outputDir, { recursive: true });
     await writeFile(path.join(outputDir, 'index.html'), renderEventPage(event));
+    if (event.publicSlug !== event.slug) {
+      const legacyDir = path.join(BUILD_DIR, 'events', event.slug);
+      await mkdir(legacyDir, { recursive: true });
+      await writeFile(
+        path.join(legacyDir, 'index.html'),
+        renderRedirectPage(`../${event.publicSlug}/`, event.title, `events/${event.publicSlug}/`)
+      );
+    }
   }
 
   const eventsDir = path.join(BUILD_DIR, 'events');
@@ -622,7 +664,7 @@ async function writeEventPages(events) {
 
   const eventsListDir = path.join(BUILD_DIR, 'events-list');
   await mkdir(eventsListDir, { recursive: true });
-  await writeFile(path.join(eventsListDir, 'index.html'), renderRedirectPage('../events/', '活動列表'));
+  await writeFile(path.join(eventsListDir, 'index.html'), renderRedirectPage('../events/', '活動列表', 'events/'));
 }
 
 async function writeArchivePages(posts) {
@@ -635,6 +677,7 @@ async function writeArchivePages(posts) {
   await writeFile(path.join(BUILD_DIR, 'categories', 'index.html'), renderArchiveIndex({
     title: '文章分類',
     rootPrefix: '../',
+    canonicalPath: 'categories/',
     groups: categories.map((group) => ({
       name: group.name,
       href: `${group.slug}/`,
@@ -649,6 +692,7 @@ async function writeArchivePages(posts) {
       title: `文章分類：${group.name}`,
       posts: group.posts,
       rootPrefix: '../../',
+      canonicalPath: `categories/${group.slug}/`,
       breadcrumbLeadingSeparator: true,
       breadcrumbs: [
         { label: '分類', href: '../' },
@@ -660,6 +704,7 @@ async function writeArchivePages(posts) {
   await writeFile(path.join(BUILD_DIR, 'months', 'index.html'), renderArchiveIndex({
     title: '月份封存',
     rootPrefix: '../',
+    canonicalPath: 'months/',
     groups: months.map((group) => ({
       name: monthLabel(group.name),
       href: `${group.name}/`,
@@ -674,6 +719,7 @@ async function writeArchivePages(posts) {
       title: `月份封存：${monthLabel(group.name)}`,
       posts: group.posts,
       rootPrefix: '../../',
+      canonicalPath: `months/${group.name}/`,
       breadcrumbLeadingSeparator: true,
       breadcrumbs: [
         { label: '月份', href: '../' },
@@ -729,10 +775,11 @@ function postThumbnail(post, rootPrefix) {
   };
 }
 
-function renderArchivePage({ title, posts, rootPrefix, breadcrumbs, breadcrumbLeadingSeparator = false }) {
+function renderArchivePage({ title, posts, rootPrefix, breadcrumbs, breadcrumbLeadingSeparator = false, canonicalPath = '' }) {
   return pageShell({
     title: `${title} | ${SITE_TITLE} 封存`,
     rootPrefix,
+    canonicalPath,
     bodyClass: 'archive',
     breadcrumbs,
     breadcrumbLeadingSeparator,
@@ -750,10 +797,11 @@ function renderArchivePage({ title, posts, rootPrefix, breadcrumbs, breadcrumbLe
   });
 }
 
-function renderArchiveIndex({ title, rootPrefix, groups }) {
+function renderArchiveIndex({ title, rootPrefix, groups, canonicalPath = '' }) {
   return pageShell({
     title: `${title} | ${SITE_TITLE} 封存`,
     rootPrefix,
+    canonicalPath,
     bodyClass: 'archive-index',
     breadcrumbLeadingSeparator: true,
     breadcrumbs: [
@@ -779,6 +827,7 @@ function renderEventPage(event) {
   return pageShell({
     title: `${event.title} | ${ARCHIVE_LABEL}`,
     rootPrefix: '../../',
+    canonicalPath: `events/${event.publicSlug}/`,
     bodyClass: 'single event-page',
     breadcrumbs: [
       { label: '活動', href: '../../events/' },
@@ -807,6 +856,7 @@ function renderEventIndex(events, title, rootPrefix, currentHref) {
   return pageShell({
     title: `${title} | ${SITE_TITLE} 封存`,
     rootPrefix,
+    canonicalPath: 'events/',
     bodyClass: 'archive events-index',
     breadcrumbs: [
       { label: title, href: currentHref },
@@ -826,7 +876,8 @@ function renderEventIndex(events, title, rootPrefix, currentHref) {
   });
 }
 
-function renderRedirectPage(targetHref, title = 'Redirect') {
+function renderRedirectPage(targetHref, title = 'Redirect', canonicalPath = '') {
+  const canonicalHref = canonicalPath ? pageCanonicalUrl(canonicalPath) : targetHref;
   return `<!doctype html>
 <html lang="zh-Hant">
 <head>
@@ -834,7 +885,7 @@ function renderRedirectPage(targetHref, title = 'Redirect') {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
   <meta http-equiv="refresh" content="0; url=${escapeAttr(targetHref)}">
-  <link rel="canonical" href="${escapeAttr(targetHref)}">
+  <link rel="canonical" href="${escapeAttr(canonicalHref)}">
   <title>${escapeHtml(title)} | Redirect</title>
 </head>
 <body>
@@ -854,7 +905,7 @@ function renderEventList(events, rootPrefix) {
         <article class="post-list-item">
           <header class="entry-header">
             <p class="entry-posted">${dateBadge(event.date)}</p>
-            <h2 class="entry-title"><a href="${rootPrefix}events/${event.slug}/">${escapeHtml(event.title)}</a></h2>
+            <h2 class="entry-title"><a href="${rootPrefix}events/${event.publicSlug}/">${escapeHtml(event.title)}</a></h2>
           </header>
           ${thumbnail ? `<div class="thumb-img"><img src="${escapeAttr(thumbnail.src)}" alt="${escapeAttr(thumbnail.alt)}" loading="lazy"></div>` : ''}
           <div class="entry-content half">${escapeHtml(excerpt)}${excerpt ? '...' : ''}</div>
@@ -1013,7 +1064,7 @@ async function writeTechAuthorCardAliases(authors, authorsLandingPage, postsByAu
   if (authorsLandingPage) {
     const outputDir = path.join(BUILD_DIR, 'author-card');
     await mkdir(outputDir, { recursive: true });
-    await writeFile(path.join(outputDir, 'index.html'), renderTechAuthorsLandingPage(authors, authorsLandingPage, postsByAuthor));
+    await writeFile(path.join(outputDir, 'index.html'), renderTechAuthorsLandingPage(authors, authorsLandingPage, postsByAuthor, 'authors/'));
   }
 
   for (const [authorId, slug] of aliasMap.entries()) {
@@ -1023,7 +1074,12 @@ async function writeTechAuthorCardAliases(authors, authorsLandingPage, postsByAu
     }
     const outputDir = path.join(BUILD_DIR, 'author-card', String(authorId));
     await mkdir(outputDir, { recursive: true });
-    await writeFile(path.join(outputDir, 'index.html'), renderAuthorPage(author, postsByAuthor.get(author.slug) || [], cardsBySlug.get(author.slug)));
+    await writeFile(path.join(outputDir, 'index.html'), renderAuthorPage(
+      author,
+      postsByAuthor.get(author.slug) || [],
+      cardsBySlug.get(author.slug),
+      `posts/author/${author.slug}/`
+    ));
   }
 }
 
@@ -1031,12 +1087,13 @@ function authorCardsBySlug(authorsLandingPage) {
   return new Map(extractAuthorIndexCards(authorsLandingPage?.content_html || '').map((card) => [card.slug, card]));
 }
 
-function renderTechAuthorsLandingPage(authors, page, postsByAuthor) {
+function renderTechAuthorsLandingPage(authors, page, postsByAuthor, canonicalPath = 'authors/') {
   const title = page?.title || '台客編輯群';
   const bodyHtml = renderAuthorsIndex(authors, '../', page, postsByAuthor);
   return pageShell({
     title: `${title} | ${ARCHIVE_LABEL}`,
     rootPrefix: '../',
+    canonicalPath,
     bodyClass: 'single authors-index',
     breadcrumbs: [
       { label: title, href: './' },
@@ -1054,10 +1111,11 @@ function renderTechAuthorsLandingPage(authors, page, postsByAuthor) {
   });
 }
 
-function renderAuthorPage(author, posts = [], referenceCard = null) {
+function renderAuthorPage(author, posts = [], referenceCard = null, canonicalPath = '') {
   return pageShell({
     title: `${author.title} | ${ARCHIVE_LABEL}`,
     rootPrefix: '../../../',
+    canonicalPath: canonicalPath || `posts/author/${author.slug}/`,
     bodyClass: 'single author-page',
     breadcrumbs: [
       { label: '台客編輯群', href: '../../../authors/' },
@@ -2154,14 +2212,17 @@ function renderNotFound() {
   });
 }
 
-function pageShell({ title, rootPrefix, bodyClass, body, breadcrumbs = [], breadcrumbLeadingSeparator = false, mastheadTitle = '', mastheadSubtitle = '', snapshotUrl = SITE_SNAPSHOT_URL }) {
+function pageShell({ title, rootPrefix, bodyClass, body, breadcrumbs = [], breadcrumbLeadingSeparator = false, mastheadTitle = '', mastheadSubtitle = '', snapshotUrl = SITE_SNAPSHOT_URL, canonicalPath = '' }) {
+  const canonicalTag = CANONICAL_BASE
+    ? `  <link rel="canonical" href="${escapeAttr(pageCanonicalUrl(canonicalPath))}">\n`
+    : '';
   return `<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="${escapeAttr(SITE_DESCRIPTION)}">
-  <title>${escapeHtml(title)}</title>
+${canonicalTag}  <title>${escapeHtml(title)}</title>
   <link rel="stylesheet" href="${rootPrefix}styles.css">
 </head>
 <body class="${escapeAttr(bodyClass)} sky">
@@ -2426,6 +2487,10 @@ function unescapeHtml(value) {
     .replaceAll('&gt;', '>')
     .replaceAll('&quot;', '"')
     .replaceAll('&#39;', "'");
+}
+
+function pageCanonicalUrl(relativePath = '') {
+  return buildPublicUrl(CANONICAL_BASE, relativePath);
 }
 
 function escapeAttr(value) {

@@ -26,6 +26,35 @@ export function normalizeOriginalUrl(url) {
   return `https://${url.replace(/^\/+/, '')}`;
 }
 
+export function decodePublicSlug(value) {
+  const slug = String(value || '');
+  if (!/%[0-9A-Fa-f]{2}/.test(slug)) {
+    return slug;
+  }
+  try {
+    return decodeURIComponent(slug);
+  } catch {
+    return slug;
+  }
+}
+
+export function normalizePublicBaseUrl(value) {
+  const clean = String(value || '').trim();
+  if (!clean) {
+    return '';
+  }
+  return clean.endsWith('/') ? clean : `${clean}/`;
+}
+
+export function buildPublicUrl(baseUrl, relativePath = '') {
+  const base = normalizePublicBaseUrl(baseUrl);
+  if (!base) {
+    return '';
+  }
+  const clean = String(relativePath || '').replace(/^\.?\//, '');
+  return new URL(clean, base).toString();
+}
+
 export function normalizeUrl(url, baseUrl) {
   if (!url) return '';
   const withoutWayback = String(url).replace(/^https?:\/\/web\.archive\.org\/web\/\d+(?:[a-z_]+)?\//i, '');

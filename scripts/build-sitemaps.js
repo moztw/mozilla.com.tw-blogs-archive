@@ -3,7 +3,8 @@
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { getSiteProfiles } from './lib/site-profiles.js';
+import { getSiteProfiles, sitePublicBaseUrl } from './lib/site-profiles.js';
+import { buildPublicUrl, decodePublicSlug } from './lib/url-utils.js';
 import { parseArgs as sharedParseArgs, relativePath } from './lib/workflow-utils.js';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -13,7 +14,7 @@ const SITES = getSiteProfiles().map((profile) => ({
   name: profile.deployName,
   buildDir: profile.buildDir,
   archiveDir: profile.archiveDir,
-  baseUrl: `https://moztw.org/${(profile.sitemapPath || profile.deployPath || profile.deployName).replace(/^\/+|\/+$/g, '')}/`,
+  baseUrl: sitePublicBaseUrl(profile),
 }));
 
 const args = parseArgs(process.argv.slice(2));
@@ -23,7 +24,8 @@ async function main() {
   for (const site of SITES) {
     const buildDir = path.join(ROOT, site.buildDir);
     const articleDates = await readArticleDates(path.join(ROOT, site.archiveDir, 'articles-json'));
-    const indexFiles = await findIndexFiles(buildDir);
+    const indexFiles = (await findIndexFiles(buildDir))
+      .filter((filePath) => shouldIncludeInSitemap(buildDir, filePath));
     const siteUrls = indexFiles.map((filePath) => sitemapEntry(site, buildDir, filePath, articleDates));
     urls.push(...siteUrls);
     console.log(`Collected ${siteUrls.length} URLs for ${site.baseUrl}`);
@@ -73,21 +75,27 @@ async function findIndexFiles(dir) {
   return results;
 }
 
+function shouldIncludeInSitemap(buildDir, filePath) {
+  const relativeFile = path.relative(buildDir, filePath);
+  const relativeDir = path.dirname(relativeFile) === '.' ? '' : path.dirname(relativeFile);
+  if (!relativeDir) {
+    return true;
+  }
+  return !relativeDir.split(path.sep).some((segment) => isLegacyEncodedPathSegment(segment));
+}
+
+function isLegacyEncodedPathSegment(segment) {
+  return /%[0-9A-Fa-f]{2}/.test(segment) && decodePublicSlug(segment) !== segment;
+}
+
 function sitemapEntry(site, buildDir, filePath, articleDates) {
   const relativeFile = path.relative(buildDir, filePath);
   const relativeDir = path.dirname(relativeFile) === '.' ? '' : path.dirname(relativeFile);
-  const urlPath = relativeDir ? `${encodePath(relativeDir)}/` : '';
-  const loc = new URL(urlPath, site.baseUrl).toString();
+  const urlPath = relativeDir ? `${relativeDir.split(path.sep).join('/')}/` : '';
+  const loc = buildPublicUrl(site.baseUrl, urlPath);
   const postId = relativeDir.match(/^posts\/(\d+)$/)?.[1] || '';
   const lastmod = postId ? articleDates.get(postId) || '' : '';
   return { loc, lastmod };
-}
-
-function encodePath(value) {
-  return value
-    .split(path.sep)
-    .map((part) => encodeURIComponent(part))
-    .join('/');
 }
 
 function renderSitemap(urls) {

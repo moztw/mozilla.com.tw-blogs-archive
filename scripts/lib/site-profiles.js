@@ -47,6 +47,11 @@ for (const profile of Object.values(SITE_PROFILES)) {
   profile.siteOrigin = `https://${profile.siteHost}`;
 }
 
+export function sitePublicBaseUrl(profile) {
+  const segment = (profile.sitemapPath || profile.deployPath || profile.deployName).replace(/^\/+|\/+$/g, '');
+  return `https://moztw.org/${segment}/`;
+}
+
 export function getSiteProfile(siteKey) {
   const profile = SITE_PROFILES[siteKey];
   if (!profile) {
@@ -75,6 +80,8 @@ export function buildSiteArgs(profile) {
     profile.siteSubtitle,
     '--site-description',
     profile.siteDescription,
+    '--canonical-base',
+    sitePublicBaseUrl(profile),
   ];
 }
 
